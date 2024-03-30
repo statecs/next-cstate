@@ -1,12 +1,17 @@
-import {InstagramIcon, TwitterIcon} from '@/components/Icon';
+import {InstagramIcon, TwitterIcon, LinkedInIcon, GithubIcon} from '@/components/Icon';
 
 const LINKS = [
+    {label: 'Github', url: 'https://github.com/statecs'},
+    {label: 'LinkedIn', url: 'https://linkedin.com/in/statecs'},
     {label: 'Instagram', url: 'https://www.instagram.com/cstate'},
     {label: 'Twitter', url: 'https://twitter.com/statecs'}
+
 ];
 const ICONS: {[key: string]: any} = {
     instagram: InstagramIcon,
-    twitter: TwitterIcon
+    twitter: TwitterIcon,
+    linkedin: LinkedInIcon,
+    github: GithubIcon
 };
 
 const SiteMenuSocialLinks: React.FC = () => (

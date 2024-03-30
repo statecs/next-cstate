@@ -8,3 +8,5 @@ export * from './Menu';
 export * from './RightArrow';
 export * from './Spinner';
 export * from './Twitter';
+export * from './LinkedIn';
+export * from './Github';
