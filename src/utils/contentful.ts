@@ -20,7 +20,7 @@ const fetchContent = cache(async (query: string, preview: boolean = false) => {
         );
         const response = await data.json();
 
-       // console.log(response);
+       console.log(response);
         
         return response;
     } catch (error) {

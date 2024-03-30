@@ -1,19 +1,21 @@
 require('dotenv').config();
 const fs = require('fs').promises;
 const path = require('path');
+const { NodeSSH } = require('node-ssh');
 const SftpClient = require('ssh2-sftp-client');
 const sftp = new SftpClient();
+const ssh = new NodeSSH();
 
-const localDir = process.cwd(); // Current working directory
-const remoteDir = '/var/www/cstate.se/portfolio'; // Destination directory on the server
-const exclude = ['node_modules', '.git', '.next']; // Directories to exclude
+const localDir = process.cwd();
+const remoteDir = '/var/www/cstate.se/portfolio';
+const exclude = ['node_modules', '.git', '.next'];
 
 async function uploadDirWithExclusion(localDir, remoteDir) {
   const files = await fs.readdir(localDir);
 
   for (const fileName of files) {
     if (exclude.includes(fileName)) {
-      continue; // Skip excluded files/directories
+      continue;
     }
 
     const localFilePath = path.join(localDir, fileName);
@@ -21,17 +23,15 @@ async function uploadDirWithExclusion(localDir, remoteDir) {
     const stats = await fs.stat(localFilePath);
 
     if (stats.isDirectory()) {
-      // If it's a directory, create it on the remote server and recurse into it
       await sftp.mkdir(remoteFilePath, true).catch(console.error);
       await uploadDirWithExclusion(localFilePath, remoteFilePath);
     } else {
-      // If it's a file, upload it
       await sftp.put(localFilePath, remoteFilePath).catch(console.error);
     }
   }
 }
 
-async function upload() {
+async function uploadAndExecuteCommands() {
   try {
     await sftp.connect({
       host: process.env.SFTP_HOST,
@@ -43,11 +43,28 @@ async function upload() {
     console.log(`Starting upload from ${localDir} to ${remoteDir}`);
     await uploadDirWithExclusion(localDir, remoteDir);
     console.log('Upload completed successfully');
-  } catch (err) {
-    console.error('Error during the upload process:', err);
-  } finally {
     await sftp.end();
+
+    await ssh.connect({
+      host: process.env.SFTP_HOST,
+      username: process.env.SFTP_USERNAME,
+      password: process.env.SFTP_PASSWORD,
+    });
+    
+
+    let result = await ssh.execCommand('npm run build', { cwd: remoteDir });
+    if (result.stdout) console.log('Build stdout:', result.stdout);
+    if (result.stderr) console.error('Build stderr:', result.stderr);
+
+    result = await ssh.execCommand('npm run start', { cwd: remoteDir });
+    if (result.stdout) console.log('Start stdout:', result.stdout);
+    if (result.stderr) console.error('Start stderr:', result.stderr);
+
+  } catch (err) {
+    console.error('Error during the process:', err);
+  } finally {
+    ssh.dispose();
   }
 }
 
-upload();
+uploadAndExecuteCommands();
