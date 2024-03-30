@@ -52,7 +52,11 @@ async function uploadAndExecuteCommands() {
     });
     
 
-    let result = await ssh.execCommand('npm run build', { cwd: remoteDir });
+    let result = await ssh.execCommand('npm install', { cwd: remoteDir });
+    if (result.stdout) console.log('Build stdout:', result.stdout);
+    if (result.stderr) console.error('Build stderr:', result.stderr);
+
+    result = await ssh.execCommand('npm run build', { cwd: remoteDir });
     if (result.stdout) console.log('Build stdout:', result.stdout);
     if (result.stderr) console.error('Build stderr:', result.stderr);
 
