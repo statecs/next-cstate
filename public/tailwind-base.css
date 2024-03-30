@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'PPEiko';
+    src: url('/fonts/PPEiko-Medium.woff2') format('woff2'),
+        url('/fonts/PPEiko-Medium.woff') format('woff');
+    font-display: swap;
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: 'PPEiko';
+    src: url('/fonts/PPEiko-Heavy.woff2') format('woff2'),
+        url('/fonts/PPEiko-Heavy.woff') format('woff');
+    font-display: swap;
+    font-weight: 800;
+}
+
+@font-face {
+    font-family: 'NeueMontreal-Regular';
+    src: url('/fonts/NeueMontreal-Regular.woff2') format('woff2'),
+        url('/fonts/NeueMontreal-Regular.woff') format('woff');
+    font-display: swap;
+    font-weight: 800;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+@media screen and (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+#__next {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+[id] {
+    scroll-margin-top: 4em;
+}
+
+.image-container > span {
+    vertical-align: top;
+}
+
+.thumbnail-container {
+    height: 0;
+    overflow: hidden;
+    padding-bottom: 15%;
+    width: 100%;
+}
+
+@media (min-width: 1280px) {
+    .xl\:min-h-screen-sticky {
+        min-height: calc(100vh - 4rem);
+    }
+}
