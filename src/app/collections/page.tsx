@@ -20,8 +20,8 @@ const CollectionsPage = async () => {
     return (
         <>
             <PageHeader
-                description="All the photo collections covering my beer, street, and travel photography."
-                title="All photo collections"
+                description="All the collections"
+                title="All collections"
             />
             <div className="grid animate-fadeIn grid-cols-2 gap-3 animate-duration-1000 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                 {sortedCollections.map(collection => (
