@@ -48,6 +48,12 @@ const usePhotoCollection = (
         // or bottom of the image, but it is not very noticeable
         return groups.map(group => {
             return group.map(photo => {
+
+                if (!photo.fullSize || typeof photo.fullSize.height !== 'number' || typeof photo.fullSize.width !== 'number') {
+                    // Handle the invalid photo.fullSize scenario, e.g., skip or use default values
+                    return photo; // Or handle differently as needed
+                }
+
                 const {height, width} = photo.fullSize;
 
                 if (width > height) {
@@ -121,18 +127,24 @@ const usePhotoCollection = (
 
         // Get the height of each column so we can compare them
         const allColumnHeights = newGroups.map((col, index) => {
-            // There could be instances where photo dimensions are not the same,
-            // so we round to the nearest 10 to avoid false positives.
             const columnHeight = col.reduce((acc, photo) => {
+                // Check if photo.fullSize is valid and has a height property
+                if (!photo.fullSize || typeof photo.fullSize.height !== 'number') {
+                    // Handle the case where height is not available
+                    // For example, skip this photo or use a default height
+                    return acc; // Or acc + defaultHeight if using a default value
+                }
+                
                 return acc + photo.fullSize.height;
             }, 0);
 
             return Math.round(columnHeight / 10) * 10;
         });
 
+
         const tallestColumnHeight = Math.max(...allColumnHeights);
         const shortestColumnHeight = Math.min(...allColumnHeights);
-        const allPhotoHeights = newGroups.flat().map(photo => photo.fullSize.height);
+        const allPhotoHeights = newGroups.flat().map(photo => photo?.fullSize?.height);
 
         // If all photo heights are equal then there will be no inbalance between columns
         const areAllPhotoHeightsEqual = allPhotoHeights.every(

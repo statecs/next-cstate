@@ -26,7 +26,7 @@ const PhotosCollection: React.FC<Props> = ({photosCollection, slug}) => {
             {photoGroups?.map((row, index) => (
                 <div key={index} className={`self-start pl-1.5 sm:pl-2 ${columnClass}`}>
                     {row.map((photo, index2) => {
-                        const padding = (photo.fullSize.height / maxSize) * 100;
+                        const padding = (photo?.fullSize?.height / maxSize) * 100;
 
                         return (
                             <div
@@ -36,7 +36,7 @@ const PhotosCollection: React.FC<Props> = ({photosCollection, slug}) => {
                             >
                                 <div
                                     className={clsx({
-                                        'mt-[-8%]': photo.fullSize.height > photo.fullSize.width
+                                        'mt-[-8%]': photo?.fullSize?.height > photo?.fullSize?.width
                                     })}
                                 >
                                     <PhotoThumbnail
