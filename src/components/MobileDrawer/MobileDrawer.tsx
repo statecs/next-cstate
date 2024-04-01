@@ -1,5 +1,6 @@
 import { Drawer, DrawerContent, DrawerTrigger } from './Drawer'
 import { MenuIcon } from '@/components/Icon';
+import SiteFooter from '@/components/SiteFooter';
 
 interface Props {
     className?: string;
@@ -15,7 +16,7 @@ export const MobileDrawer: React.FC<Props> = () => (
     </DrawerTrigger>
     <DrawerContent className="h-[80%]">
       <div className="overflow-y-auto p-4">
-        <h1>Drawer content</h1>
+        <SiteFooter />
       </div>
     </DrawerContent>
   </Drawer>
