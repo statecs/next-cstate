@@ -1,6 +1,7 @@
 import { Drawer, DrawerContent, DrawerTrigger } from './Drawer';
 import { MenuIcon } from '@/components/Icon';
 import SiteFooter from '@/components/SiteFooter';
+import { MenuContent } from '@/components/SideMenu'
 import { drawerAtom } from '@/utils/store';
 import { useAtom } from 'jotai';
 
@@ -23,7 +24,7 @@ export const MobileDrawer: React.FC<Props> = () => {
       <DrawerTrigger asChild>
         <button 
           type="button" 
-          className="relative z-50 size-6 translate-y-[-2px] md:hidden"
+          className="relative z-50 size-6 translate-y-[-2px] lg:hidden"
           onClick={handleButtonClick} // Set isOpen to true on click
         >
           <MenuIcon className="h-auto w-6 text-black dark:text-white" />
@@ -31,7 +32,7 @@ export const MobileDrawer: React.FC<Props> = () => {
       </DrawerTrigger>
       <DrawerContent className="h-[80%]">
         <div className="overflow-y-auto p-4">
-          <SiteFooter />
+          <MenuContent />
         </div>
       </DrawerContent>
     </Drawer>
