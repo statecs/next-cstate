@@ -84,7 +84,7 @@ export const isCollectionNew = (date: string | undefined) => {
  * @param args - The CSS class names or values to be combined and merged.
  * @returns - A merged string containing the combined CSS class names or values.
  */
-export function cn(...args) {
-    return twMerge(cx(...args))
+export function cn(...args: (string | null | undefined)[]) {
+    return twMerge(cx(...args));
   }
   

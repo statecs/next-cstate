@@ -7,9 +7,15 @@ const sftp = new SftpClient();
 const ssh = new NodeSSH();
 
 const localDir = process.cwd();
-const remoteDir = '/var/www/cstate.se/portfolio';
+const remoteDir = '/var/www/dev.cstate.se';
 const exclude = ['node_modules', '.git', '.next'];
 
+/**
+ * Uploads a directory to a remote location, excluding specified directories or files.
+ * 
+ * @param {string} localDir - The local directory to upload.
+ * @param {string} remoteDir - The remote directory to upload to.
+ */
 async function uploadDirWithExclusion(localDir, remoteDir) {
   const files = await fs.readdir(localDir);
 
@@ -31,6 +37,10 @@ async function uploadDirWithExclusion(localDir, remoteDir) {
   }
 }
 
+/**
+ * Connects to a remote server via SFTP and SSH, uploads a directory excluding certain files or directories,
+ * and executes a series of commands remotely.
+ */
 async function uploadAndExecuteCommands() {
   try {
     await sftp.connect({
@@ -50,7 +60,6 @@ async function uploadAndExecuteCommands() {
       username: process.env.SFTP_USERNAME,
       password: process.env.SFTP_PASSWORD,
     });
-    
 
     let result = await ssh.execCommand('npm install', { cwd: remoteDir });
     if (result.stdout) console.log('Build stdout:', result.stdout);
