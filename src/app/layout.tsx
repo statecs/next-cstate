@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
 import SiteMenu from '@/components/SiteMenu';
+import SkipLink from '@/components/SkipLink';
 import config from '@/utils/config';
 import './globals.css';
 
@@ -25,6 +26,8 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => (
         className={`flex flex-grow flex-col bg-white antialiased md:min-h-full dark:bg-custom-light-gray ${titleFont.variable} ${bodyFont.variable}`}
     >
             <body className="sm:min-h-full md:flex md:flex-grow md:flex-row bg-white dark:bg-custom-light-gray">
+                
+            <SkipLink />
                   
             <main vaul-drawer-wrapper="" className="animate-fadeIn p-4 md:mt-0 md:flex md:w-[calc(100%-260px)] md:flex-grow md:flex-col lg:w-[calc(100%-300px)] bg-white dark:bg-custom-light-gray">
                 <SiteHeader />
@@ -32,7 +35,9 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => (
                 <div className="hidden md:flex">
                     <SiteFooter />
                 </div>
-                {children}
+                <div id="main" className="relative min-h-[200px] w-full overflow-hidden md:flex md:h-full md:max-h-[calc(100vh-2rem)] md:flex-col">
+                    {children}
+                </div>
                 <div className="-mb-4 mt-10 md:hidden">
                     <SiteFooter />
                 </div>

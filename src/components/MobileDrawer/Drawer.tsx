@@ -9,9 +9,9 @@ interface DrawerProps {
   [key: string]: any;
 }
 
-const Drawer = forwardRef<HTMLDivElement, DrawerProps>(({ shouldScaleBackground = true, ...props }) => (
+const Drawer = ({ shouldScaleBackground = true, ...props }: DrawerProps) => (
   <DrawerPrimitive.Root shouldScaleBackground={shouldScaleBackground} {...props} />
-));
+);
 Drawer.displayName = 'Drawer';
 
 const DrawerTrigger = DrawerPrimitive.Trigger;

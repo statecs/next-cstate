@@ -24,7 +24,7 @@ const SiteMenuLink: React.FC<Link> = ({published, title, url}) => {
         >
             <span
                 className={clsx('underline-offset-4 transition duration-200 hover:duration-500', {
-                    'text-gray-500 group-hover:text-black group-hover:underline group-focus:text-black  group-focus:underline dark:hover:text-white dark:group-hover:text-white dark:group-focus:text-white':
+                    'text-white group-hover:text-black group-hover:underline group-focus:text-black group-focus:underline dark:hover:text-white dark:group-hover:text-white dark:group-focus:text-white':
                         !isActive,
                     'text-black underline dark:text-white': isActive
                 })}
