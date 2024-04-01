@@ -49,6 +49,9 @@ const DrawerContent = forwardRef<HTMLDivElement, DrawerContentProps>(({ classNam
     >
       <div className="mx-auto mt-4 h-2 w-[100px] shrink-0 rounded-full bg-gray-100" />
       {children}
+      <DrawerPrimitive.Close className="rounded-xs absolute right-4 top-4 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-gray-100 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-900 dark:data-[state=open]:bg-gray-800">
+            Close
+        </DrawerPrimitive.Close>
     </DrawerPrimitive.Content>
   </DrawerPortal>
 ));
@@ -97,7 +100,6 @@ const DrawerDescription = forwardRef<HTMLDivElement, DrawerDescriptionProps>(({ 
   <DrawerPrimitive.Description ref={ref} className={cn('text-sm text-gray-500', className)} {...props} />
 ));
 DrawerDescription.displayName = DrawerPrimitive.Description.displayName;
-
 export {
   Drawer,
   DrawerPortal,

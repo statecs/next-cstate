@@ -1,23 +1,39 @@
-import { Drawer, DrawerContent, DrawerTrigger } from './Drawer'
+import { Drawer, DrawerContent, DrawerTrigger } from './Drawer';
 import { MenuIcon } from '@/components/Icon';
 import SiteFooter from '@/components/SiteFooter';
+import { drawerAtom } from '@/utils/store';
+import { useAtom } from 'jotai';
 
 interface Props {
-    className?: string;
+  className?: string;
 }
 
-export const MobileDrawer: React.FC<Props> = () => (
+export const MobileDrawer: React.FC<Props> = () => {
+  const [isOpen, setIsOpen] = useAtom(drawerAtom);
 
-    <Drawer>
-    <DrawerTrigger asChild>
-      <button type="button" className="relative z-50 size-6 translate-y-[-2px] md:hidden">
-        <MenuIcon className="h-auto w-6 text-black dark:text-white" />
-      </button>
-    </DrawerTrigger>
-    <DrawerContent className="h-[80%]">
-      <div className="overflow-y-auto p-4">
-        <SiteFooter />
-      </div>
-    </DrawerContent>
-  </Drawer>
-);
+  // Handle button click to set isOpen to true
+  const handleButtonClick = () => {
+    if (!isOpen) {
+      setIsOpen(true);
+    }
+  };
+
+  return (
+    <Drawer open={isOpen} onOpenChange={setIsOpen}>
+      <DrawerTrigger asChild>
+        <button 
+          type="button" 
+          className="relative z-50 size-6 translate-y-[-2px] md:hidden"
+          onClick={handleButtonClick} // Set isOpen to true on click
+        >
+          <MenuIcon className="h-auto w-6 text-black dark:text-white" />
+        </button>
+      </DrawerTrigger>
+      <DrawerContent className="h-[80%]">
+        <div className="overflow-y-auto p-4">
+          <SiteFooter />
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+};

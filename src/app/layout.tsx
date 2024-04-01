@@ -24,9 +24,9 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => (
         lang="en"
         className={`flex flex-grow flex-col bg-white antialiased md:min-h-full dark:bg-custom-light-gray ${titleFont.variable} ${bodyFont.variable}`}
     >
-            <body className="sm:min-h-full md:flex md:flex-grow md:flex-row">
+            <body className="sm:min-h-full md:flex md:flex-grow md:flex-row bg-white dark:bg-custom-light-gray">
                   
-            <main vaul-drawer-wrapper=""  className="animate-fadeIn p-4 md:mt-0 md:flex md:w-[calc(100%-260px)] md:flex-grow md:flex-col lg:w-[calc(100%-300px)] dark:bg-custom-light-gray">
+            <main vaul-drawer-wrapper="" className="animate-fadeIn p-4 md:mt-0 md:flex md:w-[calc(100%-260px)] md:flex-grow md:flex-col lg:w-[calc(100%-300px)] bg-white dark:bg-custom-light-gray">
                 <SiteHeader />
                 <SiteMenu />
                 <div className="hidden md:flex">
