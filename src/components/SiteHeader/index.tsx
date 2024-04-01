@@ -5,6 +5,7 @@ import Link from 'next/link';
 import {CrossIcon, MenuIcon} from '@/components/Icon';
 import Logo from '@/components/Logo';
 import {isMenuOpenAtom} from '@/utils/store';
+import { MobileDrawer } from '@/components/MobileDrawer'
 
 const SiteHeader: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useAtom(isMenuOpenAtom);
@@ -38,6 +39,7 @@ const SiteHeader: React.FC = () => {
                         <MenuIcon className="h-auto w-6 text-black dark:text-white" />
                     )}
                 </button>
+                <MobileDrawer />
             </div>
         </header>
     );

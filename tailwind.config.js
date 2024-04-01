@@ -75,7 +75,10 @@ module.exports = {
             },
             screens: {
                 '-sm': {max: '639px'}
-            }
+            },
+            colors: {
+                'custom-dark-gray': '#1e1e1e',
+              },
         }
     }
 };
