@@ -8,7 +8,7 @@ export const LINKS = [
 ];
 
 const SiteFooter: React.FC = () => (
-    <nav className="relative z-50 flex items-end space-x-3 border-t-2 border-transparent bg-white pb-4 dark:bg-black">
+    <nav className="relative z-50 flex items-end space-x-3 border-t-2 border-transparent pb-4">
         {LINKS.map(link => (
             <UnderlineLink href={link.url} key={link.url} className="text-sm">
                 {link.label}

@@ -23,7 +23,7 @@ const bodyFont = localFont({
 const RootLayout = async ({children}: {children: React.ReactNode}) => (
     <html
         lang="en"
-        className={`flex flex-grow flex-col bg-white antialiased md:min-h-full dark:bg-black ${titleFont.variable} ${bodyFont.variable}`}
+        className={`flex flex-grow flex-col bg-white antialiased md:min-h-full dark:bg-custom-light-gray ${titleFont.variable} ${bodyFont.variable}`}
     >
         <body className="sm:min-h-full md:flex md:flex-grow md:flex-row">
             <div className="relative z-[100] flex-shrink-0 flex-grow-0 px-4 md:flex md:w-[240px] md:flex-grow md:flex-col lg:w-[260px]">

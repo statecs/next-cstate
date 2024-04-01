@@ -28,7 +28,7 @@ const SiteMenuMobile: React.FC<Props> = ({links}) => {
                     overflow: isMenuOpen ? 'visible' : 'hidden'
                 }}
             >
-                <div className="bg-white px-4 py-8 md:hidden dark:bg-black">
+                <div className="bg-white px-4 py-8 md:hidden dark:bg-custom-light-gray">
                     <div
                         className={clsx('flex space-x-10', {
                             'animate-menu-open': isMenuOpen,
@@ -73,7 +73,7 @@ const SiteMenuMobile: React.FC<Props> = ({links}) => {
             </div>
             <div
                 className={clsx(
-                    'fixed left-0 right-0 top-0 z-[99] h-0 bg-white md:hidden dark:bg-black',
+                    'fixed left-0 right-0 top-0 z-[99] h-0 bg-white md:hidden dark:bg-custom-light-gray',
                     {
                         'animate-menu-open-overlay': isMenuOpen,
                         'animate-menu-closed-overlay': !isMenuOpen
