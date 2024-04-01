@@ -68,6 +68,8 @@ async function uploadAndExecuteCommands() {
     result = await ssh.execCommand('npm run build', { cwd: remoteDir });
     if (result.stdout) console.log('Build stdout:', result.stdout);
     if (result.stderr) console.error('Build stderr:', result.stderr);
+    
+    result = await ssh.execCommand('killall next-server', { cwd: remoteDir });
 
     result = await ssh.execCommand('npm run start', { cwd: remoteDir });
     if (result.stdout) console.log('Start stdout:', result.stdout);
