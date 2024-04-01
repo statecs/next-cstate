@@ -15,7 +15,7 @@ const SiteHeader: React.FC = () => {
     return (
         <header className="top-0 flex h-8 pt-4 md:sticky md:z-50 md:h-10">
             <div className="absolute top-0 z-50 hidden h-10 w-full transition duration-200 ease-out md:block" />
-            <div className="absolute top-6 z-50 hidden h-10 w-full bg-gradient-to-b from-white via-white to-transparent transition duration-200 ease-out md:block dark:from-black" />
+            <div className="absolute top-6 z-50 hidden h-10 w-full transition duration-200 ease-out md:block dark:from-black" />
             <div className="flex w-full items-center justify-between">
                 <Link
                     aria-label="Home"

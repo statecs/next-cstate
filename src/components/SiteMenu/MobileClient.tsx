@@ -69,7 +69,7 @@ const SiteMenuMobile: React.FC<Props> = ({links}) => {
                         </nav>
                     </div>
                 </div>
-                <div className="h-44 bg-gradient-to-b from-white dark:from-black" />
+                <div className="h-44" />
             </div>
             <div
                 className={clsx(

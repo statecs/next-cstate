@@ -31,7 +31,7 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => (
                 <div className="hidden flex-grow flex-col justify-between space-y-8 md:flex">
                     <SiteMenu />
                     <footer className="hidden md:sticky md:bottom-0 md:block">
-                        <div className="absolute bottom-6 z-50 hidden h-10 w-full bg-gradient-to-t from-white via-white to-transparent transition duration-200 ease-out md:block dark:from-black dark:via-black" />
+                        <div className="absolute bottom-6 z-50 hidden h-10 w-full transition duration-200 ease-out md:block dark:from-black dark:via-black" />
                         <SiteFooter />
                     </footer>
                 </div>
