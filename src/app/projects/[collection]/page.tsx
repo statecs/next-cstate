@@ -5,6 +5,8 @@ import PhotoCollection from '@/components/PhotoCollection';
 import config from '@/utils/config';
 import {fetchAllCollections, fetchCollection} from '@/utils/contentful';
 import {getCollectionSeo} from '@/utils/helpers';
+import { ScrollArea } from '@/components/SideMenu/ScrollArea';
+import { FloatingHeader } from '@/components/ListLayout/FloatingHeader';
 
 interface Props {
     params: {collection: string};
@@ -17,6 +19,8 @@ const CollectionPage = async ({params}: Props) => {
     if (!collection) return notFound();
 
     return (
+        <ScrollArea useScrollAreaId>
+        <FloatingHeader scrollTitle="Projects" goBackLink="/projects"></FloatingHeader>
         <div className="flex flex-grow border-spacing-4 py-4 px-3 md:justify-center">
             <div className="flex flex-col space-y-2">
             <div className=" max-w-[700px]">
@@ -30,6 +34,7 @@ const CollectionPage = async ({params}: Props) => {
             </div>
             </div>
         </div>
+        </ScrollArea>
     );
 };
 

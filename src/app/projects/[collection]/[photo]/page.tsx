@@ -5,6 +5,7 @@ import PhotoCarousel from '@/components/PhotoCarousel';
 import config from '@/utils/config';
 import {fetchAllCollections, fetchCollection} from '@/utils/contentful';
 import {getPhotoSeo} from '@/utils/helpers';
+import { FloatingHeader } from '@/components/ListLayout/FloatingHeader';
 
 interface Props {
     params: {collection: string; photo: string};
@@ -31,10 +32,12 @@ const PhotoPage = async ({params}: Props) => {
     if (!collection) redirect('/');
 
     return (
-            <div className="flex flex-grow flex-col border-spacing-4 py-4 px-3 md:justify-center overflow-auto">
+        <>
+        <FloatingHeader scrollTitle={collection.pageTitle} goBackLink={`/projects/${collection.slug}`}></FloatingHeader>
+            <div className="flex flex-grow flex-col h-screen border-spacing-4 py-4 px-3 md:justify-center overflow-auto">
                 <PageHeader
                     animate={false}
-                    backUrl={`/${collection.slug}`}
+                    backUrl={`${collection.slug}`}
                     title={collection.pageTitle || collection.title}
                 />
                 <PhotoCarousel photo={params.photo} collection={collection} />
@@ -49,6 +52,7 @@ const PhotoPage = async ({params}: Props) => {
                     />
                 </div>
             </div>
+            </>
     );
 };
 

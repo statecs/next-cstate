@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeftIcon, RadioIcon } from 'lucide-react';
 
-import { MobileDrawer } from '@/components/MobileDrawer';
 import { SCROLL_AREA_ID, MOBILE_SCROLL_THRESHOLD } from '@/utils/constants';
 
 interface FloatingHeaderProps {
@@ -20,7 +19,7 @@ interface FloatingHeaderProps {
 export const FloatingHeader = memo<FloatingHeaderProps>(({ scrollTitle, title, goBackLink, children }) => {
   const [transformValues, setTransformValues] = useState({ translateY: 0, opacity: scrollTitle ? 0 : 1 });
   const pathname = usePathname();
-  const isWritingPath = pathname.startsWith('/writing');
+  const isProjectsPath = pathname.startsWith('/projects');
 
   useEffect(() => {
     const scrollAreaElem = document.querySelector(`#${SCROLL_AREA_ID}`);
@@ -70,7 +69,7 @@ export const FloatingHeader = memo<FloatingHeaderProps>(({ scrollTitle, title, g
               )}
             </div>
           </div>
-          {scrollTitle && isWritingPath && <div className="flex min-w-[50px] justify-end">{children}</div>}
+          {scrollTitle && isProjectsPath && <div className="flex min-w-[50px] justify-end">{children}</div>}
         </div>
       </div>
     </header>

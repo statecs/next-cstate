@@ -3,13 +3,10 @@ import {
     GithubIcon,
     LinkedinIcon,
     InstagramIcon,
-    YoutubeIcon,
     SparklesIcon,
     PencilLineIcon,
     NavigationIcon,
-    Wand2Icon,
     BookmarkIcon,
-    ArmchairIcon,
     CircleUserIcon,
     ContactIcon
   } from 'lucide-react'
@@ -85,8 +82,8 @@ export const LINKS: Link[] = [
     icon: <CircleUserIcon size={16} />
   },
   {
-    href: '/writing',
-    label: 'Writing',
+    href: '/projects',
+    label: 'Projects',
     icon: <PencilLineIcon size={16} />
   },
   {
@@ -97,11 +94,6 @@ export const LINKS: Link[] = [
   {
     href: '/links',
     label: 'Links',
-    icon: <BookmarkIcon size={16} />
-  },
-  {
-    href: '/bookmarks',
-    label: 'Bookmarks',
     icon: <BookmarkIcon size={16} />
   },
   {

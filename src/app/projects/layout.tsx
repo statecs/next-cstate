@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Suspense } from 'react'
-import { ScrollArea } from '@/components/SideMenu/ScrollArea';
-import { FloatingHeader } from '@/components/ListLayout/FloatingHeader'
 import config from '@/utils/config';
 import {fetchEditorialPage} from '@/utils/contentful';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { WritingListLayout } from '@/components/ListLayout/WritingListLayout';
+import { ListLayout } from '@/components/ListLayout/ListLayout';
 import {getEditorialSeo} from '@/utils/helpers';
+import { SideMenu } from '@/components/SideMenu/SideMenu';
 
 import {fetchCollectionNavigation} from '@/utils/contentful';
 
@@ -17,24 +16,29 @@ interface Post {
   published: string;
 }
 
-const Writing = async () => {
+interface LayoutProps {
+  children: ReactNode;
+}
+
+const Layout: React.FC<LayoutProps> = async ({ children }) => {
+
   const links = await fetchCollectionNavigation();
 
   const posts: Post[] = links.map((link) => ({
-    url: link.url, 
-    title: link.title,
+    url: link.url,
+    title: link.title, 
     slug: link.url, 
     published: link.published || 'Not specified', 
   }));
 
     return (
       <>
-      <ScrollArea className="lg:hidden">
-        <FloatingHeader title="Writing" />
-        <Suspense fallback={<LoadingSpinner />}>
-          <WritingListLayout list={posts} isMobile />
-        </Suspense>
-      </ScrollArea>
+        <SideMenu title="Projects" isInner >
+            <Suspense fallback={<LoadingSpinner />}>
+              <ListLayout list={posts} isMobile />
+            </Suspense>
+          </SideMenu>
+        <div className="lg:bg-dots flex-1">{children}</div>
       </>
     );
 };
@@ -46,4 +50,4 @@ export const generateMetadata = async () => {
 
 export const revalidate = 60;
 
-export default Writing;
+export default Layout;

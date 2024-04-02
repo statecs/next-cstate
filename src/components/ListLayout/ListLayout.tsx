@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
-import { WritingLink } from './WritingLink';
+import { LinkList } from './LinkList';
 import { cn } from '@/utils/helpers';
 
 interface Post {
@@ -12,21 +12,23 @@ interface Post {
   published: string;
 }
 
-interface WritingListLayoutProps {
+interface ListLayoutProps {
   list: (Post)[];
   isMobile: boolean;
 }
 
-export const WritingListLayout: React.FC<WritingListLayoutProps> = ({ list, isMobile }) => {
+export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile }) => {
   const pathname = usePathname();
 
   return (
     <div className={cn(isMobile ? '' : 'flex flex-col gap-1 text-sm')}>
       {list.length > 0 ? (
         list.map((post) => {
-          const isActive = pathname === `/writing${post.url}`;
+          const basePath = `/projects${post.url}`;
+          const isActive = pathname === basePath || pathname.startsWith(`${basePath}/`);
+
           return (
-            <WritingLink key={post.url} post={post} isMobile={isMobile} isActive={isActive} />
+            <LinkList key={post.url} post={post} isMobile={isMobile} isActive={isActive} />
           );
         })
       ) : (

@@ -14,21 +14,32 @@ interface Post {
   published: string;
 }
 
-interface WritingLinkProps {
+interface LinkListProps {
   post: Post;
   isMobile: boolean;
   isActive: boolean;
 }
 
 
-export const WritingLink = ({ post, isMobile, isActive }: WritingLinkProps) => {
-  const date = post?.published;
+export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
+
+  const formatDate = () => {
+    const dateObject = new Date(post?.published);
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: '2-digit',
+    };
+    return dateObject.toLocaleDateString('en-US', options);
+  };
+
+  const formattedDate = formatDate();
 
   return (
     <LazyMotion features={domAnimation}>
       <Link
         key={post.slug}
-        href={`/writing/${post.url}`}
+        href={`/projects/${post.url}`}
         className={cn(
           'flex flex-col gap-1 transition-colors duration-300 rounded-lg p-2',
           isActive ? 'bg-black text-white dark:bg-zinc-700' : 'dark:text-white dark:hover:bg-zinc-700 hover:bg-gray-200 dark:hover:bg-zinc-700',
@@ -37,8 +48,8 @@ export const WritingLink = ({ post, isMobile, isActive }: WritingLinkProps) => {
       >
         <span className="font-medium">{post.title}</span>
         <span className={cn('transition-colors duration-300', isActive ? 'text-slate-400' : 'text-gray-400')}>
-          <time dateTime={date} suppressHydrationWarning>
-              {date}
+          <time dateTime={post.published} suppressHydrationWarning>
+              {formattedDate}
           </time>
         </span>
         
