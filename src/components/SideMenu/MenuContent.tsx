@@ -48,7 +48,7 @@ export const MenuContent: React.FC = () => {
           ))}
         </div>
       </div>
-      <div className="flex flex-col gap-2 text-sm border-zinc-700 border-t pt-4">
+      <div className="flex flex-col gap-2 text-sm dark:border-zinc-700 border-t pt-4">
         <div className="flex flex-col gap-1">
           {Object.values(PROFILES).map((profile: Profile) => (
             <NavigationLink key={profile.url} href={profile.url} label={profile.title} icon={profile.icon} />

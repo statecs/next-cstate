@@ -24,13 +24,13 @@ const bodyFont = localFont({
 const RootLayout = async ({children}: {children: React.ReactNode}) => (
     <html
         lang="en"
-        className={`flex flex-grow flex-col bg-white antialiased md:min-h-full dark:bg-custom-light-gray ${titleFont.variable} ${bodyFont.variable}`}
+        className={`flex flex-grow flex-col bg-white antialiased md:min-h-full dark:bg-custom-dark-gray ${titleFont.variable} ${bodyFont.variable}`}
     >
-            <body className="sm:min-h-full md:flex md:flex-grow md:flex-row bg-white dark:bg-custom-light-gray">
+            <body className="sm:min-h-full md:flex md:flex-grow md:flex-row bg-white dark:bg-custom-dark-gray">
 
             <SkipLink />
 
-            <main vaul-drawer-wrapper="" className="animate-fadeIn p-4 md:mt-0 md:flex md:w-[calc(100%-260px)] md:flex-grow md:flex-col lg:w-[calc(100%-300px)] bg-white dark:bg-custom-light-gray">
+            <main vaul-drawer-wrapper="" className="animate-fadeIn md:mt-0 md:flex md:w-[calc(100%-260px)] md:flex-grow md:flex-col lg:w-[calc(100%-300px)] bg-white dark:bg-custom-dark-gray">
                 <div className="lg:hidden">
                     <SiteHeader />
                 </div>

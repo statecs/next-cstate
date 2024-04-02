@@ -36,19 +36,19 @@ export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner }) 
   return (
     <ScrollArea
       className={cn(
-        'hidden bg-zinc-50 dark:bg-custom-dark-gray lg:flex lg:flex-col',
+        'hidden bg-zinc-50 dark:bg-custom-light-gray lg:flex lg:flex-col',
         isInner ? 'lg:w-80 xl:w-96' : 'lg:w-60 xl:w-72'
       )}
     >
       
       {title && (
-        <div className="sticky top-0 z-10 border-b bg-zinc-50 dark:text-white dark:bg-custom-light-gray px-5 py-3">
+        <div className="sticky top-0 z-10 border-b dark:border-zinc-700 bg-zinc-50 dark:text-white dark:bg-custom-light-gray px-5 py-3">
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold tracking-tight">{title}</span>
           </div>
         </div>
       )}
-      <div className="bg-zinc-50 dark:bg-custom-dark-gray dark:text-white p-3">{children}</div>
+      <div className="bg-zinc-50 dark:bg-custom-light-gray dark:text-white p-3">{children}</div>
     </ScrollArea>
   );
 };

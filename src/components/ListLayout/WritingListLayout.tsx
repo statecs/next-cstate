@@ -24,7 +24,7 @@ export const WritingListLayout: React.FC<WritingListLayoutProps> = ({ list, isMo
     <div className={cn(isMobile ? '' : 'flex flex-col gap-1 text-sm')}>
       {list.length > 0 ? (
         list.map((post) => {
-          const isActive = pathname === `/writing/${post.url}`;
+          const isActive = pathname === `/writing${post.url}`;
           return (
             <WritingLink key={post.url} post={post} isMobile={isMobile} isActive={isActive} />
           );

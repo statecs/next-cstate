@@ -29,7 +29,7 @@ export const NavigationLink = memo<NavigationLinkProps>(({ href, label, icon, sh
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center gap-3 rounded-lg p-2 group hover:bg-gray-200"
+        className="flex items-center gap-3 rounded-lg p-2 group hover:bg-gray-200 dark:hover:bg-zinc-800"
       >
         {iconCmp}
         <span className="font-medium">{label}</span>
@@ -40,14 +40,14 @@ export const NavigationLink = memo<NavigationLinkProps>(({ href, label, icon, sh
     
   }
 
-  let isActive = pathname === href;
+  let isActive = (pathname.startsWith(href) && href !== "/") || (href === "/" && pathname === "/");
   
   return (
     <Link href={href} passHref onClick={closeDrawer}>
     <span
       className={cn(
         'group cursor-pointer flex gap-3 items-center rounded-lg p-2',
-        isActive ? 'bg-black text-white' : 'hover:bg-gray-200 dark:hover:bg-black'
+        isActive ? 'bg-black text-white dark:bg-zinc-700' : 'hover:bg-gray-200 dark:hover:bg-zinc-700'
       )}
     >
       {iconCmp}
@@ -56,8 +56,8 @@ export const NavigationLink = memo<NavigationLinkProps>(({ href, label, icon, sh
       {shortcutNumber && (
         <span
           className={cn(
-            'ml-auto hidden h-5 w-5 place-content-center rounded border border-gray-200 bg-gray-100 text-xs font-medium text-gray-500 transition-colors duration-200 group-hover:border-gray-300 lg:grid',
-            isActive ? 'border-gray-600 bg-gray-700 text-gray-200 group-hover:border-gray-600' : ''
+            'ml-auto hidden h-5 w-5 place-content-center rounded border border-gray-200 bg-gray-100 dark:text-white dark:bg-zinc-700 dark:border-custom-light-gray text-xs font-medium text-gray-500 transition-colors duration-200 group-hover:border-gray-300 group-hover:dark:border-zinc-600 lg:grid',
+            isActive ? 'border-gray-600 bg-custom-dark-gray dark:bg-zinc-200 dark:text-custom-dark-gray text-gray-200 group-hover:border-gray-600' : ''
           )}
           title={`Shortcut key: ${shortcutNumber}`}
         >

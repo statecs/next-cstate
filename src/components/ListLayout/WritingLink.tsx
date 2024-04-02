@@ -30,9 +30,9 @@ export const WritingLink = ({ post, isMobile, isActive }: WritingLinkProps) => {
         key={post.slug}
         href={`/writing/${post.url}`}
         className={cn(
-          'flex flex-col gap-1 transition-colors duration-300',
-          !isMobile && isActive ? 'bg-black text-white' : 'dark:text-white dark:hover:bg-black hover:bg-gray-200',
-          isMobile ? 'border-b px-4 py-3 text-sm hover:bg-gray-100' : 'rounded-lg p-2'
+          'flex flex-col gap-1 transition-colors duration-300 rounded-lg p-2',
+          isActive ? 'bg-black text-white dark:bg-zinc-700' : 'dark:text-white dark:hover:bg-zinc-700 hover:bg-gray-200 dark:hover:bg-zinc-700',
+          isMobile ? 'border-b px-4 py-3 dark:border-zinc-700 text-sm' : 'rounded-lg p-2'
         )}
       >
         <span className="font-medium">{post.title}</span>
