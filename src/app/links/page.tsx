@@ -12,7 +12,7 @@ const LinksPage = async () => {
 
     return (
         <div className="flex flex-grow border-spacing-4 py-4 px-3 md:justify-center">
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-2 max-w-[700px]">
                 <PageHeader title="Links" />
                 <LinksList links={links} />
             </div>
