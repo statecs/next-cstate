@@ -7,8 +7,8 @@ import { drawerAtom } from '@/utils/store';
 
 export const LINKS = [
   { label: 'About', url: '/about' },
+  { label: 'Projects', url: '/projects' },
   { label: 'Contact', url: '/contact' },
-  { label: 'Links', url: '/links' }
 ];
 
 const SiteFooter: React.FC = () => {
@@ -16,7 +16,7 @@ const SiteFooter: React.FC = () => {
   const closeDrawer = () => setIsOpen(false);
 
   return (
-    <nav className="relative z-50 flex items-end space-x-3 border-t-2 border-transparent pb-4">
+    <nav className="relative py-5 z-50 flex justify-center space-x-3 border-t dark:border-zinc-800 pb-4 items-center">
       {LINKS.map(link => (
         <UnderlineLink href={link.url} key={link.url} className="text-sm" onClick={closeDrawer}>
           {link.label}

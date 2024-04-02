@@ -1,11 +1,12 @@
 import {Analytics} from '@vercel/analytics/react';
 import localFont from 'next/font/local';
 import SiteFooter from '@/components/SiteFooter';
-import SiteHeader from '@/components/SiteHeader';
 import SiteMenu from '@/components/SiteMenu';
 import SkipLink from '@/components/SkipLink';
-import { SideMenu, MenuContent } from '@/components/SideMenu'
+import SiteHeader from '@/components/SiteHeader';
+import { SideMenu, MenuContent } from '@/components/SideMenu';
 import config from '@/utils/config';
+import styles from './rootLayout.module.css';
 import './globals.css';
 
 const titleFont = localFont({
@@ -23,16 +24,18 @@ const bodyFont = localFont({
 
 const RootLayout = async ({children}: {children: React.ReactNode}) => (
     <html
-        lang="en"
+        lang="en" 
         className={`flex flex-grow flex-col bg-white antialiased md:min-h-full dark:bg-custom-dark-gray ${titleFont.variable} ${bodyFont.variable}`}
     >
-            <body className="sm:min-h-full md:flex md:flex-grow md:flex-row bg-white dark:bg-custom-dark-gray">
+            <body style={{
+           background: 'black'
+          }} className="sm:min-h-full md:flex md:flex-grow md:flex-row bg-white dark:bg-custom-dark-gray">
 
             <SkipLink />
 
-            <main vaul-drawer-wrapper="" className="animate-fadeIn md:mt-0 md:flex md:w-[calc(100%-260px)] md:flex-grow md:flex-col lg:w-[calc(100%-300px)] bg-white dark:bg-custom-dark-gray">
+            <main vaul-drawer-wrapper=""  className={`${styles.responsiveStyle} animate-fadeIn md:mt-0 md:flex md:w-[calc(100%-260px)] md:flex-grow md:flex-col lg:w-[calc(100%-300px)] bg-white dark:bg-custom-dark-gray`}>
                 <div className="lg:hidden">
-                    <SiteHeader />
+                <SiteHeader />
                 </div>
                 <div className="lg:flex">
                     <SideMenu className="relative hidden lg:flex">
@@ -41,7 +44,7 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => (
                     </SideMenu>
                     <div className="flex flex-1">{children}</div>
                 </div>
-                <div className="-mb-4 mt-10 lg:hidden">
+                <div className="lg:hidden">
                     <SiteFooter />
                 </div>
             </main>

@@ -30,7 +30,6 @@ const ProjectPage = async () => {
     return (
       <>
       <ScrollArea className="lg:hidden">
-        <FloatingHeader title="Projects" />
         <Suspense fallback={<LoadingSpinner />}>
           <ListLayout list={posts} isMobile />
         </Suspense>
