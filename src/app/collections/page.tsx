@@ -30,7 +30,7 @@ const CollectionsPage = async () => {
                         <Link
                             className="group w-full"
                             key={collection.slug}
-                            href={`/${collection.slug}`}
+                            href={`/projects/${collection.slug}`}
                         >
                             <ThumbnailImage
                                 {...collection.photosCollection.items[0]?.thumbnail}
