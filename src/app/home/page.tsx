@@ -1,4 +1,5 @@
 import config from '@/utils/config';
+import ComboBox from '@/components/ComboBox';
 import {fetchEditorialPage} from '@/utils/contentful';
 import {getEditorialSeo} from '@/utils/helpers';
 
@@ -11,6 +12,7 @@ const HomePage = async () => {
             <h1 className="font-serif text-xl text-black sm:text-2xl dark:text-white">Christopher State</h1>
             <div className="prose-sm leading-relaxed tracking-wide dark:prose-invert prose-p:text-gray-500 dark:prose-p:text-gray-400">
                 <p>Design Technologist</p>
+                <ComboBox threadId={process.env.THREAD_ID || ''} assistantId={process.env.ASSISTANT_ID || ''}  />
             </div>
         </div>
     </div>
