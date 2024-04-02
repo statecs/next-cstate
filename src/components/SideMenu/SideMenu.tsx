@@ -11,8 +11,7 @@ const keyCodePathnameMapping: { [key: string]: string | undefined } = {
   Digit3: '/projects',
   Digit4: '/journey',
   Digit5: '/links',
-  Digit6: '/bookmarks',
-  Digit7: '/contact',
+  Digit6: '/contact',
 };
 
 interface SideMenuProps {

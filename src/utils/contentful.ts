@@ -372,3 +372,49 @@ export const fetchCollectionsForSitemap = async () => {
 
     return response.data?.collectionCollection?.items;
 };
+
+export const fetchAllJourneys = async (
+    preview: boolean = false
+): Promise<JourneyCollection[] | null> => {
+
+    const query = `query {
+        journeyCollection(
+            limit: 35,
+            order: [year_DESC],
+        ) {
+            items {
+                title
+                description
+              	year
+              	imageCollection {
+                  items{
+                    title
+                    url
+                    description
+                  }
+                }
+                sys {
+                    published: firstPublishedAt
+                }
+            }
+        }
+    }`;
+    const response: any = await fetchContent(query, preview);
+
+    if (response.data?.journeyCollection?.items) {
+        const formattedJourneys = response.data.journeyCollection.items.map(
+            (journey: any) => {
+                return {
+                    ...journey,
+                    journeyCollection: {
+                        items: journey
+                    }
+                };
+            }
+        );
+
+        return formattedJourneys;
+    }
+
+    return null;
+};
