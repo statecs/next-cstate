@@ -9,7 +9,7 @@ interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
 export const ScrollArea: React.FC<ScrollAreaProps> = ({ useScrollAreaId = false, className, ...rest }) => (
   <div
     {...(useScrollAreaId && { id: SCROLL_AREA_ID })}
-    className={cn('scrollable-area relative flex w-full flex-col', className)}
+    className={cn('scrollable-area relative flex w-full flex-col h-screen', className)}
     {...rest}
   />
 );

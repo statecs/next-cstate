@@ -17,15 +17,19 @@ const CollectionPage = async ({params}: Props) => {
     if (!collection) return notFound();
 
     return (
-        <>
-            <div className={params.collection === 'home' ? 'md:hidden' : ''}>
-                <PageHeader
-                    {...collection}
-                    description={collection?.showDescription ? collection.description : null}
-                />
+        <div className="flex flex-grow border-spacing-4 py-4 px-3 md:justify-center">
+            <div className="flex flex-col space-y-2">
+            <div className=" max-w-[700px]">
+                <div className={params.collection === 'home' ? 'md:hidden' : ''}>
+                    <PageHeader
+                        {...collection}
+                        description={collection?.showDescription ? collection.description : null}
+                    />
+                </div>
+                <PhotoCollection {...collection} key={collection.slug} />
             </div>
-            <PhotoCollection {...collection} key={collection.slug} />
-        </>
+            </div>
+        </div>
     );
 };
 

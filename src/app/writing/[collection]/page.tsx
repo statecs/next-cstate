@@ -22,19 +22,26 @@ const WritingSlug = async ({params}: Props) => {
 
   return (
     <>
-     <ScrollArea className="bg-white dark:bg-custom-light-gray dark:text-white" useScrollAreaId>
-     <FloatingHeader scrollTitle="TEST" goBackLink="/writing"></FloatingHeader>
-     <div className="content-wrapper">
-          <article className="content">
-          <div className={params.collection === 'home' ? 'md:hidden' : ''}>
-                <PageHeader
-                    {...collection}
-                    description={collection?.showDescription ? collection.description : null}
-                />
+    <ScrollArea useScrollAreaId>
+      <FloatingHeader scrollTitle="TEST" goBackLink="/writing"></FloatingHeader>
+      <div className="flex flex-grow border-spacing-4 py-4 px-3 md:justify-center overflow-auto">
+          <div className="flex flex-col space-y-2">
+              <div className="max-w-[700px]">
+
+                    <div className="content-wrapper">
+                          <article className="content">
+                          <div className={params.collection === 'home' ? 'md:hidden' : ''}>
+                                <PageHeader
+                                    {...collection}
+                                    description={collection?.showDescription ? collection.description : null}
+                                />
+                            </div>
+                            <PhotoCollection {...collection} key={collection.slug} />
+                          </article>
+                        </div>
+                  </div>
             </div>
-            <PhotoCollection {...collection} key={collection.slug} />
-          </article>
-        </div>
+      </div>
     </ScrollArea>
     </>
   );

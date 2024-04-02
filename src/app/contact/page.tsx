@@ -7,8 +7,10 @@ const ContactPage = async () => {
     const page = await fetchEditorialPage('contact') || {};
 
     return (
-        <div className="max-w-[700px]">
-            <PageHeader title={page.pageTitle} description={page.content} />
+        <div className="flex flex-grow border-spacing-4 py-4 px-3 md:justify-center">
+            <div className="flex flex-col space-y-2">
+                <PageHeader title={page.pageTitle} description={page.content} />
+            </div>
         </div>
     );
 };

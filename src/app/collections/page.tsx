@@ -18,44 +18,48 @@ const CollectionsPage = async () => {
         .sort((a, b) => a.slug.localeCompare(b.slug));
 
     return (
-        <>
-            <PageHeader
-                description="All the collections"
-                title="All collections"
-            />
-            <div className="grid animate-fadeIn grid-cols-2 gap-3 animate-duration-1000 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-                {sortedCollections.map(collection => (
-                    <Link
-                        className="group w-full"
-                        key={collection.slug}
-                        href={`/${collection.slug}`}
-                    >
-                        <ThumbnailImage
-                            {...collection.photosCollection.items[0]?.thumbnail}
-                            base64={collection.photosCollection.items[0]?.base64}
-                        />
-                        <span className="flex flex-row justify-between space-x-4 pb-2 pt-2 sm:pb-4">
-                            <span className="text-sm tracking-wide text-gray-600 underline-offset-4 group-hover:underline group-focus:underline dark:text-gray-400 dark:group-hover:text-white">
-                                {collection.pageTitle ? (
-                                    <>
-                                        <span className="hidden sm:inline-block">
-                                            {collection.pageTitle}
-                                        </span>
-                                        <span className="sm:hidden">{collection.title}</span>
-                                    </>
-                                ) : (
-                                    collection.title
-                                )}
+          <div className="flex flex-grow border-spacing-4 py-4 px-3 md:justify-center overflow-auto">
+          <div className="flex flex-col space-y-2">
+              <div className="max-w-[700px]">
+                <PageHeader
+                    description="All the collections"
+                    title="All collections"
+                />
+                <div className="grid animate-fadeIn grid-cols-2 gap-3 animate-duration-1000 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+                    {sortedCollections.map(collection => (
+                        <Link
+                            className="group w-full"
+                            key={collection.slug}
+                            href={`/${collection.slug}`}
+                        >
+                            <ThumbnailImage
+                                {...collection.photosCollection.items[0]?.thumbnail}
+                                base64={collection.photosCollection.items[0]?.base64}
+                            />
+                            <span className="flex flex-row justify-between space-x-4 pb-2 pt-2 sm:pb-4">
+                                <span className="text-sm tracking-wide text-gray-600 underline-offset-4 group-hover:underline group-focus:underline dark:text-gray-400 dark:group-hover:text-white">
+                                    {collection.pageTitle ? (
+                                        <>
+                                            <span className="hidden sm:inline-block">
+                                                {collection.pageTitle}
+                                            </span>
+                                            <span className="sm:hidden">{collection.title}</span>
+                                        </>
+                                    ) : (
+                                        collection.title
+                                    )}
+                                </span>
+                                <span>
+                                    {isCollectionNew(collection.sys?.published) && <NewBadge />}
+                                </span>
                             </span>
-                            <span>
-                                {isCollectionNew(collection.sys?.published) && <NewBadge />}
-                            </span>
-                        </span>
-                        <span className="hidden text-sm">{collection.description}</span>
-                    </Link>
-                ))}
+                            <span className="hidden text-sm">{collection.description}</span>
+                        </Link>
+                    ))}
+                    </div>
+                </div>
             </div>
-        </>
+        </div>
     );
 };
 

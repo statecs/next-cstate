@@ -31,24 +31,24 @@ const PhotoPage = async ({params}: Props) => {
     if (!collection) redirect('/');
 
     return (
-        <>
-            <PageHeader
-                animate={false}
-                backUrl={`/${collection.slug}`}
-                title={collection.pageTitle || collection.title}
-            />
-            <PhotoCarousel photo={params.photo} collection={collection} />
-            <div className="md:hidden">
+            <div className="flex flex-grow flex-col border-spacing-4 py-4 px-3 md:justify-center overflow-auto">
                 <PageHeader
                     animate={false}
                     backUrl={`/${collection.slug}`}
-                    ctaLabel={collection.ctaLabel}
-                    ctaUrl={collection.ctaUrl}
-                    description={collection.description}
-                    hasBottomPadding={false}
+                    title={collection.pageTitle || collection.title}
                 />
+                <PhotoCarousel photo={params.photo} collection={collection} />
+                <div className="md:hidden">
+                    <PageHeader
+                        animate={false}
+                        backUrl={`/${collection.slug}`}
+                        ctaLabel={collection.ctaLabel}
+                        ctaUrl={collection.ctaUrl}
+                        description={collection.description}
+                        hasBottomPadding={false}
+                    />
+                </div>
             </div>
-        </>
     );
 };
 

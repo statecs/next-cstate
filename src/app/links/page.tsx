@@ -11,10 +11,12 @@ const LinksPage = async () => {
     const links = page.linksCollection?.items || [];
 
     return (
-        <>
-            <PageHeader title="Links" />
-            <LinksList links={links} />
-        </>
+        <div className="flex flex-grow border-spacing-4 py-4 px-3 md:justify-center">
+            <div className="flex flex-col space-y-2">
+                <PageHeader title="Links" />
+                <LinksList links={links} />
+            </div>
+        </div>
     );
 };
 

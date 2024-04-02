@@ -8,21 +8,25 @@ const AboutPage = async () => {
     const page = await fetchEditorialPage('about') || {};
 
     return (
-        <div className="grid w-full max-w-[700px] gap-4 lg:grid-cols-4 lg:gap-10">
-            <div className="lg:col-span-3">
-                <PageHeader description={page.content} title={page.pageTitle} />
+    <div className="flex flex-grow border-spacing-4 py-4 px-3 md:justify-center">
+        <div className="flex flex-col space-y-2">
+            <div className="grid w-full max-w-[700px] gap-4 lg:grid-cols-4 lg:gap-10">
+                <div className="lg:col-span-3">
+                    <PageHeader description={page.content} title={page.pageTitle} />
+                </div>
+                <Image
+                    alt=""
+                    className="max-w-full sm:max-w-[260px] lg:mt-20"
+                    height={page.photo?.height}
+                    placeholder="empty"
+                    priority={false}
+                    quality={90}
+                    src={page.photo?.url}
+                    width={page.photo?.width}
+                />
             </div>
-            <Image
-                alt=""
-                className="max-w-full sm:max-w-[260px] lg:mt-20"
-                height={page.photo?.height}
-                placeholder="empty"
-                priority={false}
-                quality={90}
-                src={page.photo?.url}
-                width={page.photo?.width}
-            />
         </div>
+    </div>
     );
 };
 

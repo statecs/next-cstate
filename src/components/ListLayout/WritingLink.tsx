@@ -36,13 +36,13 @@ export const WritingLink = ({ post, isMobile, isActive }: WritingLinkProps) => {
         )}
       >
         <span className="font-medium">{post.title}</span>
-        <span className={cn('transition-colors duration-300', isActive ? 'text-slate-400' : 'text-slate-500')}>
+        <span className={cn('transition-colors duration-300', isActive ? 'text-slate-400' : 'text-gray-400')}>
           <time dateTime={date} suppressHydrationWarning>
               {date}
           </time>
         </span>
         
-        <span className={cn('transition-colors duration-300', isActive ? 'text-slate-400' : 'text-slate-500')}>
+        <span className={cn('transition-colors duration-300', isActive ? 'text-slate-400' : 'text-gray-400')}>
           {isCollectionNew(post.published) && <NewBadge isActive={isActive} />}
         </span>
       </Link>
