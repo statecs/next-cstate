@@ -18,12 +18,11 @@ const keyCodePathnameMapping: { [key: string]: string | undefined } = {
 interface SideMenuProps {
   children: React.ReactNode;
   title?: string;
-  bookmarks?: Array<{ slug: string }>;
   isInner?: boolean;
   className?: string; // Add this line if className should be accepted
 }
 
-export const SideMenu: React.FC<SideMenuProps> = ({ children, title, bookmarks = [], isInner }) => {
+export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner }) => {
   const router = useRouter();
   const pathname = usePathname();
   useKeyPress(onKeyPress, Object.keys(keyCodePathnameMapping));
@@ -43,7 +42,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ children, title, bookmarks =
     >
       
       {title && (
-        <div className="sticky top-0 z-10 border-b bg-zinc-50 px-5 py-3">
+        <div className="sticky top-0 z-10 border-b bg-zinc-50 dark:text-white dark:bg-custom-light-gray px-5 py-3">
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold tracking-tight">{title}</span>
           </div>

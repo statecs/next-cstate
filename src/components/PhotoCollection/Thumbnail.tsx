@@ -22,7 +22,7 @@ const PhotoThumbnail: React.FC<Props> = ({
     <Link
         aria-label={`View '${title}'`}
         className="group relative z-50 block"
-        href={path}
+        href={'/projects/' + path}
         id={slug}
         title={`View '${title}'`}
         {...props}

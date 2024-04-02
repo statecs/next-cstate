@@ -1,10 +1,9 @@
-import Image from 'next/image';
 import PageHeader from '@/components/PageHeader';
 import config from '@/utils/config';
 import {fetchEditorialPage} from '@/utils/contentful';
 import {getEditorialSeo} from '@/utils/helpers';
 
-const AboutPage = async () => {
+const HomePage = async () => {
     const page = await fetchEditorialPage('home') || {};
 
     return (
@@ -23,4 +22,4 @@ export const generateMetadata = async () => {
 
 export const revalidate = 60;
 
-export default AboutPage;
+export default HomePage;

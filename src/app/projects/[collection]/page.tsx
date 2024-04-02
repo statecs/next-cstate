@@ -1,6 +1,5 @@
 import {draftMode} from 'next/headers';
 import {notFound, redirect} from 'next/navigation';
-import Markdown from '@/components/Markdown';
 import PageHeader from '@/components/PageHeader';
 import PhotoCollection from '@/components/PhotoCollection';
 import config from '@/utils/config';

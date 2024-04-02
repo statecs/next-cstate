@@ -40,7 +40,7 @@ const PhotoCarousel: React.FC<Props> = ({collection, photo}) => {
             nextPhotoIndex = 0;
         }
 
-        router.push(`/${collection.slug}/${items[nextPhotoIndex].slug}`);
+        router.push(`/projects/${collection.slug}/${items[nextPhotoIndex].slug}`);
     };
 
     useKeypress('ArrowLeft', () => navigateToNextPhoto('left'));
@@ -54,8 +54,8 @@ const PhotoCarousel: React.FC<Props> = ({collection, photo}) => {
 
     useEffect(() => {
         // prefetch the next/previous photo
-        router.prefetch(`/${collection.slug}/${prevPhoto.slug}`);
-        router.prefetch(`/${collection.slug}/${nextPhoto.slug}`);
+        router.prefetch(`/projects/${collection.slug}/${prevPhoto.slug}`);
+        router.prefetch(`/projects/${collection.slug}/${nextPhoto.slug}`);
     }, [collection, nextPhoto, prevPhoto, router]);
 
     return (
@@ -93,7 +93,7 @@ const PhotoCarousel: React.FC<Props> = ({collection, photo}) => {
                 total={allPhotos.length}
             />
             <CarouselMobilePagination
-                handleBack={() => router.push(`/${collection.slug}#${activePhoto.slug}`)}
+                handleBack={() => router.push(`/projects/${collection.slug}#${activePhoto.slug}`)}
                 handleNext={() => navigateToNextPhoto('right')}
                 handlePrevious={() => navigateToNextPhoto('left')}
             />

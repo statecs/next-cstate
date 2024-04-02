@@ -35,7 +35,7 @@ const PageHeader: React.FC<Props> = ({
             <>
                 {backUrl ? (
                     <Link
-                        href={backUrl}
+                        href={'/projects/' + backUrl}
                         className="group space-x-2 focus:outline-dotted focus:outline-2 focus:outline-offset-2 focus:outline-black sm:inline-flex sm:items-baseline"
                     >
                         <h1 className="max-w-5xl space-x-2 text-balance break-normal font-serif text-xl text-black underline-offset-4 group-hover:underline sm:text-2xl md:max-w-5xl md:text-3xl dark:text-white">

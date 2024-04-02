@@ -30,17 +30,16 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => (
 
             <SkipLink />
 
-            <div className="lg:flex">
-                <SideMenu className="relative hidden lg:flex">
-                    <MenuContent />
-                    <SiteMenu />
-                </SideMenu>
-            </div>
-                  
             <main vaul-drawer-wrapper="" className="animate-fadeIn p-4 md:mt-0 md:flex md:w-[calc(100%-260px)] md:flex-grow md:flex-col lg:w-[calc(100%-300px)] bg-white dark:bg-custom-light-gray">
-                <div className="lg:hidden"><SiteHeader /></div>
-                <div id="main" className="relative min-h-[200px] w-full overflow-hidden md:flex md:h-full md:max-h-[calc(100vh-2rem)] md:flex-col">
-                    {children}
+                <div className="lg:hidden">
+                    <SiteHeader />
+                </div>
+                <div className="lg:flex">
+                    <SideMenu className="relative hidden lg:flex">
+                        <MenuContent />
+                        <SiteMenu />
+                    </SideMenu>
+                    <div className="flex flex-1">{children}</div>
                 </div>
                 <div className="-mb-4 mt-10 lg:hidden">
                     <SiteFooter />
