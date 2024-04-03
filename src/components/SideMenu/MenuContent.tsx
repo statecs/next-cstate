@@ -1,7 +1,11 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { NavigationLink } from './NavigationLink';
 import { PROFILES, LINKS } from '@/utils/constants';
+import { useAtom } from 'jotai';
+import { drawerAtom } from '@/utils/store';
 
 interface LinkItem {
   href: string;
@@ -17,10 +21,13 @@ interface Profile {
 }
 
 export const MenuContent: React.FC = () => {
+  const [, setIsOpen] = useAtom(drawerAtom);
+  const closeDrawer = () => setIsOpen(false);
+  
   return (
     <div className="flex w-full flex-col text-sm">
       <div className="flex flex-col gap-4">
-        <Link href="/" passHref>
+        <Link href="/" passHref onClick={closeDrawer}>
           <div className="link-card inline-flex items-center gap-2 p-2">
             <Image
               src="/images/me.jpeg"
