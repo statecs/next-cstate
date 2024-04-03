@@ -10,7 +10,7 @@ interface ComboBoxProps {
   assistantId: string;
 }
 
-const ComboBox: React.FC<ComboBoxProps & {setIsInputFocused: (isFocused: boolean) => void}> = ({ threadId, assistantId, setIsInputFocused }) => {
+const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
   const [inputValue, setInputValue] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [isFilled, setIsFilled] = useState(false);
