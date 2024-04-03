@@ -10,7 +10,7 @@ const HomePage = async () => {
      <div className="flex h-[calc(100vh-110px)] flex-grow border-spacing-4 items-center justify-center">
         <div className="flex flex-col space-y-2 text-center">
             <h1 className="font-serif text-xl text-black sm:text-2xl dark:text-white">Christopher State</h1>
-            <div className="prose-sm leading-relaxed tracking-wide dark:prose-invert prose-p:text-gray-500 dark:prose-p:text-gray-400 px-5 md:px-0">
+            <div className="prose-sm leading-relaxed tracking-wide dark:prose-invert prose-p:text-gray-500 dark:prose-p:text-gray-300 px-5 md:px-0">
                 <p>Design Technologist</p>
                 <ComboBox threadId={process.env.THREAD_ID || ''} assistantId={process.env.ASSISTANT_ID || ''}  />
             </div>

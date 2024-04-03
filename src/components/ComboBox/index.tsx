@@ -67,7 +67,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
         <input
           ref={inputRef}
           id="queryInput"
-          className="peer p-2 pt-5 w-full min-w-[270px] border border-gray-300 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none disabled:bg-gray-200 dark:border-zinc-700 dark:bg-transparent dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-300 dark:disabled:bg-zinc-700"
+          className="peer p-2 pt-5 px-4 w-full min-w-[270px] text-base border border-gray-300 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none disabled:bg-gray-200 dark:border-zinc-700 dark:bg-transparent dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-300 dark:disabled:bg-zinc-700"
           type="text"
           value={inputValue}
           onChange={handleInputChange}
@@ -92,7 +92,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
       </div>
       <label
         htmlFor="queryInput"
-        className={`absolute left-3 transition-all text-gray-500 dark:text-gray-400 ${isFocused || isFilled ? '-top-1 text-xs text-blue-500' : 'top-2 text-sm text-gray-500'}`}
+        className={`absolute left-4 transition-all text-gray-500 dark:text-gray-400 ${isFocused || isFilled ? '-top-1 text-xs text-blue-500' : 'top-2 text-sm text-gray-500'}`}
       >
         Ask me anything...
       </label>
@@ -103,8 +103,8 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
       </datalist>
       {loading && <p className="text-sm text-gray-500 dark:text-gray-400">Sending...</p>}
       {responseMessage && (
-        <div className="relative mt-6 flex-1 px-4 sm:px-6 whitespace-pre-wrap">
-          <p className="text-sm text-green-500 dark:text-green-400">{responseMessage}</p>
+        <div className="relative text-left w-full mt-6 flex-1 px-4 whitespace-pre-wrap border rounded-lg border-gray-300 dark:border-zinc-700">
+          <p className="text-sm">{responseMessage}</p>
         </div>
       )}
     </div>
