@@ -7,7 +7,7 @@ const securityHeaders = [
     {key: 'X-XSS-Protection', value: '1; mode=block'},
     {
         key: 'Content-Security-Policy',
-        value: "default-src 'self'; img-src 'self' data: https://images.ctfassets.net; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://vitals.vercel-insights.com https://openai-assistants-cloudfare-worker-boilerplate.chris-172.workers.dev; frame-ancestors https://app.contentful.com"
+        value: `default-src 'self'; img-src 'self' data: https://images.ctfassets.net; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://vitals.vercel-insights.com ${process.env.API_BASE_URL}; frame-ancestors https://app.contentful.com`
     }
 ];
 
