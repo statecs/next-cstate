@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, KeyboardEvent, ChangeEvent } from 'react';
+import React, { useState, useRef, useEffect, KeyboardEvent, ChangeEvent } from 'react';
 import { sendMessageToThread } from '@/utils/threadService'; // Ensure this path is correct
 
 interface ComboBoxProps {
@@ -13,8 +13,17 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isFilled, setIsFilled] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const [responseMessage, setResponseMessage] = useState<string | null>(null); // To store response message
+  const [responseMessage, setResponseMessage] = useState<string | null>(null);
   const suggestions: string[] = ["Who is Christopher?", "What can I do?", "What are my hobbies?"];
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Retrieve cached response on component mount and input change
+  useEffect(() => {
+    const cachedResponse = localStorage.getItem("chatResponse");
+    if (cachedResponse) {
+      setResponseMessage(cachedResponse);
+    }
+  }, [inputValue]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -27,6 +36,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
       setResponseMessage(null); // Reset response message on new request
       try {
         const response = await sendMessageToThread(threadId, inputValue, [], assistantId);
+        localStorage.setItem("chatResponse", response); // Cache the response
         setResponseMessage(response); // Assume the response contains a 'message' field
         setInputValue('');
         setIsFocused(false);
@@ -40,12 +50,8 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
     }
   };
 
-  // Inside your ComboBox component
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const handleButtonClick = () => {
     if (inputValue.trim() === '') {
-      console.log(inputValue);
       inputRef.current?.focus();
     } else {
       handleKeyPress({ key: 'Enter' } as KeyboardEvent<HTMLInputElement>);
@@ -54,7 +60,6 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
 
   const handleFocus = () => setIsFocused(true);
   const handleBlur = () => setIsFocused(false);
-
 
   return (
     <div className="relative flex flex-col space-y-2 max-w-[700px] justify-center items-center">
