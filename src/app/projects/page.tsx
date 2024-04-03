@@ -9,13 +9,6 @@ import {getEditorialSeo} from '@/utils/helpers';
 
 import {fetchCollectionNavigation} from '@/utils/contentful';
 
-interface Post {
-  url: string;
-  title: string;
-  slug: string;
-  published: string;
-}
-
 const ProjectPage = async () => {
   const links = await fetchCollectionNavigation();
 
@@ -23,6 +16,7 @@ const ProjectPage = async () => {
     url: link.url, 
     title: link.title,
     slug: link.url, 
+    image: link.image,
     published: link.published || 'Not specified', 
   }));
 

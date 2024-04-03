@@ -9,16 +9,6 @@ import { SideMenu } from '@/components/SideMenu/SideMenu';
 
 import {fetchCollectionNavigation} from '@/utils/contentful';
 
-interface Post {
-  url: string;
-  title: string;
-  slug: string;
-  published: string;
-}
-
-interface LayoutProps {
-  children: ReactNode;
-}
 
 const Layout: React.FC<LayoutProps> = async ({ children }) => {
 
@@ -28,6 +18,7 @@ const Layout: React.FC<LayoutProps> = async ({ children }) => {
     url: link.url,
     title: link.title, 
     slug: link.url, 
+    image: link.image,
     published: link.published || 'Not specified', 
   }));
 

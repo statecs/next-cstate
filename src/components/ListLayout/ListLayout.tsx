@@ -5,17 +5,6 @@ import { usePathname } from 'next/navigation';
 import { LinkList } from './LinkList';
 import { cn } from '@/utils/helpers';
 
-interface Post {
-  url: string;
-  title: string;
-  slug: string;
-  published: string;
-}
-
-interface ListLayoutProps {
-  list: (Post)[];
-  isMobile: boolean;
-}
 
 export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile }) => {
   const pathname = usePathname();

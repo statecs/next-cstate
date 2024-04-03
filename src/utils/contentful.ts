@@ -142,6 +142,13 @@ export const fetchCollectionNavigation = async (): Promise<Link[]> => {
                         title
                         slug
                         category
+                      	photosCollection(limit: 1){
+                          items {
+                            thumbnail {
+                                url
+                            }
+                          }
+                        }
                         sys {
                             published: firstPublishedAt
                         }
@@ -156,7 +163,8 @@ export const fetchCollectionNavigation = async (): Promise<Link[]> => {
             (item: PhotoCollection) => ({
                 published: item?.sys?.published,
                 title: item.title,
-                url: `/${item.slug}`
+                url: `/${item.slug}`,
+                image: item.photosCollection.items[0]?.thumbnail?.url || ''
             })
         );
 
