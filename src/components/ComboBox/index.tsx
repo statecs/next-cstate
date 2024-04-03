@@ -67,7 +67,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
         <input
           ref={inputRef}
           id="queryInput"
-          className="peer p-2 pt-5 w-full min-w-[270px] border border-gray-300 rounded-l-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none disabled:bg-gray-200 dark:border-zinc-700 dark:bg-transparent dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-300 dark:disabled:bg-zinc-700"
+          className="peer p-2 pt-5 w-full min-w-[270px] border border-gray-300 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none disabled:bg-gray-200 dark:border-zinc-700 dark:bg-transparent dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-300 dark:disabled:bg-zinc-700"
           type="text"
           value={inputValue}
           onChange={handleInputChange}
