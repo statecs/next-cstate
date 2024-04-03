@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, KeyboardEvent, ChangeEvent } from 'react';
+import React, { useState, useRef, KeyboardEvent, ChangeEvent } from 'react';
 import { sendMessageToThread } from '@/utils/threadService'; // Ensure this path is correct
 
 interface ComboBoxProps {
@@ -40,45 +40,71 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
     }
   };
 
+  // Inside your ComboBox component
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleButtonClick = () => {
+    if (inputValue.trim() === '') {
+      console.log(inputValue);
+      inputRef.current?.focus();
+    } else {
+      handleKeyPress({ key: 'Enter' } as KeyboardEvent<HTMLInputElement>);
+    }
+  };
+
   const handleFocus = () => setIsFocused(true);
   const handleBlur = () => setIsFocused(false);
 
 
   return (
     <div className="relative flex flex-col space-y-2 max-w-[700px] justify-center items-center">
-    <input
-      id="queryInput"
-      className="peer p-2 pt-6 w-full border border-gray-300 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none disabled:bg-gray-200 dark:border-zinc-700 dark:bg-transparent dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-300 dark:disabled:bg-zinc-700"
-      type="text"
-      value={inputValue}
-      onChange={handleInputChange}
-      onKeyDown={handleKeyPress}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      placeholder=" "
-      list="suggestions"
-      disabled={loading}
-    />
-    <label
-      htmlFor="queryInput"
-      className={`absolute left-2 transition-all text-gray-500 dark:text-gray-400 ${isFocused || isFilled ? '-top-1 text-xs text-blue-500' : 'top-2 text-sm text-gray-500'}`}
-    >
-      Ask me anything...
-    </label>
-    <datalist id="suggestions">
-      {suggestions.map((suggestion, index) => (
-        <option key={index} value={suggestion} />
-      ))}
-    </datalist>
-    {loading && <p className="text-sm text-gray-500 dark:text-gray-400">Sending...</p>}
-    {responseMessage && (
-      <div className="relative mt-6 flex-1 px-4 sm:px-6 whitespace-pre-wrap">
-        <p className="text-sm text-green-500 dark:text-green-400">{responseMessage}</p>
+      <div className="flex items-center relative w-full">
+        <input
+          ref={inputRef}
+          id="queryInput"
+          className="peer p-2 pt-5 w-full min-w-[270px] border border-gray-300 rounded-l-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none disabled:bg-gray-200 dark:border-zinc-700 dark:bg-transparent dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-300 dark:disabled:bg-zinc-700"
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyPress}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          placeholder=" "
+          list="suggestions"
+          disabled={loading}
+        />
+        <button 
+        disabled={loading}
+        className="absolute bottom-3 md:bottom-1.5 right-3 md:right-2 bg-black dark:bg-white rounded-lg border border-black p-0.5 text-white transition-colors disabled:text-gray-400 disabled:opacity-10 dark:border-white dark:bg-white dark:hover:bg-white md:bottom-3 md:right-3"
+        onClick={handleButtonClick}
+      >
+        <span data-state="closed">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white dark:text-black">
+            <path d="M7 11L12 6L17 11M12 18V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
+          </svg>
+        </span>
+      </button>
       </div>
-    )}
-  </div>
-
+      <label
+        htmlFor="queryInput"
+        className={`absolute left-3 transition-all text-gray-500 dark:text-gray-400 ${isFocused || isFilled ? '-top-1 text-xs text-blue-500' : 'top-2 text-sm text-gray-500'}`}
+      >
+        Ask me anything...
+      </label>
+      <datalist id="suggestions">
+        {suggestions.map((suggestion, index) => (
+          <option key={index} value={suggestion} />
+        ))}
+      </datalist>
+      {loading && <p className="text-sm text-gray-500 dark:text-gray-400">Sending...</p>}
+      {responseMessage && (
+        <div className="relative mt-6 flex-1 px-4 sm:px-6 whitespace-pre-wrap">
+          <p className="text-sm text-green-500 dark:text-green-400">{responseMessage}</p>
+        </div>
+      )}
+    </div>
   );
+  
 };
 
 export default ComboBox;
