@@ -34,7 +34,7 @@ const PhotoPage = async ({params}: Props) => {
     return (
         <>
         <FloatingHeader scrollTitle={collection.pageTitle} goBackLink={`/projects/${collection.slug}`}></FloatingHeader>
-            <div className="flex flex-grow flex-col h-screen border-spacing-4 py-4 px-3 md:justify-center overflow-auto">
+            <div className="flex flex-grow flex-col h-screen border-spacing-4 py-4 px-3 md:justify-center">
                 <PageHeader
                     animate={false}
                     backUrl={`${collection.slug}`}

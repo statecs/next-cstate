@@ -38,7 +38,7 @@ const Layout: React.FC<LayoutProps> = async ({ children }) => {
               <ListLayout list={posts} isMobile />
             </Suspense>
           </SideMenu>
-        <div className="lg:bg-dots flex-1">{children}</div>
+        <div className="lg:bg-dots flex-1 h-[calc(100vh-110px)] ">{children}</div>
       </>
     );
 };

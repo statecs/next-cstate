@@ -1,7 +1,6 @@
 import React from 'react';
 import { Suspense } from 'react'
 import { ScrollArea } from '@/components/SideMenu/ScrollArea';
-import { FloatingHeader } from '@/components/ListLayout/FloatingHeader'
 import config from '@/utils/config';
 import {fetchEditorialPage} from '@/utils/contentful';
 import { LoadingSpinner } from '@/components/LoadingSpinner';

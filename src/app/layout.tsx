@@ -42,7 +42,7 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => (
                         <MenuContent />
                         <SiteMenu />
                     </SideMenu>
-                    <div className="flex flex-1">{children}</div>
+                    <div id="main" className="flex flex-1 overflow-auto">{children}</div>
                 </div>
                 <div className="lg:hidden">
                     <SiteFooter />

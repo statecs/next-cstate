@@ -18,7 +18,7 @@ const CollectionsPage = async () => {
         .sort((a, b) => a.slug.localeCompare(b.slug));
 
     return (
-          <div className="flex flex-grow h-[calc(100vh-110px)] border-spacing-4 py-4 px-3 md:justify-center overflow-auto">
+          <div className="flex flex-grow h-[calc(100vh-110px)] border-spacing-4 py-4 px-3 md:justify-center ">
           <div className="flex flex-col space-y-2">
               <div className="max-w-[700px]">
                 <PageHeader
