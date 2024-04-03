@@ -2,17 +2,20 @@
 
 import React, { useState, useRef, useEffect, KeyboardEvent, ChangeEvent } from 'react';
 import { sendMessageToThread } from '@/utils/threadService'; // Ensure this path is correct
+import { useAtom } from 'jotai';
+import { footerVisibilityAtom } from '@/utils/store';
 
 interface ComboBoxProps {
   threadId: string;
   assistantId: string;
 }
 
-const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
+const ComboBox: React.FC<ComboBoxProps & {setIsInputFocused: (isFocused: boolean) => void}> = ({ threadId, assistantId, setIsInputFocused }) => {
   const [inputValue, setInputValue] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [isFilled, setIsFilled] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [, setFooterVisible] = useAtom(footerVisibilityAtom);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
   const suggestions: string[] = ["Who is Christopher?", "What can I do?", "What are my hobbies?"];
   const inputRef = useRef<HTMLInputElement>(null);
@@ -58,8 +61,15 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
     }
   };
 
-  const handleFocus = () => setIsFocused(true);
-  const handleBlur = () => setIsFocused(false);
+  const handleFocus = () => {
+    setIsFocused(true);
+    setFooterVisible(false);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+    setFooterVisible(true);
+  };
 
   return (
     <div className="relative flex flex-col space-y-2 max-w-[700px] justify-center items-center">
