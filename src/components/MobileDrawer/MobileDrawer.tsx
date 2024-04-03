@@ -1,9 +1,8 @@
 import { Drawer, DrawerContent, DrawerTrigger } from './Drawer';
-import { MenuIcon } from '@/components/Icon';
-import SiteFooter from '@/components/SiteFooter';
 import { MenuContent } from '@/components/SideMenu'
 import { drawerAtom } from '@/utils/store';
 import { useAtom } from 'jotai';
+import { AlignRightIcon } from 'lucide-react'
 
 interface Props {
   className?: string;
@@ -27,7 +26,8 @@ export const MobileDrawer: React.FC<Props> = () => {
           className="relative z-50 size-6 translate-y-[-2px] lg:hidden"
           onClick={handleButtonClick} // Set isOpen to true on click
         >
-          <MenuIcon className="h-auto w-6 text-black dark:text-white" />
+          <AlignRightIcon size={24} />
+            
         </button>
       </DrawerTrigger>
       <DrawerContent className="h-[80%]">
