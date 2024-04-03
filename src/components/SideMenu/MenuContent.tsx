@@ -26,7 +26,7 @@ export const MenuContent: React.FC = () => {
   
   return (
     <div className="flex w-full flex-col text-sm">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 font-serif">
         <Link href="/" passHref onClick={closeDrawer}>
           <div className="link-card inline-flex items-center gap-2 p-2">
             <Image

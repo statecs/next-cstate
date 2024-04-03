@@ -29,7 +29,7 @@ export const NavigationLink = memo<NavigationLinkProps>(({ href, label, icon, sh
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center gap-3 rounded-lg p-2 group hover:bg-gray-200 dark:hover:bg-zinc-700"
+        className="flex font-serif items-center gap-3 rounded-lg p-2 group hover:bg-gray-200 dark:hover:bg-zinc-700"
       >
         {iconCmp}
         <span className="font-medium">{label}</span>

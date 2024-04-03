@@ -47,7 +47,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner }) 
           </div>
         </div>
       )}
-      <div className="bg-zinc-50 dark:bg-custom-light-gray dark:text-white p-3">{children}</div>
+      <div className="bg-zinc-50 font-serif  dark:bg-custom-light-gray dark:text-white p-3">{children}</div>
     </ScrollArea>
   );
 };
