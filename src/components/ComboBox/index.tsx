@@ -15,6 +15,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isFilled, setIsFilled] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1); // -1 means no selection
   const [, setFooterVisible] = useAtom(footerVisibilityAtom);
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
@@ -58,11 +59,30 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
     }
   };
 
-  const handleKeyPress = async (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && inputValue.trim() !== '') {
-      sendMessage(inputValue.trim());
+  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      if (selectedIndex >= 0 && selectedIndex < filteredSuggestions.length) {
+        sendMessage(filteredSuggestions[selectedIndex]);
+        setSelectedIndex(-1); // Reset selection
+      } else if (inputValue.trim() !== '') {
+        sendMessage(inputValue.trim());
+      }
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      e.preventDefault(); // Prevent cursor movement
+      let newIndex = selectedIndex;
+      if (e.key === 'ArrowDown') {
+        newIndex = (selectedIndex + 1) % filteredSuggestions.length;
+      } else if (e.key === 'ArrowUp') {
+        newIndex = (selectedIndex - 1 + filteredSuggestions.length) % filteredSuggestions.length;
+      }
+      setSelectedIndex(newIndex);
+      setInputValue(filteredSuggestions[newIndex]); // Update input value
+      setIsFilled(filteredSuggestions.length > 0);
+    } else if (e.key === 'Escape') {
+      setIsFocused(false);
     }
   };
+  
 
   const handleButtonClick = () => {
     // If the input value is empty and the input is not focused, focus the input.
@@ -146,14 +166,14 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
         <div className="absolute text-left z-50 w-full md:mt-10 top-12 md:top-10 left-0 mt-1 p-2 bg-white dark:bg-custom-light-gray dark:text-white border border-gray-300 rounded-md">
           
           {filteredSuggestions.map((suggestion, index) => (
-            <div
-              key={index}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer"
-              onClick={() => handleSuggestionClick(suggestion)}
-            >
-              {suggestion}
-            </div>
-          ))}
+              <div
+                key={index}
+                className={`p-2 ${index === selectedIndex ? 'bg-zinc-700' : ''} dark:hover:bg-zinc-700 cursor-pointer`}
+                onClick={() => handleSuggestionClick(suggestion)}
+              >
+                {suggestion}
+              </div>
+            ))}
         </div>
       )}
 
