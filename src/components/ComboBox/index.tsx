@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect, KeyboardEvent, ChangeEvent } from 'react';
+import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
 import { sendMessageToThread } from '@/utils/threadService'; // Ensure this path is correct
 import { useAtom } from 'jotai';
 import { footerVisibilityAtom } from '@/utils/store';
@@ -16,6 +16,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
   const [isFilled, setIsFilled] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [, setFooterVisible] = useAtom(footerVisibilityAtom);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
   const suggestions: string[] = ["Who is Christopher?", "What can I do?", "What are my hobbies?"];
   const inputRef = useRef<HTMLInputElement>(null);
@@ -28,35 +29,50 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
     }
   }, [inputValue]);
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-    setIsFilled(e.target.value.length > 0);
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event) return; 
+    
+    const value = event.target.value;
+    setIsFilled(value.length > 0);
+    setInputValue(value); 
+    setFilteredSuggestions(suggestions.filter(suggestion =>
+     !value || suggestion.toLowerCase().includes(value.toLowerCase())
+    ));
+  };
+
+  const sendMessage = async (message: string) => {
+    setLoading(true);
+    setResponseMessage(null); // Reset response message on new request
+    try {
+      const response = await sendMessageToThread(threadId, message, [], assistantId);
+      localStorage.setItem("chatResponse", response);
+      setResponseMessage(response); 
+      setInputValue('');
+      setIsFocused(false);
+      setIsFilled(false);
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      setResponseMessage('Failed to send message');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleKeyPress = async (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputValue.trim() !== '') {
-      setLoading(true);
-      setResponseMessage(null); // Reset response message on new request
-      try {
-        const response = await sendMessageToThread(threadId, inputValue, [], assistantId);
-        localStorage.setItem("chatResponse", response); // Cache the response
-        setResponseMessage(response); // Assume the response contains a 'message' field
-        setInputValue('');
-        setIsFocused(false);
-        setIsFilled(false);
-      } catch (error) {
-        console.error('Failed to send message:', error);
-        setResponseMessage('Failed to send message'); // Display error feedback
-      } finally {
-        setLoading(false);
-      }
+      sendMessage(inputValue.trim());
     }
   };
 
   const handleButtonClick = () => {
-    if (inputValue.trim() === '') {
+    // If the input value is empty and the input is not focused, focus the input.
+    if (inputValue.trim() === '' && !isFocused) {
       inputRef.current?.focus();
-    } else {
+      return; // Exit the function after focusing the input.
+    }
+  
+    // If the input has a value, simulate pressing Enter to send the message.
+    if (inputValue.trim() !== '') {
       handleKeyPress({ key: 'Enter' } as KeyboardEvent<HTMLInputElement>);
     }
   };
@@ -67,12 +83,31 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
   };
 
   const handleBlur = () => {
-    setIsFocused(false);
-    setFooterVisible(true);
+    // Delay the blur action to allow the click event to fire on the suggestions.
+    setTimeout(() => {
+      setIsFocused(false);
+      setFooterVisible(true);
+    }, 100);
   };
 
+  const handleSuggestionClick = (suggestion: string) => {
+    setInputValue(suggestion);
+    setIsFocused(false);
+    setFooterVisible(true);
+    setIsFilled(suggestion.length > 0);
+    sendMessage(suggestion);
+   
+  };
+
+  useEffect(() => {
+    if (inputValue === '') {
+      setFilteredSuggestions(suggestions);
+    }
+  }, [inputValue]);
+  
+
   return (
-    <div className="relative flex flex-col space-y-2 max-w-[700px] justify-center items-center">
+    <div className="relative flex flex-col space-y-2 max-w-[500px] justify-center items-center">
       <div className="flex items-center relative w-full">
         <input
           ref={inputRef}
@@ -86,6 +121,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
           onBlur={handleBlur}
           placeholder=" "
           list="suggestions"
+          autoComplete="off"
           disabled={loading}
         />
         <button 
@@ -106,17 +142,26 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
       >
         Ask me anything...
       </label>
-      <datalist id="suggestions">
-        {suggestions.map((suggestion, index) => (
-          <option key={index} value={suggestion} />
-        ))}
-      </datalist>
-      {loading && <p className="text-sm text-gray-500 dark:text-gray-400">Sending...</p>}
-      {responseMessage && (
-        <div className="relative text-left w-full mt-6 flex-1 px-4 whitespace-pre-wrap border rounded-lg border-gray-300 dark:border-zinc-700">
-          <p className="text-sm">{responseMessage}</p>
+      {isFocused && filteredSuggestions.length > 0 && (
+        <div className="absolute text-left z-50 w-full md:mt-10 top-12 md:top-10 left-0 mt-1 p-2 bg-white dark:bg-custom-light-gray dark:text-white border border-gray-300 rounded-md">
+          
+          {filteredSuggestions.map((suggestion, index) => (
+            <div
+              key={index}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer"
+              onClick={() => handleSuggestionClick(suggestion)}
+            >
+              {suggestion}
+            </div>
+          ))}
         </div>
       )}
+
+      {loading && <p className="text-sm text-gray-500 dark:text-gray-400">Sending...</p>}
+      <div className={`relative text-left w-full mt-6 flex-1 px-4 whitespace-pre-wrap border rounded-lg border-gray-300 dark:border-zinc-700 ${!responseMessage ? 'opacity-0' : ''}`}>
+        <p className="text-sm">{responseMessage || "Passionate, creative, motivated."}</p>
+      </div>
+
     </div>
   );
   
