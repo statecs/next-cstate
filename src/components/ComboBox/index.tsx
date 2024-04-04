@@ -145,6 +145,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
           disabled={loading}
         />
         <button 
+        aria-label="Send message"
         disabled={loading}
         className="absolute bottom-3 md:bottom-1.5 right-3 md:right-2 bg-black dark:bg-white rounded-lg border border-black p-0.5 text-white transition-colors disabled:text-gray-400 disabled:opacity-10 dark:border-white dark:bg-white dark:hover:bg-white md:bottom-3 md:right-3"
         onClick={handleButtonClick}
@@ -177,7 +178,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
         </div>
       )}
 
-      {loading && <p className="text-sm text-gray-500 dark:text-gray-400">Sending...</p>}
+      {loading && <p aria-live="polite" aria-atomic="true" className="text-sm text-gray-500 dark:text-gray-400">Sending...</p>}
       <div className={`relative text-left w-full mt-6 flex-1 px-4 whitespace-pre-wrap border rounded-lg border-gray-300 dark:border-zinc-700 ${!responseMessage ? 'opacity-0' : ''}`}>
         <p className="text-sm">{responseMessage || "Passionate, creative, motivated."}</p>
       </div>

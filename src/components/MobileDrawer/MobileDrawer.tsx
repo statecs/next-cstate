@@ -23,11 +23,11 @@ export const MobileDrawer: React.FC<Props> = () => {
       <DrawerTrigger asChild>
         <button 
           type="button" 
+          aria-label="Menu"
           className="relative z-50 size-6 translate-y-[-2px] lg:hidden"
           onClick={handleButtonClick} // Set isOpen to true on click
         >
           <AlignRightIcon size={24} />
-            
         </button>
       </DrawerTrigger>
       <DrawerContent className="h-[80%]">
