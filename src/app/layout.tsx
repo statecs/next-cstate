@@ -1,4 +1,4 @@
-import {Analytics} from '@vercel/analytics/react';
+import { GoogleAnalytics } from '@next/third-parties/google'
 import localFont from 'next/font/local';
 import SiteFooter from '@/components/SiteFooter';
 import SiteMenu from '@/components/SiteMenu';
@@ -50,7 +50,7 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => (
             </main>
             {process.env.NODE_ENV !== 'development' && (
                 <>
-                    <Analytics />
+                    <GoogleAnalytics gaId="G-J0TJFX3J0V" />
                 </>
             )}
         </body>
