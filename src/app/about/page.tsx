@@ -62,7 +62,7 @@ export default async function Journey() {
                             />
                         }
                      
-                        <div className="max-w-[800px]">
+                        <div className="max-w-[800px] animate-fadeIn">
                             <div className="lg:col-span-3">
                             <PageHeader title="Journey" />
                             </div>

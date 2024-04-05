@@ -10,7 +10,7 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile }) => {
   const pathname = usePathname();
 
   return (
-    <div className={cn(isMobile ? '' : 'flex flex-col gap-1 text-sm')}>
+    <div className={cn(isMobile ? ' animate-fadeIn' : 'flex flex-col gap-1 text-sm')}>
       {list.length > 0 ? (
         list.map((post) => {
           const basePath = `/projects${post.url}`;
