@@ -35,7 +35,7 @@ export default async function Journey() {
   const allCollections = await fetchData();
 
   return (
-    <div className="flex flex-grow h-[calc(100vh-110px)] border-spacing-4 py-4 px-3 md:justify-center">
+    <div className="flex flex-grow h-[calc(100vh-110px)] border-spacing-4 py-4 px-8 md:justify-center">
         <div className="max-w-[700px]">
             <div className="lg:col-span-3">
             <PageHeader title="Journey" />

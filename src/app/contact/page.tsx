@@ -9,7 +9,7 @@ const ContactPage = async () => {
     const page = await fetchEditorialPage('contact') || {};
 
     return (
-        <div className="flex flex-grow h-[calc(100vh-110px)] border-spacing-4 py-4 px-3 md:justify-center">
+        <div className="flex flex-grow h-[calc(100vh-110px)] border-spacing-4 py-4 px-8 md:justify-center">
         <div className="flex flex-col space-y-2">
             <div className="grid w-full max-w-[700px] gap-4 lg:grid-cols-4 lg:gap-10">
                 <div className="lg:col-span-3">
