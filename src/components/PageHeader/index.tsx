@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import Button from '@/components/Button';
-import Markdown from '@/components/Markdown';
 import {getExternalUrl} from '@/utils/helpers';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import { BLOCKS, Block, Inline } from "@contentful/rich-text-types";
 
 export interface Props {
     animate?: boolean;
@@ -17,19 +17,63 @@ export interface Props {
     title?: string;
 }
 
+interface Asset {
+    sys: { id: string };
+    contentType: string;
+    url: string;
+    height?: number;
+    width?: number;
+    description?: string;
+}
+
 type Description = {
-    json: any; 
+    json: any;
+    links: {
+        assets?: {
+            block: Asset[];
+        };
+    };
 };
 
-// Define custom render options to handle newlines
-const renderOptions = {
-    renderText: (text: string) => {
-      return text.split('\n').reduce((children: Array<React.ReactNode>, textSegment: string, index: number) => {
-        return [...children, index > 0 && <br key={index} />, textSegment];
-      }, []);
-    },
-  };
-  
+
+function renderOptions(links: Description['links']) {
+    const assetMap = new Map();
+    links?.assets?.block.forEach(asset => {
+        assetMap.set(asset.sys.id, asset);
+    });
+
+    return {
+        renderNode: {
+            [BLOCKS.EMBEDDED_ASSET]: (node: Block | Inline) => {
+                const asset = assetMap.get(node.data.target.sys.id);
+    
+                switch (asset.contentType) {
+                    case "video/mp4":
+                        return (
+                            <video width="100%" height="auto" controls>
+                                <source src={asset.url} type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                        );
+                    case "image/png":
+                    case "image/jpeg":
+                    case "image/jpg":
+                        return (
+                            <img
+                                src={asset.url}
+                                height={asset.height}
+                                width={asset.width}
+                                alt={asset.description || 'Image'}
+                            />
+                        );
+                    default:
+                        return null;
+                }
+            },
+        },
+    };
+}
+
 const PageHeader: React.FC<Props> = ({
     animate = true,
     backUrl,
@@ -42,7 +86,7 @@ const PageHeader: React.FC<Props> = ({
     title
 }: Props) => (
     <div
-        className={clsx('pt-2', {'pb-4 sm:pb-8': hasBottomPadding, 'animate-fadeIn': animate})}
+        className={clsx('pt-2', { 'pb-4 sm:pb-8': hasBottomPadding, 'animate-fadeIn': animate })}
         id="hero"
     >
         {title && (
@@ -64,10 +108,10 @@ const PageHeader: React.FC<Props> = ({
             </>
         )}
         {(children || description || ctaUrl) && (
-            <div className="mt-4 md:mt-6" key={description ? (typeof description === 'string' ? description : 'description') : children?.toString()}>
+            <div className="mt-4 md:mt-6">
                 {description && typeof description !== 'string' && description.json && (
                     <div className="prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400">
-                        {documentToReactComponents(description.json, renderOptions)}
+                        {documentToReactComponents(description.json, renderOptions(description.links))}
                     </div>
                 )}
                 {ctaLabel && ctaUrl && (
@@ -80,7 +124,7 @@ const PageHeader: React.FC<Props> = ({
                         {ctaLabel}
                     </Button>
                 )}
-                {children && children}
+                {children}
             </div>
         )}
     </div>
