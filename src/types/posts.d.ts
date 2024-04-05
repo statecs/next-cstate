@@ -5,6 +5,7 @@ interface Post {
     published: string;
     image?: string;
     description?: string;
+    date?: string;
   }
   
 

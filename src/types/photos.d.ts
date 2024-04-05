@@ -27,6 +27,7 @@ interface PhotoCollection {
     category: string;
     ctaLabel?: string;
     ctaUrl?: string;
+    date?: string;
     photosCollection: {
         items: Photo[];
     };

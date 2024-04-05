@@ -145,6 +145,7 @@ export const fetchCollectionNavigation = async (): Promise<Link[]> => {
                         title
                         slug
                         category
+                        date
                       	photosCollection(limit: 1){
                           items {
                             thumbnail {
@@ -168,6 +169,7 @@ export const fetchCollectionNavigation = async (): Promise<Link[]> => {
                 published: item?.sys?.published,
                 title: item.title,
                 url: `/${item.slug}`,
+                date: item.date,
                 image: item.photosCollection.items[0]?.thumbnail?.url || ''
             })
         );
@@ -271,6 +273,7 @@ export const fetchCollection = async (
                 category
                 ctaLabel
                 ctaUrl
+                date
                 description {
                     json
                     links {

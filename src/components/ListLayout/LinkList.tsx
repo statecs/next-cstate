@@ -13,7 +13,19 @@ import { cn } from '@/utils/helpers'
 export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
 
   const formatDate = () => {
-    const dateObject = new Date(post?.published);
+    
+    // Check if post?.date is undefined or not
+    if (!post?.date) {
+      const dateObject = new Date(post?.published);
+      const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: 'long',
+        day: '2-digit',
+      };
+      return dateObject.toLocaleDateString('en-US', options);
+    }
+
+    const dateObject = new Date(post?.date);
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'long',
@@ -46,7 +58,7 @@ export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
       <div className="flex flex-col gap-1">
         <span className="font-medium">{post.title}</span>
         <span className={cn('transition-colors duration-300', isActive ? 'text-slate-400' : 'text-gray-400')}>
-          <time dateTime={post.published} suppressHydrationWarning>
+          <time dateTime={post.date} suppressHydrationWarning>
               {formattedDate}
           </time>
         </span>
