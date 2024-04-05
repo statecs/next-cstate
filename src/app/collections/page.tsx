@@ -53,7 +53,6 @@ const CollectionsPage = async () => {
                                     {isCollectionNew(collection.sys?.published) && <NewBadge />}
                                 </span>
                             </span>
-                            <span className="hidden text-sm">{collection.description}</span>
                         </Link>
                     ))}
                     </div>

@@ -15,9 +15,11 @@ const ContactPage = async () => {
                 <div className="lg:col-span-3">
                     <PageHeader description={page.content} title={page.pageTitle} />
                     <h1 className="text-xl font-serif dark:text-white">
-                        <Link href={page.ctaUrl} title={page.ctaLabel}>
-                            {page.ctaLabel}
-                        </Link>
+                        {page.ctaUrl && 
+                            <Link href={page.ctaUrl} title={page.ctaLabel}>
+                                {page.ctaLabel}
+                            </Link>
+                        }
                     </h1>
                 </div>
                

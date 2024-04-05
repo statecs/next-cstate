@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Button from '@/components/Button';
 import Markdown from '@/components/Markdown';
 import {getExternalUrl} from '@/utils/helpers';
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 
 export interface Props {
     animate?: boolean;
@@ -10,12 +11,25 @@ export interface Props {
     children?: React.ReactNode;
     ctaLabel?: string;
     ctaUrl?: string;
-    description?: string | null;
+    description?: Description | string | null;
     hasBottomPadding?: boolean;
     pageTitle?: string;
     title?: string;
 }
 
+type Description = {
+    json: any; 
+};
+
+// Define custom render options to handle newlines
+const renderOptions = {
+    renderText: (text: string) => {
+      return text.split('\n').reduce((children: Array<React.ReactNode>, textSegment: string, index: number) => {
+        return [...children, index > 0 && <br key={index} />, textSegment];
+      }, []);
+    },
+  };
+  
 const PageHeader: React.FC<Props> = ({
     animate = true,
     backUrl,
@@ -50,11 +64,11 @@ const PageHeader: React.FC<Props> = ({
             </>
         )}
         {(children || description || ctaUrl) && (
-            <div className="mt-4 md:mt-6" key={description || children?.toString()}>
-                {description && (
-                    <Markdown className="prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400">
-                        {description}
-                    </Markdown>
+            <div className="mt-4 md:mt-6" key={description ? (typeof description === 'string' ? description : 'description') : children?.toString()}>
+                {description && typeof description !== 'string' && description.json && (
+                    <div className="prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400">
+                        {documentToReactComponents(description.json, renderOptions)}
+                    </div>
                 )}
                 {ctaLabel && ctaUrl && (
                     <Button

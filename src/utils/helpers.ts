@@ -22,14 +22,32 @@ export const getTransformedContentfulImageUrl = (url: string = '') => {
 export const getCollectionSeo = (collection: PhotoCollection) => {
     if (!collection) return {};
 
-    const description = removeMarkdown(collection?.description || '');
+    const extractTextFromJson = (json: any) => {
+        if (typeof json !== 'object' || !json.content) return '';
+        let text = '';
+        json.content.forEach((block: any) => {
+            block.content.forEach((contentItem: any) => {
+                if (contentItem.nodeType === 'text') {
+                    text += contentItem.value + ' ';
+                }
+            });
+        });
+        return text.trim();
+    };
+
+    // Ensure TypeScript understands that description is an object with a json property
+    const descriptionIsCorrectType = (desc: any): desc is { json: any } =>
+        typeof desc === 'object' && desc !== null && 'json' in desc;
+
+    const description = descriptionIsCorrectType(collection.description)
+                        ? extractTextFromJson(collection.description.json) 
+                        : (typeof collection.description === 'string' ? collection.description : '');
+
     const title = collection.pageTitle || collection.title;
 
     return {
         alternates: {
-            canonical: `${config.seo.canonical}${
-                collection.slug === 'home' ? '' : `/${collection.slug}`
-            }`
+            canonical: `${config.seo.canonical}${collection.slug === 'home' ? '' : `/${collection.slug}`}`
         },
         description,
         openGraph: {description},
@@ -39,7 +57,28 @@ export const getCollectionSeo = (collection: PhotoCollection) => {
 };
 
 export const getPhotoSeo = (collection: PhotoCollection, photo: Photo) => {
-    const description = removeMarkdown(photo?.description || collection?.description || '');
+    const extractTextFromJson = (json: any) => {
+        let text = '';
+        json.content.forEach((block: any) => {
+            block.content.forEach((contentItem: any) => {
+                if (contentItem.nodeType === 'text') {
+                    text += contentItem.value + ' ';
+                }
+            });
+        });
+        return text.trim();
+    };
+
+    const descriptionIsCorrectType = (desc: any): desc is { json: any } =>
+        typeof desc === 'object' && desc !== null && 'json' in desc;
+
+    const description = descriptionIsCorrectType(photo.description)
+                        ? extractTextFromJson(photo.description.json) 
+                        : photo.description 
+                        || (descriptionIsCorrectType(collection.description)
+                            ? extractTextFromJson(collection.description.json) 
+                            : collection.description || '');
+
     const title = `${photo.title} | ${collection.title}`;
 
     return {
@@ -54,7 +93,26 @@ export const getPhotoSeo = (collection: PhotoCollection, photo: Photo) => {
 };
 
 export const getEditorialSeo = (page: Editorial) => {
-    const description = removeMarkdown(`${page?.content?.substring(0, 160)}...`);
+    const extractTextFromJson = (json: any) => {
+        let text = '';
+        json.content.forEach((block: any) => {
+            block.content.forEach((contentItem: any) => {
+                if (contentItem.nodeType === 'text') {
+                    text += contentItem.value + ' ';
+                }
+            });
+        });
+        return text.trim();
+    };
+
+    const contentIsCorrectType = (content: any): content is { json: any } =>
+        typeof content === 'object' && content !== null && 'json' in content;
+
+    let description = contentIsCorrectType(page.content)
+                      ? extractTextFromJson(page.content.json) 
+                      : (page.content || '');
+
+    description = `${description.substring(0, 160)}...`;
 
     return {
         alternates: {

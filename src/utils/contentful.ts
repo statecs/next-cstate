@@ -78,7 +78,9 @@ export const fetchEditorialPage = async (slug: string) => {
                 title
                 slug
                 pageTitle
-                content
+                content {
+                    json
+                }
                 ctaLabel
                 ctaUrl
                 openGraphImage: photo {
@@ -196,7 +198,9 @@ export const fetchAllCollections = async (
                 ctaUrl
                 isFeatured
                 showDescription
-                description
+                description {
+                    json
+                }
                 photoSort
                 photosCollection(limit: 50) {
                     items {
@@ -248,6 +252,7 @@ export const fetchAllCollections = async (
     return null;
 };
 
+//https://www.contentful.com/blog/rich-text-field-tips-and-tricks/
 export const fetchCollection = async (
     slug: string,
     preview: boolean = false
@@ -266,7 +271,24 @@ export const fetchCollection = async (
                 category
                 ctaLabel
                 ctaUrl
-                description
+                description {
+                    json
+                    links {
+                      assets { 
+                        block {
+                          sys {
+                            id
+                          }
+                          url
+                          title
+                          width
+                          height
+                          description
+                          contentType
+                        }
+                      }
+                    }
+                }
                 isFeatured
                 showDescription
                 pageTitle
