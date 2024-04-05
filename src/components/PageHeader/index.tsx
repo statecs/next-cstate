@@ -1,7 +1,8 @@
+import React from 'react';
 import clsx from 'clsx';
 import Link from 'next/link';
 import Button from '@/components/Button';
-import {getExternalUrl} from '@/utils/helpers';
+import { getExternalUrl } from '@/utils/helpers';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { BLOCKS, Block, Inline } from "@contentful/rich-text-types";
 
@@ -36,8 +37,16 @@ type Description = {
     };
 };
 
+const renderOptions = {
+    renderText: (text: string) => {
+      return text.split('\n').reduce<React.ReactNode[]>((children, textSegment, index) => {
+        return [...children, index > 0 && <br key={index} />, textSegment];
+      }, []);
+    },
+  };
+  
 
-function renderOptions(links: Description['links']) {
+function contentfulRenderOptions(links: Description['links']) {
     const assetMap = new Map();
     links?.assets?.block.forEach(asset => {
         assetMap.set(asset.sys.id, asset);
@@ -72,6 +81,7 @@ function renderOptions(links: Description['links']) {
                 }
             },
         },
+        renderText: renderOptions.renderText, // Using the renderText function from renderOptions
     };
 }
 
@@ -87,7 +97,6 @@ const formatDate = (date: string | number | Date) => {
     return dateObject.toLocaleDateString('en-US', options);
 };
 
-
 const PageHeader: React.FC<Props> = ({
     animate = true,
     backUrl,
@@ -100,7 +109,7 @@ const PageHeader: React.FC<Props> = ({
     title,
     date,  
 }: Props) => {
-    const formattedDate = date ? formatDate(date) : '';  // Handle undefined date
+    const formattedDate = date ? formatDate(date) : '';
 
     return (
         <div
@@ -133,7 +142,7 @@ const PageHeader: React.FC<Props> = ({
                 <div className="mt-4 md:mt-6">
                     {description && typeof description !== 'string' && description.json && (
                         <div className="prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400">
-                            {documentToReactComponents(description.json, renderOptions(description.links))}
+                            {documentToReactComponents(description.json, contentfulRenderOptions(description.links))}
                         </div>
                     )}
                     {ctaLabel && ctaUrl && (
