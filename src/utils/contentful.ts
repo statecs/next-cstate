@@ -311,8 +311,6 @@ export const fetchCollection = async (
                         description
                         location
                         date
-                        url
-                        urlLabel
                         instagramUrl
                         instagramLabel
                         fullSize {
@@ -321,7 +319,7 @@ export const fetchCollection = async (
                             description
                             url(transform: {format: WEBP, width: 1800})
                         }
-                        openGraphImage: photo {
+                        openGraphImage: fullSize {
                             url(transform: {width: 1000})
                         }
                         base64
