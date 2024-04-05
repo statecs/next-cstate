@@ -4,6 +4,7 @@ interface Post {
     slug: string;
     published: string;
     image?: string;
+    description?: string;
   }
   
 

@@ -6,6 +6,7 @@ interface Link {
     type?: string;
     url: string;
     image?: string; 
+    description?: string; 
 }
 
 interface LinksPage {

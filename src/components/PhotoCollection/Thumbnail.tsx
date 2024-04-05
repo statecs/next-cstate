@@ -16,6 +16,7 @@ const PhotoThumbnail: React.FC<Props> = ({
     path,
     slug,
     thumbnail,
+    description,
     title,
     ...props
 }: Props) => (

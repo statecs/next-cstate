@@ -88,6 +88,7 @@ export const fetchEditorialPage = async (slug: string) => {
                     height
                     url(transform: {format: WEBP, width: 1000})
                     width
+                    description
                 }
                 photoNote
             }
@@ -146,6 +147,7 @@ export const fetchCollectionNavigation = async (): Promise<Link[]> => {
                           items {
                             thumbnail {
                                 url
+                                description
                             }
                           }
                         }
@@ -291,6 +293,7 @@ export const fetchCollection = async (
                         fullSize: photo {
                             height
                             width
+                            description
                             url(transform: {format: WEBP, width: 1800})
                         }
                         openGraphImage: photo {
@@ -299,6 +302,7 @@ export const fetchCollection = async (
                         thumbnail: photo {
                             height
                             width
+                            description
                             url(transform: {format: WEBP, width: 1000})
                         }
                         base64

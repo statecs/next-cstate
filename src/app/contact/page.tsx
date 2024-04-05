@@ -22,7 +22,7 @@ const ContactPage = async () => {
                 </div>
                
                 <Image
-                    alt=""
+                    alt={page.photo?.description}
                     className="max-w-full sm:max-w-[260px] lg:mt-20"
                     height={page.photo?.height}
                     placeholder="empty"

@@ -10,7 +10,7 @@ const config = {
         openGraph: {
             images: [
                 {
-                    alt: '',
+                    alt: 'Christopher State',
                     height: 630,
                     url: 'https://cstate.se/images/chris-placeholder.jpg',
                     width: 1200

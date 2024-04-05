@@ -13,12 +13,13 @@ import {fetchCollectionNavigation} from '@/utils/contentful';
 const Layout: React.FC<LayoutProps> = async ({ children }) => {
 
   const links = await fetchCollectionNavigation();
-
+  
   const posts: Post[] = links.map((link) => ({
     url: link.url,
     title: link.title, 
     slug: link.url, 
     image: link.image,
+    description: link.description,
     published: link.published || 'Not specified', 
   }));
 

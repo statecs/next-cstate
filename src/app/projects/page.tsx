@@ -17,6 +17,7 @@ const ProjectPage = async () => {
     title: link.title,
     slug: link.url, 
     image: link.image,
+    description: link.description,
     published: link.published || 'Not specified', 
   }));
 

@@ -41,6 +41,7 @@ const PhotosCollection: React.FC<Props> = ({photosCollection, slug}) => {
                                 >
                                     <PhotoThumbnail
                                         base64={photo.base64}
+                                        alt={photo.description}
                                         loading={index2 < 6 ? 'eager' : 'lazy'}
                                         path={`/${photo.collection || slug}/${photo.slug}`}
                                         slug={photo.slug}

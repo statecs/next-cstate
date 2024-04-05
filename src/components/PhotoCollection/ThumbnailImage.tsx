@@ -5,16 +5,17 @@ type ThumbnailPhoto = Pick<Photo['thumbnail'], 'height' | 'width' | 'url'>;
 interface Props extends ThumbnailPhoto {
     base64?: string;
     loading?: 'eager' | 'lazy';
+    description?: string; 
 }
 
-const ThumbnailImage: React.FC<Props> = ({base64, height, loading = 'lazy', width, url}) => (
+const ThumbnailImage: React.FC<Props> = ({base64, height, loading = 'lazy', width, url, description}) => (
     <span
         className={clsx(
             'block min-h-[100px] overflow-hidden bg-gray-100 transition duration-200 ease-in-out hover:duration-500 group-focus:outline-none  dark:bg-gray-900 dark:group-focus:ring-white'
         )}
     >
         <Image
-            alt=""
+            alt={description || ''}
             blurDataURL={base64 || ''}
             className="transition duration-500 ease-in-out hover:duration-200 sm:group-hover:opacity-60"
             height={height}
