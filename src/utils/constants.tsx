@@ -86,11 +86,6 @@ export const LINKS: Link[] = [
     icon: <PencilLineIcon size={16} />
   },
   {
-    href: '/journey',
-    label: 'Journey',
-    icon: <NavigationIcon size={16} />
-  },
-  {
     href: '/links',
     label: 'Links',
     icon: <BookmarkIcon size={16} />
