@@ -46,7 +46,7 @@ const PhotosCollection: React.FC<Props> = ({photosCollection, slug}) => {
                                         path={`/${photo.collection || slug}/${photo.slug}`}
                                         slug={photo.slug}
                                         title={photo.title}
-                                        thumbnail={photo.thumbnail}
+                                        fullSize={photo?.fullSize}
                                     />
                                 </div>
                             </div>

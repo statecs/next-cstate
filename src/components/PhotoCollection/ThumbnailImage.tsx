@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 
-type ThumbnailPhoto = Pick<Photo['thumbnail'], 'height' | 'width' | 'url'>;
+type ThumbnailPhoto = Pick<Photo['fullSize'], 'height' | 'width' | 'url'>;
 interface Props extends ThumbnailPhoto {
     base64?: string;
     loading?: 'eager' | 'lazy';

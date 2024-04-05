@@ -148,7 +148,7 @@ export const fetchCollectionNavigation = async (): Promise<Link[]> => {
                         date
                       	photosCollection(limit: 1){
                           items {
-                            thumbnail {
+                            fullSize {
                                 url
                                 description
                             }
@@ -170,7 +170,7 @@ export const fetchCollectionNavigation = async (): Promise<Link[]> => {
                 title: item.title,
                 url: `/${item.slug}`,
                 date: item.date,
-                image: item.photosCollection.items[0]?.thumbnail?.url || ''
+                image: item.photosCollection.items[0]?.fullSize?.url || ''
             })
         );
 
@@ -218,7 +218,7 @@ export const fetchAllCollections = async (
                         slug
                         location
                         url
-                        thumbnail: photo {
+                        fullSize {
                             height
                             width
                             url(transform: {format: WEBP, width: 800})
@@ -315,7 +315,7 @@ export const fetchCollection = async (
                         urlLabel
                         instagramUrl
                         instagramLabel
-                        fullSize: photo {
+                        fullSize {
                             height
                             width
                             description
@@ -323,12 +323,6 @@ export const fetchCollection = async (
                         }
                         openGraphImage: photo {
                             url(transform: {width: 1000})
-                        }
-                        thumbnail: photo {
-                            height
-                            width
-                            description
-                            url(transform: {format: WEBP, width: 1000})
                         }
                         base64
                     }
@@ -389,7 +383,7 @@ export const fetchCollectionsForSitemap = async () => {
                         title
                         slug
                         url
-                        thumbnail: photo {
+                        fullSize {
                             url(transform: {format: WEBP, width: 800})
                         }
                         sys {

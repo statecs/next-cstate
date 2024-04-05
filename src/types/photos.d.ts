@@ -17,10 +17,7 @@ interface Photo {
     location?: string;
     openGraphImage?: {url: string};
     slug: string;
-    thumbnail: Image;
     title: string;
-    url?: string;
-    urlLabel?: string;
 }
 
 interface PhotoCollection {

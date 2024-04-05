@@ -33,7 +33,7 @@ const CollectionsPage = async () => {
                             href={`/projects/${collection.slug}`}
                         >
                             <ThumbnailImage
-                                {...collection.photosCollection.items[0]?.thumbnail}
+                                {...collection.photosCollection.items[0]?.fullSize}
                                 base64={collection.photosCollection.items[0]?.base64}
                             />
                             <span className="flex flex-row justify-between space-x-4 pb-2 pt-2 sm:pb-4">
