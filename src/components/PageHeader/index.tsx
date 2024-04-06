@@ -80,36 +80,71 @@ const renderOptions = {
           }
         },
         [INLINES.HYPERLINK]: (node: Block | Inline) => {
-            if (node.data.uri.includes("youtube.com") || node.data.uri.includes("youtu.be")) {
-              const match = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/.exec(node.data.uri);
-              const videoId = match && match[7].length === 11 ? match[7] : null;
+          if (node.data.uri.includes("youtube.com") || node.data.uri.includes("youtu.be")) {
+            const match = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/.exec(node.data.uri);
+            const videoId = match && match[7].length === 11 ? match[7] : null;
+            return (
+              videoId && (
+                <section className="flex justify-center items-center">
+                  <iframe
+                    className="w-full aspect-video"
+                    title={`https://youtube.com/embed/${videoId}`}
+                    src={`https://youtube.com/embed/${videoId}`}
+                    allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                    frameBorder="0"
+                    allowFullScreen
+                  />
+                </section>
+              )
+            );
+          } else {
+            if (node.content[0].nodeType === 'text') {
               return (
-                videoId && (
-                  <section className="flex justify-center items-center">
-                    <iframe
-                      className="w-full aspect-video"
-                      title={`https://youtube.com/embed/${videoId}`}
-                      src={`https://youtube.com/embed/${videoId}`}
-                      allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
-                      frameBorder="0"
-                      allowFullScreen
-                    />
-                  </section>
-                )
+                <a href={node.data.uri} target="_blank" rel="noopener noreferrer">
+                  {node.content[0].value}
+                </a>
               );
-            } else {
-              // Ensure the node content is of type 'Text' before accessing 'value'
-              if (node.content[0].nodeType === 'text') {
-                return (
-                  <a href={node.data.uri} target="_blank" rel="noopener noreferrer">
-                    {node.content[0].value}
-                  </a>
-                );
-              }
-              return null;
             }
+            return null;
+          }
+        },
+        [BLOCKS.HEADING_1]: (node: Block | Inline, children: React.ReactNode) => {
+            if (node.nodeType === 'heading-1') {
+              return <h1 className="dark:text-white font-serif">{children}</h1>;
+            }
+            return null; 
           },
-          
+          [BLOCKS.HEADING_2]: (node: Block | Inline, children: React.ReactNode) => {
+            if (node.nodeType === 'heading-2') {
+              return <h2 className="dark:text-white font-serif">{children}</h2>;
+            }
+            return null;
+          },
+          [BLOCKS.HEADING_3]: (node: Block | Inline, children: React.ReactNode) => {
+            if (node.nodeType === 'heading-2') {
+              return <h3 className="dark:text-white font-serif">{children}</h3>;
+            }
+            return null;
+          },
+          [BLOCKS.HEADING_4]: (node: Block | Inline, children: React.ReactNode) => {
+            if (node.nodeType === 'heading-2') {
+              return <h4 className="dark:text-white font-serif">{children}</h4>;
+            }
+            return null;
+          },
+          [BLOCKS.HEADING_5]: (node: Block | Inline, children: React.ReactNode) => {
+            if (node.nodeType === 'heading-2') {
+              return <h5 className="dark:text-white font-serif">{children}</h5>;
+            }
+            return null;
+          },
+          [BLOCKS.HEADING_6]: (node: Block | Inline, children: React.ReactNode) => {
+            if (node.nodeType === 'heading-2') {
+              return <h6 className="dark:text-white font-serif">{children}</h6>;
+            }
+            return null;
+          },
+       
       },
       renderText: renderOptions.renderText,
     };
