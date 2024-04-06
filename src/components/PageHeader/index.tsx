@@ -139,12 +139,15 @@ const PageHeader: React.FC<Props> = ({
                 <span>{formattedDate}</span>
             </div>
             {(children || description || ctaUrl) && (
-                <div className="mt-4 md:mt-6">
+                <>
+                { typeof description !== 'string' && description?.json &&
+                    <div className="mt-4 md:mt-6">
                     {description && typeof description !== 'string' && description.json && (
                         <div className="prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400">
                             {documentToReactComponents(description.json, contentfulRenderOptions(description.links))}
                         </div>
                     )}
+                    
                     {ctaLabel && ctaUrl && (
                         <Button
                             className="mt-4"
@@ -157,6 +160,17 @@ const PageHeader: React.FC<Props> = ({
                     )}
                     {children}
                 </div>
+                
+                }
+
+                <div>
+                     {description && typeof description == 'string' && description && (
+                        <div className="dark:text-gray-300 prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400">
+                           {description}
+                        </div>
+                    )}
+                </div>
+                </>
             )}
         </div>
     );
