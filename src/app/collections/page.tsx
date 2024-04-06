@@ -13,7 +13,7 @@ const CollectionsPage = async () => {
     const collections = await fetchAllCollections(isDraftModeEnabled);
     if (!collections) redirect('/');
 
-    const sortedCollections = collections
+    const sortedCollections = (collections || [])
         .filter(collection => collection.slug !== collection.category && collection.slug !== 'home')
         .sort((a, b) => a.slug.localeCompare(b.slug));
 
@@ -38,16 +38,7 @@ const CollectionsPage = async () => {
                             />
                             <span className="flex flex-row justify-between space-x-4 pb-2 pt-2 sm:pb-4">
                                 <span className="text-sm tracking-wide text-gray-600 underline-offset-4 group-hover:underline group-focus:underline dark:text-gray-400 dark:group-hover:text-white">
-                                    {collection.pageTitle ? (
-                                        <>
-                                            <span className="hidden sm:inline-block">
-                                                {collection.pageTitle}
-                                            </span>
-                                            <span className="sm:hidden">{collection.title}</span>
-                                        </>
-                                    ) : (
-                                        collection.title
-                                    )}
+                                {collection.title}     
                                 </span>
                                 <span>
                                     {isCollectionNew(collection.sys?.published) && <NewBadge />}

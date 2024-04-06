@@ -47,7 +47,7 @@ export default async function Journey() {
     <div className="flex flex-grow h-[calc(100vh-110px)] border-spacing-4 py-4 px-8 md:justify-center">
             <div className="flex flex-col space-y-2 max-w-[700px]">
                 
-                        <PageHeader description={page.content} title={page.pageTitle} />
+                        <PageHeader description={page.content} title={page.title} />
                         
                         {page.photo && 
                             <Image

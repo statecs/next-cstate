@@ -13,7 +13,7 @@ const ContactPage = async () => {
         <div className="flex flex-col space-y-2">
             <div className="grid w-full max-w-[700px] gap-4 lg:grid-cols-4 lg:gap-10">
                 <div className="lg:col-span-3">
-                    <PageHeader description={page.content} title={page.pageTitle} />
+                    <PageHeader description={page.content} title={page.title} />
                     <h1 className="text-xl font-serif dark:text-white">
                         {page.ctaUrl && 
                             <Link href={page.ctaUrl} title={page.ctaLabel}>

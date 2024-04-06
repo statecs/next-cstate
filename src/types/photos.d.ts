@@ -33,7 +33,6 @@ interface PhotoCollection {
     showInMenu?: boolean;
     showDescription?: boolean;
     slug: string;
-    pageTitle?: string;
     photoSort?: 'asc' | 'desc';
     sys?: {published: string};
     title: string;

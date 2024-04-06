@@ -77,7 +77,6 @@ export const fetchEditorialPage = async (slug: string) => {
             items {
                 title
                 slug
-                pageTitle
                 content {
                     json
                 }
@@ -194,7 +193,6 @@ export const fetchAllCollections = async (
             items {
                 title
                 slug
-                pageTitle
                 category
                 ctaLabel
                 ctaUrl
@@ -217,7 +215,6 @@ export const fetchAllCollections = async (
                         title
                         slug
                         location
-                        url
                         fullSize {
                             height
                             width
@@ -294,7 +291,6 @@ export const fetchCollection = async (
                 }
                 isFeatured
                 showDescription
-                pageTitle
                 photoSort
                 photosCollection(limit: 50) {
                     items {

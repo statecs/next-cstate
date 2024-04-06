@@ -42,7 +42,9 @@ export const generateStaticParams = async () => {
     const allCollections = await fetchAllCollections();
     if (!allCollections) return [];
 
-    return allCollections.map(collection => ({collection: collection.slug}));
+    return allCollections.map(collection => ({
+        params: { collection: collection.slug }
+    }));
 };
 
 export const generateMetadata = async ({params}: Props) => {

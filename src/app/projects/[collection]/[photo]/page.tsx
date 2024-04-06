@@ -33,12 +33,12 @@ const PhotoPage = async ({params}: Props) => {
 
     return (
         <>
-        <FloatingHeader scrollTitle={collection.pageTitle} goBackLink={`/projects/${collection.slug}`}></FloatingHeader>
+        <FloatingHeader scrollTitle={collection.title} goBackLink={`/projects/${collection.slug}`}></FloatingHeader>
             <div className="flex flex-grow flex-col h-screen border-spacing-4 py-4 px-8 md:justify-center">
                 <PageHeader
                     animate={false}
                     backUrl={`${collection.slug}`}
-                    title={collection.pageTitle || collection.title}
+                    title={collection.title}
                 />
                 <PhotoCarousel photo={params.photo} collection={collection} />
                 <div>

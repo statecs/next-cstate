@@ -14,7 +14,6 @@ export interface Props {
     ctaUrl?: string;
     description?: Description | string | null;
     hasBottomPadding?: boolean;
-    pageTitle?: string;
     title?: string;
     date?: string;  // Ensure date is part of the props
 }
@@ -105,7 +104,6 @@ const PageHeader: React.FC<Props> = ({
     ctaUrl,
     description,
     hasBottomPadding = true,
-    pageTitle,
     title,
     date,  
 }: Props) => {
@@ -124,12 +122,12 @@ const PageHeader: React.FC<Props> = ({
                             className="group space-x-2 focus:outline-dotted focus:outline-2 focus:outline-offset-2 focus:outline-black sm:inline-flex sm:items-baseline"
                         >
                             <h1 className="max-w-5xl space-x-2 text-balance break-normal font-serif text-xl text-black underline-offset-4 group-hover:underline sm:text-2xl md:max-w-5xl md:text-3xl dark:text-white">
-                                <span>{pageTitle || title}</span>
+                                <span>{title}</span>
                             </h1>
                         </Link>
                     ) : (
                         <h1 className="max-w-5xl space-x-2 text-balance break-normal font-serif text-xl text-black underline-offset-4 group-hover:underline sm:text-2xl md:max-w-5xl md:text-3xl dark:text-white">
-                            <span>{pageTitle || title}</span>
+                            <span>{title}</span>
                         </h1>
                         
                     )}

@@ -43,7 +43,7 @@ export const getCollectionSeo = (collection: PhotoCollection) => {
                         ? extractTextFromJson(collection.description.json) 
                         : (typeof collection.description === 'string' ? collection.description : '');
 
-    const title = collection.pageTitle || collection.title;
+    const title = collection.title;
 
     return {
         alternates: {
@@ -120,7 +120,7 @@ export const getEditorialSeo = (page: Editorial) => {
         },
         description,
         openGraph: {description},
-        title: page.pageTitle || page.title,
+        title: page.title,
         twitter: {description}
     };
 };
