@@ -52,59 +52,69 @@ const renderOptions = {
     });
 
     return {
-        renderNode: {
-            [BLOCKS.EMBEDDED_ASSET]: (node: Block | Inline) => {
-                const asset = assetMap.get(node.data.target.sys.id);
-    
-                switch (asset.contentType) {
-                    case "video/mp4":
-                        return (
-                            <video width="100%" height="auto" controls>
-                                <source src={asset.url} type="video/mp4" />
-                                Your browser does not support the video tag.
-                            </video>
-                        );
-                    case "image/png":
-                    case "image/jpeg":
-                    case "image/jpg":
-                        return (
-                            <img
-                                src={asset.url}
-                                height={asset.height}
-                                width={asset.width}
-                                alt={asset.description || 'Image'}
-                            />
-                        );
-                    default:
-                        return null;
-                }
-            },
-            // Add this for YouTube video rendering
-            [INLINES.HYPERLINK]: (node: Block | Inline) => {
-                if (node.data.uri.includes("youtube.com") || node.data.uri.includes("youtu.be")) {
-                    const match = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/.exec(node.data.uri);
-                    const videoId = match && match[7].length === 11 ? match[7] : null;
-                    return (
-                        videoId && (
-                            <section className="flex justify-center items-center">
-                                <iframe
-                                    className="w-full aspect-video"
-                                    title={`https://youtube.com/embed/${videoId}`}
-                                    src={`https://youtube.com/embed/${videoId}`}
-                                    allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
-                                    frameBorder="0"
-                                    allowFullScreen
-                                />
-                            </section>
-                        )
-                    );
-                    
-                }
-            },
+      renderNode: {
+        [BLOCKS.EMBEDDED_ASSET]: (node: Block | Inline) => {
+          const asset = assetMap.get(node.data.target.sys.id);
+  
+          switch (asset.contentType) {
+            case "video/mp4":
+              return (
+                <video width="100%" height="auto" controls>
+                  <source src={asset.url} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              );
+            case "image/png":
+            case "image/jpeg":
+            case "image/jpg":
+              return (
+                <img
+                  src={asset.url}
+                  height={asset.height}
+                  width={asset.width}
+                  alt={asset.description || 'Image'}
+                />
+              );
+            default:
+              return null;
+          }
         },
-        renderText: renderOptions.renderText,
+        [INLINES.HYPERLINK]: (node: Block | Inline) => {
+            if (node.data.uri.includes("youtube.com") || node.data.uri.includes("youtu.be")) {
+              const match = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/.exec(node.data.uri);
+              const videoId = match && match[7].length === 11 ? match[7] : null;
+              return (
+                videoId && (
+                  <section className="flex justify-center items-center">
+                    <iframe
+                      className="w-full aspect-video"
+                      title={`https://youtube.com/embed/${videoId}`}
+                      src={`https://youtube.com/embed/${videoId}`}
+                      allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                      frameBorder="0"
+                      allowFullScreen
+                    />
+                  </section>
+                )
+              );
+            } else {
+              // Ensure the node content is of type 'Text' before accessing 'value'
+              if (node.content[0].nodeType === 'text') {
+                return (
+                  <a href={node.data.uri} target="_blank" rel="noopener noreferrer">
+                    {node.content[0].value}
+                  </a>
+                );
+              }
+              return null;
+            }
+          },
+          
+      },
+      renderText: renderOptions.renderText,
     };
-}
+  }
+  
 
 // formatDate function now accepts a date parameter
 const formatDate = (date: string | number | Date) => {
