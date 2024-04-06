@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Button from '@/components/Button';
 import { getExternalUrl } from '@/utils/helpers';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
-import { BLOCKS, Block, Inline } from "@contentful/rich-text-types";
+import { BLOCKS, Block, Inline, INLINES } from "@contentful/rich-text-types";
 
 export interface Props {
     animate?: boolean;
@@ -45,7 +45,7 @@ const renderOptions = {
   };
   
 
-function contentfulRenderOptions(links: Description['links']) {
+  function contentfulRenderOptions(links: Description['links']) {
     const assetMap = new Map();
     links?.assets?.block.forEach(asset => {
         assetMap.set(asset.sys.id, asset);
@@ -79,8 +79,30 @@ function contentfulRenderOptions(links: Description['links']) {
                         return null;
                 }
             },
+            // Add this for YouTube video rendering
+            [INLINES.HYPERLINK]: (node: Block | Inline) => {
+                if (node.data.uri.includes("youtube.com") || node.data.uri.includes("youtu.be")) {
+                    const match = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/.exec(node.data.uri);
+                    const videoId = match && match[7].length === 11 ? match[7] : null;
+                    return (
+                        videoId && (
+                            <section className="flex justify-center items-center">
+                                <iframe
+                                    className="w-full aspect-video"
+                                    title={`https://youtube.com/embed/${videoId}`}
+                                    src={`https://youtube.com/embed/${videoId}`}
+                                    allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                                    frameBorder="0"
+                                    allowFullScreen
+                                />
+                            </section>
+                        )
+                    );
+                    
+                }
+            },
         },
-        renderText: renderOptions.renderText, // Using the renderText function from renderOptions
+        renderText: renderOptions.renderText,
     };
 }
 
@@ -163,7 +185,7 @@ const PageHeader: React.FC<Props> = ({
                         <div className="dark:text-gray-300 prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400">
                             {description}
                         </div>
-                        
+
                     )}
                     
                     {children}
