@@ -411,6 +411,7 @@ export const fetchAllJourneys = async (
                 title
                 description
               	year
+                url
               	imageCollection {
                   items{
                     title

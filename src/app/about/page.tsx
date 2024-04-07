@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { PlusIcon } from 'lucide-react'
 import Image from 'next/image';
+import Link from 'next/link';
 import config from '@/utils/config';
 import { ScrollArea } from '@/components/SideMenu/ScrollArea';
 import PageHeader from '@/components/PageHeader';
@@ -64,7 +65,7 @@ export default async function Journey() {
                      
                         <div className="max-w-[800px] animate-fadeIn">
                             <div className="lg:col-span-3">
-                            <PageHeader title="Journey" />
+                                <h2 className="max-w-5xl pb-4 sm:pb-8 space-x-2 text-balance break-normal font-serif text-xl text-black underline-offset-4 group-hover:underline sm:text-2xl md:max-w-5xl md:text-3xl dark:text-white">Journey</h2>
                             </div>
                             <ScrollArea useScrollAreaId>
                             <div className="content-wrapper dark:text-gray-300">
@@ -91,13 +92,19 @@ export default async function Journey() {
                                                         </div>
 
                                                         <div className="flex-grow pl-8">
-                                                            <span className="font-semibold tracking-tight">{item.title}</span>
+                                                            {item.url ? (
+                                                                <Link href={item.url}>
+                                                                    <h3 className="font-semibold text-l sm:text-xl tracking-tight font-serif pb-4">{item.title} →</h3>
+                                                                </Link>
+                                                            ) : (
+                                                                <h3 className="font-semibold text-l sm:text-xl tracking-tight font-serif pb-4">{item.title}</h3>
+                                                            )}
                                                             {item.description ? (
                                                             <div className="text-sm prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base">
                                                                 {item.description}
                                                             </div>
                                                             ) : (
-                                                            <p className="text-sm text-gray-500">Description not available.</p>
+                                                            <h3 className="text-sm text-gray-500">Description not available.</h3>
                                                             )}
                                                             {Array.isArray(item.imageCollection?.items) && item.imageCollection.items.map((image: Image, imgIndex: number) => (
                                                             <div key={imgIndex} className="mt-2.5 overflow-hidden rounded-xl bg-white shadow">

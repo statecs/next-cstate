@@ -23,6 +23,7 @@ interface JourneyCollection {
 interface Log {
     year: string;
     title?: string;
+    url?: string;
     description?: string;
     imageCollection?: {
         items: Image[];
