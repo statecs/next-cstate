@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { footerVisibilityAtom } from '@/utils/store';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const AboutSection: React.FC = () => {
 const [isFooterVisible] = useAtom(footerVisibilityAtom);
@@ -35,12 +36,17 @@ const [isMobile, setIsMobile] = useState(false);
                 className="rounded-full border shadow-sm"
                 />
             </div>
-            <div className="link-card inline-flex justify-center items-center gap-2 p-2">
-                <div className="flex flex-col">
-                <h1 className="font-serif text-xl text-black sm:text-2xl dark:text-white">Christopher State</h1>
-                <span className="text-gray-400">Design Technologist</span>
-                </div>
-            </div>
+            <Link
+              className="group w-full"
+              href={`/about`}
+            >
+              <div className="link-card inline-flex justify-center items-center gap-2 p-2">
+                  <div className="flex flex-col">
+                  <h1 className="font-serif text-xl text-black sm:text-2xl dark:text-white">Christopher State</h1>
+                  <span className="text-gray-400">Design Technologist</span>
+                  </div>
+              </div>
+            </Link>
         </>
       )}
     </>
