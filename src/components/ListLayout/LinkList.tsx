@@ -54,12 +54,12 @@ export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
       />
       <div className="flex flex-col gap-1">
         <span className="font-medium">{post.title}</span>
-        <span className={cn('transition-colors duration-300', isActive ? 'text-slate-400' : 'text-gray-400')}>
+        <span className={cn('transition-colors duration-300', isActive ? 'darK:text-slate-300' : 'text-gray-600 dark:text-gray-400')}>
           <time dateTime={post.date} suppressHydrationWarning>
               {formattedDate}
           </time>
         </span>
-        <span className={cn('transition-colors duration-300', isActive ? 'text-slate-400' : 'text-gray-400')}>
+        <span className={cn('transition-colors duration-300', isActive ? 'dark:text-slate-300' : 'text-gray-600 darK:text-gray-400')}>
           {isCollectionNew(post.published) && <NewBadge isActive={isActive} />}
         </span>
       </div>
