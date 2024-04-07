@@ -7,7 +7,7 @@ const sftp = new SftpClient();
 const ssh = new NodeSSH();
 
 const localDir = process.cwd();
-const remoteDir = '/var/www/dev.cstate.se';
+const remoteDir = '/var/www/cstate.se/portfolio';
 const exclude = ['node_modules', '.git', '.next'];
 
 /**
