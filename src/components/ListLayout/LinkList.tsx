@@ -12,26 +12,23 @@ import { cn } from '@/utils/helpers'
 export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
 
   const formatDate = () => {
+    let dateValue = post?.date ? post.date : post?.published;
     
-    // Check if post?.date is undefined or not
-    if (!post?.date) {
-      const dateObject = new Date(post?.published);
-      const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: 'long',
-        day: '2-digit',
-      };
-      return dateObject.toLocaleDateString('en-US', options);
+    if (!dateValue) {
+      return '';
     }
-
-    const dateObject = new Date(post?.date);
+  
+    const dateObject = new Date(dateValue);
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'long',
       day: '2-digit',
     };
-    return dateObject.toLocaleDateString('en-US', options);
+  
+    // Using 'sv-SE' for Swedish format
+    return dateObject.toLocaleDateString('sv-SE', options);
   };
+  
 
   const formattedDate = formatDate();
 

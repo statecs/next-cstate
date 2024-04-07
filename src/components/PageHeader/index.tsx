@@ -152,8 +152,7 @@ const renderOptions = {
   }
   
 
-// formatDate function now accepts a date parameter
-const formatDate = (date: string | number | Date) => {
+  const formatDate = (date: string | number | Date) => {
     if (!date) return '';  
     const dateObject = new Date(date);
     const options: Intl.DateTimeFormatOptions = {
@@ -161,7 +160,8 @@ const formatDate = (date: string | number | Date) => {
       month: 'long',
       day: '2-digit',
     };
-    return dateObject.toLocaleDateString('en-US', options);
+    // Using 'sv-SE' for Swedish format
+    return dateObject.toLocaleDateString('sv-SE', options);
 };
 
 const PageHeader: React.FC<Props> = ({
