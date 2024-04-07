@@ -100,8 +100,8 @@ const renderOptions = {
           } else {
             if (node.content[0].nodeType === 'text') {
               return (
-                <a href={node.data.uri} target="_blank" rel="noopener noreferrer">
-                  {node.content[0].value}
+                <a href={node.data.uri} className="underline" target="_blank" rel="noopener noreferrer">
+                  {node.content[0].value} →
                 </a>
               );
             }
@@ -121,25 +121,25 @@ const renderOptions = {
             return null;
           },
           [BLOCKS.HEADING_3]: (node: Block | Inline, children: React.ReactNode) => {
-            if (node.nodeType === 'heading-2') {
+            if (node.nodeType === 'heading-3') {
               return <h3 className="dark:text-white font-serif">{children}</h3>;
             }
             return null;
           },
           [BLOCKS.HEADING_4]: (node: Block | Inline, children: React.ReactNode) => {
-            if (node.nodeType === 'heading-2') {
+            if (node.nodeType === 'heading-4') {
               return <h4 className="dark:text-white font-serif">{children}</h4>;
             }
             return null;
           },
           [BLOCKS.HEADING_5]: (node: Block | Inline, children: React.ReactNode) => {
-            if (node.nodeType === 'heading-2') {
+            if (node.nodeType === 'heading-5') {
               return <h5 className="dark:text-white font-serif">{children}</h5>;
             }
             return null;
           },
           [BLOCKS.HEADING_6]: (node: Block | Inline, children: React.ReactNode) => {
-            if (node.nodeType === 'heading-2') {
+            if (node.nodeType === 'heading-6') {
               return <h6 className="dark:text-white font-serif">{children}</h6>;
             }
             return null;
