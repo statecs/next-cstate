@@ -1,8 +1,10 @@
 import React from 'react';
+import { Suspense } from 'react'
 import clsx from 'clsx';
 import Link from 'next/link';
 import Image from 'next/image';
 import Button from '@/components/Button';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { getExternalUrl } from '@/utils/helpers';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { BLOCKS, Block, Inline, INLINES } from "@contentful/rich-text-types";
@@ -69,12 +71,14 @@ const renderOptions = {
             case "image/jpeg":
             case "image/jpg":
               return (
-                <Image
-                  src={asset.url}
-                  height={asset.height}
-                  width={asset.width}
-                  alt={asset.description || 'Image'}
-                />
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Image
+                    src={asset.url}
+                    height={asset.height}
+                    width={asset.width}
+                    alt={asset.description || 'Image'}
+                  />
+                 </Suspense>
               );
             default:
               return null;
