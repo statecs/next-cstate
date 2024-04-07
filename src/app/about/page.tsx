@@ -101,11 +101,13 @@ export default async function Journey() {
                                                             )}
                                                             {Array.isArray(item.imageCollection?.items) && item.imageCollection.items.map((image: Image, imgIndex: number) => (
                                                             <div key={imgIndex} className="mt-2.5 overflow-hidden rounded-xl bg-white shadow">
-                                                                <img
+                                                                <Image
                                                                 src={image.url}
-                                                                alt={image.description || 'Relevant descriptive text'}
-                                                                width="100%"
-                                                                height="auto"
+                                                                alt={image.description || ''}
+                                                                width={0}
+                                                                height={0}
+                                                                sizes="100vw"
+                                                                style={{ width: '100%', height: 'auto' }}
                                                                 loading={imgIndex < 3 ? 'eager' : 'lazy'}
                                                                 className="animate-reveal w-full object-cover"
                                                                 />

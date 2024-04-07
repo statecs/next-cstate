@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import Link from 'next/link';
+import Image from 'next/image';
 import Button from '@/components/Button';
 import { getExternalUrl } from '@/utils/helpers';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
@@ -68,7 +69,7 @@ const renderOptions = {
             case "image/jpeg":
             case "image/jpg":
               return (
-                <img
+                <Image
                   src={asset.url}
                   height={asset.height}
                   width={asset.width}

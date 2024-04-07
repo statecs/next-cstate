@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { LazyMotion, domAnimation, m } from 'framer-motion'
 import NewBadge from '@/components/PhotoCollection/New';
 import {isCollectionNew} from '@/utils/helpers';
-
+import Image from 'next/image';
 import { cn } from '@/utils/helpers'
 
 
@@ -46,7 +46,7 @@ export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
         isMobile ? 'border-b px-4 py-3 dark:border-zinc-700 text-sm' : 'rounded-lg p-2'
       )}
     >
-      <img
+      <Image
         alt={post.description || ''}
         className="transition duration-500 ease-in-out hover:duration-200 sm:group-hover:opacity-60"
         sizes="(max-width: 240px) 100vw, (max-width: 360px) 50vw, (max-width: 640px) 33vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { footerVisibilityAtom } from '@/utils/store';
+import Image from 'next/image';
 
 const AboutSection: React.FC = () => {
 const [isFooterVisible] = useAtom(footerVisibilityAtom);
@@ -23,11 +24,13 @@ const [isMobile, setIsMobile] = useState(false);
       {(!isMobile || (isMobile && isFooterVisible)) && (
          <>
             <div className="link-card transition duration-500 ease-in-out inline-flex justify-center items-center gap-2 p-2">
-              <img
+              <Image
                 src="/images/me.jpeg"
                 alt="A smiling person with glasses in a striped shirt against a gray background."
-                width={120}
-                height={120}
+                width={0}
+                height={0}
+                sizes="100vw"
+                style={{ width: '120px', height: '120px' }}
                 loading="lazy"
                 className="rounded-full border shadow-sm"
                 />
