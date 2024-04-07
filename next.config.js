@@ -9,13 +9,13 @@ const securityHeaders = [
         key: 'Content-Security-Policy',
         value: "default-src 'self'; " +
                "img-src 'self' data: https://images.ctfassets.net; " +
-               "script-src 'self' 'unsafe-eval' 'unsafe-inline'; " +
+               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com; " +
                "style-src 'self' 'unsafe-inline'; " +
                "font-src 'self' data:; " +
                "connect-src 'self' https://vitals.vercel-insights.com " + process.env.API_BASE_URL + "; " +
                "frame-src 'self' https://www.youtube.com https://youtube.com https://youtu.be; " +
                "frame-ancestors 'self' https://app.contentful.com;"
-    } 
+    }    
 ];
 
 module.exports = {
