@@ -34,7 +34,7 @@ const ProjectPage = async () => {
 };
 
 export const generateMetadata = async () => {
-    const page = await fetchEditorialPage('home') || {};
+    const page = await fetchEditorialPage('projects') || {};
     return {...config.seo, ...getEditorialSeo(page)};
 };
 
