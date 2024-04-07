@@ -1,6 +1,5 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { useAtom } from 'jotai';
 import { footerVisibilityAtom } from '@/utils/store';
 
@@ -24,9 +23,9 @@ const [isMobile, setIsMobile] = useState(false);
       {(!isMobile || (isMobile && isFooterVisible)) && (
          <>
             <div className="link-card transition duration-500 ease-in-out inline-flex justify-center items-center gap-2 p-2">
-                <Image
+              <img
                 src="/images/me.jpeg"
-                alt="Christopher State"
+                alt="A smiling person with glasses in a striped shirt against a gray background."
                 width={120}
                 height={120}
                 loading="lazy"
