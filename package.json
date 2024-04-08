@@ -5,8 +5,10 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
+        "start-dev": "next start -p 4000",
         "lint": "next lint",
-        "release": "node release.js"
+        "release": "node release.js",
+        "release-dev": "node release.dev.js"
     },
     "dependencies": {
         "@contentful/rich-text-react-renderer": "^15.19.6",
