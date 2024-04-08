@@ -7,7 +7,7 @@ const sftp = new SftpClient();
 const ssh = new NodeSSH();
 
 const localDir = process.cwd();
-const remoteDir = '/var/www/cstate.se/portfolio';
+const remoteDir = '/var/www/dev.cstate.se';
 const exclude = ['node_modules', '.git', '.next'];
 
 /**
@@ -69,11 +69,11 @@ async function uploadAndExecuteCommands() {
     if (result.stdout) console.log('Build stdout:', result.stdout);
     if (result.stderr) console.error('Build stderr:', result.stderr);
 
-    result = await ssh.execCommand('pm2 delete prod', { cwd: remoteDir });
+    result = await ssh.execCommand('pm2 delete dev', { cwd: remoteDir });
     if (result.stdout) console.log('Build stdout:', result.stdout);
     if (result.stderr) console.error('Build stderr:', result.stderr);
 
-    result = await ssh.execCommand('pm2 start --name=prod  npm -- start', { cwd: remoteDir });
+    result = await ssh.execCommand('pm2 start npm --name=dev -- run start -- -p 4000', { cwd: remoteDir });
     if (result.stdout) console.log('Start stdout:', result.stdout);
     if (result.stderr) console.error('Start stderr:', result.stderr);
 
