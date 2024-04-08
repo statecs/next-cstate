@@ -376,7 +376,6 @@ export const fetchCollectionsForSitemap = async () => {
                     items {
                         title
                         slug
-                        url
                         fullSize {
                             url(transform: {format: WEBP, width: 800})
                         }
