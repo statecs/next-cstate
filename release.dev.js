@@ -69,7 +69,11 @@ async function uploadAndExecuteCommands() {
     if (result.stdout) console.log('Build stdout:', result.stdout);
     if (result.stderr) console.error('Build stderr:', result.stderr);
 
-    result = await ssh.execCommand('npm run start-dev', { cwd: remoteDir });
+    result = await ssh.execCommand('pm2 delete dev', { cwd: remoteDir });
+    if (result.stdout) console.log('Build stdout:', result.stdout);
+    if (result.stderr) console.error('Build stderr:', result.stderr);
+
+    result = await ssh.execCommand('pm2 start npm --name=dev -- run start -- -p 4000', { cwd: remoteDir });
     if (result.stdout) console.log('Start stdout:', result.stdout);
     if (result.stderr) console.error('Start stderr:', result.stderr);
 
