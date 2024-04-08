@@ -21,7 +21,7 @@ const getCollectionSeo = async (): Promise<MetadataRoute.Sitemap> => {
 
     const items = filteredCollections.reduce((acc: any[], collection: any) => {
         const collectionItem = {
-            url: `${process.env.NEXT_PUBLIC_URL}/${
+            url: `${process.env.NEXT_PUBLIC_URL}/projects/${
                 collection.slug === 'home' ? '' : collection.slug
             }`,
             priority: collection.slug === 'home' || collection.isFeatured ? 1 : 0.8,
@@ -37,7 +37,7 @@ const getCollectionSeo = async (): Promise<MetadataRoute.Sitemap> => {
 
         const photoItems =
             filteredPhotoItems.map((photo: any) => ({
-                url: `${process.env.NEXT_PUBLIC_URL}/${collection.slug}/${photo.slug}`,
+                url: `${process.env.NEXT_PUBLIC_URL}/projects/${collection.slug}/${photo.slug}`,
                 priority: collection.slug === 'home' || collection.isFeatured ? 1 : 0.8,
                 lastModified: getLastModifiedDate(photo?.sys?.publishedAt).toISOString(),
                 changeFrequency: photo.publishedAt === photo.firstPublishedAt ? 'monthly' : 'weekly'
