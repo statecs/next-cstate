@@ -3,6 +3,7 @@ import { MenuContent } from '@/components/SideMenu'
 import { drawerAtom } from '@/utils/store';
 import { useAtom } from 'jotai';
 import { AlignRightIcon } from 'lucide-react'
+import SiteMenu from '../SiteMenu';
 
 interface Props {
   className?: string;
@@ -33,6 +34,7 @@ export const MobileDrawer: React.FC<Props> = () => {
       <DrawerContent className="h-[80%]">
         <div className="overflow-y-auto p-4">
           <MenuContent />
+          <SiteMenu />
         </div>
       </DrawerContent>
     </Drawer>

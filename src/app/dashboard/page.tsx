@@ -13,7 +13,7 @@ export default async function Dashboard() {
         </div>
       ) : (
         <div className="flex flex-grow justify-center items-center h-[calc(100vh-110px)] text-white">
-            This page is protected, please <LoginLink> - Login -</LoginLink> to view it
+            This page is protected.
         </div>
       );
 }
