@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import Image from 'next/image';
 import Button from '@/components/Button';
+import { ExternalLinkIcon } from 'lucide-react'
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { getExternalUrl } from '@/utils/helpers';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
@@ -105,10 +106,15 @@ const renderOptions = {
           } else {
             if (node.content[0].nodeType === 'text') {
               return (
-                <a href={node.data.uri} className="underline" target="_blank" rel="noopener noreferrer">
-                  {node.content[0].value} →
+                <span className="flex items-center">
+                <a href={node.data.uri} className="underline inline-block" target="_blank" rel="noopener noreferrer">
+                  {node.content[0].value}
                 </a>
+                <ExternalLinkIcon className="ml-1 h-4 w-4 inline-block" size={14} />
+              </span>
               );
+
+           
             }
             return null;
           }

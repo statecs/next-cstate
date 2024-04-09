@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { PlusIcon } from 'lucide-react'
+import { PlusIcon, ArrowUpRightIcon } from 'lucide-react'
 import Image from 'next/image';
 import Link from 'next/link';
 import config from '@/utils/config';
@@ -93,8 +93,8 @@ export default async function Journey() {
 
                                                         <div className="flex-grow pl-8">
                                                             {item.url ? (
-                                                                <Link href={item.url}>
-                                                                    <h3 className="font-semibold text-l sm:text-xl tracking-tight font-serif pb-4">{item.title} →</h3>
+                                                                <Link href={item.url} className="hover:underline underline-offset-4 transition duration-200">
+                                                                    <h3 className="flex font-semibold text-l sm:text-xl tracking-tight font-serif pb-4">{item.title} <ArrowUpRightIcon size={28} /></h3>
                                                                 </Link>
                                                             ) : (
                                                                 <h3 className="font-semibold text-l sm:text-xl tracking-tight font-serif pb-4">{item.title}</h3>
