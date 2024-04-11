@@ -3,6 +3,7 @@ import ComboBox from '@/components/ComboBox';
 import ProfileSection from '@/components/ProfileSection';
 import {fetchEditorialPage} from '@/utils/contentful';
 import {getEditorialSeo} from '@/utils/helpers';
+import ScrollDrawer from '@/components/ScrollDrawer';
 
 const HomePage = async () => {
     const page = await fetchEditorialPage('home') || {};
@@ -17,6 +18,11 @@ const HomePage = async () => {
                 <ComboBox threadId={process.env.THREAD_ID || ''} assistantId={process.env.ASSISTANT_ID || ''}  />
             </div>
         </div>
+        
+        <div className="lg:hidden">
+            <ScrollDrawer />
+        </div>
+        
     </div>
     );
 };
