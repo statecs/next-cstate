@@ -33,11 +33,6 @@ interface TextNode {
     photoNote: string;
   }
   
-  interface ContentState {
-    allCollections: CollectionItem[]; // Assuming CollectionItem is defined elsewhere
-    page: Page;
-  }
-  
   interface ImageItem {
     title: string;
     url: string;
@@ -64,3 +59,22 @@ interface TextNode {
     allCollections: CollectionItem[];
     page: Page; // Adjust this based on the actual structure
   }
+
+interface Collection {
+  sys: {
+    published: string; // Date string
+  };
+  title: string;
+  url?: string;
+  description?: string;
+  imageCollection: {
+    items: Array<{
+      url: string;
+      description?: string;
+    }>;
+  };
+}
+
+interface CollectionsByYear {
+  [year: string]: Collection[];
+}
