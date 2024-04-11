@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Drawer, DrawerContent, DrawerHeader } from './Drawer';
 import { drawerScrollAtom } from '@/utils/store';
 import { useAtom } from 'jotai';
@@ -8,28 +8,88 @@ import { PlusIcon, ArrowUpRightIcon } from 'lucide-react'
 import Image from 'next/image';
 import Link from 'next/link';
 
+type Collection = any;
+type CollectionsByYear = { [year: string]: Collection[] };
+type ImageType = {
+  url: string;
+  description?: string;
+};
+
 const ScrollDrawer = () => {
   const [isOpen, setIsOpen] = useAtom(drawerScrollAtom);
   const [content, setContent] = useState<{ allCollections: CollectionsByYear; page: any } | null>(null);
+  const [loadedContent, setLoadedContent] = useState({});
+  const drawerContentRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+   // Fetch data once on component mount
+   useEffect(() => {
     setIsOpen(true);
     const fetchData = async () => {
       const response = await fetch('/api/journey');
       const data = await response.json();
       if (data && data.allCollections) {
         setContent({ allCollections: data.allCollections, page: data.page });
+        // Load initial content
+        loadInitialContent(data.allCollections);
       }
     };
     
     fetchData();
-    
   }, [setIsOpen]);
+
+  // Load initial content
+  const loadInitialContent = (allCollections: CollectionsByYear) => {
+    const years = Object.keys(allCollections).sort((a, b) => b.localeCompare(a));
+    let initialContent: CollectionsByYear = {};
+
+    for (let i = 0; i < 2 && i < years.length; i++) {
+      const yearToLoad = years[i];
+      initialContent[yearToLoad] = allCollections[yearToLoad];
+    }
+
+    setLoadedContent(initialContent);
+  };
+
+  // Handle scroll to dynamically load more content
+  const handleScroll = (e: Event) => {
+    if (!(e.target instanceof HTMLDivElement)) return;
+  
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+
+    if (content && content.allCollections) {
+      const threshold = 500; // Pixels from the bottom
+      if (scrollTop + clientHeight + threshold >= scrollHeight) {
+        const years = Object.keys(content.allCollections).sort((a, b) => b.localeCompare(a));
+        
+        setLoadedContent((prevContent: CollectionsByYear) => {
+          let updatedContent = { ...prevContent };
+          const loadCount = 2;
+          let loadedYearsCount = Object.keys(updatedContent).length;
+  
+          for (let i = 0; i < loadCount && (loadedYearsCount + i) < years.length; i++) {
+            const yearToLoad = years[loadedYearsCount + i];
+            updatedContent[yearToLoad] = content.allCollections[yearToLoad];
+          }
+  
+          return updatedContent;
+        });
+      }
+    }
+  };
+
+  // Attach and detach scroll event listener
+  useEffect(() => {
+    const drawerContent = drawerContentRef.current;
+    if (drawerContent) {
+      drawerContent.addEventListener('scroll', handleScroll);
+      return () => drawerContent.removeEventListener('scroll', handleScroll);
+    }
+  }, [drawerContentRef.current]);
 
 
   return (
     <Drawer
-      snapPoints={["200px", "355px", 1]}
+      snapPoints={["200px", 1]}
       dismissible={true}
       open={isOpen}
       closeThreshold={0}
@@ -37,9 +97,9 @@ const ScrollDrawer = () => {
       shouldScaleBackground={false}
       onOpenChange={setIsOpen}
     >
-      <DrawerContent className="h-[80%]">
+      <DrawerContent className="h-[80%]" >
         <DrawerHeader id="title">{content?.page?.title}</DrawerHeader>
-        <div className="overflow-y-auto p-4">
+        <div ref={drawerContentRef} className="overflow-y-auto p-4 drawer-content-class">
           <div className="prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400">
             {content?.page?.content?.json?.content.map((block: BlockNode, index: number) => (
               block.nodeType === 'paragraph' && (
@@ -55,7 +115,7 @@ const ScrollDrawer = () => {
             <h2 className="max-w-5xl pb-4 sm:pb-8 space-x-2 text-balance break-normal font-serif text-xl text-black underline-offset-4 group-hover:underline sm:text-2xl md:max-w-5xl md:text-3xl dark:text-white">
               Journey
             </h2>
-            {content && Object.entries(content.allCollections)
+            {content && Object.entries(loadedContent)
               .sort(([yearA], [yearB]) => yearB.localeCompare(yearA))
               .map(([year, collections]) => (
               <div key={year} className="content-wrapper dark:text-gray-300">
@@ -67,7 +127,7 @@ const ScrollDrawer = () => {
                         <hr className="my-0 ml-4 flex-1 border-dashed border-gray-200" />
                       </div>
                       <section>
-                      {collections.map((collection, index) => (
+                      {(collections as Collection[]).map((collection, index) => (
                         <div key={index} className="relative flex pb-8 last:pb-0">
                           <div className="absolute inset-0 flex w-6 items-center justify-center">
                             <div className="pointer-events-none h-full w-px border-l-[1px] border-gray-200 dark:border-zinc-700"></div>
@@ -94,7 +154,7 @@ const ScrollDrawer = () => {
                                   {collection.description}
                                 </div>
                               )}
-                              {collection.imageCollection && collection.imageCollection.items.map((image, imgIdx) => (
+                              {collection.imageCollection && collection.imageCollection.items.map((image: ImageType, imgIdx: number) => (
                                 <div key={imgIdx} className="mt-2.5 overflow-hidden rounded-xl bg-white shadow">
                                   <Image
                                     src={image.url}
