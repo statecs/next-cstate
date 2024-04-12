@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState, useRef } from "react";
-import { Drawer, DrawerContent, DrawerHeader } from './Drawer';
+import { Drawer, DrawerContent, DrawerHeader, DrawerClose } from './Drawer';
 import { drawerScrollAtom } from '@/utils/store';
 import { useAtom } from 'jotai';
-import { PlusIcon, ArrowUpRightIcon } from 'lucide-react'
+import { PlusIcon, ArrowUpRightIcon, XIcon } from 'lucide-react'
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -20,6 +20,25 @@ const ScrollDrawer = () => {
   const [content, setContent] = useState<{ allCollections: CollectionsByYear; page: any } | null>(null);
   const [loadedContent, setLoadedContent] = useState({});
   const drawerContentRef = useRef<HTMLDivElement>(null);
+  const drawerRef =  useRef<HTMLDivElement>(null);
+
+ // This effect ensures the drawer is open when the component mounts
+  setIsOpen(true);
+
+  // Function to close the drawer
+  const handleCloseClick = () => {
+    if (drawerRef.current) {
+      // Setting up the transition properties
+      drawerRef.current.style.transition = `transform 0.5s cubic-bezier(0.32, 0.72, 0, 1)`;
+      
+      // Determining the direction based on a 'direction' state or prop
+      const direction = 'bottom'; // Assuming the drawer slides from bottom to top
+  
+      // Applying the transform based on the direction
+      drawerRef.current.style.transform = direction === 'bottom' ? `translate3d(0, 100%, 0)` : `translate3d(0, -100%, 0)`;
+    }
+  };
+  
 
    // Fetch data once on component mount
    useEffect(() => {
@@ -103,7 +122,13 @@ const ScrollDrawer = () => {
       shouldScaleBackground={false}
       onOpenChange={setIsOpen}
     >
-      <DrawerContent className="h-[80%]" >
+      <DrawerContent ref={drawerRef} className="h-[80%]" >
+      <DrawerClose
+          className="rounded-full p-2 bg-zinc-50 dark:bg-custom-dark-gray absolute right-5 top-5 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-gray-100 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-900 dark:data-[state=open]:bg-gray-800"
+          onClick={handleCloseClick} 
+        >
+          <XIcon size={16} aria-label="Close" />
+        </DrawerClose>
         <DrawerHeader id="title">{content?.page?.title}</DrawerHeader>
         <div ref={drawerContentRef} className="overflow-y-auto p-4 drawer-content-class">
           <div className="prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400">

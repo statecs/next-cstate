@@ -3,7 +3,6 @@
 import { forwardRef } from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
 import { cn } from '@/utils/helpers';
-import { XIcon } from 'lucide-react';
 
 
 interface DrawerProps {
@@ -52,10 +51,6 @@ const DrawerContent = forwardRef<HTMLDivElement, DrawerContentProps>(({ classNam
     >
       <div className="mx-auto mt-4 h-2 w-[100px] shrink-0 rounded-full bg-gray-100" />
       {children}
-      <DrawerPrimitive.Close className="rounded-full p-2 bg-zinc-50 dark:bg-custom-dark-gray absolute right-5 top-5 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-gray-100 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-900 dark:data-[state=open]:bg-gray-800">
-        <XIcon size={16} aria-label="Close" />
-      </DrawerPrimitive.Close>
-
     </DrawerPrimitive.Content>
   </DrawerPortal>
 ));
