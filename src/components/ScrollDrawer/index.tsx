@@ -25,15 +25,21 @@ const ScrollDrawer = () => {
    useEffect(() => {
     setIsOpen(true);
     const fetchData = async () => {
-      const response = await fetch('/api/journey');
-      const data = await response.json();
-      if (data && data.allCollections) {
-        setContent({ allCollections: data.allCollections, page: data.page });
-        // Load initial content
-        loadInitialContent(data.allCollections);
+      try {
+        const response = await fetch('/api/journey');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        if (data && data.allCollections) {
+          setContent({ allCollections: data.allCollections, page: data.page });
+          loadInitialContent(data.allCollections);
+        }
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
       }
     };
-    
+  
     fetchData();
   }, [setIsOpen]);
 
