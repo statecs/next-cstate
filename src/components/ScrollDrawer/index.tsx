@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from "react";
-import { Drawer, DrawerContent, DrawerHeader, DrawerClose } from './Drawer';
+import { Drawer, DrawerContent, DrawerHeader, DrawerClose, DrawerTrigger } from './Drawer';
 import { drawerScrollAtom } from '@/utils/store';
 import { useAtom } from 'jotai';
 import { PlusIcon, ArrowUpRightIcon, XIcon } from 'lucide-react'
@@ -21,6 +21,22 @@ const ScrollDrawer = () => {
   const [loadedContent, setLoadedContent] = useState({});
   const drawerContentRef = useRef<HTMLDivElement>(null);
   const drawerRef =  useRef<HTMLDivElement>(null);
+  const [activeSnapPoint, setActiveSnapPoint] = useState<string | number | null>(null);
+
+    // Example function that updates the active snap point
+    const handleSetActiveSnapPoint = (snapPoint: string | number | null) => {
+      setActiveSnapPoint(snapPoint);
+    };
+  
+    // Click handler inside DrawerContent component
+    const handleClick = () => {
+      if (activeSnapPoint === "200px") {
+        setActiveSnapPoint(1);
+      } else {
+        setActiveSnapPoint("200px");
+      }
+    };
+
 
  // This effect ensures the drawer is open when the component mounts
   setIsOpen(true);
@@ -37,12 +53,41 @@ const ScrollDrawer = () => {
       // Applying the transform based on the direction
       drawerRef.current.style.transform = direction === 'bottom' ? `translate3d(0, 100%, 0)` : `translate3d(0, -100%, 0)`;
     }
+    
+    setActiveSnapPoint(0);
+
+    // Set a timeout to match the transition duration
+    setTimeout(() => {
+      const elementToFocus = document.getElementById('topElement');
+      if (elementToFocus) {
+        elementToFocus.focus();
+      }
+    }, 100); // Match this timeout with the transition duration
   };
+  
+    // Effect to handle the Escape key press
+    useEffect(() => {
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+          handleCloseClick();
+          setActiveSnapPoint(0);
+        }
+      };
+  
+      // Attach the event listener to the window object
+      window.addEventListener('keydown', handleKeyDown);
+  
+      // Cleanup function to remove the event listener
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }, []); // Ensure the effect runs only once
   
 
    // Fetch data once on component mount
    useEffect(() => {
     setIsOpen(true);
+    setActiveSnapPoint("200px");
     const fetchData = async () => {
       try {
         const response = await fetch('/api/journey');
@@ -114,7 +159,9 @@ const ScrollDrawer = () => {
 
   return (
     <Drawer
+      setActiveSnapPoint={handleSetActiveSnapPoint}
       snapPoints={["200px", 1]}
+      activeSnapPoint={activeSnapPoint}
       dismissible={true}
       open={isOpen}
       closeThreshold={0}
@@ -122,14 +169,21 @@ const ScrollDrawer = () => {
       shouldScaleBackground={false}
       onOpenChange={setIsOpen}
     >
-      <DrawerContent ref={drawerRef} className="h-[80%]" >
+      <DrawerContent ref={drawerRef} className="h-[80%] lg:h-[100%]">
+      <DrawerTrigger onClick={handleClick}>
+      <div className="mx-auto mt-4 h-2 w-[100px] shrink-0 rounded-full bg-gray-100">
+        <span className="sr-only">
+          {activeSnapPoint === 1 ? "Minimize Drawer" : "Expand Drawer"}
+        </span>
+      </div>
+      </DrawerTrigger>
       <DrawerClose
-          className="rounded-full p-2 bg-zinc-50 dark:bg-custom-dark-gray absolute right-5 top-5 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-gray-100 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-900 dark:data-[state=open]:bg-gray-800"
+          className="rounded-full z-50 p-2 bg-zinc-50 dark:bg-custom-dark-gray absolute right-5 top-5 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-gray-100 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-900 dark:data-[state=open]:bg-gray-800"
           onClick={handleCloseClick} 
         >
           <XIcon size={16} aria-label="Close" />
         </DrawerClose>
-        <DrawerHeader id="title">{content?.page?.title}</DrawerHeader>
+        <DrawerHeader className="lg:hidden" id="title">{content?.page?.title}</DrawerHeader>
         <div ref={drawerContentRef} className="overflow-y-auto p-4 drawer-content-class">
           <div className="prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400">
             {content?.page?.content?.json?.content.map((block: BlockNode, index: number) => (
@@ -143,7 +197,7 @@ const ScrollDrawer = () => {
             ))}
           </div>
           <div className="max-w-[800px] animate-fadeIn">
-            <h2 className="max-w-5xl pb-4 sm:pb-8 space-x-2 text-balance break-normal font-serif text-xl text-black underline-offset-4 group-hover:underline sm:text-2xl md:max-w-5xl md:text-3xl dark:text-white">
+            <h2 className="max-w-5xl pb-4 sm:pb-8 lg:pt-6 space-x-2 text-balance break-normal font-serif text-xl text-black underline-offset-4 group-hover:underline sm:text-2xl md:max-w-5xl md:text-3xl dark:text-white">
               Journey
             </h2>
             {content && Object.entries(loadedContent)
@@ -159,7 +213,7 @@ const ScrollDrawer = () => {
                       </div>
                       <section>
                       {(collections as Collection[]).map((collection, index) => (
-                        <div key={index} className="relative flex pb-8 last:pb-0">
+                        <div key={index} className="relative flex pb-8 md:pt-6 last:pb-0">
                           <div className="absolute inset-0 flex w-6 items-center justify-center">
                             <div className="pointer-events-none h-full w-px border-l-[1px] border-gray-200 dark:border-zinc-700"></div>
                           </div>

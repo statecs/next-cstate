@@ -19,9 +19,7 @@ const HomePage = async () => {
             </div>
         </div>
         
-        <div className="lg:hidden">
             <ScrollDrawer />
-        </div>
         
     </div>
     );

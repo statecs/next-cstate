@@ -7,11 +7,13 @@ import { cn } from '@/utils/helpers';
 
 interface DrawerProps {
   shouldScaleBackground?: boolean;
+  activeSnapPoint?: number | string | null;
+  setActiveSnapPoint?: (snapPoint: number | string | null) => void;
   [key: string]: any;
 }
 
-const Drawer = ({ shouldScaleBackground = true, ...props }: DrawerProps) => (
-  <DrawerPrimitive.Root shouldScaleBackground={shouldScaleBackground} {...props} />
+const Drawer = ({ activeSnapPoint, setActiveSnapPoint, shouldScaleBackground = true, ...props }: DrawerProps) => (
+  <DrawerPrimitive.Root activeSnapPoint={activeSnapPoint} setActiveSnapPoint={setActiveSnapPoint} shouldScaleBackground={shouldScaleBackground} {...props} />
 );
 Drawer.displayName = 'Drawer';
 
@@ -37,23 +39,26 @@ interface DrawerContentProps {
   [key: string]: any;
 }
 
-const DrawerContent = forwardRef<HTMLDivElement, DrawerContentProps>(({ className, children, ...props }, ref) => (
-  <DrawerPortal>
-    <DrawerOverlay />
-    <DrawerPrimitive.Content
-      ref={ref}
-      aria-labelledby="title"
-      className={cn(
-        'fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] bg-white dark:bg-custom-light-gray dark:text-white lg:hidden',
-        className
-      )}
-      {...props}
-    >
-      <div className="mx-auto mt-4 h-2 w-[100px] shrink-0 rounded-full bg-gray-100" />
-      {children}
-    </DrawerPrimitive.Content>
-  </DrawerPortal>
-));
+const DrawerContent = forwardRef<HTMLDivElement, DrawerContentProps>(({ className, children, ...props }, ref) => {
+  
+  return (
+    <DrawerPortal>
+      <DrawerOverlay />
+      <DrawerPrimitive.Content
+        ref={ref}
+        aria-labelledby="title"
+        className={cn(
+          'fixed inset-x-0 bottom-0 lg:inset-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] bg-white dark:bg-custom-light-gray dark:text-white lg:items-center animate-fadeIn md:flex md:w-[calc(100%-260px)] lg:w-[calc(800px)] md:mx-auto',
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </DrawerPrimitive.Content>
+    </DrawerPortal>
+  );
+});
+
 DrawerContent.displayName = 'DrawerContent';
 
 interface DrawerHeaderProps {
