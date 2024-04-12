@@ -8,7 +8,15 @@ import { PlusIcon, ArrowUpRightIcon, XIcon } from 'lucide-react'
 import Image from 'next/image';
 import Link from 'next/link';
 
-type Collection = any;
+interface CollectionItem {
+  id: string;
+  name: string;
+  url?: string;
+  title?: string;
+  description?: string;
+  imageCollection?: any
+}
+type Collection = CollectionItem;
 type CollectionsByYear = { [year: string]: Collection[] };
 type ImageType = {
   url: string;
@@ -18,76 +26,44 @@ type ImageType = {
 const ScrollDrawer = () => {
   const [isOpen, setIsOpen] = useAtom(drawerScrollAtom);
   const [content, setContent] = useState<{ allCollections: CollectionsByYear; page: any } | null>(null);
-  const [loadedContent, setLoadedContent] = useState({});
+  const [loadedContent, setLoadedContent] = useState<CollectionsByYear>({});
   const drawerContentRef = useRef<HTMLDivElement>(null);
-  const drawerRef =  useRef<HTMLDivElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
   const [activeSnapPoint, setActiveSnapPoint] = useState<string | number | null>(null);
 
-    // Example function that updates the active snap point
-    const handleSetActiveSnapPoint = (snapPoint: string | number | null) => {
-      setActiveSnapPoint(snapPoint);
-    };
-  
-    // Click handler inside DrawerContent component
-    const handleClick = () => {
-      if (activeSnapPoint === "200px") {
-        setActiveSnapPoint(1);
-      } else {
-        setActiveSnapPoint("200px");
-      }
-    };
-
-
- // This effect ensures the drawer is open when the component mounts
-  setIsOpen(true);
-
-  // Function to close the drawer
-  const handleCloseClick = () => {
-    if (drawerRef.current) {
-      // Setting up the transition properties
-      drawerRef.current.style.transition = `transform 0.5s cubic-bezier(0.32, 0.72, 0, 1)`;
-      
-      // Determining the direction based on a 'direction' state or prop
-      const direction = 'bottom'; // Assuming the drawer slides from bottom to top
-  
-      // Applying the transform based on the direction
-      drawerRef.current.style.transform = direction === 'bottom' ? `translate3d(0, 100%, 0)` : `translate3d(0, -100%, 0)`;
-    }
-    
-    setActiveSnapPoint(0);
-
-    // Set a timeout to match the transition duration
-    setTimeout(() => {
-      const elementToFocus = document.getElementById('topElement');
-      if (elementToFocus) {
-        elementToFocus.focus();
-      }
-    }, 100); // Match this timeout with the transition duration
+  const handleSetActiveSnapPoint = (snapPoint: string | number | null) => {
+    setActiveSnapPoint(snapPoint);
   };
-  
-    // Effect to handle the Escape key press
-    useEffect(() => {
-      const handleKeyDown = (event: KeyboardEvent) => {
-        if (event.key === 'Escape') {
-          handleCloseClick();
-          setActiveSnapPoint(0);
-        }
-      };
-  
-      // Attach the event listener to the window object
-      window.addEventListener('keydown', handleKeyDown);
-  
-      // Cleanup function to remove the event listener
-      return () => {
-        window.removeEventListener('keydown', handleKeyDown);
-      };
-    }, []); // Ensure the effect runs only once
+
+  const handleClick = () => {
+    setActiveSnapPoint((currentSnapPoint) => currentSnapPoint === "200px" ? 1 : "200px");
+  };
+
+  // This effect ensures the drawer is open when the component mounts
+  setIsOpen(true);
   
 
-   // Fetch data once on component mount
-   useEffect(() => {
-    setIsOpen(true);
-    setActiveSnapPoint("200px");
+  const handleClose = () => {
+    if (drawerRef.current) {
+      drawerRef.current.style.transition = 'transform 0.5s ease';
+      drawerRef.current.style.transform = 'translate3d(0, 100%, 0)';
+    }
+    setActiveSnapPoint(0);
+    setTimeout(() => document.getElementById('topElement')?.focus(), 500);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') handleClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    setIsOpen(true); // Ensure the drawer is opened when the component mounts.
+    setActiveSnapPoint('200px'); // Set initial snap point.
+
     const fetchData = async () => {
       try {
         const response = await fetch('/api/journey');
@@ -95,19 +71,16 @@ const ScrollDrawer = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        if (data && data.allCollections) {
-          setContent({ allCollections: data.allCollections, page: data.page });
-          loadInitialContent(data.allCollections);
-        }
+        setContent({ allCollections: data.allCollections, page: data.page });
+        loadInitialContent(data.allCollections);
       } catch (error) {
-        console.error('Failed to fetch data:', error);
+        console.error('Failed to fetch:', error);
       }
     };
-  
+
     fetchData();
   }, [setIsOpen]);
 
-  // Load initial content
   const loadInitialContent = (allCollections: CollectionsByYear) => {
     const years = Object.keys(allCollections).sort((a, b) => b.localeCompare(a));
     let initialContent: CollectionsByYear = {};
@@ -120,41 +93,35 @@ const ScrollDrawer = () => {
     setLoadedContent(initialContent);
   };
 
-  // Handle scroll to dynamically load more content
-  const handleScroll = (e: Event) => {
-    if (!(e.target instanceof HTMLDivElement)) return;
-  
-    const { scrollTop, scrollHeight, clientHeight } = e.target;
-
-    if (content && content.allCollections) {
-      const threshold = 500; // Pixels from the bottom
-      if (scrollTop + clientHeight + threshold >= scrollHeight) {
-        const years = Object.keys(content.allCollections).sort((a, b) => b.localeCompare(a));
-        
-        setLoadedContent((prevContent: CollectionsByYear) => {
-          let updatedContent = { ...prevContent };
-          const loadCount = 2;
-          let loadedYearsCount = Object.keys(updatedContent).length;
-  
-          for (let i = 0; i < loadCount && (loadedYearsCount + i) < years.length; i++) {
-            const yearToLoad = years[loadedYearsCount + i];
-            updatedContent[yearToLoad] = content.allCollections[yearToLoad];
-          }
-  
-          return updatedContent;
-        });
-      }
-    }
-  };
-
-  // Attach and detach scroll event listener
   useEffect(() => {
     const drawerContent = drawerContentRef.current;
-    if (drawerContent) {
-      drawerContent.addEventListener('scroll', handleScroll);
-      return () => drawerContent.removeEventListener('scroll', handleScroll);
-    }
-  }, [drawerContentRef.current]);
+    if (!drawerContent) return;
+
+    const handleScroll = (e: Event) => {
+      const target = e.target as HTMLDivElement; // Safe type assertion
+      const { scrollTop, scrollHeight, clientHeight } = target;
+      if (content && content.allCollections) {
+        const threshold = 500;
+        if (scrollTop + clientHeight + threshold >= scrollHeight) {
+          setLoadedContent((prevContent) => {
+            const years = Object.keys(content.allCollections).sort((a, b) => b.localeCompare(a));
+            let updatedContent = { ...prevContent };
+            const loadCount = 2;
+            let loadedYearsCount = Object.keys(updatedContent).length;
+
+            for (let i = 0; i < loadCount && loadedYearsCount + i < years.length; i++) {
+              updatedContent[years[loadedYearsCount + i]] = content.allCollections[years[loadedYearsCount + i]];
+            }
+
+            return updatedContent;
+          });
+        }
+      }
+    };
+
+    drawerContent.addEventListener('scroll', handleScroll);
+    return () => drawerContent.removeEventListener('scroll', handleScroll);
+  }, [drawerContentRef.current, content, loadedContent]);
 
 
   return (
@@ -179,7 +146,7 @@ const ScrollDrawer = () => {
       </DrawerTrigger>
       <DrawerClose
           className="rounded-full z-50 p-2 bg-zinc-50 dark:bg-custom-dark-gray absolute right-5 top-5 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-gray-100 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-900 dark:data-[state=open]:bg-gray-800"
-          onClick={handleCloseClick} 
+          onClick={handleClose} 
         >
           <XIcon size={16} aria-label="Close" />
         </DrawerClose>
