@@ -17,12 +17,21 @@ export const getOgImage = async (photos: string[]) => {
                             <div
                                 key={photo}
                                 tw={className}
-                                style={{
+                                style={photos.length > 1 ? {
                                     backgroundImage: `url(${photo
                                         .replace('fm=webp', '')
                                         .replace('w=1800', 'w=800')})`,
                                     backgroundSize: '100% 130%',
                                     backgroundPosition: '0 -15%'
+                                } : {
+                                    backgroundImage: `url(${photo
+                                        .replace('fm=webp', '')
+                                        .replace('w=1800', 'w=800')})`,
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center',
+                                    backgroundRepeat: 'no-repeat', 
+                                    transform: 'scale(1.5)', 
+                                    transformOrigin: 'left top',
                                 }}
                             />
                         );

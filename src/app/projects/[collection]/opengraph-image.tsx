@@ -6,7 +6,7 @@ const handler = async ({params}: {params: {collection: string}}) => {
     if (!collection) return;
 
     const photos = collection.photosCollection.items.filter((photo, index) => {
-        return photo.fullSize.width > photo.fullSize.height && index < 4;
+        return index < 4;
     });
     if (!photos) return;
 
