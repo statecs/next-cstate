@@ -19,7 +19,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
   const [, setFooterVisible] = useAtom(footerVisibilityAtom);
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
-  const suggestions: string[] = ["Who is Christopher?", "What can I do?", "What are my hobbies?"];
+  const suggestions: string[] = ["Who is Christopher?", "What can you do?", "What are your hobbies?"];
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Retrieve cached response on component mount and input change

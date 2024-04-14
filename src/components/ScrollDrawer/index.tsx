@@ -30,13 +30,30 @@ const ScrollDrawer = () => {
   const drawerContentRef = useRef<HTMLDivElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
   const [activeSnapPoint, setActiveSnapPoint] = useState<string | number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleSetActiveSnapPoint = (snapPoint: string | number | null) => {
     setActiveSnapPoint(snapPoint);
   };
 
-  const handleClick = () => {
-    setActiveSnapPoint((currentSnapPoint) => currentSnapPoint === "200px" ? 1 : "200px");
+  const handleMouseDown = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = () => {
+    setIsDragging(true);
+  };
+
+  const handleMouseUp = () => {
+    if (!isDragging) {
+      setActiveSnapPoint((currentSnapPoint) => currentSnapPoint === "200px" ? 1 : "200px");
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      setActiveSnapPoint((currentSnapPoint) => currentSnapPoint === "200px" ? 1 : "200px");
+    }
   };
 
   // This effect ensures the drawer is open when the component mounts
@@ -137,7 +154,11 @@ const ScrollDrawer = () => {
       onOpenChange={setIsOpen}
     >
       <DrawerContent ref={drawerRef} className="h-[80%] lg:h-[100%]">
-      <DrawerTrigger onClick={handleClick}>
+      <DrawerTrigger 
+        onKeyDown={handleKeyDown} 
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}>
       <div className="mx-auto mt-4 h-2 w-[100px] shrink-0 rounded-full bg-gray-100">
         <span className="sr-only">
           {activeSnapPoint === 1 ? "Minimize Drawer" : "Expand Drawer"}
