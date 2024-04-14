@@ -29,7 +29,7 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => (
     >
             <body style={{
            background: 'black'
-          }} className="sm:min-h-full md:flex md:flex-grow md:flex-row bg-white dark:bg-custom-dark-gray">
+          }} className="sm:min-h-full md:flex md:flex-grow md:flex-row bg-white dark:bg-custom-dark-gray overflow-hidden">
 
             <SkipLink />
 
