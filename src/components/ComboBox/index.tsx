@@ -180,7 +180,15 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
 
       {loading && <p aria-live="polite" aria-atomic="true" className="text-sm text-gray-500 dark:text-gray-400">Sending...</p>}
       <div className={`relative text-left w-full mt-6 flex-1 px-4 whitespace-pre-wrap border rounded-lg border-gray-300 dark:border-zinc-700 ${!responseMessage ? 'opacity-0' : ''}`}>
-        <p className="text-sm">{responseMessage || "Passionate, creative, motivated."}</p>
+        {responseMessage ? (
+          <p className="text-sm" dangerouslySetInnerHTML={{ __html: responseMessage
+              .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+              .replace(/^- (.*)/gm, "<li>$1</li>")
+              .replace(/<li>/, "<ul class='list-disc pl-5'><li>")
+              .replace(/<\/li>$/, "</li></ul>") }} />
+        ) : (
+          <p className="text-sm">Passionate, creative, motivated.</p>
+        )}
       </div>
 
     </div>
