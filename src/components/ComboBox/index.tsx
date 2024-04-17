@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
-import { sendMessageToThread } from '@/utils/threadService'; // Ensure this path is correct
+import { sendMessageToThreadStream } from '@/utils/threadService'; // Ensure this path is correct
 import { useAtom } from 'jotai';
 import { footerVisibilityAtom } from '@/utils/store';
 
@@ -19,6 +19,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
   const [, setFooterVisible] = useAtom(footerVisibilityAtom);
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
+  const [eventSource, setEventSource] = useState<EventSource | null>(null);
   const suggestions: string[] = ["Who is Christopher?", "What can you do?", "What are your hobbies?"];
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -42,19 +43,51 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
   };
 
   const sendMessage = async (message: string) => {
-    setLoading(true);
-    setResponseMessage(null); // Reset response message on new request
-    try {
-      const response = await sendMessageToThread(threadId, message, [], assistantId);
-      localStorage.setItem("chatResponse", response);
-      setResponseMessage(response); 
-      setInputValue('');
+      // Reset message and set loading state before any asynchronous operation
+
+      setLoading(true);
+      setResponseMessage(null);
+      setInputValue('');  // Clear input field immediately
       setIsFocused(false);
       setIsFilled(false);
+  
+      try {
+        // Close existing event source if one exists
+        if (eventSource) {
+          eventSource.close();
+          setLoading(false); 
+          setEventSource(null);
+      }
+
+      const newEventSource = await sendMessageToThreadStream(threadId, message, [], assistantId);
+      setEventSource(newEventSource);
+
+      setResponseMessage(null);
+      setLoading(true);
+
+      newEventSource.onmessage = (event) => {
+          const newMessage = JSON.parse(event.data);
+
+          // Update local state
+          setResponseMessage(prevMessages => {
+            const updatedMessages = prevMessages ? `${prevMessages}${newMessage.value}` : newMessage.value;
+            
+            // Save to localStorage
+            localStorage.setItem("chatResponse", updatedMessages);
+
+            return updatedMessages;
+        });
+       
+      };
+
+      newEventSource.onerror = () => {
+        newEventSource.close();
+        setLoading(false);
+      };
+
     } catch (error) {
       console.error('Failed to send message:', error);
       setResponseMessage('Failed to send message');
-    } finally {
       setLoading(false);
     }
   };
@@ -124,6 +157,15 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
       setFilteredSuggestions(suggestions);
     }
   }, [inputValue]);
+
+  // Cleanup EventSource when component unmounts
+  useEffect(() => {
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+    };
+  }, [eventSource]);
   
 
   return (
