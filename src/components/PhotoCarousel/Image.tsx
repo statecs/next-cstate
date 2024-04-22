@@ -19,7 +19,7 @@ const CarouselImage: React.FC<Props> = ({base64, fullSize, isActive, title}) => 
             height={fullSize.height}
             placeholder={base64 ? 'blur' : 'empty'}
             quality={75}
-            sizes="(max-width: 1024px) 100vw, 90vw"
+            sizes="(max-width: 768px) 250px, 100vw"
             src={fullSize.url}
             width={fullSize.width}
         />

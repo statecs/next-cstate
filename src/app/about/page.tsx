@@ -58,6 +58,7 @@ export default async function Journey() {
                             placeholder="empty"
                             priority={false}
                             quality={90}
+                            sizes="(max-width: 768px) 250px, 100vw"
                             src={page.photo?.url}
                             width={page.photo?.width}
                             />
@@ -114,7 +115,7 @@ export default async function Journey() {
                                                                     alt={image.description || ''}
                                                                     width={0}
                                                                     height={0}
-                                                                    sizes="100vw"
+                                                                    sizes="(max-width: 768px) 250px, 100vw"
                                                                     style={{ width: '100%', height: 'auto' }}
                                                                     loading={imgIndex < 3 ? 'eager' : 'lazy'}
                                                                     className="animate-reveal w-full object-cover"

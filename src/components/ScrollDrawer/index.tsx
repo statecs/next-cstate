@@ -234,7 +234,7 @@ const ScrollDrawer = () => {
                                     alt={image.description || ''}
                                     width={0}
                                     height={0}
-                                    sizes="100vw"
+                                    sizes="(max-width: 768px) 250px, 100vw"
                                     style={{ width: '100%', height: 'auto' }}
                                     loading={imgIdx < 3 ? 'eager' : 'lazy'}
                                     className="animate-reveal w-full object-cover"
