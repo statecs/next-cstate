@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
 import { sendMessageToThreadStream } from '@/utils/threadService'; // Ensure this path is correct
 import { useAtom } from 'jotai';
-import { footerVisibilityAtom } from '@/utils/store';
+import { footerVisibilityAtom, responseMessageLengthAtom } from '@/utils/store';
 
 interface ComboBoxProps {
   threadId: string;
@@ -22,6 +22,13 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
   const [eventSource, setEventSource] = useState<EventSource | null>(null);
   const suggestions: string[] = ["Who is Christopher?", "What can you do?", "What are your hobbies?"];
   const inputRef = useRef<HTMLInputElement>(null);
+  const [, setResponseMessageLength] = useAtom(responseMessageLengthAtom);
+
+  useEffect(() => {
+    if (responseMessage) {
+      setResponseMessageLength(responseMessage.length);
+    }
+  }, [responseMessage, setResponseMessageLength]);
 
   // Retrieve cached response on component mount and input change
   useEffect(() => {
