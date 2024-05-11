@@ -48,7 +48,7 @@ const DrawerContent = forwardRef<HTMLDivElement, DrawerContentProps>(({ classNam
         ref={ref}
         aria-labelledby="title"
         className={cn(
-          'fixed inset-x-0 bottom-0 lg:inset-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] bg-white dark:bg-custom-light-gray dark:text-white lg:items-center animate-fadeIn md:flex md:w-[calc(100%-260px)] lg:w-[calc(800px)] md:mx-auto',
+          'fixed inset-x-0 bottom-0 lg:inset-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] bg-white dark:bg-custom-light-gray dark:text-white lg:items-center animate-fadeIn md:flex md:w-[calc(100%-260px)] lg:w-[calc(800px)] xl:w-[calc(1300px)] md:mx-auto',
           className
         )}
         {...props}

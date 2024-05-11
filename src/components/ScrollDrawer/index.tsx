@@ -173,7 +173,7 @@ const ScrollDrawer = () => {
         </DrawerClose>
         <DrawerHeader className="lg:hidden" id="title">{content?.page?.title}</DrawerHeader>
         <div ref={drawerContentRef} className="overflow-y-auto p-4 drawer-content-class">
-          <div className="prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400">
+          <div className="prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-6xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400">
             {content?.page?.content?.json?.content.map((block: BlockNode, index: number) => (
               block.nodeType === 'paragraph' && (
                 <p key={index}>
