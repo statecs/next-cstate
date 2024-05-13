@@ -216,13 +216,13 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
         <div className="absolute text-left z-50 w-full md:mt-10 top-12 md:top-10 left-0 mt-1 p-2 bg-white dark:bg-custom-light-gray dark:text-white border border-gray-300 rounded-md">
           
           {filteredSuggestions.map((suggestion, index) => (
-              <div
+              <button
                 key={index}
-                className={`p-2 ${index === selectedIndex ? 'bg-zinc-700' : ''} dark:hover:bg-zinc-700 cursor-pointer`}
+                className={`w-full text-left block p-2 ${index === selectedIndex ? 'bg-zinc-700' : ''} dark:hover:bg-zinc-700 cursor-pointer`}
                 onClick={() => handleSuggestionClick(suggestion)}
               >
                 {suggestion}
-              </div>
+              </button>
             ))}
         </div>
       )}
