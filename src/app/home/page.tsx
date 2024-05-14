@@ -8,7 +8,6 @@ import ClientPadding from './ClientPadding';
 
 const HomePage = async () => {
     const page = await fetchEditorialPage('home') || {};
-    const threadId = await generateNewThreadId();
 
     return (
         <ClientPadding>
@@ -17,7 +16,7 @@ const HomePage = async () => {
                 <ProfileSection />
 
                 <div className="prose-sm leading-relaxed tracking-wide dark:prose-invert prose-p:text-gray-500 dark:prose-p:text-gray-300 px-5 md:px-0 font-serif ">
-                    <ComboBox threadId={threadId} assistantId={process.env.ASSISTANT_ID || ''}  />
+                    <ComboBox assistantId={process.env.ASSISTANT_ID || ''}  />
                 </div>
             </div>
             
@@ -25,45 +24,6 @@ const HomePage = async () => {
             
         </ClientPadding>
     );
-};
-const generateNewThreadId = async () => {
-
-    const baseUrl = process.env.NEXT_PUBLIC_URL;
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    try {
-        
-        const response = await fetch(`${baseUrl}/api/thread`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            signal: signal
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        // Extract threadId from Set-Cookie header if available
-        const setCookie = response.headers.get('set-cookie');
-        if (setCookie && setCookie.includes('threadId')) {
-            const matches = setCookie.match(/threadId=([^;]+)/);
-            if (matches && matches[1]) {
-                console.log("Extracted threadId from Set-Cookie:", matches[1]);
-                return matches[1]; // Use the threadId from the cookie
-            }
-        }
-
-        return data.threadId; // Assuming the thread ID is returned like this
-
-    } catch (error) {
-        console.error('Failed to generate new thread ID:', error);
-        return null; // Handle errors or define fallback behavior
-    }
 };
 
 

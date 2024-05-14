@@ -6,11 +6,10 @@ import { useAtom } from 'jotai';
 import { footerVisibilityAtom, responseMessageLengthAtom } from '@/utils/store';
 
 interface ComboBoxProps {
-  threadId: string;
   assistantId: string;
 }
 
-const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
+const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
   const [inputValue, setInputValue] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [isFilled, setIsFilled] = useState(false);
@@ -49,21 +48,61 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
     ));
   };
 
-  const sendMessage = async (message: string) => {
-      // Reset message and set loading state before any asynchronous operation
-
-      setLoading(true);
-      setResponseMessage(null);
-      setInputValue('');  // Clear input field immediately
-      setIsFocused(false);
-      setIsFilled(false);
+  const generateNewThreadId = async () => {
+    const baseUrl = process.env.NEXT_PUBLIC_URL;
+    const controller = new AbortController();
+    const signal = controller.signal;
   
-      try {
-        // Close existing event source if one exists
-        if (eventSource) {
-          eventSource.close();
-          setLoading(false); 
-          setEventSource(null);
+    try {
+      const response = await fetch(`${baseUrl}/api/thread`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        signal: signal
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+  
+      // Extract threadId from Set-Cookie header if available
+      const setCookie = response.headers.get('set-cookie');
+      if (setCookie && setCookie.includes('threadId')) {
+        const matches = setCookie.match(/threadId=([^;]+)/);
+        if (matches && matches[1]) {
+          console.log("Extracted threadId from Set-Cookie:", matches[1]);
+          return matches[1]; // Use the threadId from the cookie
+        }
+      }
+  
+      return data.threadId; // Assuming the thread ID is returned like this
+  
+    } catch (error) {
+      console.error('Failed to generate new thread ID:', error);
+      return null; // Handle errors or define fallback behavior
+    }
+  };
+
+  const sendMessage = async (message: string) => {
+    // Reset message and set loading state before any asynchronous operation
+    setLoading(true);
+    setResponseMessage(null);
+    setInputValue('');  // Clear input field immediately
+    setIsFocused(false);
+    setIsFilled(false);
+
+    try {
+      // Generate a new thread ID if it's not provided
+      const threadId = await generateNewThreadId();
+
+      // Close existing event source if one exists
+      if (eventSource) {
+        eventSource.close();
+        setLoading(false); 
+        setEventSource(null);
       }
 
       const newEventSource = await sendMessageToThreadStream(threadId, message, [], assistantId);
@@ -73,18 +112,18 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
       setLoading(true);
 
       newEventSource.onmessage = (event) => {
-          const newMessage = JSON.parse(event.data);
+        const newMessage = JSON.parse(event.data);
 
-          // Update local state
-          setResponseMessage(prevMessages => {
-            const updatedMessages = prevMessages ? `${prevMessages}${newMessage.value}` : newMessage.value;
-            
-            // Save to localStorage
-            localStorage.setItem("chatResponse", updatedMessages);
+        // Update local state
+        setResponseMessage(prevMessages => {
+          const updatedMessages = prevMessages ? `${prevMessages}${newMessage.value}` : newMessage.value;
 
-            return updatedMessages;
+          // Save to localStorage
+          localStorage.setItem("chatResponse", updatedMessages);
+
+          return updatedMessages;
         });
-       
+
       };
 
       newEventSource.onerror = () => {
@@ -122,7 +161,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
       setIsFocused(false);
     }
   };
-  
+
 
   const handleButtonClick = () => {
     // If the input value is empty and the input is not focused, focus the input.
@@ -194,17 +233,17 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
           disabled={loading}
         />
         <button 
-        aria-label="Send message"
-        disabled={loading}
-        className="absolute bottom-3 md:bottom-1.5 right-3 md:right-2 bg-black dark:bg-white rounded-lg border border-black p-0.5 text-white transition-colors disabled:text-gray-400 disabled:opacity-10 dark:border-white dark:bg-white dark:hover:bg-white md:bottom-3 md:right-3"
-        onClick={handleButtonClick}
-      >
-        <span data-state="closed">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white dark:text-black">
-            <path d="M7 11L12 6L17 11M12 18V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
-          </svg>
-        </span>
-      </button>
+          aria-label="Send message"
+          disabled={loading}
+          className="absolute bottom-3 md:bottom-1.5 right-3 md:right-2 bg-black dark:bg-white rounded-lg border border-black p-0.5 text-white transition-colors disabled:text-gray-400 disabled:opacity-10 dark:border-white dark:bg-white dark:hover:bg-white md:bottom-3 md:right-3"
+          onClick={handleButtonClick}
+        >
+          <span data-state="closed">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white dark:text-black">
+              <path d="M7 11L12 6L17 11M12 18V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
+            </svg>
+          </span>
+        </button>
       </div>
       <label
         htmlFor="queryInput"
@@ -214,19 +253,17 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
       </label>
       {isFocused && filteredSuggestions.length > 0 && (
         <div className="absolute text-left z-50 w-full md:mt-10 top-12 md:top-10 left-0 mt-1 p-2 bg-white dark:bg-custom-light-gray dark:text-white border border-gray-300 rounded-md">
-          
           {filteredSuggestions.map((suggestion, index) => (
-              <button
-                key={index}
-                className={`w-full text-left block p-2 ${index === selectedIndex ? 'bg-zinc-700' : ''} dark:hover:bg-zinc-700 cursor-pointer`}
-                onClick={() => handleSuggestionClick(suggestion)}
-              >
-                {suggestion}
-              </button>
-            ))}
+            <button
+              key={index}
+              className={`w-full text-left block p-2 ${index === selectedIndex ? 'bg-zinc-700' : ''} dark:hover:bg-zinc-700 cursor-pointer`}
+              onClick={() => handleSuggestionClick(suggestion)}
+            >
+              {suggestion}
+            </button>
+          ))}
         </div>
       )}
-
       {loading && <p aria-live="polite" aria-atomic="true" className="text-sm text-gray-500 dark:text-gray-400">Sending...</p>}
       <div className={`relative text-left w-full mt-6 flex-1 px-4 whitespace-pre-wrap border rounded-lg border-gray-300 dark:border-zinc-700 ${!responseMessage ? 'opacity-0' : ''}`}>
         {responseMessage ? (
@@ -239,10 +276,8 @@ const ComboBox: React.FC<ComboBoxProps> = ({ threadId, assistantId }) => {
           <p className="text-sm">Passionate, creative, motivated.</p>
         )}
       </div>
-
     </div>
   );
-  
 };
 
 export default ComboBox;
