@@ -33,14 +33,6 @@ export const POST = async (request: NextRequest) => {
             headers: { 'Content-Type': 'application/json' }
         });
 
-        // Set the cookie with threadId
-        jsonResponse.cookies.set('threadId', threadId, {
-            path: '/',
-            httpOnly: true,
-            sameSite: 'strict',
-            maxAge: 60 * 60 * 24 * 7 // 7 days
-        });
-
         return jsonResponse;
 
     } catch (error) {

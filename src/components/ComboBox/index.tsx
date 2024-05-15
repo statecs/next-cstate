@@ -49,6 +49,20 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
   };
 
   const generateNewThreadId = async () => {
+    // Function to get the threadId from localStorage
+    const getThreadIdFromLocalStorage = () => {
+      return localStorage.getItem('threadId');
+    };
+
+    // Check if threadId exists in localStorage
+    let threadId = getThreadIdFromLocalStorage();
+
+    // If threadId exists in localStorage, use it
+    if (threadId) {
+      return threadId;
+    }
+
+    // Otherwise, make the API call to get a new threadId
     const baseUrl = process.env.NEXT_PUBLIC_URL;
     const controller = new AbortController();
     const signal = controller.signal;
@@ -67,19 +81,10 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
       }
   
       const data = await response.json();
-  
-      // Extract threadId from Set-Cookie header if available
-      const setCookie = response.headers.get('set-cookie');
-      if (setCookie && setCookie.includes('threadId')) {
-        const matches = setCookie.match(/threadId=([^;]+)/);
-        if (matches && matches[1]) {
-          console.log("Extracted threadId from Set-Cookie:", matches[1]);
-          return matches[1]; // Use the threadId from the cookie
-        }
-      }
-  
+
+      // Store threadId in localStorage
+      localStorage.setItem('threadId', data.threadId);
       return data.threadId; // Assuming the thread ID is returned like this
-  
     } catch (error) {
       console.error('Failed to generate new thread ID:', error);
       return null; // Handle errors or define fallback behavior
@@ -95,20 +100,20 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
     setIsFilled(false);
 
     try {
-     // Generate a new thread ID with timeout
-     const threadIdPromise = generateNewThreadId();
-     const timeoutPromise = new Promise<string | null>(resolve => {
-       setTimeout(() => resolve(null), 1000); // 5 seconds timeout
-     });
+      // Generate a new thread ID with timeout
+      const threadIdPromise = generateNewThreadId();
+      const timeoutPromise = new Promise<string | null>(resolve => {
+        setTimeout(() => resolve(null), 1500); // 5 seconds timeout
+      });
 
-     const threadId = await Promise.race([threadIdPromise, timeoutPromise]);
+      const threadId = await Promise.race([threadIdPromise, timeoutPromise]);
 
-     // Ensure a valid threadId is obtained before proceeding
-     if (!threadId) {
-       setResponseMessage('Failed to obtain thread ID in time.');
-       setLoading(false);
-       return;
-     }
+      // Ensure a valid threadId is obtained before proceeding
+      if (!threadId) {
+        setResponseMessage('Failed to obtain thread ID in time.');
+        setLoading(false);
+        return;
+      }
 
       // Close existing event source if one exists
       if (eventSource) {
@@ -224,7 +229,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
       }
     };
   }, [eventSource]);
-  
+
 
   return (
     <div className="relative flex flex-col space-y-2 max-w-[500px] justify-center items-center">
