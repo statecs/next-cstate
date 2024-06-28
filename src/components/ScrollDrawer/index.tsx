@@ -24,6 +24,7 @@ type ImageType = {
 };
 
 const ScrollDrawer = () => {
+  const [isMobile, setIsMobile] = useState(true);
   const [isOpen, setIsOpen] = useAtom(drawerScrollAtom);
   const [content, setContent] = useState<{ allCollections: CollectionsByYear; page: any } | null>(null);
   const [loadedContent, setLoadedContent] = useState<CollectionsByYear>({});
@@ -31,6 +32,18 @@ const ScrollDrawer = () => {
   const drawerRef = useRef<HTMLDivElement>(null);
   const [activeSnapPoint, setActiveSnapPoint] = useState<string | number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+
+
+  useEffect(() => {
+    const handleResize = () => {
+    setIsMobile(window.innerWidth < 768);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+}, []);
+
 
   const handleSetActiveSnapPoint = (snapPoint: string | number | null) => {
     setActiveSnapPoint(snapPoint);
@@ -142,6 +155,9 @@ const ScrollDrawer = () => {
 
 
   return (
+    <>
+    {isMobile && (
+
     <Drawer
       setActiveSnapPoint={handleSetActiveSnapPoint}
       snapPoints={["200px", 1]}
@@ -255,6 +271,8 @@ const ScrollDrawer = () => {
         </div>
       </DrawerContent>
     </Drawer>
+      )}
+    </>
   );
 };
 

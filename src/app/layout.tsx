@@ -44,7 +44,7 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => (
                     </SideMenu>
                     <div id="main" className="flex flex-1 overflow-auto">{children}</div>
                 </div>
-                <div className="sticky bottom-0 w-full lg:hidden shadow-lg before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-t before:from-gray-100 before:to-transparent dark:before:from-custom-dark-gray dark:before:to-transparent">
+                <div className="sticky bottom-0 w-full shadow-lg before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-t before:from-gray-100 before:to-transparent dark:before:from-custom-dark-gray dark:before:to-transparent">
                     <SiteFooter />
                 </div>
             </main>
