@@ -131,6 +131,13 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
       newEventSource.onmessage = (event) => {
         const newMessage = JSON.parse(event.data);
 
+        if (newMessage.error === "Internal Server Error") {
+          setResponseMessage("Oops! Our API decided to take a coffee break. While it's sipping espresso, why not grab a book? Who knows, you might learn something before our code remembers how to function. Error: \"Failed to receive message\" (and basic manners, apparently).");
+          newEventSource.close();
+          setLoading(false);
+          return;
+        }
+
         // Update local state
         setResponseMessage(prevMessages => {
           const updatedMessages = prevMessages ? `${prevMessages}${newMessage.value}` : newMessage.value;
