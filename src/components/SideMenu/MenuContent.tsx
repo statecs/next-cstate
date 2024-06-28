@@ -39,7 +39,7 @@ export const MenuContent: React.FC = () => {
             />
             <div className="flex flex-col">
               <span className="font-semibold tracking-tight">Christopher State</span>
-              <span className="text-gray-600 dark:text-gray-400">Design Technologist</span>
+              <span className="text-gray-600 dark:text-gray-400">UX/UI Engineer & Accessibility Specialist</span>
             </div>
           </div>
         </Link>
