@@ -103,7 +103,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
       // Generate a new thread ID with timeout
       const threadIdPromise = generateNewThreadId();
       const timeoutPromise = new Promise<string | null>(resolve => {
-        setTimeout(() => resolve(null), 1500); // 5 seconds timeout
+        setTimeout(() => resolve(null), 2000); // 5 seconds timeout
       });
 
       const threadId = await Promise.race([threadIdPromise, timeoutPromise]);
