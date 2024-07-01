@@ -6,29 +6,14 @@ import { drawerAtom } from '@/utils/store';
 import { LoginLink, LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { ArrowUpRightIcon } from 'lucide-react';
 import Link from 'next/link';
+import { useAuthStatus } from '@/hooks/useAuthStatus';
 
 const SiteMenu: React.FC = () => {
     const [, setIsOpen] = useAtom(drawerAtom);
     const closeDrawer = () => setIsOpen(false);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const { isAuthenticated, loading } = useAuthStatus();
 
-    useEffect(() => {
-        fetch('/api/auth-status')
-            .then(res => res.json())
-            .then(data => {
-                setIsAuthenticated(data.isAuthenticated);
-                setUser(data.user);
-                setIsLoading(false);
-            })
-            .catch(error => {
-                console.error('Error fetching auth status:', error);
-                setIsLoading(false);
-            });
-    }, []);
-
-    if (isLoading) {
+    if (loading) {
         return <div>Loading...</div>;
     }
 

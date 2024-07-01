@@ -7,6 +7,7 @@ import { NavigationLink } from './NavigationLink';
 import { PROFILES, LINKS } from '@/utils/constants';
 import { useAtom } from 'jotai';
 import { drawerAtom } from '@/utils/store';
+import { useAuthStatus } from '@/hooks/useAuthStatus';
 
 interface LinkItem {
   href: string;
@@ -25,18 +26,7 @@ interface Profile {
 export const MenuContent: React.FC = () => {
   const [, setIsOpen] = useAtom(drawerAtom);
   const closeDrawer = () => setIsOpen(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    fetch('/api/auth-status')
-      .then(res => res.json())
-      .then(data => {
-        setIsAuthenticated(data.isAuthenticated);
-      })
-      .catch(error => {
-        console.error('Error fetching auth status:', error);
-      });
-  }, []);
+  const { isAuthenticated } = useAuthStatus();
 
   const filteredLinks = LINKS.filter(link => 
     link.href !== '/writing' || isAuthenticated

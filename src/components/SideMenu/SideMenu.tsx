@@ -4,6 +4,7 @@ import { ScrollArea } from './ScrollArea';
 import { useKeyPress } from '@/hooks/useKeyPress';
 import { cn } from '@/utils/helpers';
 import { useState, useEffect } from 'react';
+import { useAuthStatus } from '@/hooks/useAuthStatus';
 
 interface SideMenuProps {
   children: React.ReactNode;
@@ -15,7 +16,7 @@ interface SideMenuProps {
 export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { isAuthenticated, loading } = useAuthStatus();
   const [keyCodePathnameMapping, setKeyCodePathnameMapping] = useState<{ [key: string]: string | undefined }>({
     Digit1: '/',
     Digit2: '/about',
@@ -25,27 +26,21 @@ export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner }) 
   });
 
   useEffect(() => {
-    fetch('/api/auth-status')
-      .then(res => res.json())
-      .then(data => {
-        setIsAuthenticated(data.isAuthenticated);
-        if (data.isAuthenticated) {
-          setKeyCodePathnameMapping(prevMapping => ({
-            ...prevMapping,
-            Digit5: '/writing',
-            Digit6: '/contact'
-          }));
-        } else {
-          setKeyCodePathnameMapping(prevMapping => ({
-            ...prevMapping,
-            Digit5: '/contact'
-          }));
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching auth status:', error);
-      });
-  }, []);
+    if (!loading) {
+      if (isAuthenticated) {
+        setKeyCodePathnameMapping(prevMapping => ({
+          ...prevMapping,
+          Digit5: '/writing',
+          Digit6: '/contact'
+        }));
+      } else {
+        setKeyCodePathnameMapping(prevMapping => ({
+          ...prevMapping,
+          Digit5: '/contact'
+        }));
+      }
+    }
+  }, [isAuthenticated, loading]);
 
   useKeyPress(onKeyPress, Object.keys(keyCodePathnameMapping));
 

@@ -5,6 +5,7 @@ import SocialLinks from '@/components/SiteMenu/SocialLinks';
 import UnderlineLink from '@/components/UnderlineLink';
 import { useAtom } from 'jotai';
 import { drawerAtom, footerVisibilityAtom } from '@/utils/store';
+import { useAuthStatus } from '@/hooks/useAuthStatus';
 
 const LINKS = [
   { label: 'About', url: '/about' },
@@ -17,18 +18,7 @@ const SiteFooter: React.FC = () => {
   const [, setIsOpen] = useAtom(drawerAtom);
   const closeDrawer = () => setIsOpen(false);
   const [isFooterVisible] = useAtom(footerVisibilityAtom);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    fetch('/api/auth-status')
-      .then(res => res.json())
-      .then(data => {
-        setIsAuthenticated(data.isAuthenticated);
-      })
-      .catch(error => {
-        console.error('Error fetching auth status:', error);
-      });
-  }, []);
+  const { isAuthenticated } = useAuthStatus();
 
   const visibleLinks = LINKS.filter(link => 
     link.label !== 'Writing' || isAuthenticated
