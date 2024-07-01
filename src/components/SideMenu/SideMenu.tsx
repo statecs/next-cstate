@@ -1,28 +1,52 @@
 'use client';
-
 import { useRouter, usePathname } from 'next/navigation';
 import { ScrollArea } from './ScrollArea';
 import { useKeyPress } from '@/hooks/useKeyPress';
 import { cn } from '@/utils/helpers';
-
-const keyCodePathnameMapping: { [key: string]: string | undefined } = {
-  Digit1: '/',
-  Digit2: '/about',
-  Digit3: '/projects',
-  Digit4: '/links',
-  Digit5: '/contact',
-};
+import { useState, useEffect } from 'react';
 
 interface SideMenuProps {
   children: React.ReactNode;
   title?: string;
   isInner?: boolean;
-  className?: string; // Add this line if className should be accepted
+  className?: string;
 }
 
 export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [keyCodePathnameMapping, setKeyCodePathnameMapping] = useState<{ [key: string]: string | undefined }>({
+    Digit1: '/',
+    Digit2: '/about',
+    Digit3: '/projects',
+    Digit4: '/links',
+    Digit5: '/contact',
+  });
+
+  useEffect(() => {
+    fetch('/api/auth-status')
+      .then(res => res.json())
+      .then(data => {
+        setIsAuthenticated(data.isAuthenticated);
+        if (data.isAuthenticated) {
+          setKeyCodePathnameMapping(prevMapping => ({
+            ...prevMapping,
+            Digit5: '/writing',
+            Digit6: '/contact'
+          }));
+        } else {
+          setKeyCodePathnameMapping(prevMapping => ({
+            ...prevMapping,
+            Digit5: '/contact'
+          }));
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching auth status:', error);
+      });
+  }, []);
+
   useKeyPress(onKeyPress, Object.keys(keyCodePathnameMapping));
 
   function onKeyPress(event: KeyboardEvent) {
@@ -38,7 +62,6 @@ export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner }) 
         isInner ? 'lg:w-80 xl:w-96 border-l dark:border-zinc-700' : 'lg:w-60 xl:w-72'
       )}
     >
-      
       {title && (
         <div className="sticky top-0 z-10 border-b dark:border-zinc-700 bg-zinc-50 dark:text-white dark:bg-custom-light-gray px-5 py-3">
           <div className="flex items-center justify-between">
