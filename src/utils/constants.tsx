@@ -8,7 +8,8 @@ import {
     NavigationIcon,
     BookmarkIcon,
     CircleUserIcon,
-    ContactIcon
+    ContactIcon,
+    StickerIcon
   } from 'lucide-react'
 
 export const SCROLL_AREA_ID = 'scroll-area';
@@ -83,12 +84,17 @@ export const LINKS: Link[] = [
   {
     href: '/projects',
     label: 'Projects',
-    icon: <PencilLineIcon size={16} />
+    icon: <StickerIcon size={16} />
   },
   {
     href: '/links',
     label: 'Links',
     icon: <BookmarkIcon size={16} />
+  },
+  {
+    href: '/writing',
+    label: 'Writing',
+    icon: <PencilLineIcon size={16} />
   },
   {
     href: '/contact',

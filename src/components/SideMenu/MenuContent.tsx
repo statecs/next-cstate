@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { NavigationLink } from './NavigationLink';
@@ -20,9 +21,26 @@ interface Profile {
   icon?: React.ReactElement; // Making icon optional or ensure it's always provided
 }
 
+
 export const MenuContent: React.FC = () => {
   const [, setIsOpen] = useAtom(drawerAtom);
   const closeDrawer = () => setIsOpen(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/auth-status')
+      .then(res => res.json())
+      .then(data => {
+        setIsAuthenticated(data.isAuthenticated);
+      })
+      .catch(error => {
+        console.error('Error fetching auth status:', error);
+      });
+  }, []);
+
+  const filteredLinks = LINKS.filter(link => 
+    link.href !== '/writing' || isAuthenticated
+  );
   
   return (
     <nav aria-label="Main navigation" className="flex w-full flex-col text-sm">
@@ -42,7 +60,7 @@ export const MenuContent: React.FC = () => {
           </div>
         </Link>
         <ul className="flex flex-col gap-1 pb-4 list-none">
-          {LINKS.map((link: LinkItem, linkIndex: number) => (
+        {filteredLinks.map((link: LinkItem, linkIndex: number) => (
             <li key={link.href}>
               <NavigationLink
                 href={link.href}
