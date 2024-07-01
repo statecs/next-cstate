@@ -5,24 +5,30 @@ import { usePathname } from 'next/navigation';
 import { LinkList } from './LinkList';
 import { cn } from '@/utils/helpers';
 
-
 export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile }) => {
   const pathname = usePathname();
 
   return (
-    <div className={cn(isMobile ? ' animate-fadeIn' : 'flex flex-col gap-1 text-sm')}>
+    <nav aria-label="Projects navigation">
       {list.length > 0 ? (
-        list.map((post) => {
-          const basePath = `/projects${post.url}`;
-          const isActive = pathname === basePath || pathname.startsWith(`${basePath}/`);
+        <ul className={cn(
+          'list-none p-0',
+          isMobile ? 'animate-fadeIn' : 'flex flex-col gap-1 text-sm'
+        )}>
+          {list.map((post) => {
+            const basePath = `/projects${post.url}`;
+            const isActive = pathname === basePath || pathname.startsWith(`${basePath}/`);
 
-          return (
-            <LinkList key={post.url} post={post} isMobile={isMobile} isActive={isActive} />
-          );
-        })
+            return (
+              <li key={post.url}>
+                <LinkList post={post} isMobile={isMobile} isActive={isActive} />
+              </li>
+            );
+          })}
+        </ul>
       ) : (
-        <div>No posts available.</div>
+        <p>No posts available.</p>
       )}
-    </div>
+    </nav>
   );
 };

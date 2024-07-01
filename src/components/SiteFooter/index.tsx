@@ -19,14 +19,20 @@ const SiteFooter: React.FC = () => {
   return (
     <>
       {isFooterVisible && (
-        <nav aria-label="Footer Navigation" className="relative py-5 z-50 flex justify-center space-x-3 border-t dark:border-zinc-800 pb-4 items-center">
-          {LINKS.map(link => (
-            <UnderlineLink href={link.url} key={link.url} className="text-sm" onClick={closeDrawer}>
-              {link.label}
-            </UnderlineLink>
-          ))}
-          <SocialLinks />
-        </nav>
+        <footer className="relative py-5 z-50 border-t dark:border-zinc-800 pb-4">
+          <nav aria-label="Footer Navigation" className="flex flex-wrap justify-center items-center gap-3">
+            <ul className="flex flex-wrap justify-center items-center gap-3 list-none">
+              {LINKS.map(link => (
+                <li key={link.url}>
+                  <UnderlineLink href={link.url} className="text-sm" onClick={closeDrawer}>
+                    {link.label}
+                  </UnderlineLink>
+                </li>
+              ))}
+            </ul>
+            <SocialLinks />
+          </nav>
+        </footer>
       )}
     </>
   );
