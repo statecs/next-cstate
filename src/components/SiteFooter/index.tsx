@@ -1,13 +1,15 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import SocialLinks from '@/components/SiteMenu/SocialLinks';
 import UnderlineLink from '@/components/UnderlineLink';
 import { useAtom } from 'jotai';
 import { drawerAtom, footerVisibilityAtom } from '@/utils/store';
 
-export const LINKS = [
+const LINKS = [
   { label: 'About', url: '/about' },
   { label: 'Projects', url: '/projects' },
+  { label: 'Writing', url: '/writing' },
   { label: 'Contact', url: '/contact' },
 ];
 
@@ -15,6 +17,22 @@ const SiteFooter: React.FC = () => {
   const [, setIsOpen] = useAtom(drawerAtom);
   const closeDrawer = () => setIsOpen(false);
   const [isFooterVisible] = useAtom(footerVisibilityAtom);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/auth-status')
+      .then(res => res.json())
+      .then(data => {
+        setIsAuthenticated(data.isAuthenticated);
+      })
+      .catch(error => {
+        console.error('Error fetching auth status:', error);
+      });
+  }, []);
+
+  const visibleLinks = LINKS.filter(link => 
+    link.label !== 'Writing' || isAuthenticated
+  );
 
   return (
     <>
@@ -22,7 +40,7 @@ const SiteFooter: React.FC = () => {
         <footer className="relative py-5 z-50 border-t dark:border-zinc-800 pb-4">
           <nav aria-label="Footer Navigation" className="flex flex-wrap justify-center items-center gap-3">
             <ul className="flex flex-wrap justify-center items-center gap-3 list-none">
-              {LINKS.map(link => (
+              {visibleLinks.map(link => (
                 <li key={link.url}>
                   <UnderlineLink href={link.url} className="text-sm" onClick={closeDrawer}>
                     {link.label}
