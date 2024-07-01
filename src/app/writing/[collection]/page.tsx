@@ -18,7 +18,11 @@ const CollectionPage = async ({ params }: Props) => {
     const { isAuthenticated } = getKindeServerSession();
     const authStatus = await isAuthenticated();
 
-    if (!authStatus) {
+    const collection = await fetchWriting(params.collection, isDraftModeEnabled);
+
+    if (!collection) return notFound();
+
+    if (!collection.isPublic && !authStatus) {
         const baseUrl = process.env.NEXT_PUBLIC_URL;
         
         if (!baseUrl) {
@@ -27,10 +31,6 @@ const CollectionPage = async ({ params }: Props) => {
 
         redirect(`${baseUrl}/api/auth/login?post_login_redirect_url=${baseUrl}/writing/${params.collection}`);
     }
-
-    const collection = await fetchWriting(params.collection, isDraftModeEnabled);
-
-    if (!collection) return notFound();
 
     return (
         <ScrollArea useScrollAreaId>
@@ -52,14 +52,7 @@ const CollectionPage = async ({ params }: Props) => {
     );
 };
 
-export const generateStaticParams = async () => {
-    const allCollections = await fetchAllWritings();
-    if (!allCollections) return [];
 
-    return allCollections.map(collection => ({
-        params: { collection: collection.slug }
-    }));
-};
 
 export const generateMetadata = async ({params}: Props) => {
     const collection = await fetchWriting(params.collection);

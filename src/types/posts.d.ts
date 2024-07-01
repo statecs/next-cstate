@@ -6,6 +6,7 @@ interface Post {
     image?: string;
     description?: string;
     date?: string;
+    isPublic?: boolean;
   }
   
 

@@ -8,6 +8,7 @@ interface Link {
     image?: string; 
     description?: string; 
     date?: string;
+    isPublic?: boolean;
 }
 
 interface LinksPage {

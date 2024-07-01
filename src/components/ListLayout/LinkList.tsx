@@ -6,12 +6,15 @@ import NewBadge from '@/components/PhotoCollection/New';
 import { isCollectionNew } from '@/utils/helpers';
 import Image from 'next/image';
 import { cn } from '@/utils/helpers'
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Lock } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { PrivateBadge } from './PrivateBadge';
+import { useAuthStatus } from '@/hooks/useAuthStatus';
 
 export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
   const pathname = usePathname();
   const isWriting = pathname.startsWith('/writing');
+  const { isAuthenticated, loading } = useAuthStatus();
 
   const formatDate = () => {
     let dateValue = post?.date ? post.date : post?.published;
@@ -66,17 +69,32 @@ export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
             </span>
             <span className={cn('transition-colors duration-300', isActive ? 'dark:text-slate-300' : 'text-gray-600 darK:text-gray-400')}>
               {isCollectionNew(post.published) && <NewBadge isActive={isActive} />}
+              {!loading && !isAuthenticated && isWriting && !post.isPublic && <PrivateBadge isActive={isActive} />}
             </span>
           </div>
         </div>
-        <div className="px-4 h-3 w-3">
+        <div className="flex items-center gap-2">
+          {!loading && !isAuthenticated && isWriting && !post.isPublic && (
+             <span aria-label="Login required to view this post">
+             <Lock 
+               className={`
+                 h-4 w-4 transition-opacity duration-200
+                 ${isActive 
+                   ? "opacity-100" 
+                   : "opacity-50 group-hover:opacity-100"
+                 }
+               `}
+             />
+           </span>
+          )}
           <ChevronRight 
-            className={cn(
-              "h-5 w-5 transition-opacity duration-200",
-              isActive 
+            className={`
+              h-5 w-5 transition-opacity duration-200
+              ${isActive 
                 ? "opacity-100" 
                 : "opacity-50 group-hover:opacity-100"
-            )}
+              }
+            `}
           />
         </div>
       </Link>

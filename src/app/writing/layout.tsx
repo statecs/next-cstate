@@ -21,6 +21,7 @@ const Layout: React.FC<LayoutProps> = async ({ children }) => {
     image: link.image,
     description: link.description,
     date: link.date,
+    isPublic: link.isPublic,
     published: link.published || 'Not specified', 
   }));
 

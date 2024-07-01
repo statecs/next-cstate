@@ -30,6 +30,7 @@ interface PhotoCollection {
     };
     description?: string;
     isFeatured?: boolean;
+    isPublic?: boolean;
     showInMenu?: boolean;
     showDescription?: boolean;
     slug: string;
