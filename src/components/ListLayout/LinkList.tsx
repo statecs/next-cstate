@@ -23,8 +23,7 @@ export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
       day: '2-digit',
     };
   
-    // Using 'sv-SE' for Swedish format
-    return dateObject.toLocaleDateString('sv-SE', options);
+    return dateObject.toLocaleDateString('en-US', options);
   };
   
 

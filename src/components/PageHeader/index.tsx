@@ -171,8 +171,7 @@ const renderOptions = {
       month: 'long',
       day: '2-digit',
     };
-    // Using 'sv-SE' for Swedish format
-    return dateObject.toLocaleDateString('sv-SE', options);
+    return dateObject.toLocaleDateString('en-US', options);
 };
 
 const PageHeader: React.FC<Props> = ({
