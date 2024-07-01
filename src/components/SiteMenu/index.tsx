@@ -15,7 +15,7 @@ const SiteMenu = () => {
     return isAuthenticated ? (
        
         // Authenticated navigation structure
-        <nav className="py-2 sm:mb-16 space-y-0.5 sm:py-8 sm:space-y-0 md:sticky md:top-16 md:py-0">
+        <nav aria-label="Authenticated user navigation" className="py-2 sm:mb-16 space-y-0.5 sm:py-8 sm:space-y-0 md:sticky md:top-16 md:py-0">
         <div>
             <div className="mt-2 max-w-[160px] border-t border-gray-200 pt-2 dark:border-zinc-700">
                 <Link className="underline-offset-4 transition duration-200 hover:duration-500 py-0.5 text-sm tracking-[0.5px] outline-none duration-200 ease-out text-black hover:underline dark:text-white" onClick={closeDrawer} href="/collections">All collections</Link>
@@ -30,7 +30,7 @@ const SiteMenu = () => {
     </nav>
     ) : (
         // Non-authenticated navigation structure
-        <nav className="py-2 sm:mb-16 space-y-0.5 sm:py-8 sm:space-y-0 md:sticky md:top-16 md:py-0">
+        <nav aria-label="Guest navigation" className="py-2 sm:mb-16 space-y-0.5 sm:py-8 sm:space-y-0 md:sticky md:top-16 md:py-0">
         <div>
             <div className="mt-2 max-w-[160px] border-t border-gray-200 pt-2 dark:border-zinc-700">
                 <Link className="underline-offset-4 transition duration-200 hover:duration-500 py-0.5 text-sm tracking-[0.5px] outline-none duration-200 ease-out text-black hover:underline dark:text-white" onClick={closeDrawer}  href="/collections">All collections</Link>

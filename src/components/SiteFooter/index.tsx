@@ -19,7 +19,7 @@ const SiteFooter: React.FC = () => {
   return (
     <>
       {isFooterVisible && (
-        <nav className="relative py-5 z-50 flex justify-center space-x-3 border-t dark:border-zinc-800 pb-4 items-center">
+        <nav aria-label="Footer Navigation" className="relative py-5 z-50 flex justify-center space-x-3 border-t dark:border-zinc-800 pb-4 items-center">
           {LINKS.map(link => (
             <UnderlineLink href={link.url} key={link.url} className="text-sm" onClick={closeDrawer}>
               {link.label}
