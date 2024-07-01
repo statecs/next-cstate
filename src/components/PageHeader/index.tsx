@@ -188,10 +188,12 @@ const PageHeader: React.FC<Props> = ({
 }: Props) => {
     const formattedDate = date ? formatDate(date) : '';
 
+    const isWriting = currentPage === 'writing';
+    const basePath = isWriting ? '/writing' : '/projects';
+
     const descriptionClass = currentPage === 'contact'
     ? "prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400 prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-6"
     : "prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400";
-
 
     return (
         <div
@@ -204,7 +206,7 @@ const PageHeader: React.FC<Props> = ({
                         <>
                             {backUrl ? (
                                 <Link
-                                    href={'/projects/' + backUrl}
+                                    href={`${basePath}/${backUrl}`}
                                     className="group space-x-2 focus:outline-dotted focus:outline-2 focus:outline-offset-2 focus:outline-black sm:inline-flex sm:items-baseline"
                                 >
                                     <h1 className="max-w-5xl space-x-2 text-balance break-normal font-serif text-xl text-black underline-offset-4 group-hover:underline sm:text-2xl md:max-w-5xl md:text-3xl dark:text-white">

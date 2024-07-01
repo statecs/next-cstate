@@ -8,15 +8,18 @@ import { cn } from '@/utils/helpers';
 export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile }) => {
   const pathname = usePathname();
 
+  const isWriting = pathname.startsWith('/writing');
+  const navLabel = isWriting ? "Writing navigation" : "Projects navigation";
+  
   return (
-    <nav aria-label="Projects navigation">
+    <nav aria-label={navLabel}>
       {list.length > 0 ? (
         <ul className={cn(
           'list-none p-0',
           isMobile ? 'animate-fadeIn' : 'flex flex-col gap-1 text-sm'
         )}>
           {list.map((post) => {
-            const basePath = `/projects${post.url}`;
+            const basePath = isWriting ? `/writing${post.url}` : `/projects${post.url}`;
             const isActive = pathname === basePath || pathname.startsWith(`${basePath}/`);
 
             return (

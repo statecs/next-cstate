@@ -3,7 +3,7 @@
 import {memo, useEffect, useRef, useState} from 'react';
 import useKeypress from 'react-use-keypress';
 import {useWindowWidth} from '@react-hook/window-size';
-import {useRouter} from 'next/navigation';
+import {useRouter, usePathname} from 'next/navigation';
 import CarouselDetails from './Details';
 import CarouselImage from './Image';
 import ImageContainer from './ImageContainer';
@@ -17,6 +17,9 @@ interface Props {
 
 const PhotoCarousel: React.FC<Props> = ({collection, photo}) => {
     const router = useRouter();
+    const pathname = usePathname();
+    const isWriting = pathname.startsWith('/writing');
+    const basePath = isWriting ? '/writing' : '/projects';
     const $container = useRef<HTMLDivElement>(null);
     const windowWidth = useWindowWidth();
     const [containerWidth, setContainerWidth] = useState<number>(0);
@@ -24,7 +27,6 @@ const PhotoCarousel: React.FC<Props> = ({collection, photo}) => {
     const allPhotos = collection.photosCollection.items;
     const activeIndex = allPhotos.findIndex(item => item.slug === photo);
     const activePhoto = allPhotos[activeIndex];
-    // get the next/previous photo so we can render them (hidden) for faster navigation
     const prevPhoto = allPhotos[activeIndex === 0 ? allPhotos.length - 1 : activeIndex - 1];
     const nextPhoto = allPhotos[activeIndex === allPhotos.length - 1 ? 0 : activeIndex + 1];
     const orientation =
@@ -40,7 +42,7 @@ const PhotoCarousel: React.FC<Props> = ({collection, photo}) => {
             nextPhotoIndex = 0;
         }
 
-        router.push(`/projects/${collection.slug}/${items[nextPhotoIndex].slug}`);
+        router.push(`${basePath}/${collection.slug}/${items[nextPhotoIndex].slug}`);
     };
 
     useKeypress('ArrowLeft', () => navigateToNextPhoto('left'));
@@ -54,9 +56,9 @@ const PhotoCarousel: React.FC<Props> = ({collection, photo}) => {
 
     useEffect(() => {
         // prefetch the next/previous photo
-        router.prefetch(`/projects/${collection.slug}/${prevPhoto.slug}`);
-        router.prefetch(`/projects/${collection.slug}/${nextPhoto.slug}`);
-    }, [collection, nextPhoto, prevPhoto, router]);
+        router.prefetch(`${basePath}/${collection.slug}/${prevPhoto.slug}`);
+        router.prefetch(`${basePath}/${collection.slug}/${nextPhoto.slug}`);
+    }, [collection, nextPhoto, prevPhoto, router, basePath]);
 
     return (
         <div
@@ -93,7 +95,7 @@ const PhotoCarousel: React.FC<Props> = ({collection, photo}) => {
                 total={allPhotos.length}
             />
             <CarouselMobilePagination
-                handleBack={() => router.push(`/projects/${collection.slug}#${activePhoto.slug}`)}
+                handleBack={() => router.push(`${basePath}/${collection.slug}#${activePhoto.slug}`)}
                 handleNext={() => navigateToNextPhoto('right')}
                 handlePrevious={() => navigateToNextPhoto('left')}
             />

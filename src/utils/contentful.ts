@@ -443,3 +443,241 @@ export const fetchAllJourneys = async (
 
     return null;
 };
+
+export const fetchWritingNavigation = async (): Promise<Link[]> => {
+    const query = `query {
+        writingNavigationCollection(limit: 1, order: [sys_publishedAt_DESC]) {
+            items {
+                writingsCollection{
+                    items {
+                        title
+                        slug
+                        category
+                        date
+                      	photosCollection(limit: 1){
+                          items {
+                            fullSize {
+                                url
+                                description
+                            }
+                          }
+                        }
+                        sys {
+                            published: firstPublishedAt
+                        }
+                    }
+                }
+            }
+        }
+    }`;
+    const response: any = await fetchContent(query);
+    const items =
+        response?.data?.writingNavigationCollection?.items?.[0]?.writingsCollection?.items?.map(
+            (item: PhotoCollection) => ({
+                published: item?.sys?.published,
+                title: item.title,
+                url: `/${item.slug}`,
+                date: item.date,
+                image: item.photosCollection.items[0]?.fullSize?.url || ''
+            })
+        );
+
+    return items || [];
+};
+
+export const fetchAllWritings = async (
+    preview: boolean = false
+): Promise<PhotoCollection[] | null> => {
+    // NB: We will need to batch fetch collections.
+    // Because of the nesting involved with this query, Contentful errors because of
+    // the max complexity allowed. Once we exceed this limit we will need to write the
+    // batch multiple requests.
+    const query = `query {
+        writingCollection(
+            limit: 35,
+            order: [date_DESC],
+            preview: ${preview ? 'true' : 'false'},
+            where: {category_not: ""}
+        ) {
+            items {
+                title
+                slug
+                category
+                ctaLabel
+                ctaUrl
+                isFeatured
+                showDescription
+                description {
+                    json
+                }
+                photoSort
+                photosCollection(limit: 50) {
+                    items {
+                        linkedFrom {
+                            collectionCollection(limit: 3) {
+                                items {
+                                    title
+                                    slug
+                                }
+                            }
+                        }
+                        title
+                        slug
+                        location
+                        fullSize {
+                            height
+                            width
+                            url(transform: {format: WEBP, width: 800})
+                        }
+                        base64
+                    }
+                }
+                sys {
+                    published: firstPublishedAt
+                }
+            }
+        }
+    }`;
+    const response: any = await fetchContent(query, preview);
+
+    if (response.data?.collectionCollection?.items) {
+        const formattedCollections = response.data.collectionCollection.items.map(
+            (collection: any) => {
+                const collectionPhotos = getFormattedCollection(collection);
+
+                return {
+                    ...collection,
+                    photosCollection: {
+                        items: collectionPhotos
+                    }
+                };
+            }
+        );
+
+        return formattedCollections;
+    }
+
+    return null;
+};
+
+//https://www.contentful.com/blog/rich-text-field-tips-and-tricks/
+export const fetchWriting = async (
+    slug: string,
+    preview: boolean = false
+): Promise<PhotoCollection | null> => {
+    // This call is used by both page ISR where we know the content slug and
+    // in revalidation calls, where we only know the entry ID.
+    const query = `query {
+        writingCollection(
+            limit: 1,
+            preview: ${preview ? 'true' : 'false'},
+            where: {OR: [{slug: "${slug}"}, {sys: {id: "${slug}"}}]}
+        ) {
+            items {
+                title
+                slug
+                category
+                ctaLabel
+                ctaUrl
+                date
+                description {
+                    json
+                    links {
+                      assets { 
+                        block {
+                          sys {
+                            id
+                          }
+                          url
+                          title
+                          width
+                          height
+                          description
+                          contentType
+                        }
+                      }
+                    }
+                }
+                isFeatured
+                showDescription
+                photoSort
+                photosCollection(limit: 50) {
+                    items {
+                        linkedFrom {
+                            collectionCollection(limit: 5) {
+                                items {
+                                    title
+                                    slug
+                                }
+                            }
+                        }
+                        title
+                        slug
+                        description
+                        location
+                        date
+                        instagramUrl
+                        instagramLabel
+                        fullSize {
+                            height
+                            width
+                            description
+                            url(transform: {format: WEBP, width: 1800})
+                        }
+                        openGraphImage: fullSize {
+                            url(transform: {width: 1000})
+                        }
+                        base64
+                    }
+                }
+            }
+        }
+    }`;
+    const response: any = await fetchContent(query, preview);
+
+    if (response?.data?.writingCollection?.items?.length > 0) {
+        const collection = response.data.writingCollection.items[0];
+        const collectionPhotos = getFormattedCollection(collection);
+
+        return {
+            ...collection,
+            photosCollection: {
+                items: collectionPhotos
+            }
+        };
+    }
+
+    return null;
+};
+
+export const fetchWritingForSitemap = async () => {
+    const query = `query {
+        writingCollection(where: {category_not: ""}, limit: 35) {
+            items {
+                title
+                slug
+                isFeatured
+                photosCollection(limit: 50) {
+                    items {
+                        title
+                        slug
+                        fullSize {
+                            url(transform: {format: WEBP, width: 800})
+                        }
+                        sys {
+                            publishedAt
+                            firstPublishedAt
+                        }
+                    }
+                }
+                sys {
+                    publishedAt
+                    firstPublishedAt
+                }
+            }
+        }
+    }`;
+    const response: any = await fetchContent(query);
+
+    return response.data?.collectionCollection?.items;
+};

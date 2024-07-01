@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import ThumbnailImage from './ThumbnailImage';
+import { usePathname } from 'next/navigation';
 
 type ThumbnailPhoto = Pick<Photo, 'base64' | 'slug' | 'fullSize' | 'title'>;
 interface Props extends ThumbnailPhoto {
@@ -19,22 +20,28 @@ const PhotoThumbnail: React.FC<Props> = ({
     description,
     title,
     ...props
-}: Props) => (
-    <Link
-        aria-label={`View '${title}'`}
-        className="group relative z-50 block"
-        href={'/projects/' + path}
-        id={slug}
-        title={`View '${title}'`}
-        {...props}
-    >
-        <ThumbnailImage {...fullSize} base64={base64} loading={loading} />
-        {label && (
-            <span className="mt-2 block break-normal font-serif text-sm uppercase text-gray-400 transition duration-200 ease-out group-hover:text-black group-hover:underline group-hover:underline-offset-2">
-                {label}
-            </span>
-        )}
-    </Link>
-);
+}: Props) => {
+    const pathname = usePathname();
+    const isWriting = pathname.startsWith('/writing');
+    const basePath = isWriting ? '/writing' : '/projects';
+
+    return (
+        <Link
+            aria-label={`View '${title}'`}
+            className="group relative z-50 block"
+            href={`${basePath}/${path}`}
+            id={slug}
+            title={`View '${title}'`}
+            {...props}
+        >
+            <ThumbnailImage {...fullSize} base64={base64} loading={loading} />
+            {label && (
+                <span className="mt-2 block break-normal font-serif text-sm uppercase text-gray-400 transition duration-200 ease-out group-hover:text-black group-hover:underline group-hover:underline-offset-2">
+                    {label}
+                </span>
+            )}
+        </Link>
+    );
+};
 
 export default PhotoThumbnail;
