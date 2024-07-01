@@ -41,3 +41,4 @@ sitemap.json
 sitemap.xml
 data/
 .env.production
+.env.development

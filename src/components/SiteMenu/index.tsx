@@ -55,7 +55,7 @@ const SiteMenu: React.FC = () => {
                     <Link className="underline-offset-4 transition duration-200 hover:duration-500 py-0.5 text-sm tracking-[0.5px] outline-none duration-200 ease-out text-black hover:underline dark:text-white" onClick={closeDrawer} href="/collections">All collections</Link>
                     <div className="py-4 flex flex-row dark:text-gray-400 text-xs w-full justify-left items-center">
                         <div className="flex flex-row">
-                            <LoginLink className="flex">Login <ArrowUpRightIcon size={16} /></LoginLink>
+                            <LoginLink postLoginRedirectURL="/dashboard" className="flex">Login <ArrowUpRightIcon size={16} /></LoginLink>
                         </div>
                     </div>
                 </div>

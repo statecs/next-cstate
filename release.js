@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: '.env.production' });
 const fs = require('fs').promises;
 const path = require('path');
 const { NodeSSH } = require('node-ssh');
