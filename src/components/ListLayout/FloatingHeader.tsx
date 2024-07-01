@@ -18,7 +18,6 @@ export const FloatingHeader = memo<FloatingHeaderProps>(({ scrollTitle, title, g
   const pathname = usePathname();
   const isProjectsPath = pathname.startsWith('/projects');
   const isWritingPath = pathname.startsWith('/writing');
-  const basePath = isWritingPath ? '/writing' : '/projects';
   
   return (
     <header className="sticky inset-x-0 top-0 z-10 mx-auto flex h-12 w-full shrink-0 items-center overflow-hidden border-b dark:border-zinc-700 bg-white dark:bg-custom-light-gray dark:text-white text-sm font-medium lg:hidden">
@@ -26,7 +25,7 @@ export const FloatingHeader = memo<FloatingHeaderProps>(({ scrollTitle, title, g
         <div className="flex w-full items-center justify-between gap-2">
           <div className="flex flex-1 items-center gap-1">
             {goBackLink ? (
-                <Link href={`${basePath}${goBackLink}`} title="Go back">
+                <Link href={`${goBackLink}`} title="Go back">
                   <ArrowLeftIcon size={16} />
                 </Link>
             ) : ''
