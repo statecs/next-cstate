@@ -46,15 +46,17 @@ export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
         aria-current={isActive ? 'location' : undefined}
       >
         <div className="flex flex-row items-center gap-3">
-          <Image
-            alt={post.description || ''}
-            className="transition duration-500 ease-in-out hover:duration-200 sm:group-hover:opacity-60"
-            sizes="(max-width: 240px) 100vw, (max-width: 360px) 50vw, (max-width: 640px) 33vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            src={post.image || ''}
-            width={70}
-            height={70}
-            style={{ objectFit: 'cover', height: '70px', width: '70px' }}
-          />
+          {post.image && (
+            <Image
+              alt={post.description || ''}
+              className="transition duration-500 ease-in-out hover:duration-200 sm:group-hover:opacity-60"
+              sizes="(max-width: 240px) 100vw, (max-width: 360px) 50vw, (max-width: 640px) 33vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              src={post.image}
+              width={70}
+              height={70}
+              style={{ objectFit: 'cover', height: '70px', width: '70px' }}
+            />
+          )}
           <div className="flex flex-col gap-1">
             <span className="font-medium">{post.title}</span>
             <span className={cn('transition-colors duration-300', isActive ? 'darK:text-slate-300' : 'text-gray-600 dark:text-gray-400')}>
@@ -68,7 +70,7 @@ export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
           </div>
         </div>
         <div className="px-4 h-3 w-3">
-        <ChevronRight 
+          <ChevronRight 
             className={cn(
               "h-5 w-5 transition-opacity duration-200",
               isActive 

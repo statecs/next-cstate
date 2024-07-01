@@ -21,7 +21,7 @@ const CollectionPage = async ({params}: Props) => {
     return (
         <ScrollArea useScrollAreaId>
         <FloatingHeader scrollTitle="Writing" goBackLink="/writing"></FloatingHeader>
-        <div className="flex flex-grow border-spacing-4 py-4 px-8 md:justify-center">
+        <div className="flex flex-grow border-spacing-4 py-4 px-8 md:justify-left">
             <div className="flex flex-col space-y-2">
             <div className=" max-w-[700px]">
                 <div className={params.collection === 'home' ? 'md:hidden' : ''}>
