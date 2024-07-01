@@ -43,7 +43,11 @@ export const NavigationLink = memo<NavigationLinkProps>(({ href, label, icon, sh
   let isActive = (pathname.startsWith(href) && href !== "/") || (href === "/" && pathname === "/");
   
   return (
-    <Link href={href} passHref onClick={closeDrawer}>
+    <Link 
+      href={href} 
+      passHref 
+      onClick={closeDrawer} 
+      aria-current={isActive ? 'page' : undefined}>
     <span
       className={cn(
         'group cursor-pointer flex gap-3 items-center rounded-lg p-2',
@@ -60,6 +64,7 @@ export const NavigationLink = memo<NavigationLinkProps>(({ href, label, icon, sh
             isActive ? 'border-gray-600 bg-custom-dark-gray dark:bg-zinc-200 dark:text-custom-dark-gray text-gray-200 group-hover:border-gray-600' : ''
           )}
           title={`Shortcut key: ${shortcutNumber}`}
+          aria-label={`Shortcut key ${shortcutNumber}`}
         >
           {shortcutNumber}
         </span>

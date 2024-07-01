@@ -40,6 +40,7 @@ export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
           isActive ? 'bg-black text-white dark:bg-zinc-700' : 'dark:text-white dark:hover:bg-zinc-700 hover:bg-gray-200 dark:hover:bg-zinc-700',
           isMobile ? 'border-b px-4 py-3 dark:border-zinc-700 text-sm' : 'rounded-lg p-2'
         )}
+        aria-current={isActive ? 'location' : undefined}
       >
         <div className="flex flex-row items-center gap-3">
           <Image
