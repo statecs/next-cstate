@@ -43,7 +43,7 @@ const [isMobile, setIsMobile] = useState(false);
               <div className="link-card inline-flex justify-center items-center gap-2 p-2">
                   <div className="flex flex-col">
                   <h1 className="font-serif text-xl text-black sm:text-2xl dark:text-white">Christopher State</h1>
-                  <span className="text-gray-600 dark:text-gray-400">UX/UI Engineer & Accessibility Specialist</span>
+                  <span className="text-gray-600 dark:text-gray-400">UX/UI Engineer</span>
                   </div>
               </div>
             </Link>

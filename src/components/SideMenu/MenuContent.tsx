@@ -46,7 +46,7 @@ export const MenuContent: React.FC = () => {
           />
           <div>
             <span className="font-semibold tracking-tight">Christopher State</span>
-            <p className="text-gray-600 dark:text-gray-400">UX/UI Engineer & Accessibility Specialist</p>
+            <p className="text-gray-600 dark:text-gray-400">UX/UI Engineer</p>
           </div>
         </Link>
         <ul className="flex flex-col gap-1 pb-4 list-none">
