@@ -125,12 +125,12 @@ export const getEditorialSeo = (page: Editorial) => {
     };
 };
 
-// A collection can be considered new if it's been published in the last 4 months.
+// A collection can be considered new if it's been published in the last 2 months.
 export const isCollectionNew = (date: string | undefined) => {
     if (!date) return false;
     const now = new Date(date).getTime();
-    const fourMonthsAgo = new Date().setMonth(new Date().getMonth() - 4);
-    return now > fourMonthsAgo;
+    const TwoMonthsAgo = new Date().setMonth(new Date().getMonth() - 1);
+    return now > TwoMonthsAgo;
 };
 
 /**
