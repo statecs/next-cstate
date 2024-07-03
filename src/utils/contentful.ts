@@ -635,6 +635,7 @@ export const fetchWriting = async (
                 }
                 isFeatured
                 isPublic
+                isMembersOnly
                 showDescription
                 photoSort
                 photosCollection(limit: 50) {
