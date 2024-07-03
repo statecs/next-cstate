@@ -22,6 +22,9 @@ module.exports = {
     env: {
         API_BASE_URL: process.env.API_BASE_URL,
         NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
+        KINDE_DOMAIN: process.env.KINDE_DOMAIN,
+        KINDE_MANAGEMENT_CLIENT_ID: process.env.KINDE_MANAGEMENT_CLIENT_ID,
+        KINDE_MANAGEMENT_CLIENT_SECRET: process.env.KINDE_MANAGEMENT_CLIENT_SECRET,
     },
     async headers() {
         return [
