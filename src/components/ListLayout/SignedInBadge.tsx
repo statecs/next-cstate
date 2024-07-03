@@ -1,10 +1,10 @@
 import React from 'react';
 
-interface PrivateBadgeProps {
+interface SignedInBadgeProps {
   isActive: boolean;
 }
 
-export const PrivateBadge: React.FC<PrivateBadgeProps> = ({ isActive }) => {
+export const SignedInBadge: React.FC<SignedInBadgeProps> = ({ isActive }) => {
   return (
     <span className={`
     rounded-xl mx-1 px-1.5 py-1 text-[9px] uppercase leading-[1.2] tracking-[1px] sm:leading-none md:font-semibold
@@ -19,7 +19,7 @@ export const PrivateBadge: React.FC<PrivateBadgeProps> = ({ isActive }) => {
       : "dark:bg-opacity-50 dark:hover:bg-opacity-100"
     }
   `}>
-    Members-only
+    Login Required
   </span>
   );
 };

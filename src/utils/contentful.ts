@@ -479,6 +479,7 @@ export const fetchWritingNavigation = async (): Promise<Link[]> => {
                         category
                         date
                         isPublic
+                        isMembersOnly
                       	photosCollection(limit: 1){
                           items {
                             fullSize {
@@ -504,6 +505,7 @@ export const fetchWritingNavigation = async (): Promise<Link[]> => {
                 url: `/${item.slug}`,
                 date: item.date,
                 isPublic: item.isPublic,
+                isMembersOnly: item.isMembersOnly,
                 image: item.photosCollection.items[0]?.fullSize?.url || ''
             })
         );
@@ -532,6 +534,7 @@ export const fetchAllWritings = async (
                 ctaUrl
                 isFeatured
                 isPublic
+                isMembersOnly
                 showDescription
                 description {
                     json

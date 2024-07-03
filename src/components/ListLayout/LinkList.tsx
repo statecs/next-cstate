@@ -8,13 +8,19 @@ import Image from 'next/image';
 import { cn } from '@/utils/helpers'
 import { ChevronRight, Lock } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { PrivateBadge } from './PrivateBadge';
+import { MembersBadge } from './MembersBadge';
+import { SignedInBadge } from './SignedInBadge';
 import { useAuthStatus } from '@/contexts/AuthContext';
+import { useAtom } from 'jotai';
+import { rolesAtom } from '@/utils/store';
 
 export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
   const pathname = usePathname();
   const isWriting = pathname.startsWith('/writing');
   const { isAuthenticated, loading } = useAuthStatus();
+  const [roles] = useAtom(rolesAtom);
+
+  const isNewUser = roles.some(role => role.key === 'new-users');
 
   const formatDate = () => {
     let dateValue = post?.date ? post.date : post?.published;
@@ -67,14 +73,18 @@ export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
                 {formattedDate}
               </time>
             </span>
-            <span className={cn('transition-colors duration-300', isActive ? 'dark:text-slate-300' : 'text-gray-600 darK:text-gray-400')}>
+            <span className={cn('transition-colors duration-300', isActive ? 'dark:text-slate-300' : 'text-gray-600 dark:text-gray-400')}>
               {isCollectionNew(post.published) && <NewBadge isActive={isActive} />}
-              {!loading && !isAuthenticated && isWriting && !post.isPublic && <PrivateBadge isActive={isActive} />}
+              {!loading && isWriting && !post.isPublic && (
+                isAuthenticated ? 
+                  (isNewUser && <MembersBadge isActive={isActive} />) :
+                  <SignedInBadge isActive={isActive} />
+              )}
             </span>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {!loading && !isAuthenticated && isWriting && !post.isPublic && (
+          {!loading && isWriting && (!isAuthenticated || (isAuthenticated && isNewUser)) && !post.isPublic && (
              <span aria-label="Login required to view this post">
              <Lock 
                className={`

@@ -31,6 +31,7 @@ interface PhotoCollection {
     description?: string;
     isFeatured?: boolean;
     isPublic?: boolean;
+    isMembersOnly?: boolean;
     showInMenu?: boolean;
     showDescription?: boolean;
     slug: string;
