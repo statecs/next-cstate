@@ -19,6 +19,7 @@ export interface Props {
     description?: Description | string | null;
     hasBottomPadding?: boolean;
     title?: string;
+    category?: string;
     date?: string;  // Ensure date is part of the props
     currentPage?: string;
 }
@@ -180,6 +181,7 @@ const PageHeader: React.FC<Props> = ({
     children,
     ctaLabel,
     ctaUrl,
+    category,
     description,
     hasBottomPadding = true,
     title,
@@ -220,9 +222,21 @@ const PageHeader: React.FC<Props> = ({
                             )}
                         </>
                     )}
-                    <div className="text-white pt-2 text-sm">
+                    <div className="dark:text-white pt-2 text-sm">
                         <span>{formattedDate}</span>
                     </div>
+                    {category && (
+                      <div className="flex flex-wrap gap-1 pt-2">
+                      {category?.split(',').map((cat) => (
+                        <div 
+                          key={cat.trim()} 
+                          className="px-2 py-1 rounded-xl font-medium text-[10px] bg-gray-100 dark:text-white dark:bg-zinc-700 dark:border-custom-light-gray text-gray-500"
+                        >
+                          {cat.trim()}
+                        </div>
+                      ))}
+                    </div>
+                    )}
                 </div>
 
                 {ctaLabel && ctaUrl && typeof description !== 'string' && description?.json && (

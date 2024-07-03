@@ -17,17 +17,20 @@ const FILTERS = {
   MEMBERS: 'Paid'
 } as const;
 
-type FilterType = typeof FILTERS[keyof typeof FILTERS];
+type FilterType = typeof FILTERS[keyof typeof FILTERS] | string;
 
 const FilterButton: React.FC<{
   filter: FilterType;
   activeFilter: FilterType | null;
   onClick: (filter: FilterType) => void;
-}> = ({ filter, activeFilter, onClick }) => (
+  isCategory?: boolean;
+}> = ({ filter, activeFilter, onClick, isCategory = false }) => (
   <button 
-    className={cn("px-2 py-1 rounded text-xs font-medium", 
+    className={cn(
+      "px-2 py-1 rounded font-medium",
+      isCategory ? "text-[10px]" : "text-xs",
       activeFilter === filter 
-        ? "dark:bg-zinc-200 dark:text-custom-dark-gray text-gray-200" 
+        ? "bg-black dark:bg-zinc-200 dark:text-custom-dark-gray text-gray-200" 
         : "bg-gray-100 dark:text-white dark:bg-zinc-700 dark:border-custom-light-gray text-gray-500"
     )}
     onClick={() => onClick(filter)}
@@ -45,9 +48,17 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile }) => {
 
   const { isAuthenticated, loading } = useAuthStatus();
   const [activeFilter, setActiveFilter] = useState<FilterType | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
 
   const isWriting = pathname.startsWith('/writing');
   const navLabel = isWriting ? "Writing navigation" : "Projects navigation";
+
+  useEffect(() => {
+    const uniqueCategories = Array.from(new Set(
+      list.flatMap(post => post.category?.split(', ') || [])
+    ));
+    setCategories(uniqueCategories);
+  }, [list]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -79,23 +90,51 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile }) => {
     if (activeFilter === FILTERS.SIGNED_IN && (post.isPublic !== null || post.isMembersOnly !== null)) return false;
     if (activeFilter === FILTERS.MEMBERS && !post.isMembersOnly) return false;
     if (activeFilter === FILTERS.IS_PUBLIC && !post.isPublic) return false;
+    if (categories.includes(activeFilter)) {
+      return post.category?.split(', ').includes(activeFilter);
+    }
     return true;
-  }), [list, activeFilter]);
+  }), [list, activeFilter, categories]);
 
   return (
     <>
-      {isWriting && isAuthenticated && (
-        <div className="flex space-x-2 p-2 mb-4">
-          {(Object.values(FILTERS) as FilterType[]).map(filter => (
-            <FilterButton
-              key={filter}
-              filter={filter}
-              activeFilter={activeFilter}
-              onClick={toggleFilter}
-            />
-          ))}
-        </div>
-      )}
+   {isWriting && isAuthenticated && (
+  <div className="flex flex-col gap-2 p-2 mb-4">
+    <div className="flex rounded-md shadow-sm w-full" role="group">
+      {(Object.values(FILTERS) as FilterType[]).map((filter, index) => (
+        <button
+          key={filter}
+          type="button"
+          onClick={() => toggleFilter(filter)}
+          className={`
+            flex-1 px-2 py-2 text-xs font-medium
+            ${index === 0 ? 'rounded-l-md' : ''}
+            ${index === Object.values(FILTERS).length - 1 ? 'rounded-r-md' : ''}
+            ${activeFilter === filter 
+              ? 'bg-gray-200 text-gray-800 dark:bg-zinc-300 dark:text-black' 
+              : 'bg-white text-gray-700 hover:text-black dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-300'}
+            border border-gray-200 dark:border-gray-600
+            focus:z-10 focus:ring-2 focus:ring-gray-500 focus:text-gray-700
+            transition-colors duration-200
+          `}
+        >
+          {filter}
+        </button>
+      ))}
+    </div>
+    <div className="flex flex-wrap gap-1">
+      {categories.map(category => (
+        <FilterButton
+          key={category}
+          filter={category}
+          activeFilter={activeFilter}
+          onClick={toggleFilter}
+          isCategory
+        />
+      ))}
+    </div>
+  </div>
+)}
       <nav aria-label={navLabel}>
         {filteredList.length > 0 ? (
           <ul className={cn('list-none p-0', isMobile ? 'animate-fadeIn' : 'flex flex-col gap-1 text-sm')}>
