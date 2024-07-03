@@ -177,15 +177,14 @@ export const fetchCollectionNavigation = async (): Promise<Link[]> => {
 };
 
 export const fetchAllCollections = async (
-    preview: boolean = false
+    preview: boolean = false,
+    skip: number = 0,
+    limit: number = 35
 ): Promise<PhotoCollection[] | null> => {
-    // NB: We will need to batch fetch collections.
-    // Because of the nesting involved with this query, Contentful errors because of
-    // the max complexity allowed. Once we exceed this limit we will need to write the
-    // batch multiple requests.
     const query = `query {
         collectionCollection(
-            limit: 35,
+            limit: ${limit},
+            skip: ${skip},
             order: [date_DESC],
             preview: ${preview ? 'true' : 'false'},
             where: {category_not: ""}
@@ -227,6 +226,7 @@ export const fetchAllCollections = async (
                     published: firstPublishedAt
                 }
             }
+            total
         }
     }`;
     const response: any = await fetchContent(query, preview);
@@ -244,6 +244,12 @@ export const fetchAllCollections = async (
                 };
             }
         );
+
+        // If there are more items, fetch the next batch
+        if (formattedCollections.length < response.data.collectionCollection.total) {
+            const nextBatch = await fetchAllCollections(preview, skip + limit, limit);
+            return formattedCollections.concat(nextBatch || []);
+        }
 
         return formattedCollections;
     }
@@ -398,45 +404,63 @@ export const fetchCollectionsForSitemap = async () => {
 };
 
 export const fetchAllJourneys = async (
-    preview: boolean = false
+    preview: boolean = false,
+    skip: number = 0,
+    limit: number = 35
 ): Promise<JourneyCollection[] | null> => {
-
     const query = `query {
         journeyCollection(
-            limit: 35,
+            limit: ${limit},
+            skip: ${skip},
             order: [year_DESC],
+            preview: ${preview ? 'true' : 'false'}
         ) {
             items {
                 title
                 description
-              	year
+                year
                 url
-              	imageCollection {
-                  items{
-                    title
-                    url
-                    description
-                  }
+                imageCollection {
+                    items {
+                        title
+                        url
+                        description
+                    }
                 }
                 sys {
                     published: firstPublishedAt
                 }
             }
+            total
         }
     }`;
+    
     const response: any = await fetchContent(query, preview);
 
     if (response.data?.journeyCollection?.items) {
         const formattedJourneys = response.data.journeyCollection.items.map(
-            (journey: any) => {
-                return {
-                    ...journey,
-                    journeyCollection: {
-                        items: journey
-                    }
-                };
-            }
+            (journey: any) => ({
+                ...journey,
+                slug: journey.url, // Add slug for consistency with other content types
+                photosCollection: { // Rename imageCollection to photosCollection for consistency
+                    items: journey.imageCollection?.items.map((image: any) => ({
+                        title: image.title,
+                        fullSize: {
+                            url: image.url,
+                            height: 0, // You might want to add these to your journey query
+                            width: 0,
+                        },
+                        base64: '', // You might want to add this to your journey query
+                    })) || []
+                }
+            })
         );
+
+        // If there are more items, fetch the next batch
+        if (formattedJourneys.length < response.data.journeyCollection.total) {
+            const nextBatch = await fetchAllJourneys(preview, skip + limit, limit);
+            return formattedJourneys.concat(nextBatch || []);
+        }
 
         return formattedJourneys;
     }
@@ -488,15 +512,14 @@ export const fetchWritingNavigation = async (): Promise<Link[]> => {
 };
 
 export const fetchAllWritings = async (
-    preview: boolean = false
+    preview: boolean = false,
+    skip: number = 0,
+    limit: number = 35
 ): Promise<PhotoCollection[] | null> => {
-    // NB: We will need to batch fetch collections.
-    // Because of the nesting involved with this query, Contentful errors because of
-    // the max complexity allowed. Once we exceed this limit we will need to write the
-    // batch multiple requests.
     const query = `query {
         writingCollection(
-            limit: 35,
+            limit: ${limit},
+            skip: ${skip},
             order: [date_DESC],
             preview: ${preview ? 'true' : 'false'},
             where: {category_not: ""}
@@ -539,30 +562,36 @@ export const fetchAllWritings = async (
                     published: firstPublishedAt
                 }
             }
+            total
         }
     }`;
     const response: any = await fetchContent(query, preview);
 
-    if (response.data?.collectionCollection?.items) {
-        const formattedCollections = response.data.collectionCollection.items.map(
-            (collection: any) => {
-                const collectionPhotos = getFormattedCollection(collection);
+    if (response.data?.writingCollection?.items) {
+        const formattedWritings = response.data.writingCollection.items.map(
+            (writing: any) => {
+                const writingPhotos = getFormattedCollection(writing);
 
                 return {
-                    ...collection,
+                    ...writing,
                     photosCollection: {
-                        items: collectionPhotos
+                        items: writingPhotos
                     }
                 };
             }
         );
 
-        return formattedCollections;
+        // If there are more items, fetch the next batch
+        if (formattedWritings.length < response.data.writingCollection.total) {
+            const nextBatch = await fetchAllWritings(preview, skip + limit, limit);
+            return formattedWritings.concat(nextBatch || []);
+        }
+
+        return formattedWritings;
     }
 
     return null;
 };
-
 //https://www.contentful.com/blog/rich-text-field-tips-and-tricks/
 export const fetchWriting = async (
     slug: string,
@@ -686,3 +715,15 @@ export const fetchWritingForSitemap = async () => {
 
     return response.data?.collectionCollection?.items;
 };
+
+export const fetchAllData = async (
+    preview: boolean = false
+): Promise<{ collections: PhotoCollection[] | null, writings: PhotoCollection[] | null }> => {
+    const [collections, writings] = await Promise.all([
+        fetchAllCollections(preview),
+        fetchAllWritings(preview),
+    ]);
+
+    return { collections, writings };
+};
+
