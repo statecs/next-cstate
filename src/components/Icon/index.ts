@@ -10,3 +10,4 @@ export * from './Spinner';
 export * from './Twitter';
 export * from './LinkedIn';
 export * from './Github';
+export * from './Coffee';
