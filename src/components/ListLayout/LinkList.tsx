@@ -1,5 +1,6 @@
 'use client';
 
+import React, { forwardRef } from 'react';
 import Link from 'next/link'
 import { LazyMotion, domAnimation, m } from 'framer-motion'
 import NewBadge from '@/components/PhotoCollection/New';
@@ -14,7 +15,13 @@ import { useAuthStatus } from '@/contexts/AuthContext';
 import { useAtom } from 'jotai';
 import { rolesAtom } from '@/utils/store';
 
-export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
+export const LinkList = forwardRef<HTMLAnchorElement, LinkListProps>(({ 
+  post, 
+  isMobile, 
+  isActive,
+  isFocused,
+  onFocus
+}, ref) => {
   const pathname = usePathname();
   const isWriting = pathname.startsWith('/writing');
   const { isAuthenticated, loading } = useAuthStatus();
@@ -45,16 +52,17 @@ export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
   return (
     <LazyMotion features={domAnimation}>
       <Link
-        key={post.slug}
+        ref={ref}
         href={`${basePath}${post.url}`}
         className={cn(
           'group flex flex-row items-center justify-between gap-3 transition-colors duration-300 rounded-lg p-2',
-          isActive ? 'bg-black text-white dark:bg-zinc-700' : 'dark:text-white dark:hover:bg-zinc-700 hover:bg-gray-200 dark:hover:bg-zinc-700',
+          (isActive || isFocused) ? 'bg-black text-white dark:bg-zinc-700' : 'dark:text-white dark:hover:bg-zinc-700 hover:bg-gray-200 dark:hover:bg-zinc-700',
           isMobile ? 'border-b px-4 py-3 dark:border-zinc-700 text-sm' : 'rounded-lg p-2'
         )}
         aria-current={isActive ? 'location' : undefined}
+        onFocus={onFocus}
       >
-        <div className="flex flex-row items-center gap-3">
+         <div className="flex flex-row items-center gap-3">
           {post.image && (
             <Image
               alt={post.description || ''}
@@ -109,5 +117,7 @@ export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
         </div>
       </Link>
     </LazyMotion>
-  )
-}
+  );
+});
+
+LinkList.displayName = 'LinkList';

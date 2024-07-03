@@ -14,6 +14,8 @@ interface Post {
     post: Post;
     isMobile: boolean;
     isActive: boolean;
+    isFocused?: boolean;
+    onFocus?: () => void;
   }
 
 
