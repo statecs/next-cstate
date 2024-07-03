@@ -7,7 +7,7 @@ import { NavigationLink } from './NavigationLink';
 import { PROFILES, LINKS } from '@/utils/constants';
 import { useAtom } from 'jotai';
 import { drawerAtom } from '@/utils/store';
-import { useAuthStatus } from '@/hooks/useAuthStatus';
+import { useAuthStatus } from '@/contexts/AuthContext';
 
 interface LinkItem {
   href: string;

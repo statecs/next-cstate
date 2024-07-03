@@ -6,7 +6,7 @@ import { drawerAtom } from '@/utils/store';
 import { LoginLink, LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { ArrowUpRightIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useAuthStatus } from '@/hooks/useAuthStatus';
+import { useAuthStatus } from '@/contexts/AuthContext';
 import { useAuthAndRoles } from '@/hooks/useAuthAndRoles';
 
 const SiteMenu: React.FC = () => {

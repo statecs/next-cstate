@@ -9,7 +9,7 @@ import { cn } from '@/utils/helpers'
 import { ChevronRight, Lock } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { PrivateBadge } from './PrivateBadge';
-import { useAuthStatus } from '@/hooks/useAuthStatus';
+import { useAuthStatus } from '@/contexts/AuthContext';
 
 export const LinkList = ({ post, isMobile, isActive }: LinkListProps) => {
   const pathname = usePathname();

@@ -8,6 +8,7 @@ import { SideMenu, MenuContent } from '@/components/SideMenu';
 import config from '@/utils/config';
 import styles from './rootLayout.module.css';
 import './globals.css';
+import { AuthWrapper } from '@/contexts//AuthWrapper';
 
 const titleFont = localFont({
     display: 'swap',
@@ -31,28 +32,30 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => (
            background: 'black'
           }} className="sm:min-h-full md:flex md:flex-grow md:flex-row bg-white dark:bg-custom-dark-gray overflow-hidden">
 
-            <SkipLink />
+            <AuthWrapper>
+                <SkipLink />
 
-            <main id="topElement" tabIndex={-1} vaul-drawer-wrapper=""  className={`${styles.responsiveStyle} animate-fadeIn md:mt-0 md:flex md:w-[calc(100%-260px)] md:flex-grow md:flex-col lg:w-[calc(100%-300px)] bg-white dark:bg-custom-dark-gray`}>
-                <div className="lg:hidden">
-                <SiteHeader />
-                </div>
-                <div className="lg:flex">
-                    <SideMenu className="relative hidden lg:flex">
-                        <MenuContent />
-                        <SiteMenu />
-                    </SideMenu>
-                    <div id="main" className="flex flex-1 overflow-auto">{children}</div>
-                </div>
-                <div className="sticky bottom-0 w-full shadow-lg before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-t before:from-gray-100 before:to-transparent dark:before:from-custom-dark-gray dark:before:to-transparent">
-                    <SiteFooter />
-                </div>
-            </main>
-            {process.env.NODE_ENV !== 'development' && (
-                <>
-                    <GoogleAnalytics gaId="G-J0TJFX3J0V" />
-                </>
-            )}
+                <main id="topElement" tabIndex={-1} vaul-drawer-wrapper=""  className={`${styles.responsiveStyle} animate-fadeIn md:mt-0 md:flex md:w-[calc(100%-260px)] md:flex-grow md:flex-col lg:w-[calc(100%-300px)] bg-white dark:bg-custom-dark-gray`}>
+                    <div className="lg:hidden">
+                    <SiteHeader />
+                    </div>
+                    <div className="lg:flex">
+                        <SideMenu className="relative hidden lg:flex">
+                            <MenuContent />
+                            <SiteMenu />
+                        </SideMenu>
+                        <div id="main" className="flex flex-1 overflow-auto">{children}</div>
+                    </div>
+                    <div className="sticky bottom-0 w-full shadow-lg before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-t before:from-gray-100 before:to-transparent dark:before:from-custom-dark-gray dark:before:to-transparent">
+                        <SiteFooter />
+                    </div>
+                </main>
+                {process.env.NODE_ENV !== 'development' && (
+                    <>
+                        <GoogleAnalytics gaId="G-J0TJFX3J0V" />
+                    </>
+                )}
+            </AuthWrapper>
         </body>
     </html>
 );

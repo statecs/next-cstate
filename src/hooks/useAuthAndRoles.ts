@@ -28,20 +28,24 @@ export const useAuthAndRoles = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/user-roles')
-      .then(res => res.json())
-      .then(data => {
+    const fetchAuthAndRoles = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/user-roles');
+        const data = await res.json();
         setAuthData({
           isAuthenticated: data.isAuthenticated,
           user: data.user,
           roles: data.roles
         });
-        setLoading(false);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error fetching auth and roles:', error);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchAuthAndRoles();
   }, []);
 
   return { ...authData, loading };

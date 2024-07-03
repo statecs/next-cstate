@@ -5,7 +5,7 @@ import SocialLinks from '@/components/SiteMenu/SocialLinks';
 import UnderlineLink from '@/components/UnderlineLink';
 import { useAtom } from 'jotai';
 import { drawerAtom, footerVisibilityAtom } from '@/utils/store';
-import { useAuthStatus } from '@/hooks/useAuthStatus';
+import { useAuthStatus } from '@/contexts/AuthContext';
 
 const LINKS = [
   { label: 'About', url: '/about' },

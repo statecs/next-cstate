@@ -4,7 +4,7 @@ import { ScrollArea } from './ScrollArea';
 import { useKeyPress } from '@/hooks/useKeyPress';
 import { cn } from '@/utils/helpers';
 import { useState, useEffect } from 'react';
-import { useAuthStatus } from '@/hooks/useAuthStatus';
+import { useAuthStatus } from '@/contexts/AuthContext';
 
 interface SideMenuProps {
   children: React.ReactNode;
