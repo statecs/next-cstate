@@ -107,12 +107,12 @@ const renderOptions = {
           } else {
             if (node.content[0].nodeType === 'text') {
               return (
-                <span className="flex items-center">
-                <a href={node.data.uri} className="underline inline-block" target="_blank" rel="noopener noreferrer">
-                  {node.content[0].value}
-                </a>
-                <ExternalLinkIcon className="ml-1 h-4 w-4 inline-block" size={14} />
-              </span>
+                <>
+                  <a href={node.data.uri} className="underline inline-block" target="_blank" rel="noopener noreferrer">
+                    {node.content[0].value}
+                  </a>
+                  <ExternalLinkIcon className="ml-1 h-4 w-4 inline-block" size={14} />
+                </>
               );
 
            

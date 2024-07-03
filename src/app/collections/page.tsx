@@ -60,7 +60,7 @@ const CollectionsPage = async () => {
 export const generateMetadata = async () => {
     return {
         ...config.seo,
-        ...getEditorialSeo({slug: 'collections', title: 'All photo collections'})
+        ...getEditorialSeo({slug: 'collections', title: 'All collections'})
     };
 };
 

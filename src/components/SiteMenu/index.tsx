@@ -34,7 +34,13 @@ const SiteMenu: React.FC = () => {
         <nav aria-label="Authenticated user navigation" className="py-2 sm:mb-16 space-y-0.5 sm:py-8 sm:space-y-0 md:sticky md:top-16 md:py-0">
             <div>
                 <div className="mt-2 border-t border-gray-200 pt-4 dark:border-zinc-700">
-                    <Link className="underline-offset-4 transition duration-200 hover:duration-500 py-0.5 text-sm tracking-[0.5px] duration-200 ease-out text-black dark:text-white" onClick={closeDrawer} href="/collections">All collections</Link>
+                <Link 
+                    className="underline-offset-4 transition duration-200 py-0.5 text-sm tracking-[0.5px] ease-out text-black dark:text-white hover:underline"
+                    onClick={closeDrawer} 
+                    href="/collections"
+                    >
+                    All collections
+                    </Link>
                     <div className="border-t dark:border-zinc-700 mt-4"></div>
                     <div className="py-4 flex flex-col dark:text-gray-300 text-sm w-full justify-left items-start space-y-3">
                         {user && (
@@ -54,13 +60,13 @@ const SiteMenu: React.FC = () => {
                         {isNewUser && (
                             <>
                                 <a 
-                                    className="inline-flex items-center px-3 py-2 text-xs font-medium text-gray-800 bg-white rounded-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#ff813f] transition duration-150 ease-in-out"
+                                    className="inline-flex items-center px-2 py-2 text-xs font-medium text-white dark:text-gray-800 bg-black dark:bg-white rounded-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#ff813f] transition duration-150 ease-in-out"
                                     target="_blank"
                                     href="https://www.buymeacoffee.com/cstate"
                                     rel="noopener noreferrer"
                                 >
                                     <CoffeeIcon className="size-4 transition duration-200 ease-out" />
-                                    <span className="font-serif">Buy me a coffee</span>
+                                    <span className="px-1 font-serif">Buy me a coffee</span>
                                 </a>
                                 <div className="mb-4"></div>
                             </>
@@ -83,7 +89,13 @@ const SiteMenu: React.FC = () => {
         <nav aria-label="Guest navigation" className="py-2 sm:mb-16 space-y-0.5 sm:py-8 sm:space-y-0 md:sticky md:top-16 md:py-0">
             <div>
                 <div className="mt-2 border-t border-gray-200 pt-4 dark:border-zinc-700">
-                    <Link className="underline-offset-4 transition duration-200 py-0.5 text-sm tracking-[0.5px] duration-200 ease-out text-black dark:text-white" onClick={closeDrawer} href="/collections">All collections</Link>
+                <Link 
+                    className="underline-offset-4 transition duration-200 py-0.5 text-sm tracking-[0.5px] ease-out text-black dark:text-white hover:underline"
+                    onClick={closeDrawer} 
+                    href="/collections"
+                    >
+                    All collections
+                    </Link>
                     <div className="border-t dark:border-zinc-700 mt-4"></div>
                     <div className="py-4 flex flex-row dark:text-gray-300 text-sm w-full justify-left items-center">
                         <LoginLink postLoginRedirectURL="/dashboard" className={linkClass}>

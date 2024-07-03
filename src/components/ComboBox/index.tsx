@@ -295,7 +295,11 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
               .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
               .replace(/^- (.*)/gm, "<li>$1</li>")
               .replace(/<li>/, "<ul class='list-disc pl-5'><li>")
-              .replace(/<\/li>$/, "</li></ul>") }} />
+              .replace(/<\/li>$/, "</li></ul>")
+              .replace(
+                /\[([^\]]+)\]\(([^)]+)\)/g, 
+                '<a href="$2" class="underline underline-offset-4 dark:text-white hover:text-gray-400 inline-flex items-center" target="_blank" rel="noopener noreferrer">$1<svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>'
+              ) }} />
         ) : (
           <p className="text-sm">Passionate, creative, motivated.</p>
         )}
