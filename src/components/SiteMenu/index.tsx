@@ -1,40 +1,61 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useAtom } from 'jotai';
 import { drawerAtom } from '@/utils/store';
 import { LoginLink, LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
-import { ArrowUpRightIcon } from 'lucide-react';
+import { ArrowUpRightIcon, UserCircle, LayoutDashboard, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { useAuthStatus } from '@/contexts/AuthContext';
 import { useAuthAndRoles } from '@/hooks/useAuthAndRoles';
+import { userAtom, rolesAtom } from '@/utils/store';
 
 const SiteMenu: React.FC = () => {
     const [, setIsOpen] = useAtom(drawerAtom);
     const closeDrawer = () => setIsOpen(false);
-    const { isAuthenticated, loading } = useAuthStatus();
+    const { isAuthenticated, loading: authStatusLoading } = useAuthStatus();
+    const { loading: authAndRolesLoading } = useAuthAndRoles();
 
-    const AuthenticatedComponent = () => {
-        const { user, roles } = useAuthAndRoles();
-        return null;
-      };
+    const [user] = useAtom(userAtom);
+    const [roles] = useAtom(rolesAtom);
 
-    if (loading) {
-        return <div>Loading...</div>;
+    if (authStatusLoading || authAndRolesLoading) {
+        return <div className="flex items-center justify-center h-full">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900 dark:border-white"></div>
+        </div>;
     }
 
+    const linkClass = "font-serif text-xs tracking-tight text-black duration-200 ease-out hover:opacity-60 focus:outline-dotted focus:outline-2 focus:outline-offset-2 focus:outline-black dark:text-white dark:focus:outline-white flex items-center space-x-1";
+
     return isAuthenticated ? (
-        // Authenticated navigation structure
         <nav aria-label="Authenticated user navigation" className="py-2 sm:mb-16 space-y-0.5 sm:py-8 sm:space-y-0 md:sticky md:top-16 md:py-0">
             <div>
-                <div className="mt-2 max-w-[160px] border-t border-gray-200 pt-2 dark:border-zinc-700">
-                    <Link className="underline-offset-4 transition duration-200 hover:duration-500 py-0.5 text-sm tracking-[0.5px] outline-none duration-200 ease-out text-black hover:underline dark:text-white" onClick={closeDrawer} href="/collections">All collections</Link>
-                    <div className="py-4 flex flex-row dark:text-gray-400 text-xs w-full justify-left items-center">
-                        <div className="flex flex-col">
-                            {isAuthenticated && <AuthenticatedComponent />}
-                            <Link href="/dashboard">Dashboard</Link>
-                            <LogoutLink>Log out</LogoutLink>
-                        </div>
+                <div className="mt-2 border-t border-gray-200 pt-4 dark:border-zinc-700">
+                    <Link className="underline-offset-4 transition duration-200 hover:duration-500 py-0.5 text-sm tracking-[0.5px] duration-200 ease-out text-black dark:text-white" onClick={closeDrawer} href="/collections">All collections</Link>
+                    <div className="border-t dark:border-zinc-700 mt-4"></div>
+                    <div className="py-4 flex flex-col dark:text-gray-300 text-sm w-full justify-left items-start space-y-3 ">
+                        {user && (
+                             <Link href="/dashboard" className={linkClass} onClick={closeDrawer}>
+                                <div className="flex items-center space-x-2 mb-2">
+                                    <UserCircle size={24} className="text-gray-500 dark:text-gray-400" />
+                                    <span className="font-medium">{user.given_name} {user.family_name}  
+                                    {roles.length > 0 && ( 
+                                        <div>{roles.map(role => (
+                                            <span key={role.id} className="text-xs text-gray-400">{role.name} </span>
+                                        ))}</div>
+                                    )}
+                                    </span>
+                                </div>
+                            </Link>
+                        )}
+                        <Link href="/dashboard" className={linkClass} onClick={closeDrawer}>
+                            <LayoutDashboard size={16} />
+                            <span>Dashboard</span>
+                        </Link>
+                        <LogoutLink className={linkClass}>
+                            <LogOut size={16} />
+                            <span>Log out</span>
+                        </LogoutLink>
                     </div>
                 </div>
             </div>
@@ -43,12 +64,14 @@ const SiteMenu: React.FC = () => {
         // Non-authenticated navigation structure
         <nav aria-label="Guest navigation" className="py-2 sm:mb-16 space-y-0.5 sm:py-8 sm:space-y-0 md:sticky md:top-16 md:py-0">
             <div>
-                <div className="mt-2 max-w-[160px] border-t border-gray-200 pt-2 dark:border-zinc-700">
-                    <Link className="underline-offset-4 transition duration-200 hover:duration-500 py-0.5 text-sm tracking-[0.5px] outline-none duration-200 ease-out text-black hover:underline dark:text-white" onClick={closeDrawer} href="/collections">All collections</Link>
-                    <div className="py-4 flex flex-row dark:text-gray-400 text-xs w-full justify-left items-center">
-                        <div className="flex flex-row">
-                            <LoginLink postLoginRedirectURL="/dashboard" className="flex">Login <ArrowUpRightIcon size={16} /></LoginLink>
-                        </div>
+                <div className="mt-2 border-t border-gray-200 pt-4 dark:border-zinc-700">
+                    <Link className="underline-offset-4 transition duration-200 py-0.5 text-sm tracking-[0.5px] duration-200 ease-out text-black dark:text-white" onClick={closeDrawer} href="/collections">All collections</Link>
+                    <div className="border-t dark:border-zinc-700 mt-4"></div>
+                    <div className="py-4 flex flex-row dark:text-gray-300 text-sm w-full justify-left items-center">
+                        <LoginLink postLoginRedirectURL="/dashboard" className={linkClass}>
+                            <span>Login</span>
+                            <ArrowUpRightIcon size={16} />
+                        </LoginLink>
                     </div>
                 </div>
             </div>

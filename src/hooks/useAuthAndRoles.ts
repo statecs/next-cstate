@@ -1,16 +1,23 @@
+// useAuthAndRoles.ts
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useAtom } from 'jotai';
+import { userAtom, rolesAtom } from '@/utils/store';
 
 interface User {
   id: string;
-  // Add other user properties as needed
+  family_name: string;
+  given_name: string;
+  picture: string;
+  email: string;
+  properties: Record<string, unknown>;
 }
 
 interface Role {
   id: string;
+  key: string;
   name: string;
-  // Add other role properties as needed
 }
 
 interface AuthData {
@@ -26,6 +33,8 @@ export const useAuthAndRoles = () => {
     roles: []
   });
   const [loading, setLoading] = useState(true);
+  const [, setUser] = useAtom(userAtom);
+  const [, setRoles] = useAtom(rolesAtom);
 
   useEffect(() => {
     const fetchAuthAndRoles = async () => {
@@ -36,8 +45,10 @@ export const useAuthAndRoles = () => {
         setAuthData({
           isAuthenticated: data.isAuthenticated,
           user: data.user,
-          roles: data.roles
+          roles: data.roles.roles
         });
+        setUser(data.user);
+        setRoles(data.roles.roles);
       } catch (error) {
         console.error('Error fetching auth and roles:', error);
       } finally {
@@ -46,7 +57,7 @@ export const useAuthAndRoles = () => {
     };
 
     fetchAuthAndRoles();
-  }, []);
+  }, [setUser, setRoles]);
 
   return { ...authData, loading };
 };
