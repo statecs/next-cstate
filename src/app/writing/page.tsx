@@ -21,6 +21,7 @@ const WritingPage = async () => {
     date: link.date,
     isPublic: link.isPublic,
     isMembersOnly: link.isMembersOnly,
+    category: link.category,
     published: link.published || 'Not specified', 
   }));
 

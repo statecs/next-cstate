@@ -8,6 +8,7 @@ interface Post {
     date?: string;
     isPublic?: boolean;
     isMembersOnly?: boolean;
+    category?: string;
   }
   
 

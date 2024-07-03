@@ -511,6 +511,7 @@ export const fetchWritingNavigation = async (): Promise<Link[]> => {
                 date: item.date,
                 isPublic: item.isPublic,
                 isMembersOnly: item.isMembersOnly,
+                category: item.category,
                 image: item.photosCollection.items[0]?.fullSize?.url || ''
             })
         );
