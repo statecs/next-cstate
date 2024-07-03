@@ -49,9 +49,9 @@ export const LinkList = forwardRef<HTMLAnchorElement, LinkListProps>(({
   const formattedDate = formatDate();
   const basePath = isWriting ? '/writing' : '/projects';
 
-  const showLock = !loading && isWriting && (
-    (!isAuthenticated && !post.isPublic) || 
-    (isAuthenticated && isNewUser && post.isMembersOnly)
+  const showLock = !loading && (
+    (isWriting && ((!isAuthenticated && !post.isPublic) || (isAuthenticated && isNewUser && post.isMembersOnly))) || 
+    (post.isPublic == false && !isWriting && !isAuthenticated)
   );
 
   return (

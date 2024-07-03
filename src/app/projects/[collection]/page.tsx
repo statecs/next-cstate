@@ -7,6 +7,7 @@ import {fetchAllCollections, fetchCollection} from '@/utils/contentful';
 import {getCollectionSeo} from '@/utils/helpers';
 import { ScrollArea } from '@/components/SideMenu/ScrollArea';
 import { FloatingHeader } from '@/components/ListLayout/FloatingHeader';
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 interface Props {
     params: {collection: string};
@@ -15,7 +16,13 @@ interface Props {
 const CollectionPage = async ({params}: Props) => {
     const {isEnabled: isDraftModeEnabled} = draftMode();
     const collection = await fetchCollection(params.collection, isDraftModeEnabled);
+    const { isAuthenticated } = getKindeServerSession();
+    const authStatus = await isAuthenticated();
 
+    if (collection?.isPublic == false && !authStatus) {
+        const baseUrl = process.env.NEXT_PUBLIC_URL;
+        redirect(`${baseUrl}/api/auth/login?post_login_redirect_url=${baseUrl}/projects`);
+    }
     if (!collection) return notFound();
 
     return (

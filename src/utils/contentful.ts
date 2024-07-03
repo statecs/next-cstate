@@ -145,6 +145,7 @@ export const fetchCollectionNavigation = async (): Promise<Link[]> => {
                         slug
                         category
                         date
+                        isPublic
                       	photosCollection(limit: 1){
                           items {
                             fullSize {
@@ -169,6 +170,7 @@ export const fetchCollectionNavigation = async (): Promise<Link[]> => {
                 title: item.title,
                 url: `/${item.slug}`,
                 date: item.date,
+                isPublic: item.isPublic,
                 image: item.photosCollection.items[0]?.fullSize?.url || ''
             })
         );
@@ -196,6 +198,7 @@ export const fetchAllCollections = async (
                 ctaLabel
                 ctaUrl
                 isFeatured
+                isPublic
                 showDescription
                 description {
                     json
@@ -296,6 +299,7 @@ export const fetchCollection = async (
                     }
                 }
                 isFeatured
+                isPublic
                 showDescription
                 photoSort
                 photosCollection(limit: 50) {
@@ -378,6 +382,7 @@ export const fetchCollectionsForSitemap = async () => {
                 title
                 slug
                 isFeatured
+                isPublic
                 photosCollection(limit: 50) {
                     items {
                         title
