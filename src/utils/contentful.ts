@@ -171,6 +171,7 @@ export const fetchCollectionNavigation = async (): Promise<Link[]> => {
                 url: `/${item.slug}`,
                 date: item.date,
                 isPublic: item.isPublic,
+                category: item.category,
                 image: item.photosCollection.items[0]?.fullSize?.url || ''
             })
         );

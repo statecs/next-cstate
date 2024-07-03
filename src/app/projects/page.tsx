@@ -20,6 +20,7 @@ const ProjectPage = async () => {
     description: link.description,
     date: link.date,
     isPublic: link.isPublic,
+    category: link.category,
     published: link.published || 'Not specified', 
   }));
 

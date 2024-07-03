@@ -99,7 +99,7 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile }) => {
   return (
     <>
    {isWriting && isAuthenticated && (
-  <div className="flex flex-col gap-2 p-2 mb-4">
+  <div className="flex flex-col gap-2 pb-2 px-1 lg:px-0 py-2">
     <div className="flex rounded-md shadow-sm w-full" role="group">
       {(Object.values(FILTERS) as FilterType[]).map((filter, index) => (
         <button
@@ -122,7 +122,7 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile }) => {
         </button>
       ))}
     </div>
-    <div className="flex flex-wrap gap-1">
+    <div className="flex flex-wrap gap-1 py-1 px-0">
       {categories.map(category => (
         <FilterButton
           key={category}
@@ -135,6 +135,20 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile }) => {
     </div>
   </div>
 )}
+      {!isWriting && (
+        <div className="flex flex-wrap gap-1 p-4 lg:pb-4 lg:pt-1">
+        {categories.map(category => (
+          <FilterButton
+            key={category}
+            filter={category}
+            activeFilter={activeFilter}
+            onClick={toggleFilter}
+            isCategory
+          />
+        ))}
+      </div>
+      )}
+      
       <nav aria-label={navLabel}>
         {filteredList.length > 0 ? (
           <ul className={cn('list-none p-0', isMobile ? 'animate-fadeIn' : 'flex flex-col gap-1 text-sm')}>
