@@ -9,6 +9,8 @@ import { ScrollArea } from '@/components/SideMenu/ScrollArea';
 import { FloatingHeader } from '@/components/ListLayout/FloatingHeader';
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
+export const dynamic = 'force-dynamic';
+
 interface Props {
     params: {collection: string};
 }
