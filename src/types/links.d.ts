@@ -9,6 +9,7 @@ interface Link {
     description?: string; 
     date?: string;
     isPublic?: boolean;
+    isMembersOnly?: boolean,
 }
 
 interface LinksPage {

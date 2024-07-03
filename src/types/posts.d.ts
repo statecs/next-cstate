@@ -7,6 +7,7 @@ interface Post {
     description?: string;
     date?: string;
     isPublic?: boolean;
+    isMembersOnly?: boolean;
   }
   
 

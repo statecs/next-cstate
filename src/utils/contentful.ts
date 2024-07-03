@@ -695,6 +695,7 @@ export const fetchWritingForSitemap = async () => {
                 slug
                 isFeatured
                 isPublic
+                isMembersOnly
                 photosCollection(limit: 50) {
                     items {
                         title

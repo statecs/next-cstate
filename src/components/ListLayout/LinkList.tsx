@@ -49,6 +49,11 @@ export const LinkList = forwardRef<HTMLAnchorElement, LinkListProps>(({
   const formattedDate = formatDate();
   const basePath = isWriting ? '/writing' : '/projects';
 
+  const showLock = !loading && isWriting && (
+    (!isAuthenticated && !post.isPublic) || 
+    (isAuthenticated && isNewUser && post.isMembersOnly)
+  );
+
   return (
     <LazyMotion features={domAnimation}>
       <Link
@@ -83,27 +88,32 @@ export const LinkList = forwardRef<HTMLAnchorElement, LinkListProps>(({
             </span>
             <span className={cn('transition-colors duration-300', isActive ? 'dark:text-slate-300' : 'text-gray-600 dark:text-gray-400')}>
               {isCollectionNew(post.published) && <NewBadge isActive={isActive} />}
-              {!loading && isWriting && !post.isPublic && (
-                isAuthenticated ? 
-                  (isNewUser && <MembersBadge isActive={isActive} />) :
-                  <SignedInBadge isActive={isActive} />
+              {!loading && isWriting && (
+                <>
+                  {!isAuthenticated && !post.isPublic && (
+                    <SignedInBadge isActive={isActive} />
+                  )}
+                  {isAuthenticated && isNewUser && post.isMembersOnly && (
+                    <MembersBadge isActive={isActive} />
+                  )}
+                </>
               )}
             </span>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {!loading && isWriting && (!isAuthenticated || (isAuthenticated && isNewUser)) && !post.isPublic && (
+          {showLock && (
              <span aria-label="Login required to view this post">
-             <Lock 
-               className={`
-                 h-4 w-4 transition-opacity duration-200
-                 ${isActive 
-                   ? "opacity-100" 
-                   : "opacity-50 group-hover:opacity-100"
-                 }
-               `}
-             />
-           </span>
+               <Lock 
+                 className={`
+                   h-4 w-4 transition-opacity duration-200
+                   ${isActive 
+                     ? "opacity-100" 
+                     : "opacity-50 group-hover:opacity-100"
+                   }
+                 `}
+               />
+             </span>
           )}
           <ChevronRight 
             className={`
