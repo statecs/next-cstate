@@ -20,57 +20,61 @@ const Dashboard: React.FC = () => {
     const isNewUser = roles.some(role => role.key === 'new-users');
 
     if (authStatusLoading || authAndRolesLoading) {
-        return <div className="flex items-center justify-center w-full h-screen">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900 dark:border-white"></div>
-        </div>;
+        return (
+            <div className="flex items-center justify-center w-full h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500"></div>
+            </div>
+        );
     }
 
-    const linkClass = "font-serif text-xs tracking-tight text-black duration-200 ease-out hover:opacity-60 focus:outline-dotted focus:outline-2 focus:outline-offset-2 focus:outline-black dark:text-white dark:focus:outline-white flex items-center space-x-1";
+    const linkClass = "flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400";
 
     return isAuthenticated ? (
-        <div className="flex items-center justify-center w-full min-h-screen bg-gray-100 dark:bg-gray-900">
-            <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md max-w-md w-full">
-                <div className="flex flex-col items-center space-y-4">
-                    <div className="space-y-0">
+        <div className="flex flex-col items-center justify-start md:justify-center w-full min-h-screen px-4 py-8">
+            <div className="w-full max-w-md">
+                <div className="flex flex-col items-center space-y-6">
                     {user && (
-                        <div className="flex items-center space-x-2 mb-2">
-                            <UserCircle size={24} className="text-gray-500 dark:text-gray-400" />
-                            <span className="font-medium text-black dark:text-white">{user.given_name} {user.family_name}</span>
+                        <div className="text-center">
+                            <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-100 dark:bg-blue-900 rounded-full mb-4">
+                                <UserCircle size={40} className="text-blue-500 dark:text-blue-300" />
+                            </div>
+                            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{user.given_name} {user.family_name}</h2>
+                            {roles.length > 0 && (
+                                <div className="mt-2 flex flex-wrap justify-center gap-2">
+                                    {roles.map(role => (
+                                        <span key={role.id} className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full">{role.name}</span>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     )}
-                    {roles.length > 0 && (
-                        <div className="text-center mt-4">
-                            {roles.map(role => (
-                                <span key={role.id} className="text-xs text-gray-500 dark:text-gray-400 mr-2">{role.name}</span>
-                            ))}
-                        </div>
-                    )}
-                    </div>
                     {isNewUser && (
                         <a 
-                            className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-[#5f7fff] rounded-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#ff813f] transition duration-150 ease-in-out"
+                            className="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out w-full justify-center"
                             target="_blank"
                             href="https://www.buymeacoffee.com/cstate"
                             rel="noopener noreferrer"
                         >
-                            <CoffeeIcon className="size-5 mr-2 transition duration-200 ease-out" />
-                            <span className="font-serif">Buy me a coffee</span>
+                            <CoffeeIcon className="w-5 h-5 mr-2" />
+                            <span>Buy me a coffee</span>
                         </a>
                     )}
-                    <Link href="/writing" className={`${linkClass} text-black dark:text-white`}>
-                        <PencilLineIcon size={16} className="mr-2" />
-                        <span>Read my articles</span>
-                    </Link>
-                    <LogoutLink className={`${linkClass} text-black dark:text-white`}>
-                        <LogOut size={16} className="mr-2" />
-                        <span>Log out</span>
-                    </LogoutLink>
+                    <div className="w-full space-y-3">
+                        <Link href="/writing" className={linkClass}>
+                            <PencilLineIcon size={20} className="text-gray-600 dark:text-gray-300" />
+                            <span className="text-gray-800 dark:text-white">Read my articles</span>
+                        </Link>
+                        <LogoutLink className={linkClass}>
+                            <LogOut size={20} className="text-gray-600 dark:text-gray-300" />
+                            <span className="text-gray-800 dark:text-white">Log out</span>
+                        </LogoutLink>
+                    </div>
                 </div>
             </div>
         </div>
     ) : (
-        <div className="flex items-center w-full justify-center h-screen">
-            <div className="text-xl font-medium text-gray-800 dark:text-gray-200">
+        <div className="flex items-center justify-center w-full h-screen">
+            <div className="text-xl font-medium text-gray-800 dark:text-gray-200 p-8">
                 This page is protected.
             </div>
         </div>
