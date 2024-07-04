@@ -3,7 +3,7 @@
 import React from 'react';
 import { useAtom } from 'jotai';
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
-import { UserCircle, PencilLineIcon, LogOut } from 'lucide-react';
+import { UserCircle, PencilLineIcon, LogOut, ChevronDown } from 'lucide-react';
 import { CoffeeIcon } from '@/components/Icon';
 import Link from 'next/link';
 import { useAuthStatus } from '@/contexts/AuthContext';
@@ -16,6 +16,7 @@ const Dashboard: React.FC = () => {
 
     const [user] = useAtom(userAtom);
     const [roles] = useAtom(rolesAtom);
+    const [showUSPs, setShowUSPs] = React.useState(false);
 
     const isNewUser = roles.some(role => role.key === 'new-users');
 
@@ -49,21 +50,41 @@ const Dashboard: React.FC = () => {
                         </div>
                     )}
                     {isNewUser && (
-                        <a 
-                            className="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out w-full justify-center"
-                            target="_blank"
-                            href="https://www.buymeacoffee.com/cstate"
-                            rel="noopener noreferrer"
-                        >
-                            <CoffeeIcon className="w-5 h-5 mr-2" />
-                            <span>Buy me a coffee</span>
-                        </a>
+                        <div className="w-full space-y-3">
+                            <a 
+                                className="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out w-full justify-center"
+                                target="_blank"
+                                href="https://www.buymeacoffee.com/cstate"
+                                rel="noopener noreferrer"
+                            >
+                                <CoffeeIcon className="w-5 h-5 mr-2" />
+                                <span>Buy me a coffee</span>
+                            </a>
+                            <button 
+                                onClick={() => setShowUSPs(!showUSPs)}
+                                className="flex items-center justify-center w-full text-sm text-blue-600 hover:text-blue-800"
+                            >
+                                <span>Why buy me a coffee?</span>
+                                <ChevronDown className={`ml-1 transform transition-transform ${showUSPs ? 'rotate-180' : ''}`} size={16} />
+                            </button>
+                            {showUSPs && (
+                                <ul className="mt-2 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                                    <li>• Get access to exclusive content and latest news in Accessibility, AI and UX</li>
+                                    <li>• Support and help me continue to be dedicated to learning more in these fields</li>
+                                    <li>• Join a community of like-minded individuals passionate about cutting-edge technology</li>
+                                    <li>• Receive early access to new articles and resources</li>
+                                </ul>
+                            )}
+                        </div>
                     )}
                     <div className="w-full space-y-3">
+                    <div className="w-full space-y-1">
                         <Link href="/writing" className={linkClass}>
                             <PencilLineIcon size={20} className="text-gray-600 dark:text-gray-300" />
-                            <span className="text-gray-800 dark:text-white">Read my articles</span>
+                            <span className="text-gray-800 dark:text-white">Explore My Writings</span>
                         </Link>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 pl-4">Fresh insights on AI, UX, and Accessibility</p>
+                    </div>
                         <LogoutLink className={linkClass}>
                             <LogOut size={20} className="text-gray-600 dark:text-gray-300" />
                             <span className="text-gray-800 dark:text-white">Log out</span>
