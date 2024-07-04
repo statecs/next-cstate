@@ -4,7 +4,7 @@ import React from 'react';
 import { useAtom } from 'jotai';
 import { drawerAtom } from '@/utils/store';
 import { LoginLink, LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
-import { ArrowUpRightIcon, UserCircle, LayoutDashboard, LogOut } from 'lucide-react';
+import { ArrowUpRightIcon, UserCircle, LayoutDashboard, LogOut, ChevronDown, LogIn } from 'lucide-react';
 import {CoffeeIcon} from '@/components/Icon';
 import Link from 'next/link';
 import { useAuthStatus } from '@/contexts/AuthContext';
@@ -16,6 +16,7 @@ const SiteMenu: React.FC = () => {
     const closeDrawer = () => setIsOpen(false);
     const { isAuthenticated, loading: authStatusLoading } = useAuthStatus();
     const { loading: authAndRolesLoading } = useAuthAndRoles();
+    const [showUSPs, setShowUSPs] = React.useState(false);
 
     const [user] = useAtom(userAtom);
     const [roles] = useAtom(rolesAtom);
@@ -43,24 +44,11 @@ const SiteMenu: React.FC = () => {
                     </Link>
                     <div className="border-t dark:border-zinc-700 mt-4"></div>
                     <div className="py-4 flex flex-col dark:text-gray-300 text-sm w-full justify-left items-start space-y-3">
-                        {user && (
-                             <Link href="/dashboard" className={linkClass} onClick={closeDrawer}>
-                                <div className="flex items-center space-x-2 mb-2">
-                                    <UserCircle size={24} className="text-gray-500 dark:text-gray-400" />
-                                    <span className="font-medium">{user.given_name} {user.family_name}  
-                                    {roles.length > 0 && ( 
-                                        <div>{roles.map(role => (
-                                            <span key={role.id} className="text-xs text-gray-400">{role.name} </span>
-                                        ))}</div>
-                                    )}
-                                    </span>
-                                </div>
-                            </Link>
-                        )}
+
                         {isNewUser && (
                             <>
                                 <a 
-                                    className="inline-flex items-center px-2 py-2 text-xs font-medium text-white dark:text-gray-800 bg-black dark:bg-white rounded-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#ff813f] transition duration-150 ease-in-out"
+                                    className="inline-flex items-center px-2 py-2 text-xs font-medium text-white dark:text-gray-800 bg-black dark:bg-gray-200 rounded-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#ff813f] transition duration-150 ease-in-out"
                                     target="_blank"
                                     href="https://www.buymeacoffee.com/cstate"
                                     rel="noopener noreferrer"
@@ -68,18 +56,26 @@ const SiteMenu: React.FC = () => {
                                     <CoffeeIcon className="size-4 transition duration-200 ease-out" />
                                     <span className="px-1 font-serif">Buy me a coffee</span>
                                 </a>
-                                <div className="mb-4"></div>
                             </>
                         )}
+                        {isNewUser && (
+                         <button 
+                                onClick={() => setShowUSPs(!showUSPs)}
+                                className="flex items-left justify-left w-full text-xs lg:text-[10px] text-gray-400 hover:text-zinc-50"
+                            >
+                                <span>Why buy me a coffee?</span>
+                                <ChevronDown className={`ml-1 text-xs transform transition-transform ${showUSPs ? 'rotate-180' : ''}`} size={16} />
+                            </button>
+                        )}
+                            {showUSPs && isNewUser && (
+                                <ul className="mt-2 space-y-2 text-xs text-gray-600 dark:text-gray-300">
+                                    <li>• Get access to exclusive content and latest news in Accessibility, AI and UX</li>
+                                    <li>• Support and help me continue to be dedicated to learning more in these fields</li>
+                                    <li>• Join a community of like-minded individuals passionate about cutting-edge technology</li>
+                                    <li>• Receive early access to new articles and resources</li>
+                                </ul>
+                            )}
                         
-                        <Link href="/dashboard" className={linkClass} onClick={closeDrawer}>
-                            <LayoutDashboard size={16} />
-                            <span>Dashboard</span>
-                        </Link>
-                        <LogoutLink className={linkClass}>
-                            <LogOut size={16} />
-                            <span>Log out</span>
-                        </LogoutLink>
                     </div>
                 </div>
             </div>
@@ -97,11 +93,12 @@ const SiteMenu: React.FC = () => {
                     All collections
                     </Link>
                     <div className="border-t dark:border-zinc-700 mt-4"></div>
+                   
                     <div className="py-4 flex flex-row dark:text-gray-300 text-sm w-full justify-left items-center">
-                        <LoginLink postLoginRedirectURL="/dashboard" className={linkClass}>
-                            <span>Login</span>
-                            <ArrowUpRightIcon size={16} />
-                        </LoginLink>
+                    <LoginLink postLoginRedirectURL="/dashboard" className="inline-flex items-center px-4 py-2 bg-white text-gray-800 rounded-md hover:bg-blue-50 transition duration-300 ease-in-out">
+                    <LogIn className="w-4 h-4 mr-2" />
+                        Sign In
+                    </LoginLink>
                     </div>
                 </div>
             </div>
