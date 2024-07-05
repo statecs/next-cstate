@@ -36,7 +36,7 @@ const SiteMenu: React.FC = () => {
             <div>
                 <div className="mt-2 border-t border-gray-200 pt-4 dark:border-zinc-700">
                 <Link 
-                    className="underline-offset-4 transition duration-200 py-0.5 text-sm tracking-[0.5px] ease-out text-black dark:text-white hover:underline"
+                    className="underline-offset-4 transition font-serif duration-200 py-0.5 text-sm tracking-[0.5px] ease-out text-black dark:text-white hover:underline"
                     onClick={closeDrawer} 
                     href="/collections"
                     >
@@ -86,7 +86,7 @@ const SiteMenu: React.FC = () => {
             <div>
                 <div className="mt-2 border-t border-gray-200 pt-4 dark:border-zinc-700">
                 <Link 
-                    className="underline-offset-4 transition duration-200 py-0.5 text-sm tracking-[0.5px] ease-out text-black dark:text-white hover:underline"
+                    className="underline-offset-4 font-serif transition duration-200 py-0.5 text-sm tracking-[0.5px] ease-out text-black dark:text-white hover:underline"
                     onClick={closeDrawer} 
                     href="/collections"
                     >

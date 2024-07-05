@@ -31,7 +31,7 @@ export const MobileDrawer: React.FC<Props> = () => {
           <AlignRightIcon size={24} />
         </button>
       </DrawerTrigger>
-      <DrawerContent className="h-[80%]">
+      <DrawerContent className="h-[70%]">
         <div className="overflow-y-auto p-4">
           <MenuContent />
           <SiteMenu />

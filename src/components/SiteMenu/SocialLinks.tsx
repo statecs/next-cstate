@@ -3,7 +3,6 @@ import {InstagramIcon, TwitterIcon, LinkedInIcon, GithubIcon} from '@/components
 const LINKS = [
     {label: 'Github', url: 'https://github.com/statecs'},
     {label: 'LinkedIn', url: 'https://linkedin.com/in/state'},
-    {label: 'Instagram', url: 'https://www.instagram.com/cstate'},
     {label: 'Twitter', url: 'https://twitter.com/statecs'}
 
 ];

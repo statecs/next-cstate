@@ -155,19 +155,10 @@ export const MenuContent: React.FC = () => {
         </div>
         )}
 
-        <ul className="flex flex-col gap-1 pb-4 list-none">
+        <ul className="flex flex-col gap-1 list-none">
           {filteredLinks.map((link: LinkItem, linkIndex: number) => (
             <li key={link.href}>
               <NavigationLink href={link.href} label={link.label} icon={link.icon} shortcutNumber={linkIndex + 1} />
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="flex flex-col gap-2 text-sm dark:border-zinc-700 border-t pt-4">
-        <ul className="flex flex-col gap-1 list-none">
-          {Object.values(PROFILES).map((profile: Profile) => (
-            <li key={profile.url}>
-              <NavigationLink href={profile.url} label={profile.title} icon={profile.icon} />
             </li>
           ))}
         </ul>
