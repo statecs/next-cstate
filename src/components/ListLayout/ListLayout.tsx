@@ -49,6 +49,7 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile }) => {
   const { isAuthenticated, loading } = useAuthStatus();
   const [activeFilter, setActiveFilter] = useState<FilterType | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
+  const [showFilters, setShowFilters] = useState(false);
 
   const isWriting = pathname.startsWith('/writing');
   const navLabel = isWriting ? "Writing navigation" : "Projects navigation";
@@ -98,56 +99,91 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile }) => {
 
   return (
     <>
-   {isWriting && isAuthenticated && (
-  <div className="flex flex-col gap-2 pb-2 px-1 lg:px-0 py-2">
-    <div className="flex rounded-md shadow-sm w-full" role="group">
-      {(Object.values(FILTERS) as FilterType[]).map((filter, index) => (
-        <button
-          key={filter}
-          type="button"
-          onClick={() => toggleFilter(filter)}
-          className={`
-            flex-1 px-2 py-2 text-xs font-medium
-            ${index === 0 ? 'rounded-l-md' : ''}
-            ${index === Object.values(FILTERS).length - 1 ? 'rounded-r-md' : ''}
-            ${activeFilter === filter 
-              ? 'bg-gray-200 text-gray-800 dark:bg-zinc-300 dark:text-black' 
-              : 'bg-white text-gray-700 hover:text-black dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-300'}
-            border border-gray-200 dark:border-gray-600
-            focus:z-10 focus:ring-2 focus:ring-gray-500 focus:text-gray-700
-            transition-colors duration-200
-          `}
-        >
-          {filter}
-        </button>
-      ))}
-    </div>
-    <div className="flex flex-wrap gap-1 py-1 px-0">
-      {categories.map(category => (
-        <FilterButton
-          key={category}
-          filter={category}
-          activeFilter={activeFilter}
-          onClick={toggleFilter}
-          isCategory
-        />
-      ))}
-    </div>
-  </div>
-)}
-      {!isWriting && (
-        <div className="flex flex-wrap gap-1 p-4 lg:pb-4 lg:pt-1">
-        {categories.map(category => (
-          <FilterButton
-            key={category}
-            filter={category}
-            activeFilter={activeFilter}
-            onClick={toggleFilter}
-            isCategory
-          />
-        ))}
-      </div>
+ {isWriting && isAuthenticated && (
+    <div className="flex flex-col gap-2 bg-zinc-50 font-serif dark:bg-custom-light-gray dark:text-white p-3 lg:p-0">
+      <button
+        onClick={() => setShowFilters(!showFilters)}
+        className={`
+          lg:mb-2 px-4 py-2 
+          ${activeFilter ? 'w-[7.5rem]' : 'w-[6.5rem]'}
+          bg-gray-200 text-gray-800 dark:bg-zinc-700 dark:text-gray-200 
+          rounded-md text-xs font-medium 
+          transition-colors duration-200 
+          hover:bg-gray-300 hover:text-gray-900 
+          dark:hover:bg-zinc-600 dark:hover:text-white
+        `}
+      >
+        {showFilters ? 'Hide Filters' : 'Show Filters'}
+        {activeFilter && ' (1)'}
+      </button>
+      {showFilters && (
+        <>
+          <div className="flex rounded-md shadow-sm w-full" role="group">
+            {(Object.values(FILTERS) as FilterType[]).map((filter, index) => (
+              <button
+                key={filter}
+                type="button"
+                onClick={() => toggleFilter(filter)}
+                className={`
+                  flex-1 px-2 py-2 text-xs font-medium
+                  ${index === 0 ? 'rounded-l-md' : ''}
+                  ${index === Object.values(FILTERS).length - 1 ? 'rounded-r-md' : ''}
+                  ${activeFilter === filter 
+                    ? 'bg-gray-200 text-gray-800 dark:bg-zinc-300 dark:text-black' 
+                    : 'bg-white text-gray-700 hover:text-black dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-300'}
+                  border border-gray-200 dark:border-gray-600
+                  focus:z-10 focus:ring-2 focus:ring-gray-500
+                  transition-colors duration-200
+                `}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-1 py-1 px-0">
+            {categories.map(category => (
+              <FilterButton
+                key={category}
+                filter={category}
+                activeFilter={activeFilter}
+                onClick={toggleFilter}
+                isCategory
+              />
+            ))}
+          </div>
+        </>
       )}
+    </div>
+  )}
+      {!isWriting && (
+        <div className="relative bg-zinc-50 font-serif dark:bg-custom-light-gray dark:text-white p-3 lg:p-0">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="lg:mb-2 px-4 py-2 bg-gray-200 dark:bg-zinc-700 rounded-md text-xs font-medium transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-600"
+          >
+            {showFilters ? 'Hide Filters' : 'Show Filters'}
+            {activeFilter && ' (1)'}
+          </button>
+          {showFilters && (
+            <div 
+              className={`
+                flex flex-wrap gap-1 p-4 lg:pb-4 lg:pt-1 
+                overflow-hidden animate-fadeIn
+              `}
+            >
+            {categories.map(category => (
+              <FilterButton
+                key={category}
+                filter={category}
+                activeFilter={activeFilter}
+                onClick={toggleFilter}
+                isCategory
+              />
+            ))}
+            </div>
+          )}
+        </div>
+    )}
       
       <nav aria-label={navLabel}>
         {filteredList.length > 0 ? (
