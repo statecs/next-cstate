@@ -306,36 +306,46 @@ useEffect(() => {
       )}
       {loading && <p aria-live="polite" aria-atomic="true" className="text-sm text-gray-500 dark:text-gray-400">Sending...</p>}
       <div className={`relative text-left w-full mt-6 flex-1 px-4 whitespace-pre-wrap border rounded-lg border-gray-300 dark:border-zinc-700 ${!responseMessage ? 'opacity-0' : ''}`}>
-        {responseMessage ? (
-          <p className="text-sm" dangerouslySetInnerHTML={{ __html: responseMessage
-              .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-              .replace(/^- (.*)/gm, "<li>$1</li>")
-              .replace(/<li>/, "<ul class='list-disc pl-5'><li>")
-              .replace(/<\/li>$/, "</li></ul>")
-              .replace(/```(\w+)?\s*([\s\S]*?)```/g, (_, lang, content) => {
-                const trimmedContent = content.trim();
-                const escapedContent = trimmedContent.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                const language = lang ? `<div class="text-sm font-semibold dark:text-gray-300 truncate">${lang}</div>` : '';
-                const id = Math.random().toString(36).substr(2, 9);
-                return `
-                  <div class="relative flex flex-col bg-zinc-50 dark:bg-custom-light-gray border dark:border-zinc-700 rounded-md overflow-hidden my-4 w-full max-w-full">
-                    <div class="flex justify-between items-center p-2 bg-gray-100 dark:bg-zinc-700 max-h-5 overflow-hidden">
-                      <div class="flex-grow mr-2 overflow-hidden">
-                        ${language}
-                      </div>
-                      <button onclick="window.copyCode('${id}')" class="flex-shrink-0 text-xs dark:hover:bg-gray-500 dark:text-gray-200 font-bold py-0.5 px-1.5 rounded inline-flex items-center">
-                        <svg class="fill-current w-3 h-3 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M17 6h-5V2H7C5.346 2 4 3.346 4 5v10c0 1.654 1.346 3 3 3h10c1.654 0 3-1.346 3-3V9a3 3 0 00-3-3zm1 9c0 .551-.449 1-1 1H7c-.551 0-1-.449-1-1V5c0-.551.449-1 1-1h4v3h6v8z"/></svg>
-                        <span class="hidden sm:inline">Copy</span>
-                      </button>
-                    </div>
-                    <pre id="${id}" class="overflow-x-auto whitespace-pre-wrap break-words font-mono text-sm leading-6 text-gray-800 dark:text-gray-200 max-h-60 bg-zinc-50 dark:bg-custom-light-gray">${escapedContent}</pre>
-                  </div>
-                `.trim();
-              })
-              .replace(
-                /\[([^\]]+)\]\(([^)]+)\)/g, 
-                '<a href="$2" class="underline underline-offset-4 dark:text-white hover:text-gray-400 inline-flex items-center" target="_blank" rel="noopener noreferrer">$1<svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>'
-              ) }} />
+      {responseMessage ? (
+  <p
+    className="text-sm"
+    dangerouslySetInnerHTML={{
+      __html: responseMessage
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+        .replace(/^- (.*)/gm, "<li>$1</li>")
+        .replace(/<li>/, "<ul class='list-disc pl-5'><li>")
+        .replace(/<\/li>$/, "</li></ul>")
+        .replace(/```(\w+)?\s*([\s\S]*?)```/g, (_, lang, content) => {
+          const trimmedContent = content.trim();
+          const escapedContent = trimmedContent
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+          const language = lang
+            ? `<div class="text-sm font-semibold dark:text-gray-300 truncate">${lang}</div>`
+            : '';
+          const id = Math.random().toString(36).substr(2, 9);
+          return `
+            <div class="relative flex flex-col bg-zinc-50 dark:bg-custom-light-gray border dark:border-zinc-700 rounded-md overflow-hidden my-4 w-full max-w-full">
+              <div class="flex justify-between items-center p-2 bg-gray-100 dark:bg-zinc-700 max-h-5 overflow-hidden">
+                <div class="flex-grow mr-2 overflow-hidden">
+                  ${language}
+                </div>
+                <button onclick="window.copyCode('${id}')" class="flex-shrink-0 text-xs dark:hover:bg-gray-500 dark:text-gray-200 font-bold py-0.5 px-1.5 rounded inline-flex items-center">
+                  <svg class="fill-current w-3 h-3 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M17 6h-5V2H7C5.346 2 4 3.346 4 5v10c0 1.654 1.346 3 3 3h10c1.654 0 3-1.346 3-3V9a3 3 0 00-3-3zm1 9c0 .551-.449 1-1 1H7c-.551 0-1-.449-1-1V5c0-.551.449-1 1-1h4v3h6v8z"/></svg>
+                  <span class="hidden sm:inline">Copy</span>
+                </button>
+              </div>
+              <pre id="${id}" class="overflow-x-auto whitespace-pre-wrap break-words font-mono text-sm leading-6 text-gray-800 dark:text-gray-200 max-h-60 bg-zinc-50 dark:bg-custom-light-gray">${escapedContent}</pre>
+            </div>
+          `.trim();
+        })
+       
+        .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="w-full h-auto" />')
+        .replace(
+          /\[([^\]]+)\]\(([^)]+)\)/g, 
+          '<a href="$2" class="underline underline-offset-4 dark:text-white hover:text-gray-400 inline-flex items-center" target="_blank" rel="noopener noreferrer">$1<svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>'
+        ) }}
+          />
         ) : (
           <p className="text-sm">Passionate, creative, motivated.</p>
         )}
