@@ -25,6 +25,7 @@ module.exports = {
         KINDE_DOMAIN: process.env.KINDE_DOMAIN,
         KINDE_MANAGEMENT_CLIENT_ID: process.env.KINDE_MANAGEMENT_CLIENT_ID,
         KINDE_MANAGEMENT_CLIENT_SECRET: process.env.KINDE_MANAGEMENT_CLIENT_SECRET,
+        INSTRUCTION_TEXT: process.env.INSTRUCTION_TEXT,
     },
     async headers() {
         return [
