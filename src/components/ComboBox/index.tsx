@@ -14,7 +14,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isFilled, setIsFilled] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(-1); // -1 means no selection
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [, setFooterVisible] = useAtom(footerVisibilityAtom);
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
@@ -22,6 +22,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
   const suggestions: string[] = ["Who is Christopher?", "What can you do?", "What are your hobbies?"];
   const inputRef = useRef<HTMLInputElement>(null);
   const [, setResponseMessageLength] = useAtom(responseMessageLengthAtom);
+  const [selectedModel, setSelectedModel] = useState<string>("assistant"); // New state for model selection
 
   useEffect(() => {
     if (responseMessage) {
@@ -165,10 +166,10 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       if (selectedIndex >= 0 && selectedIndex < filteredSuggestions.length) {
-        sendMessage(filteredSuggestions[selectedIndex]);
-        setSelectedIndex(-1); // Reset selection
+        handleSendMessage(filteredSuggestions[selectedIndex]);
+        setSelectedIndex(-1);
       } else if (inputValue.trim() !== '') {
-        sendMessage(inputValue.trim());
+        handleSendMessage(inputValue.trim());
       }
     } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
       e.preventDefault(); // Prevent cursor movement
@@ -194,9 +195,8 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
       return; // Exit the function after focusing the input.
     }
   
-    // If the input has a value, simulate pressing Enter to send the message.
     if (inputValue.trim() !== '') {
-      handleKeyPress({ key: 'Enter' } as KeyboardEvent<HTMLInputElement>);
+      handleSendMessage(inputValue.trim());
     }
   };
 
@@ -254,7 +254,38 @@ useEffect(() => {
   };
 }, []);
 
+  const sendMessageToClaude = async (message: string) => {
+    // Implement the logic to send message to Claude API here
+    // This is a placeholder function
+    setLoading(true);
+    setResponseMessage(null);
+    setInputValue('');
+    setIsFocused(false);
+    setIsFilled(false);
+
+    try {
+      // Simulating API call
+      const response = await new Promise(resolve => setTimeout(() => resolve("This is a response from Claude."), 2000));
+      setResponseMessage(response as string);
+    } catch (error) {
+      console.error('Failed to send message to Claude:', error);
+      setResponseMessage('Failed to send message to Claude');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSendMessage = async (message: string) => {
+    if (selectedModel === "claude") {
+      await sendMessageToClaude(message);
+    } else {
+      await sendMessage(message);
+    }
+  };
+
+
   return (
+    <>
     <div className="relative flex flex-col space-y-2 max-w-[500px] justify-center items-center">
       <div className="flex items-center relative w-full">
         <input
@@ -304,6 +335,41 @@ useEffect(() => {
           ))}
         </div>
       )}
+      
+      <div className="w-full flex justify-start items-center">
+      <label htmlFor="assistant-select" className="sr-only text-[10px] text-gray-500 dark:text-gray-400 whitespace-nowrap">
+        Assistant:
+      </label>
+      <div className="flex flex-row items-center space-x-1">
+        <div className="relative inline-block -mt-2 mb-1">
+          <select
+            id="assistant-select"
+            value={selectedModel}
+            onChange={(e) => setSelectedModel(e.target.value)}
+            className="
+              w-auto py-0.5 pl-1 pr-4 text-[10px]
+              text-gray-500 dark:text-gray-400 
+              bg-transparent
+              border-none outline-none
+              cursor-pointer
+              appearance-none
+              transition-all duration-300
+              hover:bg-gray-100 dark:hover:bg-zinc-700
+              focus:bg-gray-100 dark:focus:bg-zinc-700
+              rounded-md
+            "
+          >
+            <option value="assistant">GPT-4o</option>
+            <option value="claude">Sonnet 3.5</option>
+          </select>
+          <div className="pointer-events-none absolute pt-1 inset-y-0 right-0 flex items-center text-gray-500 dark:text-gray-400">
+            <svg className="fill-current h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
       {loading && <p aria-live="polite" aria-atomic="true" className="text-sm text-gray-500 dark:text-gray-400">Sending...</p>}
       <div className={`relative text-left w-full mt-6 flex-1 px-4 whitespace-pre-wrap border rounded-lg border-gray-300 dark:border-zinc-700 ${!responseMessage ? 'opacity-0' : ''}`}>
       {responseMessage ? (
@@ -351,6 +417,7 @@ useEffect(() => {
         )}
       </div>
     </div>
+    </>
   );
 };
 
