@@ -23,6 +23,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [, setResponseMessageLength] = useAtom(responseMessageLengthAtom);
   const [selectedModel, setSelectedModel] = useState<string>("assistant"); // New state for model selection
+  const selectRef = useRef<HTMLSelectElement>(null);
 
   useEffect(() => {
     if (responseMessage) {
@@ -291,6 +292,24 @@ const sendMessageToClaude = async (message: string) => {
     }
   };
 
+  const adjustSelectWidth = () => {
+    if (selectRef.current) {
+      const selectedOption = selectRef.current.options[selectRef.current.selectedIndex];
+      const tempSpan = document.createElement('span');
+      tempSpan.style.visibility = 'hidden';
+      tempSpan.style.position = 'absolute';
+      tempSpan.style.fontSize = '10px'; // Match the font size of your select
+      tempSpan.textContent = selectedOption.textContent;
+      document.body.appendChild(tempSpan);
+      const width = tempSpan.getBoundingClientRect().width;
+      document.body.removeChild(tempSpan);
+      selectRef.current.style.width = `${width + 25}px`; // Add some padding
+    }
+  };
+
+  useEffect(() => {
+    adjustSelectWidth();
+  }, [selectedModel]);
 
   return (
     <>
@@ -351,9 +370,13 @@ const sendMessageToClaude = async (message: string) => {
       <div className="flex flex-row items-center space-x-1">
         <div className="relative inline-block -mt-2 mb-1">
           <select
+           ref={selectRef}
             id="assistant-select"
             value={selectedModel}
-            onChange={(e) => setSelectedModel(e.target.value)}
+            onChange={(e) => {
+              setSelectedModel(e.target.value);
+              adjustSelectWidth();
+            }}
             className="
               w-auto py-0.5 pl-1 pr-4 text-[10px]
               text-gray-500 dark:text-gray-400 
