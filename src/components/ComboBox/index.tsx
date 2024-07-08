@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
-import { sendMessageToThreadStream } from '@/utils/threadService'; // Ensure this path is correct
+import { sendMessageToThreadStream, sendMessageToClaudeAPI } from '@/utils/threadService'; // Ensure this path is correct
 import { useAtom } from 'jotai';
 import { footerVisibilityAtom, responseMessageLengthAtom } from '@/utils/store';
 
@@ -218,7 +218,12 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
     setIsFocused(false);
     setFooterVisible(true);
     setIsFilled(suggestion.length > 0);
-    sendMessage(suggestion);
+
+    if (selectedModel === "claude") {
+      sendMessageToClaude(suggestion);
+    } else {
+     sendMessage(suggestion);
+    }
    
   };
 
@@ -254,26 +259,29 @@ useEffect(() => {
   };
 }, []);
 
-  const sendMessageToClaude = async (message: string) => {
-    // Implement the logic to send message to Claude API here
-    // This is a placeholder function
-    setLoading(true);
-    setResponseMessage(null);
-    setInputValue('');
-    setIsFocused(false);
-    setIsFilled(false);
+const sendMessageToClaude = async (message: string) => {
+  setLoading(true);
+  setResponseMessage(null);
+  setInputValue('');
+  setIsFocused(false);
+  setIsFilled(false);
 
-    try {
-      // Simulating API call
-      const response = await new Promise(resolve => setTimeout(() => resolve("This is a response from Claude."), 2000));
-      setResponseMessage(response as string);
-    } catch (error) {
-      console.error('Failed to send message to Claude:', error);
-      setResponseMessage('Failed to send message to Claude');
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const response = await sendMessageToClaudeAPI(message);
+    
+    // Update local state
+    setResponseMessage(response);
+
+    // Save to localStorage
+    localStorage.setItem("chatResponse", response);
+
+  } catch (error) {
+    console.error('Failed to send message to Claude:', error);
+    setResponseMessage('Failed to send message to Claude');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleSendMessage = async (message: string) => {
     if (selectedModel === "claude") {

@@ -63,3 +63,29 @@ export async function sendMessageToThreadStream(threadId: string, message: strin
       throw error; // Re-throw to handle in component
   }
 }
+
+
+export async function sendMessageToClaudeAPI(message: string): Promise<string> {
+  try {
+    const response = await fetch(`${process.env.API_BASE_URL}/claude`, {
+      method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              input: message,
+              instructionText: process.env.INSTRUCTION_TEXT
+            }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to send message to Claude: ${response.status}`);
+    }
+
+    const data = await response.text();
+    return data;
+  } catch (error) {
+    console.error('Error sending message to Claude:', error);
+    throw error;
+  }
+}
