@@ -8,11 +8,11 @@ const securityHeaders = [
     {
         key: 'Content-Security-Policy',
         value: "default-src 'self'; " +
-               "img-src 'self' data: https://images.ctfassets.net https://oaidalleapiprodscus.blob.core.windows.net; " +
-               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com; " +
+               "img-src 'self' data: https://images.ctfassets.net https://oaidalleapiprodscus.blob.core.windows.net https://*.google-analytics.com https://*.googletagmanager.com; " +
+               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; " +
                "style-src 'self' 'unsafe-inline'; " +
                "font-src 'self' data:; " +
-               "connect-src 'self' https://vitals.vercel-insights.com " + process.env.API_BASE_URL + "; " +
+               "connect-src 'self' https://vitals.vercel-insights.com " + process.env.API_BASE_URL + " https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; " +
                "frame-src 'self' https://www.youtube.com https://youtube.com https://youtu.be; " +
                "frame-ancestors 'self' https://app.contentful.com;" +
                "media-src 'self' blob:;"

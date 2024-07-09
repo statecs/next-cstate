@@ -1,4 +1,7 @@
 import { GoogleAnalytics } from '@next/third-parties/google'
+import { Analytics } from '@/components/Analytics'
+import { GA_TRACKING_ID } from '@/lib/gtag'
+import Script from 'next/script'
 import localFont from 'next/font/local';
 import SiteFooter from '@/components/SiteFooter';
 import SiteMenu from '@/components/SiteMenu';
@@ -60,10 +63,29 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => {
                 </div>
               </main>
               {process.env.NODE_ENV !== 'development' && (
-                <>
-                  <GoogleAnalytics gaId="G-J0TJFX3J0V" />
-                </>
-              )}
+            <>
+              <Script
+                strategy="afterInteractive"
+                src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+              />
+              <Script
+                id="gtag-init"
+                strategy="afterInteractive"
+                dangerouslySetInnerHTML={{
+                  __html: `
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    gtag('js', new Date());
+                    gtag('config', '${GA_TRACKING_ID}', {
+                      page_path: window.location.pathname,
+                    });
+                  `,
+                }}
+              />
+              <GoogleAnalytics gaId={GA_TRACKING_ID} />
+              <Analytics />
+            </>
+          )}
             </AuthWrapper>
           </body>
         </html>
