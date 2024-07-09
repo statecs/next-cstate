@@ -45,8 +45,10 @@ export default async function Journey() {
   const page = await fetchEditorialPage('about') || {};
 
   return (
-    <div className="flex flex-grow h-[calc(100vh-110px)] border-spacing-4 py-4 px-8 md:justify-center">
-            <div className="flex flex-col space-y-2 max-w-[700px]">
+    <div className="flex flex-grow h-[calc(100vh-110px)] overflow-hidden">
+        <div className="w-full overflow-y-auto">
+            <div className="flex justify-center pr-4">
+                <div className="flex flex-col space-y-2 max-w-[700px] py-4 px-8">    
                 
                         <PageHeader description={page.content} title={page.title} />
                         
@@ -143,7 +145,8 @@ export default async function Journey() {
                     </div>
                   
                     
-               
+                    </div>
+                </div>
             </div>
         </div>
 

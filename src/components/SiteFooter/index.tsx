@@ -27,7 +27,7 @@ const SiteFooter: React.FC = () => {
   return (
     <>
       {isFooterVisible && (
-        <footer className="relative py-5 z-50 border-t dark:border-zinc-800 pb-4">
+        <footer className="relative py-5 z-50 border-t dark:border-zinc-800">
           <nav aria-label="Footer Navigation" className="flex flex-wrap justify-center items-center gap-3">
             <ul className="flex flex-wrap justify-center items-center gap-3 list-none">
               {visibleLinks.map(link => (

@@ -34,17 +34,21 @@ const CollectionsPage = async () => {
         });
 
     return (
-        <main className="flex flex-grow h-[calc(100vh-110px)] border-spacing-4 py-4 px-8 md:justify-center">
-            <div className="flex flex-col space-y-2">
-                <div className="max-w-[700px]">
-                    <PageHeader
-                        description="All collections and writings"
-                        title="All collections"
-                    />
-                    <FilterableCollections items={sortedItems} />
-                </div>
+        <main className="flex flex-grow h-[calc(100vh-110px)] overflow-hidden">
+        <div className="w-full overflow-y-auto">
+          <div className="flex justify-center pr-4">
+            <div className="w-full max-w-[700px] px-8 py-4">
+              <div className="flex flex-col space-y-2">
+                <PageHeader
+                  description="All collections and writings"
+                  title="All collections"
+                />
+                <FilterableCollections items={sortedItems} />
+              </div>
             </div>
-        </main>
+          </div>
+        </div>
+      </main>
     );
 };
 
