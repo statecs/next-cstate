@@ -15,7 +15,7 @@ const HomePage = async () => {
                 
                 <ProfileSection />
 
-                <div className="prose-sm leading-relaxed tracking-wide dark:prose-invert prose-p:text-gray-500 dark:prose-p:text-gray-300 px-5 md:px-0 font-serif ">
+                <div className="prose-sm leading-relaxed tracking-wide dark:prose-invert prose-p:text-gray-500 dark:prose-p:text-gray-300 px-5 md:px-0 font-serif pb-32">
                     <ComboBox assistantId={process.env.ASSISTANT_ID || ''}  />
                 </div>
             </div>
