@@ -14,7 +14,8 @@ const securityHeaders = [
                "font-src 'self' data:; " +
                "connect-src 'self' https://vitals.vercel-insights.com " + process.env.API_BASE_URL + "; " +
                "frame-src 'self' https://www.youtube.com https://youtube.com https://youtu.be; " +
-               "frame-ancestors 'self' https://app.contentful.com;"
+               "frame-ancestors 'self' https://app.contentful.com;" +
+               "media-src 'self' blob:;"
     }    
 ];
 
