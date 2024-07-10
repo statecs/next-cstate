@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
 import { sendMessageToThreadStream, sendMessageToClaudeAPI, textToSpeech } from '@/utils/threadService';
 import { useAtom } from 'jotai';
 import { footerVisibilityAtom, responseMessageLengthAtom } from '@/utils/store';
-import { Volume2Icon, PauseIcon } from 'lucide-react';
+import { Volume2Icon, PauseIcon, LoaderIcon } from 'lucide-react';
 
 interface ComboBoxProps {
   assistantId: string;
@@ -29,6 +29,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [currentLabel, setCurrentLabel] = useState('Ask me anything...');
   const [isVisible, setIsVisible] = useState(true);
@@ -326,6 +327,7 @@ const sendMessageToClaude = async (message: string) => {
     if (!responseMessage) return;
   
     try {
+      setIsLoading(true);
       if (!audioUrl) {
         const audioBlob = await textToSpeech(responseMessage);
         const url = URL.createObjectURL(audioBlob);
@@ -346,6 +348,8 @@ const sendMessageToClaude = async (message: string) => {
       }
     } catch (error) {
       console.error('Failed to handle text to speech:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -582,13 +586,16 @@ useEffect(() => {
               <button
                   onClick={handleTextToSpeech}
                   className="absolute -bottom-4 right-2.5 p-1.5 rounded-full bg-gray-200 dark:bg-zinc-700 hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors duration-200"
-                  aria-label={isPlaying ? "Audio playing" : "Play audio"}
+                  aria-label={isPlaying ? "Audio playing" : isLoading ? "Loading audio" : "Play audio"}
+                  disabled={isLoading}
                 >
-                {isPlaying ? (
-                    <PauseIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                    ) : (
-                    <Volume2Icon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                  )}
+                {isLoading ? (
+                  <LoaderIcon className="h-4 w-4 text-gray-500 dark:text-gray-400 animate-spin" />
+                ) : isPlaying ? (
+                  <PauseIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                ) : (
+                  <Volume2Icon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                )}
               </button>
             </>
             ) : (
