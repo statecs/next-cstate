@@ -30,6 +30,11 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const [currentLabel, setCurrentLabel] = useState('Ask me anything...');
+  const [isVisible, setIsVisible] = useState(true);
+  const intervalRef = useRef<number | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
+
 
   useEffect(() => {
     if (responseMessage) {
@@ -367,6 +372,73 @@ const sendMessageToClaude = async (message: string) => {
     }
   }, [responseMessage]);
 
+  function shuffleArray<T>(array: T[]): T[] {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+const labels: string[] = shuffleArray([
+  'Let\'s chat!',
+  'Întreabă-mă orice...',
+  'La ce te gândești?',
+  'Cum te pot ajuta?',
+  'Hai să vorbim!',
+  'Fråga mig vad som helst...',
+  'Låt oss prata!',
+  'Who is Christopher?',
+  'Vem är Christopher?',
+  'What can you do?',
+  'Want to know my interests?',
+  'What are my skills?',
+  'What technologies do I work with?',
+  'Let\'s discuss my projects!',
+  'Låt oss diskutera mina projekt!',
+  'Quels sont mes projets actuels?', // French: What are my current projects?
+  'Parliamo delle mie esperienze!', // Italian: Let's talk about my experiences!
+  'Was sind meine Fähigkeiten?', // German: What are my skills?
+  '我使用哪些编程语言？', // Mandarin: What programming languages do I use?
+  'Quelles sont mes passions?', // French: What are my passions?
+  'Cosa posso fare per te?', // Italian: What can I do for you?
+  'Erzähl mir von deinem Hintergrund!', // German: Tell me about your background!
+  '你想了解我的工作经历吗？', // Mandarin: Do you want to know about my work experience?
+  'Quelle est ma philosophie de travail?', // French: What's my work philosophy?
+  'Quali tecnologie conosco?', // Italian: What technologies do I know?
+  'Was sind meine Karriereziele?', // German: What are my career goals?
+  '让我们讨论我的项目！', // Mandarin: Let's discuss my projects!
+  '¿Quién es Christopher?', // Spanish: Who is Christopher?
+  '¿Cuáles son mis habilidades?', // Spanish: What are my skills?
+  'Hablemos de mis proyectos', // Spanish: Let's talk about my projects
+  '¿Qué tecnologías domino?', // Spanish: What technologies do I master?
+  '¿Cuál es mi experiencia laboral?', // Spanish: What's my work experience?
+  '¿Quieres conocer mis intereses?', // Spanish: Do you want to know my interests?
+]);
+
+
+useEffect(() => {
+  let currentIndex = 0;
+
+  const changeLabel = () => {
+    if (!isFocused && !inputValue && !isHovered) {
+      setIsVisible(false);
+      setTimeout(() => {
+        currentIndex = (currentIndex + 1) % labels.length;
+        setCurrentLabel(labels[currentIndex]);
+        setIsVisible(true);
+      }, 300);
+    }
+  };
+
+  intervalRef.current = window.setInterval(changeLabel, 4000);
+
+  return () => {
+    if (intervalRef.current !== null) {
+      clearInterval(intervalRef.current);
+    }
+  };
+}, [isFocused, inputValue, labels, isHovered]);
 
   return (
     <>
@@ -382,6 +454,8 @@ const sendMessageToClaude = async (message: string) => {
           onKeyDown={handleKeyPress}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
           placeholder=" "
           list="suggestions"
           autoComplete="off"
@@ -402,10 +476,14 @@ const sendMessageToClaude = async (message: string) => {
       </div>
       <label
         htmlFor="queryInput"
-        className={`absolute left-4 transition-all text-gray-500 dark:text-gray-400 ${isFocused || isFilled ? '-top-1 text-xs text-blue-500' : 'top-2 text-sm text-gray-500'}`}
-      >
-        Ask me anything...
-      </label>
+        className={`
+          absolute left-4 transition-all duration-300
+          ${isFocused || isFilled ? '-top-1 text-xs text-blue-500' : 'top-2 text-sm text-gray-500'}
+          ${isVisible ? 'opacity-100' : 'opacity-0'}
+      `}
+    >
+      {currentLabel}
+    </label>
       {isFocused && filteredSuggestions.length > 0 && (
         <div className="absolute text-left z-50 w-full md:mt-10 top-12 md:top-10 left-0 mt-1 p-2 bg-white dark:bg-custom-light-gray dark:text-white border border-gray-300 rounded-md">
           {filteredSuggestions.map((suggestion, index) => (
