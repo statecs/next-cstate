@@ -45,7 +45,7 @@ export const MenuContent: React.FC = () => {
   const filteredLinks = LINKS.filter(link => link.href !== '/writing' || isAuthenticated);
 
   const userName = user ? `${user.given_name} ${user.family_name}` : 'Christopher State';
-  const userRole = roles.length > 0 ? roles[0].name : 'UX/UI Engineer';
+  const userRole = roles.length > 0 ? roles[0].name : 'UX & Accessibility Specialist';
   const userEmail = user?.email || 'No email available';
 
   useEffect(() => {
