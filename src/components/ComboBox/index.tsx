@@ -20,7 +20,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
   const [eventSource, setEventSource] = useState<EventSource | null>(null);
-  const suggestions: string[] = ["Who is Christopher?", "What can you do?", "What are your hobbies?"];
+  const suggestions: string[] = ["Who is Christopher?", "What are your skills?", "What are your hobbies?"];
   const inputRef = useRef<HTMLInputElement>(null);
   const [, setResponseMessageLength] = useAtom(responseMessageLengthAtom);
   const [selectedModel, setSelectedModel] = useState<string>("assistant"); // New state for model selection
@@ -395,29 +395,20 @@ const labels: string[] = shuffleArray([
   'Who is Christopher?',
   'Vem är Christopher?',
   'What can you do?',
-  'Want to know my interests?',
-  'What are my skills?',
-  'What technologies do I work with?',
+  'What are your skills?',
+  'What technologies do you work with?',
   'Let\'s discuss my projects!',
   'Låt oss diskutera mina projekt!',
   'Quels sont mes projets actuels?', // French: What are my current projects?
   'Parliamo delle mie esperienze!', // Italian: Let's talk about my experiences!
-  'Was sind meine Fähigkeiten?', // German: What are my skills?
-  '我使用哪些编程语言？', // Mandarin: What programming languages do I use?
+  '¿Cuál es mi experiencia laboral?', // Spanish: What's my work experience?
   'Quelles sont mes passions?', // French: What are my passions?
   'Cosa posso fare per te?', // Italian: What can I do for you?
-  'Erzähl mir von deinem Hintergrund!', // German: Tell me about your background!
-  '你想了解我的工作经历吗？', // Mandarin: Do you want to know about my work experience?
+  '¿Quién es Christopher?', // Spanish: Who is Christopher?
   'Quelle est ma philosophie de travail?', // French: What's my work philosophy?
   'Quali tecnologie conosco?', // Italian: What technologies do I know?
-  'Was sind meine Karriereziele?', // German: What are my career goals?
-  '让我们讨论我的项目！', // Mandarin: Let's discuss my projects!
-  '¿Quién es Christopher?', // Spanish: Who is Christopher?
-  '¿Cuáles son mis habilidades?', // Spanish: What are my skills?
-  'Hablemos de mis proyectos', // Spanish: Let's talk about my projects
   '¿Qué tecnologías domino?', // Spanish: What technologies do I master?
-  '¿Cuál es mi experiencia laboral?', // Spanish: What's my work experience?
-  '¿Quieres conocer mis intereses?', // Spanish: Do you want to know my interests?
+
 ]);
 
 
