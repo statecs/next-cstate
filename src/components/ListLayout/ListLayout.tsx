@@ -155,7 +155,6 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile }) => {
       )}
     </div>
   )}
-      {!isWriting && (
         <div className="relative bg-zinc-50 font-serif dark:bg-custom-light-gray dark:text-white p-3 lg:p-0">
           <button
             onClick={() => setShowFilters(!showFilters)}
@@ -183,7 +182,7 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile }) => {
             </div>
           )}
         </div>
-    )}
+
       
       <nav aria-label={navLabel}>
         {filteredList.length > 0 ? (
