@@ -130,6 +130,11 @@ const ScrollDrawer = () => {
     const handleScroll = (e: Event) => {
       const target = e.target as HTMLDivElement; // Safe type assertion
       const { scrollTop, scrollHeight, clientHeight } = target;
+
+      if (activeSnapPoint === "285px") {
+        setActiveSnapPoint(1);
+      }
+      
       if (content && content.allCollections) {
         const threshold = 500;
         if (scrollTop + clientHeight + threshold >= scrollHeight) {
@@ -151,7 +156,7 @@ const ScrollDrawer = () => {
 
     drawerContent.addEventListener('scroll', handleScroll);
     return () => drawerContent.removeEventListener('scroll', handleScroll);
-  }, [drawerContentRef.current, content, loadedContent]);
+  }, [drawerContentRef.current, content, loadedContent, activeSnapPoint, setActiveSnapPoint]);
 
 
   return (
