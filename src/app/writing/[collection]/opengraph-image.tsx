@@ -1,8 +1,10 @@
-import {fetchCollection} from '@/utils/contentful';
+import {fetchWriting} from '@/utils/contentful';
 import {getOgImage} from '@/utils/og';
 
 const handler = async ({params}: {params: {collection: string}}) => {
-    const collection = await fetchCollection(params.collection);
+
+    const collection = await fetchWriting(params.collection);
+
     if (!collection) return;
 
     const photos = collection.photosCollection.items.filter((photo, index) => {
