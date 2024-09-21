@@ -42,8 +42,6 @@ export const MenuContent: React.FC = () => {
   const closeDrawer = () => setIsOpen(false);
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
-  const filteredLinks = LINKS.filter(link => link.href !== '/writing' || isAuthenticated);
-
   const userName = user ? `${user.given_name} ${user.family_name}` : 'Christopher State';
   const userRole = roles.length > 0 ? roles[0].name : 'UX & Accessibility Specialist';
   const userEmail = user?.email || 'No email available';
@@ -156,7 +154,7 @@ export const MenuContent: React.FC = () => {
         )}
 
         <ul className="flex flex-col gap-1 list-none">
-          {filteredLinks.map((link: LinkItem, linkIndex: number) => (
+          {LINKS.map((link: LinkItem, linkIndex: number) => (
             <li key={link.href}>
               <NavigationLink href={link.href} label={link.label} icon={link.icon} shortcutNumber={linkIndex + 1} />
             </li>
