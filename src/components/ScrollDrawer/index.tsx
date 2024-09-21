@@ -59,13 +59,13 @@ const ScrollDrawer = () => {
 
   const handleMouseUp = () => {
     if (!isDragging) {
-      setActiveSnapPoint((currentSnapPoint) => currentSnapPoint === "200px" ? 1 : "200px");
+      setActiveSnapPoint((currentSnapPoint) => currentSnapPoint === "285px" ? 1 : "285px");
     }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' || event.key === ' ') {
-      setActiveSnapPoint((currentSnapPoint) => currentSnapPoint === "200px" ? 1 : "200px");
+      setActiveSnapPoint((currentSnapPoint) => currentSnapPoint === "285px" ? 1 : "285px");
     }
   };
 
@@ -92,7 +92,7 @@ const ScrollDrawer = () => {
 
   useEffect(() => {
     setIsOpen(true); // Ensure the drawer is opened when the component mounts.
-    setActiveSnapPoint('200px'); // Set initial snap point.
+    setActiveSnapPoint('285px'); // Set initial snap point.
 
     const fetchData = async () => {
       try {
@@ -160,7 +160,7 @@ const ScrollDrawer = () => {
 
     <Drawer
       setActiveSnapPoint={handleSetActiveSnapPoint}
-      snapPoints={["200px", 1]}
+      snapPoints={["285px", 1]}
       activeSnapPoint={activeSnapPoint}
       dismissible={true}
       open={isOpen}
@@ -169,13 +169,13 @@ const ScrollDrawer = () => {
       shouldScaleBackground={false}
       onOpenChange={setIsOpen}
     >
-      <DrawerContent ref={drawerRef} className="h-[80%] lg:h-[100%]">
+      <DrawerContent ref={drawerRef} className="h-[80%] lg:h-[100%] outline-none">
       <DrawerTrigger 
         onKeyDown={handleKeyDown} 
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}>
-      <div className="mx-auto mt-4 h-2 w-[100px] shrink-0 rounded-full bg-gray-100">
+      <div className="mx-auto mt-4 h-[5px] w-[70px] opacity-30 shrink-0 rounded-full bg-gray-100">
         <span className="sr-only">
           {activeSnapPoint === 1 ? "Minimize Drawer" : "Expand Drawer"}
         </span>

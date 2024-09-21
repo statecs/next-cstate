@@ -42,13 +42,13 @@ const DrawerContent = forwardRef<HTMLDivElement, DrawerContentProps>(({ classNam
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] bg-white dark:bg-custom-light-gray dark:text-white',
+        'fixed inset-x-0 outline-none bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] bg-white dark:bg-custom-light-gray dark:text-white',
         className
       )}
       {...props}
     >
-      <div className="mx-auto mt-4 h-2 w-[100px] shrink-0 rounded-full bg-gray-100" />
-      {children}
+      <div className="mx-auto mt-4 h-[5px] w-[70px] opacity-30 shrink-0 rounded-full bg-gray-100" />
+        {children}
       <DrawerPrimitive.Close className="rounded-full p-2 bg-zinc-50 dark:bg-custom-dark-gray absolute right-5 top-5 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-gray-100 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-900 dark:data-[state=open]:bg-gray-800">
         <XIcon size={16} aria-label="Close" />
       </DrawerPrimitive.Close>
