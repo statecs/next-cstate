@@ -1,17 +1,13 @@
 import React, { ReactNode } from 'react';
 import { Suspense } from 'react'
 import config from '@/utils/config';
-import {fetchEditorialPage} from '@/utils/contentful';
+import { fetchEditorialPage, fetchCollectionNavigation } from '@/utils/contentful';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { ListLayout } from '@/components/ListLayout/ListLayout';
-import {getEditorialSeo} from '@/utils/helpers';
-import { SideMenu } from '@/components/SideMenu/SideMenu';
-
-import {fetchCollectionNavigation} from '@/utils/contentful';
+import { getEditorialSeo } from '@/utils/helpers';
+import ClientLayout from './ClientLayout';
 
 
 const Layout: React.FC<LayoutProps> = async ({ children }) => {
-
   const links = await fetchCollectionNavigation();
   
   const posts: Post[] = links.map((link) => ({
@@ -26,21 +22,18 @@ const Layout: React.FC<LayoutProps> = async ({ children }) => {
     published: link.published || 'Not specified', 
   }));
 
-    return (
-      <div className="flex">
-        <SideMenu title="Projects" isInner >
-            <Suspense fallback={<LoadingSpinner />}>
-              <ListLayout list={posts} isMobile />
-            </Suspense>
-          </SideMenu>
-        <div className="lg:bg-dots flex-1 h-[calc(100vh-110px)] lg:h-[calc(100vh)] overflow-scroll">{children}</div>
-      </div>
-    );
+  return (
+    <ClientLayout posts={posts}>
+      <Suspense fallback={<LoadingSpinner />}>
+        {children}
+      </Suspense>
+    </ClientLayout>
+  );
 };
 
 export const generateMetadata = async () => {
-    const page = await fetchEditorialPage('home') || {};
-    return {...config.seo, ...getEditorialSeo(page)};
+  const page = await fetchEditorialPage('home') || {};
+  return {...config.seo, ...getEditorialSeo(page)};
 };
 
 export const revalidate = 60;

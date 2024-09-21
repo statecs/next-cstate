@@ -1,14 +1,11 @@
 import React, { ReactNode } from 'react';
 import { Suspense } from 'react'
 import config from '@/utils/config';
-import {fetchEditorialPage} from '@/utils/contentful';
+import {fetchEditorialPage, fetchWritingNavigation} from '@/utils/contentful';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { ListLayout } from '@/components/ListLayout/ListLayout';
 import {getEditorialSeo} from '@/utils/helpers';
-import { SideMenu } from '@/components/SideMenu/SideMenu';
 
-import {fetchWritingNavigation} from '@/utils/contentful';
-
+import ClientLayout from './ClientLayout';
 
 const Layout: React.FC<LayoutProps> = async ({ children }) => {
 
@@ -27,16 +24,13 @@ const Layout: React.FC<LayoutProps> = async ({ children }) => {
     published: link.published || 'Not specified', 
   }));
 
-    return (
-      <div className="flex">
-        <SideMenu title="Writing" isInner >
-            <Suspense fallback={<LoadingSpinner />}>
-              <ListLayout list={posts} isMobile />
-            </Suspense>
-          </SideMenu>
-        <div className="lg:bg-dots flex-1 h-[calc(100vh-110px)] lg:h-[calc(100vh)] overflow-scroll">{children}</div>
-      </div>
-    );
+  return (
+    <ClientLayout posts={posts}>
+      <Suspense fallback={<LoadingSpinner />}>
+        {children}
+      </Suspense>
+    </ClientLayout>
+  );
 };
 
 export const generateMetadata = async () => {
