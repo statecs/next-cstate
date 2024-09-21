@@ -507,13 +507,13 @@ export const fetchWritingNavigation = async (): Promise<Link[]> => {
         response?.data?.writingNavigationCollection?.items?.[0]?.writingsCollection?.items?.map(
             (item: PhotoCollection) => ({
                 published: item?.sys?.published,
-                title: item.title,
-                url: `/${item.slug}`,
-                date: item.date,
-                isPublic: item.isPublic,
-                isMembersOnly: item.isMembersOnly,
-                category: item.category,
-                image: item.photosCollection.items[0]?.fullSize?.url || ''
+                title: item?.title ?? 'Untitled',
+                url: `/${item?.slug ?? ''}`,
+                date: item?.date ?? null,
+                isPublic: item?.isPublic ?? false,
+                isMembersOnly: item?.isMembersOnly ?? false,
+                category: item?.category ?? null,
+                image: item?.photosCollection?.items?.[0]?.fullSize?.url ?? ''
             })
         );
 
