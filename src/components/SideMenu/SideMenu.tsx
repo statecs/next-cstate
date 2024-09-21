@@ -4,7 +4,6 @@ import { ScrollArea } from './ScrollArea';
 import { useKeyPress } from '@/hooks/useKeyPress';
 import { cn } from '@/utils/helpers';
 import { useState, useEffect } from 'react';
-import { useAuthStatus } from '@/contexts/AuthContext';
 
 interface SideMenuProps {
   children: React.ReactNode;
@@ -16,31 +15,14 @@ interface SideMenuProps {
 export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, loading } = useAuthStatus();
   const [keyCodePathnameMapping, setKeyCodePathnameMapping] = useState<{ [key: string]: string | undefined }>({
     Digit1: '/',
     Digit2: '/about',
     Digit3: '/projects',
-    Digit4: '/links',
-    Digit5: '/contact',
+    Digit4: '/writing',
+    Digit5: '/links',
+    Digit6: '/contact',
   });
-
-  useEffect(() => {
-    if (!loading) {
-      if (isAuthenticated) {
-        setKeyCodePathnameMapping(prevMapping => ({
-          ...prevMapping,
-          Digit5: '/writing',
-          Digit6: '/contact'
-        }));
-      } else {
-        setKeyCodePathnameMapping(prevMapping => ({
-          ...prevMapping,
-          Digit5: '/contact'
-        }));
-      }
-    }
-  }, [isAuthenticated, loading]);
 
   useKeyPress(onKeyPress, Object.keys(keyCodePathnameMapping));
 
