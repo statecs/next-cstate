@@ -78,7 +78,7 @@ module.exports = {
             },
             colors: {
                 'custom-dark-gray': '#1C1C1C',
-                'custom-light-gray': '#282828',
+                'custom-light-gray': '#1e1e1e',
               },
         }
     }

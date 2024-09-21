@@ -203,8 +203,8 @@ const PageHeader: React.FC<Props> = ({
     const basePath = isWriting ? '/writing' : '/projects';
 
     const descriptionClass = currentPage === 'contact'
-    ? "prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400 prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-6"
-    : "prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400";
+    ? "prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-300 prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-6"
+    : "prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-300";
 
     return (
         <div
@@ -263,13 +263,13 @@ const PageHeader: React.FC<Props> = ({
             {(children || description) && (
                 <div className="mt-4 md:mt-6">
                     {description && typeof description !== 'string' && description.json && (
-                        <div className={`dark:text-gray-300 ${descriptionClass}`}>
+                           <div className={`dark:text-gray-300 ${descriptionClass}`}>
                             {documentToReactComponents(description.json, contentfulRenderOptions(description.links))}
                         </div>
                     )}
 
                     {description && typeof description == 'string' && (
-                        <div className={`dark:text-gray-300 ${descriptionClass}`}>
+                         <div className={`dark:text-gray-300 ${descriptionClass}`}>
                             {description}
                         </div>
 
