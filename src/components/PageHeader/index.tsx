@@ -157,6 +157,15 @@ const renderOptions = {
             }
             return null;
           },
+          [BLOCKS.UL_LIST]: (node: Block | Inline, children: React.ReactNode) => {
+            return <ul className="list-disc pl-5 space-y-2 my-4">{children}</ul>;
+          },
+          [BLOCKS.OL_LIST]: (node: Block | Inline, children: React.ReactNode) => {
+            return <ol className="list-decimal pl-5 space-y-2 my-4">{children}</ol>;
+          },
+          [BLOCKS.LIST_ITEM]: (node: Block | Inline, children: React.ReactNode) => {
+            return <li className="ml-2">{children}</li>;
+          },
        
       },
       renderText: renderOptions.renderText,
