@@ -46,6 +46,7 @@ export const CollectionPageServer: React.FC<Props> = ({
           <div className="max-w-[700px]">
             <div className={params.collection === 'home' ? 'md:hidden' : ''}>
               <PageHeader
+                currentPage="writing"
                 {...collection}
                 description={collection?.showDescription ? collection.description : null}
               />

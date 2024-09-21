@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Suspense } from 'react'
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -9,6 +9,15 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { getExternalUrl } from '@/utils/helpers';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { BLOCKS, Block, Inline, INLINES } from "@contentful/rich-text-types";
+
+// Updated estimateReadTime function with error handling
+const estimateReadTime = (content: string | undefined): number => {
+  if (!content) return 0;
+  const wordsPerMinute = 200;
+  const wordCount = content.trim().split(/\s+/).length;
+  return Math.ceil(wordCount / wordsPerMinute);
+};
+
 
 export interface Props {
     animate?: boolean;
@@ -195,16 +204,22 @@ const PageHeader: React.FC<Props> = ({
     hasBottomPadding = true,
     title,
     date,
-    currentPage  
+    currentPage
 }: Props) => {
     const formattedDate = date ? formatDate(date) : '';
-
     const isWriting = currentPage === 'writing';
     const basePath = isWriting ? '/writing' : '/projects';
 
     const descriptionClass = currentPage === 'contact'
     ? "prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-300 prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-6"
     : "prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-300";
+
+    // Estimate reading time
+    const readTimeMinutes = useMemo(() => {
+      const content = typeof description === 'string' ? description : JSON.stringify(description?.json);
+      return estimateReadTime(content);
+  }, [description]);
+
 
     return (
         <div
@@ -233,6 +248,9 @@ const PageHeader: React.FC<Props> = ({
                     )}
                     <div className="dark:text-white pt-2 text-sm">
                         <span>{formattedDate}</span>
+                        {isWriting && readTimeMinutes > 0 && (
+                            <span className="ml-4">Total read: {readTimeMinutes} minute{readTimeMinutes !== 1 ? 's' : ''}</span>
+                        )}
                     </div>
                     {category && (
                       <div className="flex flex-wrap gap-1 pt-2">
