@@ -13,10 +13,10 @@ const ClientPadding: React.FC<ClientPaddingProps> = ({ children }) => {
     const addExtraPadding = responseLength > 450;
 
     return (
-        <div className="flex h-[calc(100vh-110px)] overflow-hidden">
-            <div className={`flex flex-grow border-spacing-4 items-center justify-center overflow-scroll ${addExtraPadding ? 'pt-80 md:pt-0' : ''}`}>
-                {children}
-             </div>
+        <div className="flex min-h-[calc(100vh-110px)] lg:min-h-screen overflow-scroll">
+            <div className={`flex flex-grow border-spacing-4 items-center justify-center overflow-scroll ${addExtraPadding ? 'md:pt-20' : ''}`}>
+                    {children}
+            </div>
         </div>
     );
 };

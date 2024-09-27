@@ -532,11 +532,11 @@ useEffect(() => {
       </div>
     </div>
       {loading && <p aria-live="polite" aria-atomic="true" className="text-sm text-gray-500 dark:text-gray-400">Sending...</p>}
-        <div className={`relative text-left w-full mt-6 flex-1 px-4 whitespace-pre-wrap border rounded-lg border-gray-300 dark:border-zinc-700 ${!responseMessage ? 'opacity-0' : ''}`}>
+        <div className={`relative text-left w-full mt-6 flex-1 px-4 whitespace-pre-wrap border rounded-lg border-gray-300 dark:border-zinc-700 ${!responseMessage ? 'opacity-0 ' : ''}`}>
           {responseMessage ? (
             <>
               <p
-                className="text-sm"
+                className="text-sm max-h-[300px] overflow-scroll"
                 dangerouslySetInnerHTML={{
                   __html: responseMessage
                     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")

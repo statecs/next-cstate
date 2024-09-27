@@ -1,8 +1,9 @@
 import config from '@/utils/config';
 import ComboBox from '@/components/ComboBox';
 import ProfileSection from '@/components/ProfileSection';
-import {fetchEditorialPage} from '@/utils/contentful';
-import {getEditorialSeo} from '@/utils/helpers';
+import AboutSection from '@/components/AboutSection';
+import { fetchEditorialPage } from '@/utils/contentful';
+import { getEditorialSeo } from '@/utils/helpers';
 import ScrollDrawer from '@/components/ScrollDrawer';
 import ClientPadding from './ClientPadding';
 
@@ -12,24 +13,28 @@ const HomePage = async () => {
     return (
         <ClientPadding>
             <div className="flex flex-col space-y-2 text-center">
-                
                 <ProfileSection />
-
-                <div className="prose-sm leading-relaxed tracking-wide dark:prose-invert prose-p:text-gray-500 dark:prose-p:text-gray-300 px-5 md:px-0 font-serif pb-32">
-                    <ComboBox assistantId={process.env.ASSISTANT_ID || ''}  />
+                <div className="hidden md:block mb-8">
+                    <AboutSection />
                 </div>
+
+                <div className="prose-sm leading-relaxed tracking-wide dark:prose-invert prose-p:text-gray-500 dark:prose-p:text-gray-300 px-5 md:px-0 font-serif mb-8">
+                    <ComboBox assistantId={process.env.ASSISTANT_ID || ''} />
+                </div>
+
+                <div className="md:hidden mb-8">
+                    <ScrollDrawer />
+                </div>
+
+               
             </div>
-            
-                <ScrollDrawer />
-            
         </ClientPadding>
     );
 };
 
-
 export const generateMetadata = async () => {
     const page = await fetchEditorialPage('home') || {};
-    return {...config.seo, ...getEditorialSeo(page)};
+    return { ...config.seo, ...getEditorialSeo(page) };
 };
 
 export const revalidate = 60;
