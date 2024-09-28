@@ -80,7 +80,7 @@ export default async function Journey() {
                                             Array.isArray(events) && (
                                             <div key={index} className="flex flex-col items-baseline gap-6 md:flex-row md:gap-12">
                                                 <div className="flex items-center">
-                                                    <h2>{year}</h2>
+                                                    <h3>{year}</h3>
                                                     <hr className="my-0 ml-4 flex-1 border-dashed border-gray-200 " />
                                                 </div>
                                                 <section>
@@ -97,10 +97,10 @@ export default async function Journey() {
                                                         <div className="flex-grow pl-8">
                                                             {item.url ? (
                                                                 <Link href={item.url} className="hover:underline underline-offset-4 transition duration-200">
-                                                                    <h3 className="flex font-semibold text-l sm:text-xl tracking-tight font-serif pb-4">{item.title} <ArrowUpRightIcon size={28} /></h3>
+                                                                    <h4 className="flex font-semibold text-l sm:text-xl tracking-tight font-serif pb-4">{item.title} <ArrowUpRightIcon size={28} /></h4>
                                                                 </Link>
                                                             ) : (
-                                                                <h3 className="font-semibold text-l sm:text-xl tracking-tight font-serif pb-4">{item.title}</h3>
+                                                                <h4 className="font-semibold text-l sm:text-xl tracking-tight font-serif pb-4">{item.title}</h4>
                                                             )}
                                                             {item.description ? (
                                                             <div className="text-sm prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base">
