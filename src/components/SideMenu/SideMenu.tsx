@@ -8,7 +8,6 @@ import React, { useState, useEffect, ReactElement } from 'react';
 import { ListLayout } from '@/components/ListLayout/ListLayout';
 
 interface SideMenuProps {
-  children: React.ReactNode;
   title?: string;
   isInner?: boolean;
   className?: string;
@@ -48,16 +47,16 @@ export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner, on
           isMinimized ? "px-2" : ''
         )}>
           <div className="flex items-center justify-between">
-            {!isMinimized && <span className="text-sm font-semibold tracking-tight">{title}</span>}
+            {!isMinimized && <h1 className="text-sm font-semibold tracking-tight">{title}</h1>}
           </div>
         </div>
       )}
-      <div className={cn(
-        "bg-zinc-50 font-serif  justify-between dark:bg-custom-light-gray dark:text-white p-3",
-        isMinimized ? "p-2 flex flex-col items-center": ''
-      )}>
-        {childrenWithProps}
-      </div>
+        <div className={cn(
+          "bg-zinc-50 font-serif justify-between dark:bg-custom-light-gray dark:text-white p-3",
+          isMinimized ? "p-2 flex flex-col items-center": ''
+        )}>
+          {childrenWithProps}
+        </div>
     </ScrollArea>
   );
 };
