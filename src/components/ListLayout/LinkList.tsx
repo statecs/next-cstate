@@ -54,6 +54,8 @@ export const LinkList = forwardRef<HTMLAnchorElement, LinkListProps>(({
     (post.isPublic == false && !isWriting && !isAuthenticated)
   );
 
+  const accessibilityLabel = `${post.title}, ${formattedDate}${post.category ? `, Categories: ${post.category}` : ''}${showLock ? ', Login required' : ''}`;
+
   return (
     <LazyMotion features={domAnimation}>
       <Link
@@ -64,10 +66,11 @@ export const LinkList = forwardRef<HTMLAnchorElement, LinkListProps>(({
           (isActive || isFocused) ? 'bg-black text-white dark:bg-zinc-700' : 'dark:text-white dark:hover:bg-zinc-700 hover:bg-gray-200 dark:hover:bg-zinc-700',
           isMobile ? 'border-b px-4 py-3 dark:border-zinc-700 text-sm' : 'rounded-lg p-2'
         )}
+        aria-label={accessibilityLabel}
         aria-current={isActive ? 'location' : undefined}
         onFocus={onFocus}
       >
-         <div className="flex flex-row items-center gap-3">
+         <div aria-hidden="true" className="flex flex-row items-center gap-3">
           {post.image && (
             <Image
               alt={post.description || ''}
