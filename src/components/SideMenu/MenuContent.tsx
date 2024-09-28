@@ -15,7 +15,6 @@ interface LinkItem {
   href: string;
   label: string;
   icon: JSX.Element;
-  shortcutNumber?: number;
 }
 
 interface Profile {
@@ -156,7 +155,7 @@ export const MenuContent: React.FC = () => {
         <ul className="flex flex-col gap-1 list-none">
           {LINKS.map((link: LinkItem, linkIndex: number) => (
             <li key={link.href}>
-              <NavigationLink href={link.href} label={link.label} icon={link.icon} shortcutNumber={linkIndex + 1} />
+              <NavigationLink href={link.href} label={link.label} icon={link.icon} />
             </li>
           ))}
         </ul>

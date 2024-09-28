@@ -19,22 +19,6 @@ export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner, on
   const router = useRouter();
   const pathname = usePathname();
   const [isMinimized, setIsMinimized] = useState(false);
-  const [keyCodePathnameMapping, setKeyCodePathnameMapping] = useState<{ [key: string]: string | undefined }>({
-    Digit1: '/',
-    Digit2: '/about',
-    Digit3: '/projects',
-    Digit4: '/writing',
-    Digit5: '/links',
-    Digit6: '/contact',
-  });
-
-  useKeyPress(onKeyPress, Object.keys(keyCodePathnameMapping));
-
-  function onKeyPress(event: KeyboardEvent) {
-    const key = event.code;
-    const targetPathname = keyCodePathnameMapping[key];
-    if (targetPathname && targetPathname !== pathname) router.push(targetPathname);
-  }
 
   const handleMinimizeChange = (minimized: boolean) => {
     setIsMinimized(minimized);

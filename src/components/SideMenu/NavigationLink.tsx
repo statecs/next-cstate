@@ -12,10 +12,9 @@ interface NavigationLinkProps {
   href: string;
   label: string;
   icon?: JSX.Element;
-  shortcutNumber?: number;
 }
 
-export const NavigationLink = memo<NavigationLinkProps>(({ href, label, icon, shortcutNumber }) => {
+export const NavigationLink = memo<NavigationLinkProps>(({ href, label, icon }) => {
   const [, setIsOpen] = useAtom(drawerAtom);
   const closeDrawer = () => setIsOpen(false);
   const pathname = usePathname();
@@ -56,19 +55,6 @@ export const NavigationLink = memo<NavigationLinkProps>(({ href, label, icon, sh
     >
       {iconCmp}
       <span className={cn('font-medium', isActive ? 'text-white' : '')}>{label}</span>
-
-      {shortcutNumber && (
-        <span
-          className={cn(
-            'ml-auto hidden h-5 w-5 place-content-center rounded border border-gray-200 bg-gray-100 dark:text-white dark:bg-zinc-700 dark:border-custom-light-gray text-xs font-medium text-gray-500 transition-colors duration-200 group-hover:border-gray-300 group-hover:dark:border-zinc-600 lg:grid',
-            isActive ? 'border-gray-600 bg-custom-dark-gray dark:bg-zinc-200 dark:text-custom-dark-gray text-gray-200 group-hover:border-gray-600' : ''
-          )}
-          title={`Shortcut key: ${shortcutNumber}`}
-          aria-label={`Shortcut key ${shortcutNumber}`}
-        >
-          {shortcutNumber}
-        </span>
-      )}
 
     </span>
   </Link>
