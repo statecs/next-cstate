@@ -8,6 +8,7 @@ import React, { useState, useEffect, ReactElement } from 'react';
 import { ListLayout } from '@/components/ListLayout/ListLayout';
 
 interface SideMenuProps {
+  children: React.ReactNode;
   title?: string;
   isInner?: boolean;
   className?: string;
