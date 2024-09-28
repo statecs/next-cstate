@@ -51,7 +51,7 @@ const AboutSection: React.FC = () => {
             {showFullContent && (
             <button 
               onClick={toggleContent} 
-              className="flex items-center text-white text-sm underline font-serif mb-4 transition-colors duration-200"
+              className="flex items-center dark:text-white text-sm underline font-serif mb-4 transition-colors duration-200"
             >
               <ChevronUpIcon size={16} className="mr-1" />
               Read less

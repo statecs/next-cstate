@@ -87,6 +87,22 @@ export const LinkList = forwardRef<HTMLAnchorElement, LinkListProps>(({
               </time>
             </span>
             <span className={cn('transition-colors duration-300', isActive ? 'dark:text-slate-300' : 'text-gray-600 dark:text-gray-400')}>
+            {post.category && (
+              <div className="max-w-[210px] max-h-[40px] overflow-hidden">
+                <div className="whitespace-nowrap overflow-hidden text-ellipsis">
+                  {post.category?.split(',').map((cat, index, array) => (
+                    <React.Fragment key={cat.trim()}>
+                      <span className="font-sans text-[12px] text-gray-400 dark:text-gray-400">
+                        {cat.trim()}
+                      </span>
+                      {index < array.length - 1 && (
+                        <span>, &nbsp;</span>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            )}
               {isCollectionNew(post.published) && <NewBadge isActive={isActive} />}
               {!loading && isWriting && (
                 <>
