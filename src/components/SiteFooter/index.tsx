@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import SocialLinks from '@/components/SiteMenu/SocialLinks';
 import UnderlineLink from '@/components/UnderlineLink';
 import { useAtom } from 'jotai';
@@ -25,9 +24,12 @@ const SiteFooter: React.FC = () => {
   );
 
   return (
-    <>
-      {isFooterVisible && (
-        <footer className="relative py-5 z-50 border-t dark:border-zinc-800">
+    <footer className={`
+      relative py-5 z-50 border-t dark:border-zinc-800
+      transition-opacity duration-300
+      ${isFooterVisible ? 'opacity-100' : 'opacity-0 sm:opacity-100'}
+    `}>
+    
           <nav aria-label="Footer Navigation" className="flex flex-wrap justify-center items-center gap-3">
             <ul className="flex flex-wrap justify-center items-center gap-3 list-none">
               {visibleLinks.map(link => (
@@ -40,9 +42,7 @@ const SiteFooter: React.FC = () => {
             </ul>
             <SocialLinks />
           </nav>
-        </footer>
-      )}
-    </>
+    </footer>
   );
 };
 

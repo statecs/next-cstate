@@ -2,7 +2,7 @@
 
 import React, { ReactNode } from 'react';
 import { useAtom } from 'jotai';
-import { responseMessageLengthAtom } from '@/utils/store';
+import { responseMessageLengthAtom, footerVisibilityAtom } from '@/utils/store';
 
 interface ClientPaddingProps {
     children: ReactNode;
@@ -10,13 +10,33 @@ interface ClientPaddingProps {
 
 const ClientPadding: React.FC<ClientPaddingProps> = ({ children }) => {
     const [responseLength] = useAtom(responseMessageLengthAtom);
-    const addExtraPadding = responseLength > 450;
+    const [footerVisible] = useAtom(footerVisibilityAtom);
+    const addExtraPadding = responseLength > 1;
 
     return (
-        <div className="flex min-h-[calc(100vh-110px)] lg:min-h-screen overflow-scroll">
-            <div className={`flex flex-grow border-spacing-4 items-center justify-center overflow-scroll ${addExtraPadding ? 'md:pt-20' : ''}`}>
+        <div className={`
+            ${footerVisible ? 'min-h-screen md:h-40 md:overflow-scroll' : 'h-full md:min-h-screen mt-20'}
+            w-full
+            flex flex-col
+            ${addExtraPadding ? '-mt-12 md:mt-auto' : 'md:mt-auto'}
+        `}>
+            <main className={`
+                flex-grow
+                flex
+                items-start 
+                justify-center 
+                w-full 
+                px-4 
+                sm:px-6 
+                md:px-8
+                ${addExtraPadding ? 'pt-20 pb-32' : 'py-20'}
+                max-h-[calc(100vh-110px)] md:max-h-none
+                overflow-y-auto
+            `}>
+                <div>
                     {children}
-            </div>
+                </div>
+            </main>
         </div>
     );
 };

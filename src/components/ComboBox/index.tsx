@@ -536,7 +536,7 @@ useEffect(() => {
           {responseMessage ? (
             <>
               <p
-                className="text-sm max-h-[300px] overflow-scroll"
+                className="text-sm max-h-[200px] lg:max-h-[450px] overflow-scroll"
                 dangerouslySetInnerHTML={{
                   __html: responseMessage
                     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")

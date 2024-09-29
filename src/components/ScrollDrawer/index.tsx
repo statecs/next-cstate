@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerClose, DrawerTrigger } from './Drawer';
-import { drawerScrollAtom } from '@/utils/store';
+import { drawerScrollAtom, footerVisibilityAtom, responseMessageLengthAtom } from '@/utils/store';
 import { useAtom } from 'jotai';
 import { PlusIcon, ArrowUpRightIcon, XIcon } from 'lucide-react'
 import Image from 'next/image';
@@ -32,6 +32,8 @@ const ScrollDrawer = () => {
   const drawerRef = useRef<HTMLDivElement>(null);
   const [activeSnapPoint, setActiveSnapPoint] = useState<string | number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isFooterVisible] = useAtom(footerVisibilityAtom);
+  const [responseLength] = useAtom(responseMessageLengthAtom);
 
 
   useEffect(() => {
@@ -161,7 +163,7 @@ const ScrollDrawer = () => {
 
   return (
     <>
-    {isMobile && (
+    {isMobile && isFooterVisible && !responseLength &&(
 
     <Drawer
       setActiveSnapPoint={handleSetActiveSnapPoint}
