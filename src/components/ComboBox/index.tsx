@@ -224,7 +224,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
     setTimeout(() => {
       setIsFocused(false);
       setFooterVisible(true);
-    }, 100);
+    }, 200);
   };
 
   const handleSuggestionClick = (suggestion: string) => {
