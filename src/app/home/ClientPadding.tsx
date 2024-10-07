@@ -18,7 +18,7 @@ const ClientPadding: React.FC<ClientPaddingProps> = ({ children }) => {
             ${footerVisible ? 'min-h-screen md:h-40 md:overflow-scroll' : 'h-full md:min-h-screen mt-20'}
             w-full
             flex flex-col
-            ${addExtraPadding ? '-mt-12 md:mt-auto' : 'md:mt-auto'}
+            ${addExtraPadding ? 'md:mt-auto' : 'md:mt-auto'}
         `}>
             <main className={`
                 flex-grow

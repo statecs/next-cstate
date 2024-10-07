@@ -108,6 +108,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
   const sendMessage = async (message: string) => {
     // Reset message and set loading state before any asynchronous operation
     setLoading(true);
+    setResponseMessageLength(1);
     setResponseMessage(null);
     setInputValue('');  // Clear input field immediately
     setIsFocused(false);
