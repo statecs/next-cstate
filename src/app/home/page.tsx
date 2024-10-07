@@ -18,7 +18,7 @@ const HomePage = async () => {
                     <AboutSection />
                 </div>
 
-                <div className="prose-sm leading-relaxed tracking-wide dark:prose-invert prose-p:text-gray-500 dark:prose-p:text-gray-300 px-5 md:px-0 font-serif mb-8">
+                <div className="prose-sm leading-relaxed tracking-wide dark:prose-invert prose-p:text-gray-500 dark:prose-p:text-gray-300 px-5 md:px-0 font-sans mb-8">
                     <ComboBox assistantId={process.env.ASSISTANT_ID || ''} />
                 </div>
 

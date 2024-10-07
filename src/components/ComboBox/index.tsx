@@ -481,7 +481,7 @@ useEffect(() => {
       {currentLabel}
     </label>
       {isFocused && filteredSuggestions.length > 0 && (
-        <div className="absolute text-left z-50 w-full md:mt-10 top-12 md:top-10 left-0 mt-1 p-2 bg-white dark:bg-custom-light-gray dark:text-white border border-gray-300 rounded-md">
+        <div className="absolute text-base text-left z-50 w-full md:mt-10 top-12 md:top-10 left-0 mt-1 p-2 bg-white dark:bg-custom-light-gray dark:text-white border border-gray-300 rounded-md">
           {filteredSuggestions.map((suggestion, index) => (
             <button
               key={index}
@@ -537,7 +537,7 @@ useEffect(() => {
           {responseMessage ? (
             <>
               <p
-                className="text-sm max-h-[200px] lg:max-h-[450px] overflow-scroll"
+                className="text-base max-h-[200px] lg:max-h-[450px] overflow-scroll"
                 dangerouslySetInnerHTML={{
                   __html: responseMessage
                     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
