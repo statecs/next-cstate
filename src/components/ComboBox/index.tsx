@@ -5,6 +5,7 @@ import { sendMessageToThreadStream, sendMessageToClaudeAPI, textToSpeech } from 
 import { useAtom } from 'jotai';
 import { footerVisibilityAtom, responseMessageLengthAtom } from '@/utils/store';
 import { Volume2Icon, PauseIcon, LoaderIcon } from 'lucide-react';
+import VoiceInput from '../VoiceInput'; // Import the new VoiceInput component
 
 interface ComboBoxProps {
   assistantId: string;
@@ -397,16 +398,10 @@ const labels: string[] = shuffleArray([
   'Vem är Christopher?',
   'What can you do?',
   'What are your skills?',
-  'What technologies do you work with?',
   'Let\'s discuss my projects!',
-  'Låt oss diskutera mina projekt!',
-  'Quels sont mes projets actuels?', // French: What are my current projects?
-  'Parliamo delle mie esperienze!', // Italian: Let's talk about my experiences!
-  '¿Cuál es mi experiencia laboral?', // Spanish: What's my work experience?
   'Quelles sont mes passions?', // French: What are my passions?
   'Cosa posso fare per te?', // Italian: What can I do for you?
   '¿Quién es Christopher?', // Spanish: Who is Christopher?
-  'Quelle est ma philosophie de travail?', // French: What's my work philosophy?
   'Quali tecnologie conosco?', // Italian: What technologies do I know?
   '¿Qué tecnologías domino?', // Spanish: What technologies do I master?
 
@@ -436,6 +431,12 @@ useEffect(() => {
   };
 }, [isFocused, inputValue, labels, isHovered]);
 
+const handleVoiceInput = (transcript: string) => {
+  setInputValue(transcript);
+  setIsFilled(transcript.length > 0);
+  handleSendMessage(transcript);
+};
+
   return (
     <>
     <div className="relative flex flex-col space-y-2 max-w-[500px] justify-center items-center">
@@ -457,6 +458,7 @@ useEffect(() => {
           autoComplete="off"
           disabled={loading}
         />
+        <VoiceInput onVoiceInput={handleVoiceInput} />
         <button 
           aria-label="Send message"
           disabled={loading}
