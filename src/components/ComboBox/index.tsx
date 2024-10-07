@@ -542,7 +542,7 @@ useEffect(() => {
                   __html: responseMessage
                     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
                     .replace(/^- (.*)/gm, "<li>$1</li>")
-                    .replace(/<li>/, "<ul class='list-disc pl-5'><li>")
+                    .replace(/<li>/, "<ul class='list-disc pl-5 whitespace-normal'><li>")
                     .replace(/<\/li>$/, "</li></ul>")
                     .replace(/```(\w+)?\s*([\s\S]*?)```/g, (_, lang, content) => {
                       const trimmedContent = content.trim();
