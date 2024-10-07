@@ -25,7 +25,7 @@ const [isMobile, setIsMobile] = useState(false);
       {(!isMobile || (isMobile && isFooterVisible)) && (
          <>
             <div className="link-card transition duration-500 ease-in-out inline-flex justify-center items-center gap-2 p-2">
-              <Image
+            <Image
                 src="/images/me.jpeg"
                 alt="A smiling person with glasses in a striped shirt against a gray background."
                 width={0}
@@ -34,6 +34,7 @@ const [isMobile, setIsMobile] = useState(false);
                 style={{ width: '120px', height: '120px' }}
                 loading="lazy"
                 className="rounded-full border shadow-sm"
+                unoptimized
                 />
             </div>
             <Link

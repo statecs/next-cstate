@@ -125,7 +125,7 @@ export const MenuContent: React.FC = () => {
           onClick={toggleWelcomeMessage}
           className="link-card inline-flex items-center gap-2 p-2 w-full text-left mt-4 lg:mt-0"
         >
-          <Image src="/images/me.jpeg" alt={userName} width={40} height={40} loading="lazy" className="rounded-full border shadow-sm" />
+          <Image src="/images/me.jpeg" alt={userName} width={40} height={40} loading="lazy" className="rounded-full border shadow-sm" unoptimized />
           <div className="flex-grow">
             <span className="font-semibold tracking-tight">{userName}</span>
             <p className="text-gray-600 dark:text-gray-400">{userRole}</p>
