@@ -91,7 +91,7 @@ export const LinkList = forwardRef<HTMLAnchorElement, LinkListProps>(({
             </span>
             <span className={cn('transition-colors duration-300', isActive ? 'dark:text-slate-300' : 'text-gray-600 dark:text-gray-400')}>
             {post.category && (
-              <div className="max-w-[210px] max-h-[40px] overflow-hidden">
+              <div className="max-w-[210px] lg:max-w-[160px] xl:max-w-[210px] max-h-[40px] overflow-hidden">
                 <div className="whitespace-nowrap overflow-hidden text-ellipsis">
                   {post.category?.split(',').map((cat, index, array) => (
                     <React.Fragment key={cat.trim()}>

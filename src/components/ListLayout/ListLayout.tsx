@@ -18,7 +18,7 @@ interface ListLayoutProps {
 
 const FILTERS = {
   IS_PUBLIC: 'Public',
-  SIGNED_IN: 'Free Access',
+  SIGNED_IN: 'Members',
   MEMBERS: 'Paid'
 } as const;
 
@@ -176,23 +176,33 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
 
   return (
     <>
-      {isWriting && isAuthenticated && (
+     
+      <div className="relative bg-zinc-50 font-serif dark:bg-custom-light-gray dark:text-white p-3 lg:p-0">
+        <div className="flex justify-between items-center mb-2">
+          
+        {!isListMinimized && (
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="px-4 py-2 bg-gray-200 dark:bg-zinc-700 rounded-md text-xs font-medium transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-600"
+          >
+            {showFilters ? 'Hide Filters' : 'Show Filters'}
+            {activeFilter && ' (1)'}
+          </button>
+        )}
+          <button
+            onClick={toggleMinimize}
+            className={cn(
+              "hidden lg:block px-4 py-2 bg-gray-200 dark:bg-zinc-700 rounded-md text-xs font-medium transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-600",
+              isListMinimized ? "mt-2 mb-4" : ""
+            )}
+            aria-label={isListMinimized ? "Expand list" : "Minimize list"}
+          >
+            {isListMinimized ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          </button>
+        </div>
+
+        {isWriting && !isListMinimized && showFilters && (
         <div className="flex flex-col gap-2 bg-zinc-50 font-serif dark:bg-custom-light-gray dark:text-white p-3 lg:p-0">
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`
-                lg:mb-2 px-4 py-2 
-                ${activeFilter ? 'w-[7.5rem]' : 'w-[6.5rem]'}
-                bg-gray-200 text-gray-800 dark:bg-zinc-700 dark:text-gray-200 
-                rounded-md text-xs font-medium 
-                transition-colors duration-200 
-                hover:bg-gray-300 hover:text-gray-900 
-                dark:hover:bg-zinc-600 dark:hover:text-white
-              `}
-            >
-              {showFilters ? 'Hide Filters' : 'Show Filters'}
-              {activeFilter && ' (1)'}
-            </button>
           {showFilters && (
             <>
               <div className="flex rounded-md shadow-sm w-full" role="group">
@@ -232,30 +242,8 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
           )}
         </div>
       )}
-      <div className="relative bg-zinc-50 font-serif dark:bg-custom-light-gray dark:text-white p-3 lg:p-0">
-        <div className="flex justify-between items-center mb-2">
-          
-        {!isListMinimized && (
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="px-4 py-2 bg-gray-200 dark:bg-zinc-700 rounded-md text-xs font-medium transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-600"
-          >
-            {showFilters ? 'Hide Filters' : 'Show Filters'}
-            {activeFilter && ' (1)'}
-          </button>
-        )}
-          <button
-            onClick={toggleMinimize}
-            className={cn(
-              "hidden lg:block px-4 py-2 bg-gray-200 dark:bg-zinc-700 rounded-md text-xs font-medium transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-600",
-              isListMinimized ? "mt-2 mb-4" : ""
-            )}
-            aria-label={isListMinimized ? "Expand list" : "Minimize list"}
-          >
-            {isListMinimized ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-          </button>
-        </div>
-        {showFilters && !isListMinimized && (
+
+        {showFilters && !isListMinimized && !isWriting && (
           <div className="flex flex-wrap gap-1 p-4 lg:pb-4 lg:pt-1 overflow-hidden animate-fadeIn">
             {categories.map(category => (
               <FilterButton
