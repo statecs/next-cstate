@@ -12,18 +12,23 @@ const securityHeaders = [
                "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; " +
                "style-src 'self' 'unsafe-inline'; " +
                "font-src 'self' data:; " +
-               "connect-src 'self' https://vitals.vercel-insights.com " + process.env.API_BASE_URL + " https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; " +
+               "connect-src 'self' https://vitals.vercel-insights.com " + 
+               process.env.API_BASE_URL + " " +
+               "https://*.google-analytics.com https://*.analytics.google.com " +
+               "https://*.googletagmanager.com https://api.openai.com https://cstate.se https://*.cstate.se " +
+               "https://*.workers.dev " +
+               "http://localhost:3001; " + 
                "frame-src 'self' https://www.youtube.com https://youtube.com https://youtu.be; " +
                "frame-ancestors 'self' https://app.contentful.com;" +
                "media-src 'self' blob:;"
     }    
 ];
-
 module.exports = {
     env: {
         API_BASE_URL: process.env.API_BASE_URL,
         NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
         KINDE_DOMAIN: process.env.KINDE_DOMAIN,
+        OPENAI_API_KEY: process.env.OPENAI_API_KEY,
         KINDE_MANAGEMENT_CLIENT_ID: process.env.KINDE_MANAGEMENT_CLIENT_ID,
         KINDE_MANAGEMENT_CLIENT_SECRET: process.env.KINDE_MANAGEMENT_CLIENT_SECRET,
         INSTRUCTION_TEXT: process.env.INSTRUCTION_TEXT,

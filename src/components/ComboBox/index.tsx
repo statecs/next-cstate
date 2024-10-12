@@ -434,7 +434,6 @@ useEffect(() => {
 const handleVoiceInput = (transcript: string) => {
   setInputValue(transcript);
   setIsFilled(transcript.length > 0);
-  handleSendMessage(transcript);
 };
 
   return (
@@ -458,7 +457,7 @@ const handleVoiceInput = (transcript: string) => {
           autoComplete="off"
           disabled={loading}
         />
-        <VoiceInput onVoiceInput={handleVoiceInput} />
+        <VoiceInput onVoiceInput={handleVoiceInput} assistantId={assistantId} />
         <button 
           aria-label="Send message"
           disabled={loading}
