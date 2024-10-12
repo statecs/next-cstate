@@ -28,7 +28,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
 
     try {
       // Initialize WebSocket connection
-      socketRef.current = new WebSocket('ws://api2.cstate.se/audio-stream');
+      socketRef.current = new WebSocket('wss://api2.cstate.se/audio-stream');
       socketRef.current.binaryType = 'arraybuffer';
 
       socketRef.current.onopen = async () => {
