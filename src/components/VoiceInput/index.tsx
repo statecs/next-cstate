@@ -1,24 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, X, Volume2 } from 'lucide-react';
+import { Mic, X } from 'lucide-react';
 
 interface VoiceInputProps {
   onVoiceInput: (input: string) => void;
   assistantId: string;
-}
-
-interface SpeechRecognitionEvent extends Event {
-  results: SpeechRecognitionResultList;
-}
-
-interface SpeechRecognitionErrorEvent extends Event {
-  error: string;
-}
-
-interface SpeechRecognition extends EventTarget {
-  start: () => void;
-  stop: () => void;
-  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
-  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null;
 }
 
 const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) => {
@@ -26,190 +11,128 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
     return () => {
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-      }
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-      if (audioSourceRef.current) {
-        audioSourceRef.current.stop();
-      }
+      stopListening();
     };
   }, []);
-  
 
-  const startListening = () => {
+  const startListening = async () => {
     setError(null);
     setIsListening(true);
     setDropdownVisible(true);
-    
-    try {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        throw new Error("Speech recognition is not supported in this browser.");
-      }
-      
-      recognitionRef.current = new SpeechRecognition();
-      
-      if (recognitionRef.current) {
-        recognitionRef.current.onresult = async (event: SpeechRecognitionEvent) => {
-          const transcript = event.results[0][0].transcript;
-          onVoiceInput(transcript);
-          stopListening();
-          await sendSpeechToSpeech(transcript);
-        };
 
-        recognitionRef.current.onerror = (event: SpeechRecognitionErrorEvent) => {
-          setError(`Speech recognition error: ${event.error}`);
-          stopListening();
+    try {
+      // Initialize WebSocket connection
+      socketRef.current = new WebSocket('ws://api2.cstate.se/audio-stream');
+      socketRef.current.binaryType = 'arraybuffer';
+
+      socketRef.current.onopen = async () => {
+        console.log('WebSocket connection opened');
+
+        // Get user media (microphone access)
+        mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+
+        const source = audioContextRef.current.createMediaStreamSource(mediaStreamRef.current);
+        const processor = audioContextRef.current.createScriptProcessor(4096, 1, 1);
+
+        source.connect(processor);
+        processor.connect(audioContextRef.current.destination);
+
+        processor.onaudioprocess = (e) => {
+          const audioData = e.inputBuffer.getChannelData(0);
+          const int16Data = floatTo16BitPCM(audioData);
+          if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+            socketRef.current.send(int16Data);
+          }
         };
-        
-        recognitionRef.current.start();
-      } else {
-        throw new Error("Failed to initialize speech recognition.");
-      }
+      };
+
+      socketRef.current.onmessage = (event) => {
+        const arrayBuffer = event.data;
+        playAudioBuffer(arrayBuffer);
+      };
+
+      socketRef.current.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        setError('WebSocket error occurred.');
+      };
+
+      socketRef.current.onclose = () => {
+        console.log('WebSocket connection closed');
+      };
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-      stopListening();
+      console.error('Error starting listening:', err);
+      setError('Failed to start listening. Please try again.');
+      setIsListening(false);
     }
   };
 
   const stopListening = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-    }
-    setIsListening(false);
     setDropdownVisible(false);
-  };
+    setIsListening(false);
 
-  const sendSpeechToSpeech = async (transcript: string) => {
-    try {
-      // Convert the transcript to an ArrayBuffer
-      const encoder = new TextEncoder();
-      const audioData = encoder.encode(transcript);
+    if (socketRef.current) {
+      socketRef.current.close();
+      socketRef.current = null;
+    }
 
-      // Convert ArrayBuffer to Base64
-      const uint8Array = new Uint8Array(audioData);
-      const numberArray = Array.from(uint8Array);
-      const base64Audio = btoa(String.fromCharCode.apply(null, numberArray));
-      
-      const response = await fetch('https://api2.cstate.se/speech-to-speech', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          audio: base64Audio,
-          threadId: 'thread_s3dkWqL2T4WwfTHTVL391fyD',
-          assistantId: assistantId,
-        }),
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Failed to process speech-to-speech request: ${response.status}`);
-      }
-  
-      if (response.status === 204) {
-        console.log("No audio response received");
-        return;
-      }
-      console.log(response);
-  
-      await streamAudio(response);
-    } catch (error) {
-      console.error('Error in speech-to-speech:', error);
-      setError('Failed to process speech. Please try again.');
+    if (mediaStreamRef.current) {
+      mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+      mediaStreamRef.current = null;
+    }
+
+    if (audioContextRef.current) {
+      audioContextRef.current.close();
+      audioContextRef.current = null;
     }
   };
 
-  const streamAudio = async (response: Response) => {
-    const reader = response.body!.getReader();
-    let chunks: Uint8Array[] = [];
-    
+  const floatTo16BitPCM = (input: Float32Array): ArrayBuffer => {
+    const buffer = new ArrayBuffer(input.length * 2);
+    const view = new DataView(buffer);
+    for (let i = 0; i < input.length; i++) {
+      let s = Math.max(-1, Math.min(1, input[i]));
+      view.setInt16(i * 2, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+    }
+    return buffer;
+  };
+
+  const playAudioBuffer = async (arrayBuffer: ArrayBuffer) => {
     try {
-      // Read all chunks and concatenate them into a single buffer
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        
-        console.log("Raw audio chunk (encoded):", value);
-        chunks.push(new Uint8Array(value)); // Collect chunks
-      }
-  
-      // Concatenate all the chunks into one Uint8Array
-      const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0);
-      const combinedBuffer = new Uint8Array(totalLength);
-      let offset = 0;
-  
-      for (const chunk of chunks) {
-        combinedBuffer.set(chunk, offset);
-        offset += chunk.length;
-      }
-  
-      console.log("Combined audio buffer length:", combinedBuffer.length);
-  
       if (!audioContextRef.current) {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
       }
   
-      // Decode the combined buffer
-      const audioBuffer = await audioContextRef.current.decodeAudioData(combinedBuffer.buffer);
-      playAudioBuffer(audioBuffer);
-      
+      const audioBuffer = await audioContextRef.current.decodeAudioData(arrayBuffer);
+  
+      const source = audioContextRef.current.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(audioContextRef.current.destination);
+      source.start(0);
+      setIsPlaying(true);
+  
+      source.onended = () => {
+        setIsPlaying(false);
+      };
     } catch (error) {
       console.error('Error decoding audio data:', error);
-      setError('Failed to decode audio. Please try again.');
+      setError('Failed to decode audio.');
     }
   };
   
-  
-  
-  const playAudioBuffer = (audioBuffer: AudioBuffer) => {
-    if (audioContextRef.current) {
-      if (audioSourceRef.current) {
-        audioSourceRef.current.stop();
-        audioSourceRef.current.disconnect();  // Ensure it is disconnected from destination
-      }
-      audioSourceRef.current = audioContextRef.current.createBufferSource();
-      audioSourceRef.current.buffer = audioBuffer;
-      audioSourceRef.current.connect(audioContextRef.current.destination);
-      audioSourceRef.current.start();
-      setIsPlaying(true);
-      audioSourceRef.current.onended = () => {
-        setIsPlaying(false);
-        audioSourceRef.current = null;  // Clear the reference after playback ends
-      };
-    }
-  };
-
-  const handlePlayPause = async () => {
-    if (audioContextRef.current && audioSourceRef.current) {
-      if (isPlaying) {
-        if (audioContextRef.current.state === 'running') {
-          await audioContextRef.current.suspend();
-        }
-      } else {
-        if (audioContextRef.current.state === 'suspended') {
-          await audioContextRef.current.resume();
-        }
-      }
-      setIsPlaying(!isPlaying);
-    }
-  };
 
   return (
     <div className="relative">
       <button
         onClick={isListening ? stopListening : startListening}
         className="-ml-32 p-2 rounded-full hover:bg-gray-300 dark:hover:bg-zinc-600 transition-colors duration-200 cursor-pointer"
-        aria-label={isListening ? "Stop listening" : "Start voice input"}
+        aria-label={isListening ? 'Stop listening' : 'Start voice input'}
       >
         {isListening ? (
           <X className="h-4 w-4 text-gray-500 dark:text-gray-400 cursor-pointer" />
@@ -217,7 +140,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
           <Mic className="h-4 w-4 text-gray-500 dark:text-gray-400 cursor-pointer" />
         )}
       </button>
-      
+
       {dropdownVisible && (
         <div className="absolute z-50 -ml-36 mt-2 p-4 bg-white dark:bg-zinc-800 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700">
           <svg className="w-16 h-16 mx-auto" viewBox="0 0 100 100">
@@ -254,19 +177,8 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
         
         </div>
       )}
-     
-      {audioSourceRef.current && (
-        <button
-          onClick={handlePlayPause}
-          className="mt-2 p-2 rounded-full bg-blue-500 hover:bg-blue-600 transition-colors duration-200"
-          aria-label={isPlaying ? "Pause audio" : "Play audio"}
-        >
-          <Volume2 className="h-4 w-4 text-white" />
-        </button>
-      )}
-        {error && (
-            <div className="fixed mt-2 text-sm text-red-500">{error}</div>
-          )}
+
+      {error && <div className="fixed mt-2 text-sm text-red-500">{error}</div>}
     </div>
   );
 };

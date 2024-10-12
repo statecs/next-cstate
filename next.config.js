@@ -15,9 +15,9 @@ const securityHeaders = [
                "connect-src 'self' https://vitals.vercel-insights.com " + 
                process.env.API_BASE_URL + " " +
                "https://*.google-analytics.com https://*.analytics.google.com " +
-               "https://*.googletagmanager.com https://api.openai.com https://cstate.se https://*.cstate.se " +
+               "https://*.googletagmanager.com https://api.openai.com https://cstate.se https://*.cstate.se ws://*.cstate.se " +
                "https://*.workers.dev " +
-               "http://localhost:3001; " + 
+               "http://localhost:3001 ws://localhost:3001; " + 
                "frame-src 'self' https://www.youtube.com https://youtube.com https://youtu.be; " +
                "frame-ancestors 'self' https://app.contentful.com;" +
                "media-src 'self' blob:;"
