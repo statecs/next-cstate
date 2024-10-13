@@ -4,10 +4,11 @@ import { useAudioBufferManager } from '../../hooks/useAudioBufferManager';
 
 interface VoiceInputProps {
   onVoiceInput: (input: string) => void;
+  onAssistantResponse: (response: string) => void;
   assistantId: string;
 }
 
-const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) => {
+const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantResponse, assistantId }) => {
   const [isListening, setIsListening] = useState(false);
   const [isInterrupted, setIsInterrupted] = useState(false);
   const isInterruptedRef = useRef(false);
@@ -61,7 +62,16 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
             console.warn('Received empty audio chunk from WebSocket');
           }
         } else {
-          console.error('Received non-binary data from WebSocket');
+          try {
+            const message = JSON.parse(event.data);
+            if (message.type === 'transcription') {
+              onVoiceInput(message.text);
+            } else if (message.type === 'assistant_response') {
+              onAssistantResponse(message.text);
+            }
+          } catch (error) {
+            console.error('Error parsing WebSocket message:', error);
+          }
         }
       };
 

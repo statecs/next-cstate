@@ -436,6 +436,12 @@ const handleVoiceInput = (transcript: string) => {
   setIsFilled(transcript.length > 0);
 };
 
+const handleAssistantResponse = (response: string) => {
+  setResponseMessage(response);
+  // Save to localStorage
+  localStorage.setItem("chatResponse", response);
+};
+
   return (
     <>
     <div className="relative flex flex-col space-y-2 max-w-[500px] justify-center items-center">
@@ -457,7 +463,7 @@ const handleVoiceInput = (transcript: string) => {
           autoComplete="off"
           disabled={loading}
         />
-        <VoiceInput onVoiceInput={handleVoiceInput} assistantId={assistantId} />
+        <VoiceInput onVoiceInput={handleVoiceInput} onAssistantResponse={handleAssistantResponse} assistantId={assistantId} />
         <button 
           aria-label="Send message"
           disabled={loading}
