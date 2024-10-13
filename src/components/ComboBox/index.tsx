@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
-import { sendMessageToThreadStream, sendMessageToClaudeAPI, textToSpeech } from '@/utils/threadService';
+import { sendMessageToThread, sendMessageToThreadStream, sendMessageToClaudeAPI, textToSpeech } from '@/utils/threadService';
 import { useAtom } from 'jotai';
 import { footerVisibilityAtom, responseMessageLengthAtom } from '@/utils/store';
 import { Volume2Icon, PauseIcon, LoaderIcon } from 'lucide-react';
@@ -36,6 +36,11 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
   const [isVisible, setIsVisible] = useState(true);
   const intervalRef = useRef<number | null>(null);
   const [isHovered, setIsHovered] = useState(false);
+
+
+  const getThreadIdFromLocalStorage = () => {
+    return localStorage.getItem('threadId');
+  };
 
 
   useEffect(() => {
@@ -431,13 +436,46 @@ useEffect(() => {
   };
 }, [isFocused, inputValue, labels, isHovered]);
 
-const handleVoiceInput = (transcript: string) => {
+// Function to handle voice input
+const handleVoiceInput = async (transcript: string) => {
   setInputValue(transcript);
   setIsFilled(transcript.length > 0);
+
+  try {
+    // Retrieve the thread ID, or generate a new one if not available
+    const threadId = await generateNewThreadId();
+
+    if (!threadId) {
+      console.error("Failed to obtain thread ID.");
+      return;
+    }
+
+    const role = 'user';
+    await sendMessageToThread(threadId, transcript, [], assistantId, role); // Use the thread ID
+  } catch (error) {
+    console.error('Failed to send message to thread:', error);
+  }
 };
 
-const handleAssistantResponse = (response: string) => {
+// Function to handle assistant response
+const handleAssistantResponse = async (response: string) => {
   setResponseMessage(response);
+
+  try {
+    // Check if threadId exists in localStorage
+    let threadId = getThreadIdFromLocalStorage();
+
+    if (!threadId) {
+      console.error("Failed to obtain thread ID.");
+      return;
+    }
+
+    const role = 'assistant';
+    await sendMessageToThread(threadId, response, [], assistantId, role); // Use the thread ID
+  } catch (error) {
+    console.error('Failed to send message to thread:', error);
+  }
+
   // Save to localStorage
   localStorage.setItem("chatResponse", response);
 };
