@@ -45,7 +45,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
     setDropdownVisible(true);
 
     try {
-      socketRef.current = new WebSocket('wss://api2.cstate.se/audio-stream');
+      socketRef.current = new WebSocket('ws://localhost:3001/audio-stream');
       socketRef.current.binaryType = 'arraybuffer';
 
       socketRef.current.onopen = async () => {
@@ -212,13 +212,15 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
               strokeDasharray="251.2"
               strokeDashoffset="251.2"
             >
-              <animate
-                attributeName="stroke-dashoffset"
-                from="251.2"
-                to="0"
-                dur="2s"
-                repeatCount="indefinite"
-              />
+              {!isInterrupted && (
+                <animate
+                  attributeName="stroke-dashoffset"
+                  from="251.2"
+                  to="0"
+                  dur="2s"
+                  repeatCount="indefinite"
+                />
+              )}
             </circle>
           </svg>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
