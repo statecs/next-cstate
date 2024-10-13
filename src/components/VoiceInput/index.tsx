@@ -44,7 +44,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
     setDropdownVisible(true);
 
     try {
-      socketRef.current = new WebSocket('ws://localhost:3001/audio-stream');
+      socketRef.current = new WebSocket('wss://api2.cstate.se/audio-stream');
       socketRef.current.binaryType = 'arraybuffer';
 
       socketRef.current.onopen = async () => {
