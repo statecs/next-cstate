@@ -41,7 +41,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
       socketRef.current.onopen = async () => {
         console.log('WebSocket connection opened');
         mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
         const source = audioContext.createMediaStreamSource(mediaStreamRef.current);
         const processor = audioContext.createScriptProcessor(4096, 1, 1);
 
