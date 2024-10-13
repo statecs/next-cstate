@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Mic, X } from 'lucide-react';
+import { useAudioBufferManager } from '../../hooks/useAudioBufferManager';
 
 interface VoiceInputProps {
   onVoiceInput: (input: string) => void;
@@ -10,10 +11,9 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
   const [isListening, setIsListening] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioContextRef = useRef<AudioContext | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
+  const { isPlaying, addAudioChunk, stopAudio, pitchFactor, adjustPitch, setOnPlaybackComplete } = useAudioBufferManager();
 
   useEffect(() => {
     return () => {
@@ -21,28 +21,32 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
     };
   }, []);
 
+  useEffect(() => {
+    setOnPlaybackComplete(() => {
+      if (isListening) {
+        startListening();
+      }
+    });
+  }, [isListening, setOnPlaybackComplete]);
+
   const startListening = async () => {
     setError(null);
     setIsListening(true);
     setDropdownVisible(true);
 
     try {
-      // Initialize WebSocket connection
       socketRef.current = new WebSocket('wss://api2.cstate.se/audio-stream');
       socketRef.current.binaryType = 'arraybuffer';
 
       socketRef.current.onopen = async () => {
         console.log('WebSocket connection opened');
-
-        // Get user media (microphone access)
         mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true });
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-
-        const source = audioContextRef.current.createMediaStreamSource(mediaStreamRef.current);
-        const processor = audioContextRef.current.createScriptProcessor(4096, 1, 1);
+        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const source = audioContext.createMediaStreamSource(mediaStreamRef.current);
+        const processor = audioContext.createScriptProcessor(4096, 1, 1);
 
         source.connect(processor);
-        processor.connect(audioContextRef.current.destination);
+        processor.connect(audioContext.destination);
 
         processor.onaudioprocess = (e) => {
           const audioData = e.inputBuffer.getChannelData(0);
@@ -54,8 +58,16 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
       };
 
       socketRef.current.onmessage = (event) => {
-        const arrayBuffer = event.data;
-        playAudioBuffer(arrayBuffer);
+        if (event.data instanceof ArrayBuffer) {
+          const int16Data = new Int16Array(event.data);
+          if (int16Data.length > 0) {
+            addAudioChunk(int16Data);
+          } else {
+            console.warn('Received empty audio chunk from WebSocket');
+          }
+        } else {
+          console.error('Received non-binary data from WebSocket');
+        }
       };
 
       socketRef.current.onerror = (error) => {
@@ -76,6 +88,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
   const stopListening = () => {
     setDropdownVisible(false);
     setIsListening(false);
+    stopAudio();
 
     if (socketRef.current) {
       socketRef.current.close();
@@ -85,11 +98,6 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
     if (mediaStreamRef.current) {
       mediaStreamRef.current.getTracks().forEach((track) => track.stop());
       mediaStreamRef.current = null;
-    }
-
-    if (audioContextRef.current) {
-      audioContextRef.current.close();
-      audioContextRef.current = null;
     }
   };
 
@@ -102,30 +110,6 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
     }
     return buffer;
   };
-
-  const playAudioBuffer = async (arrayBuffer: ArrayBuffer) => {
-    try {
-      if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      }
-  
-      const audioBuffer = await audioContextRef.current.decodeAudioData(arrayBuffer);
-  
-      const source = audioContextRef.current.createBufferSource();
-      source.buffer = audioBuffer;
-      source.connect(audioContextRef.current.destination);
-      source.start(0);
-      setIsPlaying(true);
-  
-      source.onended = () => {
-        setIsPlaying(false);
-      };
-    } catch (error) {
-      console.error('Error decoding audio data:', error);
-      setError('Failed to decode audio.');
-    }
-  };
-  
 
   return (
     <div className="relative">
@@ -172,9 +156,23 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
             </circle>
           </svg>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
-            Listening...
+            {isPlaying ? 'Playing...' : 'Listening...'}
           </p>
-        
+          <div className="mt-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Pitch</label>
+            <input
+              type="range"
+              min="0.1"
+              max="2"
+              step="0.1"
+              value={pitchFactor}
+              onChange={(e) => adjustPitch(parseFloat(e.target.value))}
+              className="mt-1 w-full"
+            />
+            <p className="mt-1 text-center text-xs text-gray-500 dark:text-gray-400">
+              {pitchFactor.toFixed(1)}
+            </p>
+          </div>
         </div>
       )}
 
