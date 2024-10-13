@@ -13,7 +13,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
   const [error, setError] = useState<string | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
-  const { isPlaying, addAudioChunk, stopAudio, pitchFactor, adjustPitch, setOnPlaybackComplete } = useAudioBufferManager();
+  const { isPlaying, addAudioChunk, stopAudio, setOnPlaybackComplete } = useAudioBufferManager();
 
   useEffect(() => {
     return () => {
@@ -59,9 +59,9 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
 
       socketRef.current.onmessage = (event) => {
         if (event.data instanceof ArrayBuffer) {
-          const int16Data = new Int16Array(event.data);
-          if (int16Data.length > 0) {
-            addAudioChunk(int16Data);
+          const float32Data = new Float32Array(event.data);
+          if (float32Data.length > 0) {
+            addAudioChunk(float32Data);
           } else {
             console.warn('Received empty audio chunk from WebSocket');
           }
@@ -100,7 +100,6 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
       mediaStreamRef.current = null;
     }
   };
-
   const floatTo16BitPCM = (input: Float32Array): ArrayBuffer => {
     const buffer = new ArrayBuffer(input.length * 2);
     const view = new DataView(buffer);
@@ -158,21 +157,6 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, assistantId }) =>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
             {isPlaying ? 'Playing...' : 'Listening...'}
           </p>
-          <div className="mt-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Pitch</label>
-            <input
-              type="range"
-              min="0.1"
-              max="2"
-              step="0.1"
-              value={pitchFactor}
-              onChange={(e) => adjustPitch(parseFloat(e.target.value))}
-              className="mt-1 w-full"
-            />
-            <p className="mt-1 text-center text-xs text-gray-500 dark:text-gray-400">
-              {pitchFactor.toFixed(1)}
-            </p>
-          </div>
         </div>
       )}
 
