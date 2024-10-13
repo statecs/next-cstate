@@ -192,47 +192,25 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
       </button>
 
       {dropdownVisible && (
-        <div className="absolute z-50 -ml-36 mt-2 p-4 bg-white dark:bg-zinc-800 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700">
-          <svg className="w-16 h-16 mx-auto" viewBox="0 0 100 100">
-            <circle
-              cx="50"
-              cy="50"
-              r="40"
-              stroke="#3B82F6"
-              strokeWidth="8"
-              fill="none"
-            />
-            <circle
-              cx="50"
-              cy="50"
-              r="40"
-              stroke="#93C5FD"
-              strokeWidth="8"
-              fill="none"
-              strokeDasharray="251.2"
-              strokeDashoffset="251.2"
+          <div className="relative inline-block">
+        
+          <div className="absolute z-50 -left-32 mt-3 w-32 bg-white dark:bg-zinc-800 rounded-md shadow-lg border border-gray-200 dark:border-zinc-700 flex items-center justify-between p-1" style={{ height: '2rem' }}>
+            <svg className="w-6 h-6" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" stroke="#3B82F6" strokeWidth="2" fill="none" />
+              <circle cx="12" cy="12" r="10" stroke="#93C5FD" strokeWidth="2" fill="none" strokeDasharray="62.8" strokeDashoffset="62.8">
+              {!isInterrupted && (<animate attributeName="stroke-dashoffset" from="62.8" to="0" dur="2s" repeatCount="indefinite" />)}
+              </circle>
+            </svg>
+            <span className="text-xs text-gray-600 dark:text-gray-300 mx-1">
+              {isInterrupted ? 'Paused' : (isPlaying ? 'Playing' : 'Listening')}
+            </span>
+            <button
+              onClick={isInterrupted ? resumeVoiceInput : interruptVoiceInput}
+              className="p-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200"
             >
-              {!isInterrupted && (
-                <animate
-                  attributeName="stroke-dashoffset"
-                  from="251.2"
-                  to="0"
-                  dur="2s"
-                  repeatCount="indefinite"
-                />
-              )}
-            </circle>
-          </svg>
-          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
-            {isInterrupted ? 'Paused' : (isPlaying ? 'Playing...' : 'Listening...')}
-          </p>
-          <button
-            onClick={isInterrupted ? resumeVoiceInput : interruptVoiceInput}
-            className="mt-2 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200 flex items-center justify-center"
-          >
-            {isInterrupted ? <Play className="h-4 w-4 mr-2" /> : <Pause className="h-4 w-4 mr-2" />}
-            {isInterrupted ? 'Resume' : 'Pause'}
-          </button>
+              {isInterrupted ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
+            </button>
+          </div>
         </div>
       )}
 

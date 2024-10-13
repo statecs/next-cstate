@@ -20,6 +20,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
   const [, setFooterVisible] = useAtom(footerVisibilityAtom);
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
+  const responseMessageRef = useRef<string | null>(null);
   const [eventSource, setEventSource] = useState<EventSource | null>(null);
   const suggestions: string[] = ["Who is Christopher?", "What are your skills?", "What are your hobbies?"];
   const inputRef = useRef<HTMLInputElement>(null);
@@ -41,6 +42,10 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
   const getThreadIdFromLocalStorage = () => {
     return localStorage.getItem('threadId');
   };
+
+  useEffect(() => {
+    responseMessageRef.current = responseMessage;
+  }, [responseMessage]);
 
 
   useEffect(() => {
@@ -459,7 +464,9 @@ const handleVoiceInput = async (transcript: string) => {
 
 // Function to handle assistant response
 const handleAssistantResponse = async (response: string) => {
+  // Update state and ref immediately
   setResponseMessage(response);
+  responseMessageRef.current = response;
 
   try {
     // Check if threadId exists in localStorage
