@@ -67,6 +67,7 @@ class AudioBufferManager {
       // Stop the current audio if it's playing
       if (this.currentSource) {
         this.currentSource.stop();
+        this.currentSource.disconnect();
         this.currentSource = null;
       }
     }

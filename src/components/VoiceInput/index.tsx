@@ -152,6 +152,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
       processorRef.current.disconnect();
       audioContextRef.current.close();
     }
+    stopAudio();
   };
 
   const resumeVoiceInput = async () => {
