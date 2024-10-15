@@ -9,7 +9,7 @@ import { Item } from '@/types/items.d';  // Import the shared type
 
 const FILTERS = {
   ALL: 'All',
-  COLLECTIONS: 'Collections',
+  COLLECTIONS: 'Projects',
   WRITINGS: 'Writings'
 } as const;
 

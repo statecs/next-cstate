@@ -40,7 +40,7 @@ const CollectionsPage = async () => {
             <div className="w-full max-w-[700px] px-8 py-4">
               <div className="flex flex-col space-y-2">
                 <PageHeader
-                  description="All collections and writings"
+                  description="All projects and writings"
                   title="All collections"
                 />
                 <FilterableCollections items={sortedItems} />
