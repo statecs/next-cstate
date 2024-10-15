@@ -38,6 +38,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
   const intervalRef = useRef<number | null>(null);
   const [isHovered, setIsHovered] = useState(false);
 
+  const [isVoiceInputActive, setIsVoiceInputActive] = useState(false);
 
   const getThreadIdFromLocalStorage = () => {
     return localStorage.getItem('threadId');
@@ -487,6 +488,11 @@ const handleAssistantResponse = async (response: string) => {
   localStorage.setItem("chatResponse", response);
 };
 
+// Function to handle voice input state
+const handleVoiceInputState = (isActive: boolean) => {
+  setIsVoiceInputActive(isActive);
+};
+
   return (
     <>
     <div className="relative flex flex-col space-y-2 max-w-[500px] justify-center items-center">
@@ -508,7 +514,7 @@ const handleAssistantResponse = async (response: string) => {
           autoComplete="off"
           disabled={loading}
         />
-        <VoiceInput onVoiceInput={handleVoiceInput} onAssistantResponse={handleAssistantResponse} assistantId={assistantId} />
+        <VoiceInput onVoiceInput={handleVoiceInput} onAssistantResponse={handleAssistantResponse} assistantId={assistantId} onVoiceInputStateChange={handleVoiceInputState} />
         <button 
           aria-label="Send message"
           disabled={loading}
@@ -627,20 +633,22 @@ const handleAssistantResponse = async (response: string) => {
                       '<a href="$2" class="underline underline-offset-4 dark:text-white hover:text-gray-400 inline-flex items-center" target="_blank" rel="noopener noreferrer">$1<svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>'
                     ) }}
               />
-              <button
+              {!isVoiceInputActive && (
+                <button
                   onClick={handleTextToSpeech}
                   className="absolute -bottom-4 right-2.5 p-1.5 rounded-full bg-gray-200 dark:bg-zinc-700 hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors duration-200"
                   aria-label={isPlaying ? "Audio playing" : isLoading ? "Loading audio" : "Play audio"}
                   disabled={isLoading}
                 >
-                {isLoading ? (
-                  <LoaderIcon className="h-4 w-4 text-gray-500 dark:text-gray-400 animate-spin" />
-                ) : isPlaying ? (
-                  <PauseIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                ) : (
-                  <Volume2Icon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                )}
-              </button>
+                  {isLoading ? (
+                    <LoaderIcon className="h-4 w-4 text-gray-500 dark:text-gray-400 animate-spin" />
+                  ) : isPlaying ? (
+                    <PauseIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                  ) : (
+                    <Volume2Icon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                  )}
+                </button>
+              )}
             </>
             ) : (
                <p className="text-sm">Passionate, creative, motivated.</p>

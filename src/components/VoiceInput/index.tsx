@@ -6,9 +6,10 @@ interface VoiceInputProps {
   onVoiceInput: (input: string) => void;
   onAssistantResponse: (response: string) => void;
   assistantId: string;
+  onVoiceInputStateChange: (state: boolean) => void;
 }
 
-const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantResponse, assistantId }) => {
+const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantResponse, assistantId, onVoiceInputStateChange }) => {
   const [isListening, setIsListening] = useState(false);
   const [isInterrupted, setIsInterrupted] = useState(false);
   const isInterruptedRef = useRef(false);
@@ -43,6 +44,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
     setIsListening(true);
     setIsInterrupted(false);
     setDropdownVisible(true);
+    onVoiceInputStateChange(true);
 
     try {
       socketRef.current = new WebSocket('wss://api2.cstate.se/audio-stream');
@@ -118,6 +120,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
     setDropdownVisible(false);
     setIsListening(false);
     setIsInterrupted(false);
+    onVoiceInputStateChange(false);
     isInterruptedRef.current = false;
     stopAudio();
   
