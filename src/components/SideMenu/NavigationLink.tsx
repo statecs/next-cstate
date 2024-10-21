@@ -54,7 +54,7 @@ export const NavigationLink = memo<NavigationLinkProps>(({ href, label, icon }) 
       )}
     >
       {iconCmp}
-      <span className={cn('font-medium', isActive ? 'text-white' : '')}>{label}</span>
+      <span className={cn('', isActive ? 'text-white' : '')}>{label}</span>
 
     </span>
   </Link>

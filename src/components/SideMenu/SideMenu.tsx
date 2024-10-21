@@ -53,7 +53,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner, on
         </div>
       )}
         <div className={cn(
-          "bg-zinc-50 font-serif justify-between dark:bg-custom-light-gray dark:text-white p-3",
+          "bg-zinc-50 justify-between dark:bg-custom-light-gray dark:text-white p-3",
           isMinimized ? "p-2 flex flex-col items-center": ''
         )}>
           {childrenWithProps}

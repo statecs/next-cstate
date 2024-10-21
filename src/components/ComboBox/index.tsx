@@ -580,7 +580,7 @@ const handleVoiceInputState = (isActive: boolean) => {
             "
           >
             <option value="assistant">GPT-4o</option>
-            <option value="claude">Sonnet 3.5</option>
+            <option value="claude">Claude 3.5 Sonnet</option>
           </select>
           <div className="pointer-events-none absolute pt-1 inset-y-0 right-0 flex items-center text-gray-500 dark:text-gray-400">
             <svg className="fill-current h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">

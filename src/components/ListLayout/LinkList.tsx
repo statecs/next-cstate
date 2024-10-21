@@ -83,7 +83,7 @@ export const LinkList = forwardRef<HTMLAnchorElement, LinkListProps>(({
             />
           )}
           <div className="flex flex-col gap-1">
-            <span className="font-medium">{post.title}</span>
+            <span className="font-semibold md:text-md md:tracking-wide">{post.title}</span>
             <span className={cn('transition-colors duration-300', isActive ? 'darK:text-slate-300' : 'text-gray-600 dark:text-gray-400')}>
               <time dateTime={post.date} suppressHydrationWarning>
                 {formattedDate}

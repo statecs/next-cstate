@@ -81,7 +81,7 @@ export const MenuContent: React.FC = () => {
   };
 
   return (
-    <nav aria-label="Main" className="flex w-full flex-col text-sm">
+    <nav aria-label="Main" className="flex w-full flex-col text-sm md:font-semibold tracking-wider">
       <div className="flex flex-col gap-4 font-serif">
         {isAuthenticated ? (
           <div className="relative" ref={dropdownRef}>
