@@ -40,7 +40,7 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => {
             <AuthWrapper>
               <SkipLink />
               <main id="topElement" tabIndex={-1} vaul-drawer-wrapper="" 
-                    className={`${styles.responsiveStyle} animate-fadeIn md:mt-0 md:flex md:w-[calc(100%-260px)] md:flex-grow md:flex-col lg:w-[calc(100%-300px)] bg-white dark:bg-custom-dark-gray`}>
+                    className={`${styles.responsiveStyle} md:mt-0 md:flex md:w-[calc(100%-260px)] md:flex-grow md:flex-col lg:w-[calc(100%-300px)] bg-white dark:bg-custom-dark-gray`}>
                 <div className="lg:hidden">
                   <SiteHeader />
                 </div>

@@ -1,12 +1,12 @@
 /* RootLayout.css */
-@media (min-width: 768px) { /* Adjust if your theme's 'md' breakpoint is different */
-    .responsiveStyle {
-      transition-property: transform, border-radius;
-      transition-duration: 0.5s;
-      transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-      transform-origin: center top;
-      border-radius: 8px;
-      overflow: hidden;
-      transform: scale(0.9248554913294798) translate3d(0, calc(env(safe-area-inset-top) + 14px), 0);
-    }
+
+@media (min-width: 768px) {
+  .responsiveStyle {
+    transition-property: transform, border-radius;
+    transition-duration: 0.5s;
+    transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+    transform-origin: center top;
+    border-radius: 8px;
+    overflow: hidden;
   }
+}
