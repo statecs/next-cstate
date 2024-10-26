@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { PlusIcon, ArrowUpRightIcon, ChevronUpIcon, ChevronRightIcon } from 'lucide-react';
+import { PlusIcon, ArrowUpRightIcon, ChevronLeftIcon } from 'lucide-react';
 
 interface CollectionItem {
   id: string;
@@ -51,10 +51,10 @@ const AboutSection: React.FC = () => {
             {showFullContent && (
             <button 
               onClick={toggleContent} 
-              className="flex items-center dark:text-white text-sm underline font-serif mb-4 transition-colors duration-200"
+              className="flex items-center dark:text-gray-300 text-sm hover:underline font-serif mb-4 transition-colors duration-200"
             >
-              <ChevronUpIcon size={16} className="mr-1" />
-              Read less
+              <ChevronLeftIcon size={16} className="mr-1" />
+              Go back
             </button>
           )}
           <div className="flex flex-col prose-sm max-w-lg text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-400">
@@ -66,8 +66,8 @@ const AboutSection: React.FC = () => {
                       text.nodeType === 'text' && <span key={textIndex}>{text.value}</span>
                     )}
                     {index === 0 && !showFullContent && (
-                      <button onClick={toggleContent} className="text-sm font-serif ml-2 whitespace-nowrap">
-                        <div className="flex justify-center items-center underline">Read more <ChevronRightIcon size={16} className="-ml-0.5" /></div>
+                      <button onClick={toggleContent} className="text-gray-500 font-medium font-sans ml-2 whitespace-nowrap">
+                        <div className="flex justify-center hover:underline items-center">...see more</div>
                       </button>
                     )}
                   </p>
