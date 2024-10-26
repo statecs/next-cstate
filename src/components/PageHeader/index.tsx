@@ -80,6 +80,7 @@ const renderOptions = {
                 </video>
               );
             case "image/png":
+            case "image/gif":
             case "image/jpeg":
             case "image/jpg":
               return (
