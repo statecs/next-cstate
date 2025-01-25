@@ -4,11 +4,12 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import Image from 'next/image';
 import Button from '@/components/Button';
+import CodeBlock from './codeBlocks';
 import { ExternalLinkIcon } from 'lucide-react'
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { getExternalUrl } from '@/utils/helpers';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
-import { BLOCKS, Block, Inline, INLINES } from "@contentful/rich-text-types";
+import { BLOCKS, INLINES, Block, Inline } from "@contentful/rich-text-types";
 
 // Updated estimateReadTime function with error handling
 const estimateReadTime = (content: string | undefined): number => {
@@ -18,6 +19,15 @@ const estimateReadTime = (content: string | undefined): number => {
   return Math.ceil(wordCount / wordsPerMinute);
 };
 
+interface ContentNode {
+  nodeType: string;
+  data?: any;
+  content?: Array<{
+    nodeType: string;
+    value?: string;
+    marks?: Array<{ type: string }>;
+  }>;
+}
 
 export interface Props {
     animate?: boolean;
@@ -65,6 +75,7 @@ const renderOptions = {
     links?.assets?.block.forEach(asset => {
         assetMap.set(asset.sys.id, asset);
     });
+
 
     return {
       renderNode: {
@@ -131,6 +142,7 @@ const renderOptions = {
             return null;
           }
         },
+
         [BLOCKS.HEADING_1]: (node: Block | Inline, children: React.ReactNode) => {
             if (node.nodeType === 'heading-1') {
               return <h1 className="dark:text-white font-serif">{children}</h1>;
@@ -176,6 +188,29 @@ const renderOptions = {
           [BLOCKS.LIST_ITEM]: (node: Block | Inline, children: React.ReactNode) => {
             return <li className="ml-2">{children}</li>;
           },
+          [BLOCKS.PARAGRAPH]: (node: ContentNode, children: React.ReactNode) => {
+            // Handle entire code block paragraph
+            if (node.content?.length === 1 && 
+                node.content[0].marks?.some(mark => mark.type === 'code')) {
+              return <CodeBlock text={node.content[0].value || ''} />;
+            }
+            
+            // Handle mixed content paragraph with code
+            if (node.content?.some(content => 
+                content.marks?.some(mark => mark.type === 'code'))) {
+              return <p>
+                {node.content.map((content, i) => {
+                  if (content.marks?.some(mark => mark.type === 'code')) {
+                    return <CodeBlock key={i} text={content.value || ''} />;
+                  }
+                  return <span key={i}>{content.value}</span>;
+                })}
+              </p>;
+            }
+            
+            // Regular paragraph
+            return <p className="mb-4">{children}</p>;
+          }
        
       },
       renderText: renderOptions.renderText,
