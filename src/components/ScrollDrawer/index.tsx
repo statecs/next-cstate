@@ -51,29 +51,122 @@ const ScrollDrawer = () => {
     setActiveSnapPoint(snapPoint);
   };
 
-  const handleMouseDown = () => {
-    setIsDragging(false);
-  };
-
-  const handleMouseMove = () => {
-    setIsDragging(true);
-  };
-
-  const handleMouseUp = () => {
-    if (!isDragging) {
-      setActiveSnapPoint((currentSnapPoint) => currentSnapPoint === "285px" ? 1 : "285px");
-    }
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      setActiveSnapPoint((currentSnapPoint) => currentSnapPoint === "285px" ? 1 : "285px");
-    }
-  };
-
-  // This effect ensures the drawer is open when the component mounts
   setIsOpen(true);
   
+  const handleMouseDrag = (event: React.MouseEvent<HTMLButtonElement>) => {
+    handleDrag(event as unknown as MouseEvent);
+  };
+  
+  const handleTouchDrag = (event: React.TouchEvent<HTMLButtonElement>) => {
+    handleDrag(event as unknown as TouchEvent);
+  };
+
+  const handleMouseDragEnd = (event: React.MouseEvent<HTMLButtonElement>) => {
+    handleDragEnd(event as unknown as MouseEvent);
+  };
+  
+  const handleTouchDragEnd = (event: React.TouchEvent<HTMLButtonElement>) => {
+    handleDragEnd(event as unknown as TouchEvent);
+  };
+
+  const handleDragStart = () => {
+    // Only set isDragging if we're not at full height
+    if (drawerRef.current && drawerRef.current.offsetHeight < window.innerHeight) {
+      setIsDragging(false);
+    }
+  };
+
+   // Add this function to handle the actual dragging
+   const handleDrag = (event: MouseEvent | TouchEvent) => {
+    if (!drawerRef.current) return;
+    
+    setIsDragging(true);
+    
+    // Get the Y position from either mouse or touch event
+    const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
+    
+    // Calculate new height based on drag position
+    const windowHeight = window.innerHeight;
+    const newHeight = windowHeight - clientY;
+    
+    // Set minimum and maximum heights for normal dragging
+    const minHeight = 0; // Allow dragging all the way down
+    const maxHeight = windowHeight;
+    
+    const clampedHeight = Math.min(newHeight, maxHeight);
+    drawerRef.current.style.height = `${clampedHeight}px`;
+  };
+
+  const handleDragEnd = (event: MouseEvent | TouchEvent) => {
+    if (!drawerRef.current) return;
+
+    if (isDragging) {
+      // Get current drawer height
+      const currentHeight = drawerRef.current.offsetHeight;
+      const windowHeight = window.innerHeight;
+      
+      // If drawer is dragged above 60% of the window height, snap to full
+      if (currentHeight > windowHeight * 0.6) {
+        drawerRef.current.style.height = '100%';
+        setActiveSnapPoint(1);
+      } else if (currentHeight < 200) { // Close threshold
+        handleClose?.();
+      } else {
+        // Otherwise snap back to default height
+        drawerRef.current.style.height = '205px';
+        setActiveSnapPoint('205px');
+      }
+      setIsDragging(false);
+    } else {
+      // Click/tap behavior: toggle between full height and default height
+      if (activeSnapPoint === 1) {
+        drawerRef.current.style.height = '205px';
+        setActiveSnapPoint('205px');
+      } else {
+        drawerRef.current.style.height = '100%';
+        setActiveSnapPoint(1);
+      }
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault(); // Prevent page scroll on space
+      if (!drawerRef.current) return;
+
+      if (activeSnapPoint === 1) {
+        drawerRef.current.style.height = '285px';
+        setActiveSnapPoint('285px');
+      } else {
+        drawerRef.current.style.height = '100%';
+        setActiveSnapPoint(1);
+      }
+    }
+  };
+
+
+  useEffect(() => {
+    const drawer = drawerRef.current;
+    if (!drawer) return;
+
+    const handleDragStart = () => setIsDragging(false);
+
+    drawer.addEventListener('mousedown', handleDragStart);
+    drawer.addEventListener('touchstart', handleDragStart);
+    window.addEventListener('mousemove', handleDrag);
+    window.addEventListener('touchmove', handleDrag, { passive: false });
+    window.addEventListener('mouseup', handleDragEnd);
+    window.addEventListener('touchend', handleDragEnd);
+
+    return () => {
+      drawer.removeEventListener('mousedown', handleDragStart);
+      drawer.removeEventListener('touchstart', handleDragStart);
+      window.removeEventListener('mousemove', handleDrag);
+      window.removeEventListener('touchmove', handleDrag);
+      window.removeEventListener('mouseup', handleDragEnd);
+      window.removeEventListener('touchend', handleDragEnd);
+    };
+  }, []);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -137,6 +230,11 @@ const ScrollDrawer = () => {
       const target = e.target as HTMLDivElement; // Safe type assertion
       const { scrollTop, scrollHeight, clientHeight } = target;
 
+      if (drawerRef.current && drawerRef.current.offsetHeight < window.innerHeight) {
+        drawerRef.current.style.height = '100%';
+        setActiveSnapPoint(1);
+      }
+
       if (activeSnapPoint === "285px") {
         setActiveSnapPoint(1);
       }
@@ -170,7 +268,7 @@ const ScrollDrawer = () => {
     {isMobile && isFooterVisible && !responseLength &&(
 
     <Drawer
-      setActiveSnapPoint={handleSetActiveSnapPoint}
+    setActiveSnapPoint={handleSetActiveSnapPoint}
       snapPoints={["285px", 1]}
       activeSnapPoint={activeSnapPoint}
       dismissible={true}
@@ -182,10 +280,15 @@ const ScrollDrawer = () => {
     >
       <DrawerContent ref={drawerRef} className="h-[30%] lg:h-[100%] outline-none">
       <DrawerTrigger 
-        onKeyDown={handleKeyDown} 
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}>
+       className="w-full cursor-grab active:cursor-grabbing"
+       onMouseDown={handleDragStart}
+       onTouchStart={handleDragStart}
+       onMouseMove={handleMouseDrag}
+       onTouchMove={handleTouchDrag}
+       onMouseUp={handleMouseDragEnd}
+       onTouchEnd={handleTouchDragEnd}
+       onKeyDown={handleKeyDown}
+              >
       <div className="mx-auto mt-4 h-[5px] w-[70px] opacity-30 shrink-0 rounded-full bg-gray-100">
         <span className="sr-only">
           {activeSnapPoint === 1 ? "Minimize Drawer" : "Expand Drawer"}
