@@ -186,7 +186,7 @@ const renderOptions = {
             return <ol className="list-decimal pl-5 space-y-2 my-4">{children}</ol>;
           },
           [BLOCKS.LIST_ITEM]: (node: Block | Inline, children: React.ReactNode) => {
-            return <li className="ml-2">{children}</li>;
+            return <li className="ml-2 [&>p]:mb-0 [&>p]:mt-0">{children}</li>;
           },
           [BLOCKS.PARAGRAPH]: (node: ContentNode, children: React.ReactNode) => {
             // Handle entire code block paragraph
