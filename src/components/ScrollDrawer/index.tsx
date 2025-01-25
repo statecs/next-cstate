@@ -76,7 +76,11 @@ const ScrollDrawer = () => {
   
 
   const handleClose = () => {
+    setIsOpen(false);
     if (drawerRef.current) {
+      drawerRef.current.classList.add('vaul-drawer-closing');
+      drawerRef.current.style.height = '0';
+      drawerRef.current.setAttribute('data-state', 'closed');
       drawerRef.current.style.transition = 'transform 0.5s ease';
       drawerRef.current.style.transform = 'translate3d(0, 100%, 0)';
     }
@@ -176,7 +180,7 @@ const ScrollDrawer = () => {
       shouldScaleBackground={false}
       onOpenChange={setIsOpen}
     >
-      <DrawerContent ref={drawerRef} className="h-[80%] lg:h-[100%] outline-none">
+      <DrawerContent ref={drawerRef} className="h-[30%] lg:h-[100%] outline-none">
       <DrawerTrigger 
         onKeyDown={handleKeyDown} 
         onMouseDown={handleMouseDown}
