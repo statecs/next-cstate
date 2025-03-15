@@ -135,62 +135,41 @@ const ScrollDrawer = () => {
       return; // Exit early and let the click handler take over
     }
     
-    // Check if this is an initial swipe downward (detect direction)
-    if (dragStartYRef.current !== null && 'touches' in event) {
-      const clientY = event.changedTouches[0].clientY;
+    // Check if this is an initial swipe (detect direction)
+    if (dragStartYRef.current !== null) {
+      const clientY = 'touches' in event 
+        ? event.changedTouches[0].clientY 
+        : (event as React.MouseEvent).clientY;
       const swipedDown = clientY > dragStartYRef.current;
       const swipeDistance = Math.abs(clientY - dragStartYRef.current);
       
-      // If swiping down significantly on initial load, close the drawer
+      // If swiping down significantly, close the drawer
       if (swipedDown && swipeDistance > 50) {
         handleClose();
         return;
       }
-    } else if (dragStartYRef.current !== null && !('touches' in event)) {
-      const clientY = (event as React.MouseEvent).clientY;
-      const swipedDown = clientY > dragStartYRef.current;
-      const swipeDistance = Math.abs(clientY - dragStartYRef.current);
       
-      // If swiping down significantly with mouse, close the drawer
-      if (swipedDown && swipeDistance > 50) {
-        handleClose();
+      // If swiping up, go straight to full height
+      if (!swipedDown && swipeDistance > 30) {
+        drawerRef.current.style.height = '100%';
+        setActiveSnapPoint(1);
         return;
       }
     }
     
-    // Only process drag logic if we determined this was a drag operation
+    // Only process additional drag logic if we determined this was a drag operation
     if (isDragging) {
       // Get current drawer height
       const currentHeight = drawerRef.current.offsetHeight;
       const defaultHeight = 285;
-      const windowHeight = window.innerHeight;
       
-      // Check if we're currently in full height mode or close to it
-      const isFullHeight = currentHeight > windowHeight * 0.9;
-      
-      // If we're near full height and moved down even slightly (10px), go to default height
-      if (isFullHeight && currentHeight < windowHeight - 10) {
-        drawerRef.current.style.height = '285px';
-        setActiveSnapPoint('285px');
-      } 
-      // If we're very close to default height (within 30px), snap to default
-      else if (Math.abs(currentHeight - defaultHeight) < 30) {
-        drawerRef.current.style.height = '285px';
-        setActiveSnapPoint('285px');
-      }
-      // If we dragged up significantly from default, go to full
-      else if (currentHeight > defaultHeight + 30) {
+      // If we dragged down significantly from any height, close
+      if (currentHeight < defaultHeight - 50) {
+        handleClose();
+      } else {
+        // For any upward movement or small downward movement, go to full height
         drawerRef.current.style.height = '100%';
         setActiveSnapPoint(1);
-      } 
-      // If we dragged down significantly from default, close
-      else if (currentHeight < defaultHeight - 50) { // More responsive to downward swipes
-        handleClose();
-      } 
-      // Otherwise snap to default height
-      else {
-        drawerRef.current.style.height = '285px';
-        setActiveSnapPoint('285px');
       }
     }
     
@@ -211,13 +190,13 @@ const ScrollDrawer = () => {
     
     if (!drawerRef.current) return;
     
-    // Toggle between full height and default height on header click
-    if (activeSnapPoint === 1) {
-      drawerRef.current.style.height = '285px';
-      setActiveSnapPoint('285px');
-    } else {
+    // Go straight to full height if drawer is not already fully expanded
+    if (activeSnapPoint !== 1) {
       drawerRef.current.style.height = '100%';
       setActiveSnapPoint(1);
+    } else {
+      // If already at full height, close it
+      handleClose();
     }
     
     // Reset our state
@@ -355,21 +334,22 @@ const ScrollDrawer = () => {
       >
         <DrawerContent ref={drawerRef} className="h-[30%] lg:h-[100%] outline-none">
           {/* Restore the DrawerTrigger for keyboard accessibility but with improved click handling */}
+
           <DrawerTrigger 
-            className="w-full cursor-pointer flex justify-center items-center"
+            className="w-full cursor-pointer flex justify-center items-center py-3"
             onClick={handleHeaderClick}
             onKeyDown={handleKeyDown}
+            onTouchStart={handleDragStart}
+            onMouseDown={handleDragStart}
+            onTouchMove={handleDrag}
+            onMouseMove={handleDrag}
+            onTouchEnd={handleDragEnd}
+            onMouseUp={handleDragEnd}
             tabIndex={0}
             aria-label={activeSnapPoint === 1 ? "Minimize Drawer" : "Expand Drawer"}
           >
             <div 
-              className="mx-auto mt-4 h-[5px] w-[70px] opacity-30 shrink-0 rounded-full bg-gray-100 cursor-grab active:cursor-grabbing"
-              onTouchStart={handleDragStart}
-              onMouseDown={handleDragStart}
-              onTouchMove={handleDrag}
-              onMouseMove={handleDrag}
-              onTouchEnd={handleDragEnd}
-              onMouseUp={handleDragEnd}
+              className="mx-auto h-[5px] w-[70px] opacity-30 shrink-0 rounded-full bg-gray-100"
             >
               <span className="sr-only">
                 {activeSnapPoint === 1 ? "Minimize Drawer" : "Expand Drawer"}
