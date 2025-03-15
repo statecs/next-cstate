@@ -38,6 +38,8 @@ const ScrollDrawer = () => {
   const dragStartTimeRef = useRef<number | null>(null);
   const moveDistanceRef = useRef<number>(0);
   const wasClickRef = useRef<boolean>(false);
+  const lastDragDirectionRef = useRef<'up' | 'down' | null>(null);
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -90,6 +92,13 @@ const ScrollDrawer = () => {
     const deltaY = clientY - dragStartYRef.current;
     moveDistanceRef.current += Math.abs(deltaY);
     
+    // Track the overall drag direction
+    if (deltaY > 5) {
+      lastDragDirectionRef.current = 'down';
+    } else if (deltaY < -5) {
+      lastDragDirectionRef.current = 'up';
+    }
+
     // Check if this is a downward swipe at the beginning of interaction
     const isDownwardSwipe = deltaY > 0;
     
@@ -163,9 +172,16 @@ const ScrollDrawer = () => {
       const currentHeight = drawerRef.current.offsetHeight;
       const defaultHeight = 285;
       
+      // Use the tracked direction instead of calculating it here
+      const isDownwardSwipe = lastDragDirectionRef.current === 'down';
+      
       // If we dragged down significantly from any height, close
       if (currentHeight < defaultHeight - 50) {
         handleClose();
+      } else if (isDownwardSwipe && currentHeight > window.innerHeight * 0.7) {
+        // If height is above 70% of window and swiping down, go to default height
+        drawerRef.current.style.height = '285px';
+        setActiveSnapPoint('285px');
       } else {
         // For any upward movement or small downward movement, go to full height
         drawerRef.current.style.height = '100%';
@@ -177,6 +193,7 @@ const ScrollDrawer = () => {
     setIsDragging(false);
     dragStartYRef.current = null;
     dragStartTimeRef.current = null;
+    lastDragDirectionRef.current = null; // Reset direction
   };
 
   const handleHeaderClick = (event: React.MouseEvent) => {
@@ -190,13 +207,13 @@ const ScrollDrawer = () => {
     
     if (!drawerRef.current) return;
     
-    // Go straight to full height if drawer is not already fully expanded
-    if (activeSnapPoint !== 1) {
+    // Toggle between full height and default height
+    if (activeSnapPoint === 1) {
+      drawerRef.current.style.height = '285px';
+      setActiveSnapPoint('285px');
+    } else {
       drawerRef.current.style.height = '100%';
       setActiveSnapPoint(1);
-    } else {
-      // If already at full height, close it
-      handleClose();
     }
     
     // Reset our state
