@@ -155,26 +155,52 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
       setResponseMessage(null);
       setLoading(true);
 
-      newEventSource.onmessage = (event) => {
+      newEventSource.onmessage = async (event) => {
         const newMessage = JSON.parse(event.data);
-
         if (newMessage.error === "Internal Server Error") {
-          setResponseMessage("Oops! Our API decided to take a coffee break. While it's sipping espresso, why not grab a book? Who knows, you might learn something before our code remembers how to function. Error: \"Failed to receive message\" (and basic manners, apparently).");
           newEventSource.close();
-          setLoading(false);
+          
+          // Remove the old threadId in localStorage
+          localStorage.removeItem('threadId');
+
+          // Generate a new thread ID
+          const newThreadId = await generateNewThreadId();
+          
+          if (newThreadId) {
+            // Try sending with the new thread ID
+            const retryEventSource = await sendMessageToThreadStream(newThreadId, message, [], assistantId);
+            setEventSource(retryEventSource);
+            
+            // Setup handlers for the new event source
+            retryEventSource.onmessage = (retryEvent) => {
+              // Handle messages from retry event source
+              const retryMessage = JSON.parse(retryEvent.data);
+              setResponseMessage(prevMessages => {
+                const updatedMessages = prevMessages ? `${prevMessages}${retryMessage.value}` : retryMessage.value;
+                localStorage.setItem("chatResponse", updatedMessages);
+                return updatedMessages;
+              });
+            };
+            
+            retryEventSource.onerror = () => {
+              setResponseMessage("Oops! Our API decided to take a coffee break. While it's sipping espresso, why not grab a book? Who knows, you might learn something before our code remembers how to function. Error: \"Failed to receive message\" (and basic manners, apparently).");
+              retryEventSource.close();
+              setLoading(false);
+            };
+          } else {
+            setLoading(false);
+          }
           return;
         }
-
+      
         // Update local state
         setResponseMessage(prevMessages => {
           const updatedMessages = prevMessages ? `${prevMessages}${newMessage.value}` : newMessage.value;
 
           // Save to localStorage
           localStorage.setItem("chatResponse", updatedMessages);
-
           return updatedMessages;
         });
-
       };
 
       newEventSource.onerror = () => {
