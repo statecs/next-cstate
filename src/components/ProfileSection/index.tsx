@@ -27,13 +27,13 @@ const [isMobile, setIsMobile] = useState(false);
             <div className="link-card transition duration-500 ease-in-out inline-flex justify-center items-center gap-2 p-2">
             <Image
                 src="/images/me.jpeg"
-                alt="A smiling person with glasses in a striped shirt against a gray background."
+                alt="A smiling person with glasses"
                 width={0}
                 height={0}
                 sizes="(max-width: 768px) 250px, 100vw"
                 style={{ width: '120px', height: '120px' }}
                 loading="lazy"
-                className="rounded-full border shadow-sm"
+                className="rounded-full shadow-sm"
                 unoptimized
                 />
             </div>
