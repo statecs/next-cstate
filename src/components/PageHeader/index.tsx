@@ -247,8 +247,8 @@ const PageHeader: React.FC<Props> = ({
     const basePath = isWriting ? '/writing' : '/projects';
 
     const descriptionClass = currentPage === 'contact'
-    ? "prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-300 prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-6"
-    : "prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-300";
+    ? "prose-sm max-w-2xl leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-300 prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-6"
+    : "prose-sm max-w-2xl leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-300";
 
     // Estimate reading time
     const readTimeMinutes = useMemo(() => {
