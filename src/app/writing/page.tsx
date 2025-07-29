@@ -26,8 +26,9 @@ const WritingPage = async () => {
   }));
 
     return (
-      <main className="min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="flex flex-grow h-[calc(100vh-110px)] overflow-hidden">
+        <div className="w-full overflow-y-auto">
+          <div className="max-w-7xl mx-auto px-4 py-12">
           {/* Custom Enhanced Header */}
           <div className="text-center mb-12 animate-fadeIn">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-4 tracking-tight">
@@ -42,8 +43,9 @@ const WritingPage = async () => {
           <Suspense fallback={<LoadingSpinner />}>
             <WritingGrid posts={posts} />
           </Suspense>
+          </div>
         </div>
-      </main>
+      </div>
     );
 };
 

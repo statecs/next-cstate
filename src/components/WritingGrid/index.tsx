@@ -40,7 +40,7 @@ const WritingGrid: React.FC<WritingGridProps> = ({ posts }) => {
   }> = ({ filter, activeFilter, onClick }) => (
     <button 
       className={cn(
-        "px-4 py-2 rounded-full font-medium text-sm border transition-all duration-200 hover:scale-105 hover:shadow-sm",
+        "px-3 py-1.5 sm:px-4 sm:py-2 rounded-full font-medium text-xs sm:text-sm border transition-all duration-200 hover:scale-105 hover:shadow-sm",
         activeFilter === filter 
           ? "bg-black dark:bg-white text-white dark:text-black border-black dark:border-white shadow-md" 
           : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
@@ -55,39 +55,39 @@ const WritingGrid: React.FC<WritingGridProps> = ({ posts }) => {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-8 animate-fadeIn animate-duration-700">
-      {/* Enhanced Filter Section */}
-      <div className="mb-8">
-        <div className="flex items-center justify-center mb-6">
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="group relative inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-full text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:border-gray-300 dark:hover:border-gray-600 hover:-translate-y-0.5"
+      {/* Subtle Filter Toggle at Top */}
+      <div className="flex justify-end mb-2">
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className="group inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors duration-200"
+        >
+          <svg 
+            className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
           >
-            <div className="flex items-center gap-2">
-              <svg 
-                className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
-              </svg>
-              <span>{showFilters ? 'Hide Filters' : 'Show Filters'}</span>
-            </div>
-            {activeFilter && (
-              <span className="flex items-center justify-center w-5 h-5 bg-black dark:bg-white text-white dark:text-black text-xs rounded-full font-bold">
-                1
-              </span>
-            )}
-          </button>
-        </div>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
+          </svg>
+          <span>filters</span>
+          {activeFilter && (
+            <span className="flex items-center justify-center w-4 h-4 bg-black dark:bg-white text-white dark:text-black text-xs rounded-full font-bold ml-1">
+              1
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* Filter Section */}
+      <div className="mb-4 sm:mb-8">
         
         {showFilters && (
           <div className="animate-fadeIn">
-            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-6 border border-gray-100 dark:border-gray-700/50">
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 text-center">
+            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-100 dark:border-gray-700/50">
+              <h3 className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 text-center">
                 Filter by Category
               </h3>
-              <div className="flex flex-wrap justify-center gap-2">
+              <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
                 {categories.map(category => (
                   <FilterButton
                     key={category}
