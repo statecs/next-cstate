@@ -12,9 +12,16 @@ interface ClientLayoutProps {
 
 const ClientLayout: React.FC<ClientLayoutProps> = ({ children, posts }) => {
   const [isListVisible, setIsListVisible] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (posts && posts.length >= 0) {
+      setIsLoaded(true);
+    }
+  }, [posts]);
 
   useEffect(() => {
     if (contentRef.current) {
@@ -33,6 +40,21 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children, posts }) => {
     }
   }, [isListVisible, pathname]);
 
+  if (!isLoaded) {
+    return (
+      <div className="flex">
+        <div className="hidden lg:flex lg:w-80 xl:w-96 bg-zinc-50 dark:bg-custom-light-gray border-l dark:border-zinc-700 items-center justify-center">
+          <div className="animate-pulse">Loading...</div>
+        </div>
+        <div className="lg:bg-dots flex-1 h-[calc(100vh-110px)] lg:h-[calc(100vh)] overflow-hidden">
+          <div className="lg:bg-dots flex-1 h-[calc(100vh-110px)] lg:h-[calc(100vh)] overflow-scroll">
+            {children}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex">
       <div 
@@ -41,7 +63,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children, posts }) => {
         aria-hidden={!isListVisible}
       >
         <SideMenu title="Projects" isInner>
-          <ListLayout list={posts} isMobile />
+          <ListLayout list={posts} isMobile={false} />
         </SideMenu>
       </div>
       <div className="lg:bg-dots flex-1 h-[calc(100vh-110px)] lg:h-[calc(100vh)] overflow-hidden">

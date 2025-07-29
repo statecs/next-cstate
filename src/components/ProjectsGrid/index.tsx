@@ -40,10 +40,10 @@ const ProjectsGrid: React.FC<ProjectsGridProps> = ({ projects }) => {
   }> = ({ filter, activeFilter, onClick }) => (
     <button 
       className={cn(
-        "px-2 py-1 rounded font-medium text-[10px]",
+        "px-4 py-2 rounded-full font-medium text-sm border transition-all duration-200 hover:scale-105 hover:shadow-sm",
         activeFilter === filter 
-          ? "bg-black dark:bg-zinc-200 dark:text-custom-dark-gray text-gray-200" 
-          : "bg-gray-100 dark:text-white dark:bg-zinc-700 dark:border-custom-light-gray text-gray-500"
+          ? "bg-black dark:bg-white text-white dark:text-black border-black dark:border-white shadow-md" 
+          : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
       )}
       onClick={() => onClick(filter)}
       aria-pressed={activeFilter === filter}
@@ -54,25 +54,59 @@ const ProjectsGrid: React.FC<ProjectsGridProps> = ({ projects }) => {
   );
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-8 animate-fadeIn animate-duration-700">
-      {/* Filter Section */}
-      <div className="mb-6">
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="mb-2 px-4 py-2 bg-gray-200 dark:bg-zinc-700 dark:text-gray-200 rounded-md text-xs font-medium transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-600"
-        >
-          {showFilters ? 'Hide Filters' : 'Show Filters'}
-          {activeFilter && ' (1)'}
-        </button>
+      {/* Enhanced Filter Section */}
+      <div className="mb-8">
+        <div className="flex items-center justify-center mb-6">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="group relative inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-full text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:border-gray-300 dark:hover:border-gray-600 hover:-translate-y-0.5"
+          >
+            <div className="flex items-center gap-2">
+              <svg 
+                className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
+              </svg>
+              <span>{showFilters ? 'Hide Filters' : 'Show Filters'}</span>
+            </div>
+            {activeFilter && (
+              <span className="flex items-center justify-center w-5 h-5 bg-black dark:bg-white text-white dark:text-black text-xs rounded-full font-bold">
+                1
+              </span>
+            )}
+          </button>
+        </div>
+        
         {showFilters && (
-          <div className="flex flex-wrap gap-1 py-1 px-0 animate-fadeIn">
-            {categories.map(category => (
-              <FilterButton
-                key={category}
-                filter={category}
-                activeFilter={activeFilter}
-                onClick={toggleFilter}
-              />
-            ))}
+          <div className="animate-fadeIn">
+            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-6 border border-gray-100 dark:border-gray-700/50">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 text-center">
+                Filter by Category
+              </h3>
+              <div className="flex flex-wrap justify-center gap-2">
+                {categories.map(category => (
+                  <FilterButton
+                    key={category}
+                    filter={category}
+                    activeFilter={activeFilter}
+                    onClick={toggleFilter}
+                  />
+                ))}
+              </div>
+              {activeFilter && (
+                <div className="mt-4 text-center">
+                  <button
+                    onClick={() => setActiveFilter(null)}
+                    className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 underline transition-colors"
+                  >
+                    Clear all filters
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
@@ -111,7 +145,7 @@ const ProjectsGrid: React.FC<ProjectsGridProps> = ({ projects }) => {
                 
                 {/* Title overlay */}
                 <div className="absolute inset-x-0 bottom-0 p-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                  <h3 className="text-white font-bold text-xl sm:text-2xl md:text-2xl line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 leading-tight">
+                  <h3 className="text-white font-bold text-lg sm:text-xl md:text-xl line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 leading-tight">
                     {project.title}
                   </h3>
                   {project.description && (

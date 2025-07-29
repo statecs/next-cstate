@@ -26,11 +26,18 @@ const ProjectPage = async () => {
 
     return (
       <main className="min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <PageHeader
-            title="Projects"
-            description="A showcase of my creative work and projects"
-          />
+        <div className="max-w-7xl mx-auto px-4 py-12">
+          {/* Custom Enhanced Header */}
+          <div className="text-center mb-12 animate-fadeIn">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-4 tracking-tight">
+              Projects
+            </h1>
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
+              A curated collection of my creative work, experiments, and digital experiences
+            </p>
+            <div className="mt-6 h-1 w-20 bg-gradient-to-r from-black to-gray-400 dark:from-white dark:to-gray-500 mx-auto rounded-full"></div>
+          </div>
+          
           <Suspense fallback={<LoadingSpinner />}>
             <ProjectsGrid projects={posts} />
           </Suspense>

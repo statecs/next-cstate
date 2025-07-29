@@ -6,6 +6,9 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { getEditorialSeo } from '@/utils/helpers';
 import ClientLayout from './ClientLayout';
 
+interface LayoutProps {
+  children: ReactNode;
+}
 
 const Layout: React.FC<LayoutProps> = async ({ children }) => {
   const links = await fetchCollectionNavigation();
@@ -23,11 +26,9 @@ const Layout: React.FC<LayoutProps> = async ({ children }) => {
   }));
 
   return (
-    <ClientLayout posts={posts}>
-      <Suspense fallback={<LoadingSpinner />}>
-        {children}
-      </Suspense>
-    </ClientLayout>
+    <Suspense fallback={<LoadingSpinner />}>
+      {children}
+    </Suspense>
   );
 };
 
