@@ -1,7 +1,7 @@
 import {draftMode} from 'next/headers';
 import {notFound, redirect} from 'next/navigation';
 import PageHeader from '@/components/PageHeader';
-import PhotoCollection from '@/components/PhotoCollection';
+import BannerPhotoCollection from '@/components/BannerPhotoCollection';
 import config from '@/utils/config';
 import {fetchAllCollections, fetchCollection} from '@/utils/contentful';
 import {getCollectionSeo} from '@/utils/helpers';
@@ -30,17 +30,22 @@ const CollectionPage = async ({params}: Props) => {
     return (
         <ScrollArea useScrollAreaId>
         <FloatingHeader scrollTitle="Projects" goBackLink="/projects"></FloatingHeader>
-        <div className="flex flex-grow border-spacing-4 py-4 px-8 md:justify-center">
-            <div className="flex flex-col space-y-2">
-            <div className=" max-w-[700px]">
-                <div className={params.collection === 'home' ? 'md:hidden' : ''}>
-                    <PageHeader
-                        {...collection}
-                        description={collection?.showDescription ? collection.description : null}
-                    />
+        <div className="flex flex-grow py-8 px-4 sm:px-8 md:justify-center">
+            <div className="flex flex-col space-y-8 w-full">
+                <div className="max-w-5xl mx-auto w-full">
+                    {/* Banner Photo Collection */}
+                    <BannerPhotoCollection {...collection} key={collection.slug} />
+                    
+                    {/* Page Header below banner */}
+                    <div className={params.collection === 'home' ? 'md:hidden' : ''}>
+                        <div className="rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 sm:p-8">
+                            <PageHeader
+                                {...collection}
+                                description={collection?.showDescription ? collection.description : null}
+                            />
+                        </div>
+                    </div>
                 </div>
-                <PhotoCollection {...collection} key={collection.slug} />
-            </div>
             </div>
         </div>
         </ScrollArea>

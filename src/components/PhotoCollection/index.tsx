@@ -22,22 +22,25 @@ const PhotosCollection: React.FC<Props> = ({photosCollection, slug}) => {
     const columnClass = columnClasses[columnSize];
 
     return (
-        <div className="-mb-1.5 -ml-1.5 flex animate-fadeIn flex-row flex-wrap animate-duration-1000 sm:-mb-2 sm:-ml-2">
+        <div className="-mb-3 -ml-3 flex animate-fadeIn flex-row flex-wrap animate-duration-1000 sm:-mb-4 sm:-ml-4">
             {photoGroups?.map((row, index) => (
-                <div key={index} className={`self-start pl-1.5 sm:pl-2 ${columnClass}`}>
+                <div key={index} className={`self-start pl-3 sm:pl-4 ${columnClass}`}>
                     {row.map((photo, index2) => {
                         const padding = (photo?.fullSize?.height / maxSize) * 100;
 
                         return (
                             <div
-                                className="mb-1.5 h-0 w-full overflow-hidden sm:mb-2"
+                                className="mb-3 h-0 w-full overflow-hidden sm:mb-4 group"
                                 key={index2}
                                 style={{paddingBottom: `${padding}%`}}
                             >
                                 <div
-                                    className={clsx({
-                                        'mt-[-8%]': photo?.fullSize?.height > photo?.fullSize?.width
-                                    })}
+                                    className={clsx(
+                                        "rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02] group-hover:-translate-y-1",
+                                        {
+                                            'mt-[-8%]': photo?.fullSize?.height > photo?.fullSize?.width
+                                        }
+                                    )}
                                 >
                                     <PhotoThumbnail
                                         base64={photo.base64}
