@@ -146,7 +146,7 @@ const WritingGrid: React.FC<WritingGridProps> = ({ posts }) => {
                 
                 {/* Title overlay */}
                 <div className="absolute inset-x-0 bottom-0 p-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                  <h3 className="text-white font-bold text-lg sm:text-xl md:text-xl line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 leading-tight">
+                  <h3 className="text-white font-bold text-lg sm:text-xl md:text-xl line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 leading-tight font-serif">
                     {post.title}
                   </h3>
                   {post.description && (
@@ -159,7 +159,7 @@ const WritingGrid: React.FC<WritingGridProps> = ({ posts }) => {
               
               {/* Title below image */}
               <div className="mt-4 px-1">
-                <h3 className="text-gray-900 dark:text-gray-100 font-semibold text-lg sm:text-xl md:text-xl line-clamp-2 group-hover:text-black dark:group-hover:text-white transition-colors duration-200 leading-snug">
+                <h3 className="text-gray-900 dark:text-gray-100 font-semibold text-lg sm:text-xl md:text-xl line-clamp-2 group-hover:text-black dark:group-hover:text-white transition-colors duration-200 leading-snug font-serif">
                   {post.title}
                 </h3>
                 {post.category && (() => {
