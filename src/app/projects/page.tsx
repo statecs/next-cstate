@@ -1,11 +1,11 @@
 import React from 'react';
 import { Suspense } from 'react'
-import { ScrollArea } from '@/components/SideMenu/ScrollArea';
 import config from '@/utils/config';
 import {fetchEditorialPage} from '@/utils/contentful';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { ListLayout } from '@/components/ListLayout/ListLayout';
+import ProjectsGrid from '@/components/ProjectsGrid';
 import {getEditorialSeo} from '@/utils/helpers';
+import PageHeader from '@/components/PageHeader';
 
 import {fetchCollectionNavigation} from '@/utils/contentful';
 
@@ -25,13 +25,17 @@ const ProjectPage = async () => {
   }));
 
     return (
-      <>
-      <ScrollArea className="lg:hidden">
-        <Suspense fallback={<LoadingSpinner />}>
-          <ListLayout list={posts} isMobile />
-        </Suspense>
-      </ScrollArea>
-      </>
+      <main className="min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <PageHeader
+            title="Projects"
+            description="A showcase of my creative work and projects"
+          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <ProjectsGrid projects={posts} />
+          </Suspense>
+        </div>
+      </main>
     );
 };
 
