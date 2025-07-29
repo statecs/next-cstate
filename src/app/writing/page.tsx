@@ -1,11 +1,11 @@
 import React from 'react';
 import { Suspense } from 'react'
-import { ScrollArea } from '@/components/SideMenu/ScrollArea';
 import config from '@/utils/config';
 import {fetchEditorialPage} from '@/utils/contentful';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { ListLayout } from '@/components/ListLayout/ListLayout';
+import WritingGrid from '@/components/WritingGrid';
 import {getEditorialSeo} from '@/utils/helpers';
+import PageHeader from '@/components/PageHeader';
 
 import {fetchWritingNavigation} from '@/utils/contentful';
 
@@ -26,13 +26,24 @@ const WritingPage = async () => {
   }));
 
     return (
-      <>
-      <ScrollArea className="lg:hidden">
-        <Suspense fallback={<LoadingSpinner />}>
-          <ListLayout list={posts} isMobile />
-        </Suspense>
-      </ScrollArea>
-      </>
+      <main className="min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 py-12">
+          {/* Custom Enhanced Header */}
+          <div className="text-center mb-12 animate-fadeIn">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-4 tracking-tight">
+              Writing
+            </h1>
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
+              Thoughts, insights, and stories from my journey in design and technology
+            </p>
+            <div className="mt-6 h-1 w-20 bg-gradient-to-r from-black to-gray-400 dark:from-white dark:to-gray-500 mx-auto rounded-full"></div>
+          </div>
+          
+          <Suspense fallback={<LoadingSpinner />}>
+            <WritingGrid posts={posts} />
+          </Suspense>
+        </div>
+      </main>
     );
 };
 

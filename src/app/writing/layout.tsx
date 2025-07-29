@@ -7,8 +7,11 @@ import {getEditorialSeo} from '@/utils/helpers';
 
 import ClientLayout from './ClientLayout';
 
-const Layout: React.FC<LayoutProps> = async ({ children }) => {
+interface LayoutProps {
+  children: ReactNode;
+}
 
+const Layout: React.FC<LayoutProps> = async ({ children }) => {
   const links = await fetchWritingNavigation();
   
   const posts: Post[] = links.map((link) => ({
@@ -25,11 +28,9 @@ const Layout: React.FC<LayoutProps> = async ({ children }) => {
   }));
 
   return (
-    <ClientLayout posts={posts}>
-      <Suspense fallback={<LoadingSpinner />}>
-        {children}
-      </Suspense>
-    </ClientLayout>
+    <Suspense fallback={<LoadingSpinner />}>
+      {children}
+    </Suspense>
   );
 };
 
