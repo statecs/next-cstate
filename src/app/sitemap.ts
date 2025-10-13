@@ -1,5 +1,5 @@
 import {type MetadataRoute} from 'next';
-import {fetchCollectionsForSitemap} from '@/utils/contentful';
+import {fetchCollectionsForSitemap, fetchWritingForSitemap} from '@/utils/contentful';
 
 const getLastModifiedDate = (date?: string) => {
     if (!date || !process.env.SITEMAP_LAST_MODIFIED_MINIMUM) return new Date();
@@ -49,4 +49,48 @@ const getCollectionSeo = async (): Promise<MetadataRoute.Sitemap> => {
     return items;
 };
 
-export default getCollectionSeo;
+const getWritingSeo = async (): Promise<MetadataRoute.Sitemap> => {
+    const allWritings = await fetchWritingForSitemap();
+    if (!allWritings?.length) return [];
+
+    const filteredWritings = allWritings.filter(
+        (writing: any) => writing.photosCollection?.items?.length > 0
+    );
+    if (!filteredWritings?.length) return [];
+
+    const items = filteredWritings.reduce((acc: any[], writing: any) => {
+        const writingItem = {
+            url: `${process.env.NEXT_PUBLIC_URL}/writing/${writing.slug}`,
+            priority: writing.isFeatured ? 1 : 0.8,
+            lastModified: getLastModifiedDate(writing?.sys?.publishedAt).toISOString(),
+            changeFrequency:
+                writing.publishedAt === writing.firstPublishedAt ? 'monthly' : 'weekly'
+        };
+        const filteredPhotoItems = writing.photosCollection?.items?.filter((i: any) => i);
+
+        if (!filteredPhotoItems.length) {
+            return [...acc, writingItem];
+        }
+
+        const photoItems =
+            filteredPhotoItems.map((photo: any) => ({
+                url: `${process.env.NEXT_PUBLIC_URL}/writing/${writing.slug}/${photo.slug}`,
+                priority: writing.isFeatured ? 1 : 0.8,
+                lastModified: getLastModifiedDate(photo?.sys?.publishedAt).toISOString(),
+                changeFrequency: photo.publishedAt === photo.firstPublishedAt ? 'monthly' : 'weekly'
+            })) || [];
+
+        return [...acc, writingItem, ...photoItems];
+    }, [] as any[]);
+
+    return items;
+};
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+    const [collections, writings] = await Promise.all([
+        getCollectionSeo(),
+        getWritingSeo()
+    ]);
+
+    return [...collections, ...writings];
+}

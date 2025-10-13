@@ -725,7 +725,7 @@ export const fetchWritingForSitemap = async () => {
     }`;
     const response: any = await fetchContent(query);
 
-    return response.data?.collectionCollection?.items;
+    return response.data?.writingCollection?.items;
 };
 
 export const fetchAllData = async (
