@@ -182,10 +182,10 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
   };
 
   return (
-    <div className="relative">
+    <div className="absolute right-12 bottom-2">
       <button
         onClick={isListening ? stopListening : startListening}
-        className="-ml-32 p-2 rounded-full hover:bg-gray-300 dark:hover:bg-zinc-600 transition-colors duration-200 cursor-pointer"
+        className="p-2 rounded-full hover:bg-gray-300 dark:hover:bg-zinc-600 transition-colors duration-200 cursor-pointer"
         aria-label={isListening ? 'Stop listening' : 'Start voice input'}
       >
         {isListening ? (

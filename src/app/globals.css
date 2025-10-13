@@ -8,10 +8,46 @@
             scroll-behavior: auto;
         }
     }
+
+    html {
+        scroll-behavior: smooth;
+    }
 }
 
 @layer utilities {
     .tap-transparent {
         -webkit-tap-highlight-color: transparent;
+    }
+
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fadeIn {
+        animation: fadeIn 0.6s ease-out forwards;
+    }
+
+    .animate-duration-700 {
+        animation-duration: 0.7s;
+    }
+
+    .animate-duration-1000 {
+        animation-duration: 1s;
     }
 }

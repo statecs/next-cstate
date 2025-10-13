@@ -521,7 +521,7 @@ const handleVoiceInputState = (isActive: boolean) => {
 
   return (
     <>
-    <div className="relative flex flex-col space-y-2 max-w-[500px] justify-center items-center">
+    <div className="relative flex flex-col space-y-2 w-full max-w-[400px] mx-auto justify-center items-center">
       <div className="flex items-center relative w-full">
         <input
           ref={inputRef}
@@ -621,7 +621,7 @@ const handleVoiceInputState = (isActive: boolean) => {
           {responseMessage ? (
             <>
               <p
-                className="text-base max-h-[200px] lg:max-h-[450px] overflow-scroll"
+                className="text-base text-gray-900 dark:text-gray-100 max-h-[200px] lg:max-h-[450px] overflow-scroll"
                 dangerouslySetInnerHTML={{
                   __html: responseMessage
                     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
