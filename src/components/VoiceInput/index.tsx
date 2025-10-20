@@ -182,7 +182,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
   };
 
   return (
-    <div className="absolute right-12 bottom-2">
+    <div className="absolute right-12 bottom-3 md:bottom-1.5 md:bottom-2.5">
       <button
         onClick={isListening ? stopListening : startListening}
         className="p-2 rounded-full hover:bg-gray-300 dark:hover:bg-zinc-600 transition-colors duration-200 cursor-pointer"

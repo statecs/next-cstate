@@ -103,11 +103,8 @@ const HomePage = async () => {
                     </div>
 
                     <div className="relative">
-                        {/* Subtle glow effect */}
-                        <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 to-purple-500/20 dark:from-blue-500/30 dark:to-purple-500/30 rounded-3xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
                         {/* Main container - Clean and minimal */}
-                        <div className="relative bg-white dark:bg-black/40 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200/50 dark:border-white/10 p-6 sm:p-8">
+                        <div className="relative bg-white dark:bg-transparent rounded-3xl shadow-xl dark:shadow-none border border-gray-200/50 dark:border-transparent p-6 sm:p-8 animate-fadeIn">
                             <ComboBox assistantId={process.env.ASSISTANT_ID || ''} />
                         </div>
                     </div>

@@ -354,7 +354,7 @@ const sendMessageToClaude = async (message: string) => {
       document.body.appendChild(tempSpan);
       const width = tempSpan.getBoundingClientRect().width;
       document.body.removeChild(tempSpan);
-      selectRef.current.style.width = `${width + 25}px`; // Add some padding
+      selectRef.current.style.width = `${width + 22}px`; // Add some padding
     }
   };
 
@@ -605,8 +605,8 @@ const handleVoiceInputState = (isActive: boolean) => {
               rounded-md
             "
           >
-            <option value="assistant">GPT-4o</option>
-            <option value="claude">Claude 3.5 Sonnet</option>
+            <option value="assistant">GPT</option>
+            <option value="claude">Claude</option>
           </select>
           <div className="pointer-events-none absolute pt-1 inset-y-0 right-0 flex items-center text-gray-500 dark:text-gray-400">
             <svg className="fill-current h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
