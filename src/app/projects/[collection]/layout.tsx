@@ -13,21 +13,21 @@ interface LayoutProps {
 const CollectionLayout: React.FC<LayoutProps> = async ({ children }) => {
   try {
     const links = await fetchCollectionNavigation();
-    
+
     const posts: Post[] = (links || []).map((link) => ({
       url: link.url,
-      title: link.title, 
-      slug: link.url, 
+      title: link.title,
+      slug: link.url,
       image: link.image,
       description: link.description,
       date: link.date,
       isPublic: link.isPublic,
       category: link.category,
-      published: link.published || 'Not specified', 
+      published: link.published || 'Not specified',
     }));
 
     return (
-      <ClientLayout posts={posts}>
+      <ClientLayout posts={posts} key="projects-layout">
         <Suspense fallback={<LoadingSpinner />}>
           {children}
         </Suspense>
@@ -35,7 +35,7 @@ const CollectionLayout: React.FC<LayoutProps> = async ({ children }) => {
     );
   } catch (error) {
     console.error('Error fetching collection navigation:', error);
-    
+
     // Fallback without sidebar
     return (
       <div className="lg:bg-dots flex-1 h-[calc(100vh-110px)] lg:h-[calc(100vh)] overflow-hidden">

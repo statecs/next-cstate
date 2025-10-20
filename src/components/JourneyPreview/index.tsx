@@ -39,14 +39,14 @@ const JourneyPreview: React.FC<JourneyPreviewProps> = ({ events }) => {
             {recentEvents.map((event, index) => (
               <div
                 key={index}
-                className="group relative flex-shrink-0 w-80 lg:w-auto animate-fadeIn"
+                className="group relative flex-shrink-0 w-[340px] sm:w-96 lg:w-auto animate-fadeIn"
                 style={{ animationDelay: `${600 + index * 100}ms` }}
               >
                 {/* Card */}
-                <div className="relative h-full bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-white/10 overflow-hidden group-hover:scale-[1.02]">
+                <div className="relative h-full min-h-[200px] bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-white/10 overflow-hidden group-hover:scale-[1.02]">
                   {/* Year Badge */}
                   <div className="absolute top-4 right-4 z-10">
-                    <div className="px-4 py-2 rounded-full bg-black dark:bg-white text-white dark:text-black text-sm font-bold shadow-lg">
+                    <div className="px-3 py-1.5 rounded-full bg-black dark:bg-white text-white dark:text-black text-xs font-bold shadow-lg">
                       {event.year}
                     </div>
                   </div>
@@ -55,14 +55,14 @@ const JourneyPreview: React.FC<JourneyPreviewProps> = ({ events }) => {
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400 dark:from-gray-500 dark:via-gray-300 dark:to-gray-500" />
 
                   {/* Content */}
-                  <div className="p-6 pt-16">
+                  <div className="p-5 pt-14">
                     {/* Timeline dot */}
-                    <div className="absolute top-6 left-6 w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center shadow-lg">
-                      <Plus className="w-4 h-4 text-white dark:text-black" />
+                    <div className="absolute top-5 left-5 w-7 h-7 rounded-full bg-black dark:bg-white flex items-center justify-center shadow-lg">
+                      <Plus className="w-3.5 h-3.5 text-white dark:text-black" />
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-3 font-serif leading-tight pr-20">
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-3 font-serif leading-tight pr-16">
                       {event.title}
                     </h3>
 

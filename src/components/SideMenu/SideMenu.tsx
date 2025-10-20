@@ -18,7 +18,11 @@ interface SideMenuProps {
 export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner, onMinimizeChange }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const [isMinimized, setIsMinimized] = useState(false);
+
+  // Initialize minimize state based on pathname
+  const [isMinimized, setIsMinimized] = useState(() => {
+    return pathname !== '/projects' && pathname !== '/writing';
+  });
 
   const handleMinimizeChange = (minimized: boolean) => {
     setIsMinimized(minimized);
@@ -37,9 +41,8 @@ export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner, on
   return (
     <ScrollArea
       className={cn(
-        'hidden bg-zinc-50 dark:bg-custom-light-gray lg:flex lg:flex-col h-[calc(100vh)]',
-        isInner ? 'lg:w-80 xl:w-96 border-l dark:border-zinc-700' : 'lg:w-60 xl:w-72',
-        isMinimized ? 'flex flex-col items-center lg:w-20 xl:w-20 hidden lg:block' : ''
+        'bg-zinc-50 dark:bg-custom-light-gray flex flex-col h-[calc(100vh)] w-full',
+        isMinimized ? 'items-center' : ''
       )}
     >
       {title && !isMinimized && (

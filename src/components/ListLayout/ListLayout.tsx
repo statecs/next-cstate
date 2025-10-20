@@ -55,11 +55,18 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
   const [activeFilter, setActiveFilter] = useState<FilterType | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
-  const [isListMinimized, setIsListMinimized] = useState(false);
-  const [manualOverride, setManualOverride] = useState(false);
 
+  // Initialize with the correct state based on pathname
   const isWriting = pathname.startsWith('/writing');
   const basePath = isWriting ? '/writing' : '/projects';
+
+  const [isListMinimized, setIsListMinimized] = useState(() => {
+    // Initialize as minimized if we're viewing a specific project/article
+    return pathname !== '/projects' && pathname !== '/writing';
+  });
+  const [manualOverride, setManualOverride] = useState(false);
+  const [prevPathname, setPrevPathname] = useState(pathname);
+
   const navLabel = isWriting ? "Writing navigation" : "Projects navigation";
 
   useEffect(() => {
@@ -69,14 +76,31 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
     setCategories(uniqueCategories);
   }, [list]);
 
+  // Reset manual override when navigating to a different page
   useEffect(() => {
-    if (!manualOverride) {
-      const shouldMinimize = pathname !== '/projects' && pathname !== '/writing';
-      setIsListMinimized(shouldMinimize);
-      if (onMinimizeChange) {
-        onMinimizeChange(shouldMinimize);
-      }
+    if (pathname !== prevPathname) {
+      setManualOverride(false);
+      setPrevPathname(pathname);
     }
+  }, [pathname, prevPathname]);
+
+  useEffect(() => {
+    // Don't auto-minimize if user manually toggled the state
+    if (manualOverride) {
+      return;
+    }
+
+    const shouldMinimize = pathname !== '/projects' && pathname !== '/writing';
+    // Only update if the state actually needs to change
+    setIsListMinimized(prev => {
+      if (prev !== shouldMinimize) {
+        if (onMinimizeChange) {
+          onMinimizeChange(shouldMinimize);
+        }
+        return shouldMinimize;
+      }
+      return prev;
+    });
   }, [pathname, onMinimizeChange, manualOverride]);
 
 
