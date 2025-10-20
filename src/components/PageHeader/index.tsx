@@ -145,37 +145,37 @@ const renderOptions = {
 
         [BLOCKS.HEADING_1]: (node: Block | Inline, children: React.ReactNode) => {
             if (node.nodeType === 'heading-1') {
-              return <h1 className="dark:text-white font-serif">{children}</h1>;
+              return <h1 className="text-black dark:text-white font-serif">{children}</h1>;
             }
-            return null; 
+            return null;
           },
           [BLOCKS.HEADING_2]: (node: Block | Inline, children: React.ReactNode) => {
             if (node.nodeType === 'heading-2') {
-              return <h2 className="dark:text-white font-serif">{children}</h2>;
+              return <h2 className="text-black dark:text-white font-serif">{children}</h2>;
             }
             return null;
           },
           [BLOCKS.HEADING_3]: (node: Block | Inline, children: React.ReactNode) => {
             if (node.nodeType === 'heading-3') {
-              return <h3 className="dark:text-white font-serif">{children}</h3>;
+              return <h3 className="text-black dark:text-white font-serif">{children}</h3>;
             }
             return null;
           },
           [BLOCKS.HEADING_4]: (node: Block | Inline, children: React.ReactNode) => {
             if (node.nodeType === 'heading-4') {
-              return <h4 className="dark:text-white font-serif">{children}</h4>;
+              return <h4 className="text-black dark:text-white font-serif">{children}</h4>;
             }
             return null;
           },
           [BLOCKS.HEADING_5]: (node: Block | Inline, children: React.ReactNode) => {
             if (node.nodeType === 'heading-5') {
-              return <h5 className="dark:text-white font-serif">{children}</h5>;
+              return <h5 className="text-black dark:text-white font-serif">{children}</h5>;
             }
             return null;
           },
           [BLOCKS.HEADING_6]: (node: Block | Inline, children: React.ReactNode) => {
             if (node.nodeType === 'heading-6') {
-              return <h6 className="dark:text-white font-serif">{children}</h6>;
+              return <h6 className="text-black dark:text-white font-serif">{children}</h6>;
             }
             return null;
           },
@@ -247,8 +247,8 @@ const PageHeader: React.FC<Props> = ({
     const basePath = isWriting ? '/writing' : '/projects';
 
     const descriptionClass = currentPage === 'contact'
-    ? "prose-sm max-w-2xl leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-300 prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-6"
-    : "prose-sm max-w-2xl leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-500 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-300";
+    ? "prose-sm max-w-2xl leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-800 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-300 prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-6"
+    : "prose-sm max-w-2xl leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-800 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-300";
 
     // Estimate reading time
     const readTimeMinutes = useMemo(() => {
@@ -282,7 +282,7 @@ const PageHeader: React.FC<Props> = ({
                             )}
                         </>
                     )}
-                    <div className="dark:text-white pt-2 text-sm">
+                    <div className="text-gray-800 dark:text-white pt-2 text-sm">
                         <span>{formattedDate}</span>
                         {isWriting && readTimeMinutes > 0 && (
                             <span className="ml-4">Total read: {readTimeMinutes} minute{readTimeMinutes !== 1 ? 's' : ''}</span>
@@ -291,9 +291,9 @@ const PageHeader: React.FC<Props> = ({
                     {category && (
                       <div className="flex flex-wrap gap-1 pt-2">
                       {category?.split(',').map((cat) => (
-                        <div 
-                          key={cat.trim()} 
-                          className="px-2 py-1 rounded-xl font-medium text-[10px] bg-gray-100 dark:text-white dark:bg-zinc-700 dark:border-custom-light-gray text-gray-500"
+                        <div
+                          key={cat.trim()}
+                          className="px-2 py-1 rounded-xl font-medium text-[10px] bg-gray-100 text-gray-700 dark:text-white dark:bg-zinc-700 dark:border-custom-light-gray"
                         >
                           {cat.trim()}
                         </div>
@@ -317,13 +317,13 @@ const PageHeader: React.FC<Props> = ({
             {(children || description) && (
                 <div className="mt-4 md:mt-6">
                     {description && typeof description !== 'string' && description.json && (
-                           <div className={`dark:text-gray-300 ${descriptionClass}`}>
+                           <div className={`text-gray-800 dark:text-gray-300 ${descriptionClass}`}>
                             {documentToReactComponents(description.json, contentfulRenderOptions(description.links))}
                         </div>
                     )}
 
                     {description && typeof description == 'string' && (
-                         <div className={`dark:text-gray-300 ${descriptionClass}`}>
+                         <div className={`text-gray-800 dark:text-gray-300 ${descriptionClass}`}>
                             {description}
                         </div>
 

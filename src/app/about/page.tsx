@@ -71,7 +71,7 @@ export default async function Journey() {
                                 <h2 className="max-w-5xl pb-4 sm:pb-8 space-x-2 text-balance break-normal font-serif text-xl text-black underline-offset-4 group-hover:underline sm:text-2xl md:max-w-5xl md:text-3xl dark:text-white">Journey</h2>
                             </div>
                             <ScrollArea useScrollAreaId>
-                            <div className="content-wrapper dark:text-gray-300">
+                            <div className="content-wrapper text-gray-900 dark:text-gray-300">
                                 <div className="content">
                                 <Suspense fallback={<LoadingSpinner />}>
                                     <div className="flex flex-col items-stretch gap-12">
@@ -80,8 +80,8 @@ export default async function Journey() {
                                             Array.isArray(events) && (
                                             <div key={index} className="flex flex-col items-baseline gap-6 md:flex-row md:gap-12">
                                                 <div className="flex items-center">
-                                                    <h3>{year}</h3>
-                                                    <hr className="my-0 ml-4 flex-1 border-dashed border-gray-200 " />
+                                                    <h3 className="text-black dark:text-white">{year}</h3>
+                                                    <hr className="my-0 ml-4 flex-1 border-dashed border-gray-300 dark:border-gray-200" />
                                                 </div>
                                                 <section>
                                                     {events.map((item, itemIndex) => (
@@ -97,17 +97,17 @@ export default async function Journey() {
                                                         <div className="flex-grow pl-8">
                                                             {item.url ? (
                                                                 <Link href={item.url} className="hover:underline underline-offset-4 transition duration-200">
-                                                                    <h4 className="flex font-semibold text-l sm:text-xl tracking-tight font-serif pb-4">{item.title} <ArrowUpRightIcon size={28} /></h4>
+                                                                    <h4 className="flex font-semibold text-l sm:text-xl tracking-tight font-serif pb-4 text-black dark:text-white">{item.title} <ArrowUpRightIcon size={28} /></h4>
                                                                 </Link>
                                                             ) : (
-                                                                <h4 className="font-semibold text-l sm:text-xl tracking-tight font-serif pb-4">{item.title}</h4>
+                                                                <h4 className="font-semibold text-l sm:text-xl tracking-tight font-serif pb-4 text-black dark:text-white">{item.title}</h4>
                                                             )}
                                                             {item.description ? (
-                                                            <div className="text-sm prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base">
+                                                            <div className="text-sm prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base text-gray-800 dark:text-gray-300">
                                                                 {item.description}
                                                             </div>
                                                             ) : (
-                                                            <h3 className="text-sm text-gray-500">Description not available.</h3>
+                                                            <h3 className="text-sm text-gray-600 dark:text-gray-500">Description not available.</h3>
                                                             )}
                                                             {Array.isArray(item.imageCollection?.items) && item.imageCollection.items.map((image: Image, imgIndex: number) => (
                                                             <div key={imgIndex} className="mt-2.5 overflow-hidden rounded-xl bg-white shadow">
