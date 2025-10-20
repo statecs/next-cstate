@@ -69,11 +69,16 @@ const HomePage = async () => {
     const journeyEvents = journeyData && Array.isArray(journeyData)
         ? journeyData
             .sort((a, b) => new Date(b.year).getFullYear() - new Date(a.year).getFullYear())
-            .map(item => ({
-                title: item.title,
-                description: item.description,
-                year: new Date(item.year).getFullYear().toString()
-            }))
+            .map(item => {
+                // Create a URL-friendly slug from the title
+                const slug = item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+                return {
+                    title: item.title,
+                    description: item.description,
+                    year: new Date(item.year).getFullYear().toString(),
+                    url: `/about#${slug}`
+                };
+            })
         : [];
 
     return (

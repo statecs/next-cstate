@@ -84,8 +84,11 @@ export default async function Journey() {
                                                     <hr className="my-0 ml-4 flex-1 border-dashed border-gray-300 dark:border-gray-200" />
                                                 </div>
                                                 <section>
-                                                    {events.map((item, itemIndex) => (
-                                                    <div key={itemIndex} className="relative flex pb-8 last:pb-0">
+                                                    {events.map((item, itemIndex) => {
+                                                      // Create a URL-friendly slug from the title for anchor links
+                                                      const slug = item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+                                                      return (
+                                                    <div key={itemIndex} id={slug} className="relative flex pb-8 last:pb-0 scroll-mt-8">
                                                         <div className="absolute inset-0 flex w-6 items-center justify-center">
                                                             <div className="pointer-events-none h-full w-px border-l-[1px] border-gray-200 dark:border-zinc-700"></div>
                                                         </div>
@@ -126,9 +129,10 @@ export default async function Journey() {
                                                             </div>
                                                             ))}
                                                         </div>
-                                                    
+
                                                     </div>
-                                                    ))}
+                                                      );
+                                                    })}
                                                 </section>
                                             </div>
                                             )
