@@ -617,10 +617,9 @@ const handleVoiceInputState = (isActive: boolean) => {
       </div>
     </div>
       {loading && <p aria-live="polite" aria-atomic="true" className="text-sm text-gray-500 dark:text-gray-400">Sending...</p>}
-        <div className={`relative text-left w-full mt-6 flex-1 p-6 whitespace-pre-wrap border rounded-2xl border-gray-200 dark:border-zinc-600/50 bg-gray-50/50 dark:bg-zinc-800/30 ${!responseMessage ? 'opacity-0 ' : ''}`}>
-          {responseMessage ? (
-            <>
-              <p
+        {responseMessage && (
+          <div className="relative text-left w-full mt-6 flex-1 p-6 whitespace-pre-wrap border rounded-2xl border-gray-200 dark:border-zinc-600/50 bg-gray-50/50 dark:bg-zinc-800/30">
+            <p
                 className="text-base text-gray-900 dark:text-gray-100 max-h-[200px] lg:max-h-[450px] overflow-scroll"
                 dangerouslySetInnerHTML={{
                   __html: responseMessage
@@ -675,12 +674,9 @@ const handleVoiceInputState = (isActive: boolean) => {
                   )}
                 </button>
               )}
-            </>
-            ) : (
-               <p className="text-sm">Passionate, creative, motivated.</p>
-            )}
           </div>
-        </div>
+        )}
+      </div>
       <audio ref={audioRef} style={{ display: 'none' }} />
     </>
   );
