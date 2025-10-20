@@ -1,47 +1,44 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useAtom } from 'jotai';
+import { footerVisibilityAtom } from '@/utils/store';
 import SiteFooter from '@/components/SiteFooter';
 
 const MobileFooter: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [isFooterVisible, setFooterVisible] = useAtom(footerVisibilityAtom);
 
   useEffect(() => {
     const mainElement = document.getElementById('main');
     if (!mainElement) {
-      console.log('MobileFooter: main element not found');
       return;
     }
-
-    console.log('MobileFooter: main element found', mainElement);
 
     const handleScroll = (e: Event) => {
       const target = e.target as HTMLElement;
       const scrollTop = target.scrollTop;
-      console.log('MobileFooter: scroll detected on', target.id || target.className, 'scrollTop:', scrollTop);
       // Show footer after scrolling down 200px
       const shouldShow = scrollTop > 200;
-      console.log('MobileFooter: shouldShow', shouldShow);
       setIsVisible(shouldShow);
+      setFooterVisible(shouldShow);  // Sync with global footer visibility atom
     };
 
     // Add listener to main element
     mainElement.addEventListener('scroll', handleScroll);
-    console.log('MobileFooter: scroll listener added to main');
 
     // Also try finding nested scroll containers and add listeners
     const nestedScrollContainers = mainElement.querySelectorAll('.overflow-auto, .overflow-scroll, .overflow-y-auto, .overflow-y-scroll');
-    console.log('MobileFooter: found nested scroll containers:', nestedScrollContainers.length);
 
     nestedScrollContainers.forEach((container, index) => {
-      console.log(`MobileFooter: adding listener to nested container ${index}:`, container.className);
       container.addEventListener('scroll', handleScroll);
     });
 
     // Check initial scroll position
     const initialScrollTop = mainElement.scrollTop;
-    console.log('MobileFooter: initial scrollTop', initialScrollTop);
-    setIsVisible(initialScrollTop > 200);
+    const initialShouldShow = initialScrollTop > 200;
+    setIsVisible(initialShouldShow);
+    setFooterVisible(initialShouldShow);  // Sync initial state with global atom
 
     return () => {
       mainElement.removeEventListener('scroll', handleScroll);
@@ -49,7 +46,12 @@ const MobileFooter: React.FC = () => {
         container.removeEventListener('scroll', handleScroll);
       });
     };
-  }, []);
+  }, [setFooterVisible]);
+
+  // Don't render the fixed footer wrapper if not visible
+  if (!isFooterVisible) {
+    return null;
+  }
 
   return (
     <div

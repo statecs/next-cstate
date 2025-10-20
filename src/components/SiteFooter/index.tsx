@@ -23,12 +23,16 @@ const SiteFooter: React.FC = () => {
     link.label !== 'Writing' || isAuthenticated
   );
 
+  // Don't render anything if footer should be hidden
+  if (!isFooterVisible) {
+    return null;
+  }
+
   return (
     <footer
       className={`
         relative z-10 border-t dark:border-zinc-800 bg-white dark:bg-custom-dark-gray
         transition-opacity duration-300
-        ${isFooterVisible ? 'opacity-100' : 'opacity-0 sm:opacity-100'}
       `}
     >
       <div

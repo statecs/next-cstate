@@ -82,7 +82,7 @@ const HomePage = async () => {
         : [];
 
     return (
-        <div className="flex flex-grow h-[calc(100vh-110px)] overflow-hidden">
+        <div className="flex flex-grow h-[calc(100vh)] overflow-hidden">
             <div className="w-full overflow-y-auto">
                 {/* Hero Section */}
                 <HeroSection />

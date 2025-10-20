@@ -17,7 +17,7 @@ interface User {
   }
   
 export const drawerAtom = atom(false);  // false indicates the drawer is initially closed
-export const footerVisibilityAtom = atom(true);
+export const footerVisibilityAtom = atom(false);  // false prevents footer from showing on initial mobile load
 export const drawerScrollAtom = atom(true);
 export const responseMessageLengthAtom = atom(0);
 export const userAtom = atom<User | null>(null);

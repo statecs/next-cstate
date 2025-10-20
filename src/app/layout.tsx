@@ -3,7 +3,7 @@ import { Analytics } from '@/components/Analytics'
 import { GA_TRACKING_ID } from '@/lib/gtag'
 import Script from 'next/script'
 import localFont from 'next/font/local';
-import SiteFooter from '@/components/SiteFooter';
+import ConditionalStickyFooter from '@/components/ConditionalStickyFooter';
 import MobileFooter from '@/components/MobileFooter';
 import SkipLink from '@/components/SkipLink';
 import SiteHeader from '@/components/SiteHeader';
@@ -50,9 +50,7 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => {
                     <div className="flex-1">
                       {children}
                     </div>
-                    <div className="lg:hidden sticky bottom-0 w-full lg:relative lg:w-auto shadow-lg before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-t before:from-gray-100 before:to-transparent dark:before:from-custom-dark-gray dark:before:to-transparent">
-                      <SiteFooter />
-                    </div>
+                    <ConditionalStickyFooter />
                   </div>
                 </div>
                 <MobileFooter />
