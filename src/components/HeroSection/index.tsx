@@ -36,7 +36,7 @@ const HeroSection: React.FC = () => {
 
   return (
     <section
-      className="relative min-h-[80vh] md:min-h-[85vh] lg:min-h-[90vh] flex items-center justify-center px-4 py-6 md:py-12 lg:py-16 overflow-hidden"
+      className="relative min-h-[85vh] md:min-h-[85vh] lg:min-h-[90vh] flex items-center justify-center px-4 py-6 md:py-12 lg:py-16 overflow-hidden"
       style={{
         WebkitBackfaceVisibility: 'hidden',
         transform: 'translate3d(0,0,0)'
@@ -140,7 +140,7 @@ const HeroSection: React.FC = () => {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-4 sm:bottom-8 left-0 right-0 flex justify-center animate-bounce">
+      <div className="absolute bottom-4 sm:bottom-8 left-0 right-0 flex justify-center animate-bounce hover:animate-none">
         <button
           onClick={scrollToContent}
           className="cursor-pointer group"
