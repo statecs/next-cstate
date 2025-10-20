@@ -1,32 +1,48 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
 
 const HeroSection: React.FC = () => {
+  const [isInIframe, setIsInIframe] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  useEffect(() => {
+    // Check if we're in an iframe
+    setIsInIframe(window.self !== window.top);
+
+    // Check if screen is small (≤375px)
+    const checkScreenSize = () => {
+      setIsSmallScreen(window.innerWidth <= 375);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   const scrollToContent = () => {
-    // Try to find the scrollable container
+    // Find the main scroll container
     const mainElement = document.getElementById('main');
 
-    // Look for the actual scroll container within the page
-    const scrollContainer = mainElement?.querySelector('.overflow-y-auto') as HTMLElement;
-
-    if (scrollContainer) {
-      const currentScroll = scrollContainer.scrollTop;
-      scrollContainer.scrollTo({
-        top: currentScroll + window.innerHeight * 0.8,
-        behavior: 'smooth'
-      });
-    } else if (mainElement) {
-      const currentScroll = mainElement.scrollTop;
-      mainElement.scrollTo({
-        top: currentScroll + window.innerHeight * 0.8,
-        behavior: 'smooth'
-      });
+    if (mainElement) {
+      // Find the next section after the hero
+      const sections = mainElement.querySelectorAll('section');
+      if (sections.length > 1) {
+        // Scroll to the second section (first one after hero)
+        sections[1].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        // Fallback: scroll by viewport height
+        mainElement.scrollTo({
+          top: window.innerHeight,
+          behavior: 'smooth'
+        });
+      }
     } else {
+      // Fallback to window scroll
       window.scrollTo({
         top: window.innerHeight,
         behavior: 'smooth'
@@ -36,7 +52,7 @@ const HeroSection: React.FC = () => {
 
   return (
     <section
-      className="relative min-h-[85vh] md:min-h-[85vh] lg:min-h-[90vh] flex items-center justify-center px-4 py-6 md:py-12 lg:py-16 overflow-hidden"
+      className={`relative ${isInIframe || isSmallScreen ? 'min-h-[95vh]' : 'min-h-[85vh]'} md:min-h-[85vh] lg:min-h-[90vh] flex items-center justify-center px-4 py-6 md:py-12 lg:py-16 overflow-hidden`}
       style={{
         WebkitBackfaceVisibility: 'hidden',
         transform: 'translate3d(0,0,0)'
