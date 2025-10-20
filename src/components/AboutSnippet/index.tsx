@@ -207,8 +207,22 @@ const AboutSnippet: React.FC<AboutSnippetProps> = ({
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Get to know me</span>
               </div>
 
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-purple-600 to-gray-900 dark:from-white dark:via-pink-400 dark:to-white bg-clip-text text-transparent font-serif mb-4 animate-gradient bg-[length:200%_auto]">
-                {title}
+              <h2
+                className="text-3xl sm:text-4xl md:text-5xl font-bold font-serif mb-4"
+                style={{
+                  lineHeight: '1.3',
+                  paddingBottom: '0.1em'
+                }}
+              >
+                <span
+                  className="bg-gradient-to-r from-gray-900 via-purple-600 to-gray-900 dark:from-white dark:via-pink-400 dark:to-white bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]"
+                  style={{
+                    display: 'inline-block',
+                    paddingBottom: '0.08em'
+                  }}
+                >
+                  {title}
+                </span>
               </h2>
             </div>
 

@@ -24,8 +24,22 @@ const JourneyPreview: React.FC<JourneyPreviewProps> = ({ events }) => {
   return (
     <section className="w-full max-w-6xl mx-auto px-4 py-16 animate-fadeIn" style={{ animationDelay: '500ms' }}>
       <div className="text-center mb-12">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent font-serif mb-3">
-          My Journey
+        <h2
+          className="text-3xl sm:text-4xl md:text-5xl font-bold font-serif mb-3"
+          style={{
+            lineHeight: '1.3',
+            paddingBottom: '0.1em'
+          }}
+        >
+          <span
+            className="bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent"
+            style={{
+              display: 'inline-block',
+              paddingBottom: '0.08em'
+            }}
+          >
+            My Journey
+          </span>
         </h2>
         <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg">
           Key milestones and achievements throughout my career

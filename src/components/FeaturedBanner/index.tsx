@@ -56,8 +56,22 @@ const FeaturedBanner: React.FC<FeaturedBannerProps> = ({ items }) => {
   return (
     <section className="w-full max-w-7xl mx-auto px-4 py-12 animate-fadeIn" style={{ animationDelay: '200ms' }}>
       <div className="mb-8 text-center">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent font-serif">
-          Featured Work
+        <h2
+          className="text-3xl sm:text-4xl md:text-5xl font-bold font-serif"
+          style={{
+            lineHeight: '1.3',
+            paddingBottom: '0.1em'
+          }}
+        >
+          <span
+            className="bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent"
+            style={{
+              display: 'inline-block',
+              paddingBottom: '0.08em'
+            }}
+          >
+            Featured Work
+          </span>
         </h2>
         <p className="text-gray-600 dark:text-gray-400 mt-2 text-lg">
           Highlights from my latest projects and writings

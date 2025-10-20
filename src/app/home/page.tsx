@@ -94,8 +94,22 @@ const HomePage = async () => {
                             <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
                             <span className="text-sm font-medium text-gray-700 dark:text-gray-200">AI Assistant</span>
                         </div>
-                        <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent font-serif mb-3">
-                            Ask Me Anything
+                        <h2
+                            className="text-3xl sm:text-4xl font-bold font-serif mb-3"
+                            style={{
+                                lineHeight: '1.3',
+                                paddingBottom: '0.1em'
+                            }}
+                        >
+                            <span
+                                className="bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent"
+                                style={{
+                                    display: 'inline-block',
+                                    paddingBottom: '0.08em'
+                                }}
+                            >
+                                Ask Me Anything
+                            </span>
                         </h2>
                         <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg">
                             Have questions? Chat with my AI assistant trained on my work and experience

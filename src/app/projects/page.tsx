@@ -30,8 +30,22 @@ const ProjectPage = async () => {
           <div className="max-w-7xl mx-auto px-4 py-12">
           {/* Custom Enhanced Header */}
           <div className="text-center mb-12 animate-fadeIn">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-6 tracking-tight font-serif leading-tight">
-              Projects
+            <h1
+              className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 tracking-tight font-serif"
+              style={{
+                lineHeight: '1.2',
+                paddingBottom: '0.1em'
+              }}
+            >
+              <span
+                className="bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent"
+                style={{
+                  display: 'inline-block',
+                  paddingBottom: '0.08em'
+                }}
+              >
+                Projects
+              </span>
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
               A curated collection of my creative work, experiments, and digital experiences

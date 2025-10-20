@@ -109,8 +109,25 @@ const HeroSection: React.FC = () => {
 
         {/* Main Headline */}
         <h1 className="mb-4 sm:mb-5 md:mb-6">
-          <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight font-serif mb-2 sm:mb-3 md:mb-4">
-            <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 dark:from-white dark:via-gray-200 dark:to-white bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
+          <span
+            className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight font-serif mb-2 sm:mb-3 md:mb-4"
+            style={{
+              fontFeatureSettings: 'normal',
+              textRendering: 'geometricPrecision',
+              WebkitFontSmoothing: 'antialiased',
+              MozOsxFontSmoothing: 'grayscale',
+              letterSpacing: '-0.02em',
+              lineHeight: '1.2',
+              paddingBottom: '0.15em'
+            }}
+          >
+            <span
+              className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 dark:from-white dark:via-gray-200 dark:to-white bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]"
+              style={{
+                display: 'inline-block',
+                paddingBottom: '0.1em'
+              }}
+            >
               Christopher State
             </span>
           </span>
