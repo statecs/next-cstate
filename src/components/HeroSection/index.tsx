@@ -1,16 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
 
 const HeroSection: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
 
   const scrollToContent = () => {
     // Try to find the scrollable container
@@ -48,12 +43,10 @@ const HeroSection: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className={`relative z-10 max-w-5xl mx-auto text-center transition-all duration-1000 transform ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-      }`}>
+      <div className="relative z-10 max-w-5xl mx-auto text-center animate-fadeIn">
 
         {/* Profile Image with Glow Effect */}
-        <div className="mb-8 inline-block animate-fadeIn" style={{ animationDelay: '200ms' }}>
+        <div className="mb-8 inline-block">
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-gray-400 to-gray-600 dark:from-gray-500 dark:to-gray-300 rounded-full blur-2xl opacity-40 animate-pulse"
                  style={{ animationDuration: '2s' }} />
@@ -72,7 +65,7 @@ const HeroSection: React.FC = () => {
         </div>
 
         {/* Main Headline */}
-        <h1 className="mb-6 animate-fadeIn" style={{ animationDelay: '400ms' }}>
+        <h1 className="mb-6">
           <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight font-serif mb-4">
             <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 dark:from-white dark:via-gray-200 dark:to-white bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
               Christopher State
@@ -84,15 +77,13 @@ const HeroSection: React.FC = () => {
         </h1>
 
         {/* Description */}
-        <p className="text-lg sm:text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10 animate-fadeIn font-light"
-           style={{ animationDelay: '600ms' }}>
+        <p className="text-lg sm:text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10 font-light">
           Crafting inclusive digital experiences through thoughtful design,
           accessible interfaces, and human-centered solutions.
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 animate-fadeIn"
-             style={{ animationDelay: '800ms' }}>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
           <Link
             href="/projects"
             className="group relative px-8 py-4 bg-black dark:bg-white text-white dark:text-black rounded-full font-semibold text-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl"
@@ -110,8 +101,7 @@ const HeroSection: React.FC = () => {
         </div>
 
         {/* Social Links */}
-        <div className="flex gap-6 justify-center items-center mb-8 animate-fadeIn"
-             style={{ animationDelay: '1000ms' }}>
+        <div className="flex gap-6 justify-center items-center mb-8">
           <a
             href="https://github.com/statecs"
             target="_blank"
