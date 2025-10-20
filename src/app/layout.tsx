@@ -4,10 +4,9 @@ import { GA_TRACKING_ID } from '@/lib/gtag'
 import Script from 'next/script'
 import localFont from 'next/font/local';
 import SiteFooter from '@/components/SiteFooter';
-import SiteMenu from '@/components/SiteMenu';
 import SkipLink from '@/components/SkipLink';
 import SiteHeader from '@/components/SiteHeader';
-import { SideMenu, MenuContent } from '@/components/SideMenu';
+import TopNav from '@/components/TopNav';
 import config from '@/utils/config';
 import styles from './rootLayout.module.css';
 import './globals.css';
@@ -36,20 +35,17 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => {
         >
           <body style={{
             background: 'black'
-          }} className="sm:min-h-full md:flex md:flex-grow md:flex-row bg-white dark:bg-custom-dark-gray overflow-hidden">
+          }} className="sm:min-h-full md:flex md:flex-grow md:flex-col bg-white dark:bg-custom-dark-gray overflow-hidden">
             <AuthWrapper>
               <SkipLink />
-              <main id="topElement" tabIndex={-1} vaul-drawer-wrapper="" 
-                    className={`${styles.responsiveStyle} md:mt-0 md:flex md:w-[calc(100%-260px)] md:flex-grow md:flex-col lg:w-[calc(100%-300px)] bg-white dark:bg-custom-dark-gray`}>
+              <main id="topElement" tabIndex={-1} vaul-drawer-wrapper=""
+                    className={`${styles.responsiveStyle} md:mt-0 flex flex-col flex-grow w-full bg-white dark:bg-custom-dark-gray`}>
                 <div className="lg:hidden">
                   <SiteHeader />
                 </div>
-                <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
-                  <SideMenu className="relative hidden lg:flex lg:w-1/4">
-                    <MenuContent />
-                    <SiteMenu />
-                  </SideMenu>
-                  <div id="main" className="flex flex-col flex-1 overflow-auto lg:w-3/4">
+                <TopNav />
+                <div className="flex flex-col flex-1 overflow-hidden">
+                  <div id="main" className="flex flex-col flex-1 overflow-auto">
                     <div className="flex-1">
                       {children}
                     </div>
