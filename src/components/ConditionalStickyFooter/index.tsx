@@ -6,7 +6,6 @@ import SiteFooter from '@/components/SiteFooter';
 
 const ConditionalStickyFooter: React.FC = () => {
   const [isFooterVisible] = useAtom(footerVisibilityAtom);
-  console.log('ConditionalStickyFooter: isFooterVisible', isFooterVisible);
 
   if (!isFooterVisible) {
     return null;

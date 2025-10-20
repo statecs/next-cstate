@@ -82,9 +82,10 @@ const HomePage = async () => {
         : [];
 
     return (
-        <>
-            {/* Hero Section */}
-            <HeroSection />
+        <div className="flex flex-grow h-[calc(100vh)] overflow-hidden">
+            <div className="w-full overflow-y-auto">
+                {/* Hero Section */}
+                <HeroSection />
 
                 {/* AI Assistant Section */}
                 <section className="w-full max-w-4xl mx-auto px-4 py-16 animate-fadeIn" style={{ animationDelay: '300ms' }}>
@@ -151,7 +152,8 @@ const HomePage = async () => {
                         </div>
                     </div>
                 </section>
-        </>
+            </div>
+        </div>
     );
 };
 
