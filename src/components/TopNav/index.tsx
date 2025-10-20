@@ -59,56 +59,15 @@ export const TopNav: React.FC = () => {
 
   return (
     <nav className="hidden lg:flex items-center justify-between w-full px-6 py-4 border-b dark:border-zinc-700 bg-white dark:bg-custom-light-gray">
-      {/* Left: Profile/User Section */}
+      {/* Left: Logo/Home Link */}
       <div className="flex items-center gap-6">
-        {isAuthenticated ? (
-          <div className="relative flex items-center gap-2" ref={dropdownRef}>
-            <Link href="/" className="inline-flex items-center gap-2 p-2 hover:opacity-80 transition-opacity">
-              <UserCircle size={30} className="text-gray-500 dark:text-gray-300 opacity-50" />
-              <div className="text-left">
-                <span className="font-semibold tracking-tight text-sm text-black dark:text-white">{userName}</span>
-                <p className="text-xs text-gray-600 dark:text-gray-400">{userRole}</p>
-              </div>
-            </Link>
-            <button
-              onClick={toggleDropdown}
-              className="inline-flex items-center p-2"
-            >
-              <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
-            </button>
-
-            {dropdownOpen && (
-              <div className="absolute left-0 mt-2 w-64 bg-white dark:bg-[#2f2f2f] rounded-lg shadow-lg z-50 border border-gray-200 dark:border-[#ffffff1a]">
-                <div className="px-4 py-3 text-sm text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-600">
-                  <div className="font-medium">{userRole}</div>
-                  <div className="truncate">{userEmail}</div>
-                </div>
-                <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
-                  <li>
-                    <Link onClick={() => setDropdownOpen(false)} href="/dashboard" className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
-                      <LayoutDashboard className="w-4 h-4 mr-2" />
-                      Dashboard
-                    </Link>
-                  </li>
-                </ul>
-                <div className="py-2 border-t border-gray-200 dark:border-gray-600">
-                  <LogoutLink className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200">
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sign out
-                  </LogoutLink>
-                </div>
-              </div>
-            )}
+        <Link href="/" className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <Image src="/images/me.jpeg" alt={userName} width={40} height={40} loading="lazy" className="rounded-full shadow-sm" unoptimized />
+          <div className="text-left">
+            <span className="font-semibold tracking-tight text-sm text-black dark:text-white">{userName}</span>
+            <p className="text-xs text-gray-600 dark:text-gray-400">UX & Accessibility Specialist</p>
           </div>
-        ) : (
-          <Link href="/" className="inline-flex items-center gap-2">
-            <Image src="/images/me.jpeg" alt={userName} width={40} height={40} loading="lazy" className="rounded-full shadow-sm" unoptimized />
-            <div className="text-left">
-              <span className="font-semibold tracking-tight text-sm text-black dark:text-white">{userName}</span>
-              <p className="text-xs text-gray-600 dark:text-gray-400">{userRole}</p>
-            </div>
-          </Link>
-        )}
+        </Link>
       </div>
 
       {/* Center: Navigation Links */}
@@ -142,10 +101,45 @@ export const TopNav: React.FC = () => {
         >
           All collections
         </Link>
-        {!isAuthenticated && (
-          <LoginLink postLoginRedirectURL="/dashboard" className="inline-flex items-center px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition font-bold text-sm">
-            <LogIn className="w-4 h-4 mr-2" />
-            Sign In
+
+        {isAuthenticated ? (
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={toggleDropdown}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition font-bold text-sm"
+            >
+              <UserCircle className="w-4 h-4" />
+              <span>{user?.given_name || 'Account'}</span>
+              <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {dropdownOpen && (
+              <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-[#2f2f2f] rounded-lg shadow-lg z-50 border border-gray-200 dark:border-[#ffffff1a]">
+                <div className="px-4 py-3 text-sm text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-600">
+                  <div className="font-medium">{userName}</div>
+                  <div className="truncate text-xs text-gray-600 dark:text-gray-400">{userEmail}</div>
+                </div>
+                <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                    <Link onClick={() => setDropdownOpen(false)} href="/dashboard" className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
+                      <LayoutDashboard className="w-4 h-4 mr-2" />
+                      Dashboard
+                    </Link>
+                  </li>
+                </ul>
+                <div className="py-2 border-t border-gray-200 dark:border-gray-600">
+                  <LogoutLink className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign out
+                  </LogoutLink>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <LoginLink postLoginRedirectURL="/dashboard" className="inline-flex items-center gap-2 px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition font-bold text-sm">
+            <LogIn className="w-4 h-4" />
+            <span>Sign In</span>
           </LoginLink>
         )}
       </div>
