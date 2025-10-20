@@ -36,7 +36,7 @@ const HeroSection: React.FC = () => {
 
   return (
     <section
-      className="relative min-h-[85vh] flex items-center justify-center px-4 py-16 overflow-hidden"
+      className="relative min-h-[80vh] md:min-h-[85vh] lg:min-h-[90vh] flex items-center justify-center px-4 py-6 md:py-12 lg:py-16 overflow-hidden"
       style={{
         WebkitBackfaceVisibility: 'hidden',
         transform: 'translate3d(0,0,0)'
@@ -58,7 +58,7 @@ const HeroSection: React.FC = () => {
       <div className="relative z-10 max-w-5xl mx-auto text-center animate-fadeIn">
 
         {/* Profile Image with Glow Effect */}
-        <div className="mb-8 inline-block">
+        <div className="mb-4 sm:mb-6 md:mb-8 inline-block">
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-gray-400 to-gray-600 dark:from-gray-500 dark:to-gray-300 rounded-full blur-2xl opacity-40 animate-pulse"
                  style={{ animationDuration: '2s' }} />
@@ -66,9 +66,9 @@ const HeroSection: React.FC = () => {
               <Image
                 src="/images/me.jpeg"
                 alt="Christopher State"
-                width={140}
-                height={140}
-                className="rounded-full shadow-2xl ring-4 ring-white dark:ring-gray-800 hover:scale-105 transition-transform duration-300"
+                width={120}
+                height={120}
+                className="sm:w-[140px] sm:h-[140px] rounded-full shadow-2xl ring-4 ring-white dark:ring-gray-800 hover:scale-105 transition-transform duration-300"
                 priority
                 unoptimized
               />
@@ -77,28 +77,28 @@ const HeroSection: React.FC = () => {
         </div>
 
         {/* Main Headline */}
-        <h1 className="mb-6">
-          <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight font-serif mb-4">
+        <h1 className="mb-4 sm:mb-5 md:mb-6">
+          <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight font-serif mb-2 sm:mb-3 md:mb-4">
             <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 dark:from-white dark:via-gray-200 dark:to-white bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
               Christopher State
             </span>
           </span>
-          <span className="block text-xl sm:text-2xl md:text-3xl font-medium text-gray-600 dark:text-gray-400 tracking-wide">
+          <span className="block text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium text-gray-600 dark:text-gray-400 tracking-wide">
             UX & Accessibility Specialist
           </span>
         </h1>
 
         {/* Description */}
-        <p className="text-lg sm:text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10 font-light">
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed mb-6 sm:mb-8 md:mb-10 font-light">
           Crafting inclusive digital experiences through thoughtful design,
           accessible interfaces, and human-centered solutions.
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+        <div className="flex flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12">
           <Link
             href="/projects"
-            className="group relative px-8 py-4 bg-black dark:bg-white text-white dark:text-black rounded-full font-semibold text-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+            className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-black dark:bg-white text-white dark:text-black rounded-full font-semibold text-base sm:text-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl"
           >
             <span className="relative z-10">View Projects</span>
             <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-black dark:from-gray-200 dark:to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -106,14 +106,14 @@ const HeroSection: React.FC = () => {
 
           <Link
             href="/writing"
-            className="group px-8 py-4 bg-transparent border-2 border-gray-900 dark:border-gray-200 text-gray-900 dark:text-gray-200 rounded-full font-semibold text-lg transition-all duration-300 hover:bg-gray-900 dark:hover:bg-gray-200 hover:text-white dark:hover:text-black hover:scale-105 hover:shadow-xl"
+            className="group px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-gray-900 dark:border-gray-200 text-gray-900 dark:text-gray-200 rounded-full font-semibold text-base sm:text-lg transition-all duration-300 hover:bg-gray-900 dark:hover:bg-gray-200 hover:text-white dark:hover:text-black hover:scale-105 hover:shadow-xl whitespace-nowrap"
           >
             Read Writing
           </Link>
         </div>
 
         {/* Social Links */}
-        <div className="flex gap-6 justify-center items-center mb-8">
+        <div className="flex gap-4 sm:gap-6 justify-center items-center mb-6 sm:mb-8">
           <a
             href="https://github.com/statecs"
             target="_blank"

@@ -5,7 +5,6 @@ import UnderlineLink from '@/components/UnderlineLink';
 import { useAtom } from 'jotai';
 import { drawerAtom, footerVisibilityAtom } from '@/utils/store';
 import { useAuthStatus } from '@/contexts/AuthContext';
-import { useEffect, useState } from 'react';
 
 const LINKS = [
   { label: 'About', url: '/about' },
@@ -19,25 +18,6 @@ const SiteFooter: React.FC = () => {
   const closeDrawer = () => setIsOpen(false);
   const [isFooterVisible] = useAtom(footerVisibilityAtom);
   const { isAuthenticated } = useAuthStatus();
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    // Check if dark mode is active
-    const checkDarkMode = () => {
-      setIsDark(document.documentElement.classList.contains('dark'));
-    };
-
-    checkDarkMode();
-
-    // Watch for dark mode changes
-    const observer = new MutationObserver(checkDarkMode);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class']
-    });
-
-    return () => observer.disconnect();
-  }, []);
 
   const visibleLinks = LINKS.filter(link =>
     link.label !== 'Writing' || isAuthenticated
@@ -46,15 +26,14 @@ const SiteFooter: React.FC = () => {
   return (
     <footer
       className={`
-        relative z-10 border-t dark:border-zinc-800
+        relative z-10 border-t dark:border-zinc-800 bg-white dark:bg-custom-dark-gray
         transition-opacity duration-300
         ${isFooterVisible ? 'opacity-100' : 'opacity-0 sm:opacity-100'}
       `}
     >
       <div
-        className="py-5"
+        className="py-5 bg-white dark:bg-custom-dark-gray"
         style={{
-          backgroundColor: isDark ? '#1c1c1c' : 'white',
           WebkitBackfaceVisibility: 'hidden',
           transform: 'translate3d(0,0,0)',
           willChange: 'transform',

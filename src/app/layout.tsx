@@ -4,6 +4,7 @@ import { GA_TRACKING_ID } from '@/lib/gtag'
 import Script from 'next/script'
 import localFont from 'next/font/local';
 import SiteFooter from '@/components/SiteFooter';
+import MobileFooter from '@/components/MobileFooter';
 import SkipLink from '@/components/SkipLink';
 import SiteHeader from '@/components/SiteHeader';
 import TopNav from '@/components/TopNav';
@@ -49,14 +50,12 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => {
                     <div className="flex-1">
                       {children}
                     </div>
-                    <div className="hidden lg:inline sticky bottom-0 w-full lg:relative lg:w-auto shadow-lg before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-t before:from-gray-100 before:to-transparent dark:before:from-custom-dark-gray dark:before:to-transparent">
+                    <div className="lg:hidden sticky bottom-0 w-full lg:relative lg:w-auto shadow-lg before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-t before:from-gray-100 before:to-transparent dark:before:from-custom-dark-gray dark:before:to-transparent">
                       <SiteFooter />
                     </div>
                   </div>
                 </div>
-                <div className="lg:hidden sticky bottom-0 w-full shadow-lg bg-white dark:bg-custom-dark-gray relative before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-t before:from-gray-100 before:to-transparent dark:before:from-custom-dark-gray dark:before:to-transparent before:-z-10" style={{ WebkitBackfaceVisibility: 'hidden', WebkitTransform: 'translateZ(0)' }}>
-                    <SiteFooter />
-                </div>
+                <MobileFooter />
               </main>
               {process.env.NODE_ENV !== 'development' && (
             <>
