@@ -8,10 +8,17 @@ import { ChevronDown } from 'lucide-react';
 const HeroSection: React.FC = () => {
   const [isInIframe, setIsInIframe] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [isLinkedIn, setIsLinkedIn] = useState(false);
 
   useEffect(() => {
     // Check if we're in an iframe
     setIsInIframe(window.self !== window.top);
+
+    // Check if we're in LinkedIn browser
+    const userAgent = navigator.userAgent || navigator.vendor;
+    const isLinkedInBrowser = /LinkedInApp/i.test(userAgent) ||
+                              (window.self !== window.top && document.referrer.includes('linkedin'));
+    setIsLinkedIn(isLinkedInBrowser);
 
     // Check if screen is small (≤375px)
     const checkScreenSize = () => {
@@ -50,9 +57,15 @@ const HeroSection: React.FC = () => {
     }
   };
 
+  // Determine the height class based on context
+  const getHeightClass = () => {
+    if (isInIframe || isSmallScreen || isLinkedIn) return 'min-h-[95dvh]'; // Other iframes and small screens
+    return 'min-h-[85vh]'; // Default
+  };
+
   return (
     <section
-      className={`relative ${isInIframe || isSmallScreen ? 'min-h-[95vh]' : 'min-h-[85vh]'} md:min-h-[85vh] lg:min-h-[90vh] flex items-center justify-center px-4 py-6 md:py-12 lg:py-16 overflow-hidden`}
+      className={`relative ${getHeightClass()} md:min-h-[85vh] lg:min-h-[90vh] flex items-center justify-center px-4 py-6 md:py-12 lg:py-16 overflow-hidden`}
       style={{
         WebkitBackfaceVisibility: 'hidden',
         transform: 'translate3d(0,0,0)'
