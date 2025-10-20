@@ -35,9 +35,21 @@ const HeroSection: React.FC = () => {
   };
 
   return (
-    <section className="relative min-h-[85vh] flex items-center justify-center px-4 py-16 overflow-hidden">
+    <section
+      className="relative min-h-[85vh] flex items-center justify-center px-4 py-16 overflow-hidden"
+      style={{
+        WebkitBackfaceVisibility: 'hidden',
+        transform: 'translate3d(0,0,0)'
+      }}
+    >
       {/* Animated Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-custom-dark-gray dark:via-gray-900 dark:to-black">
+      <div
+        className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-custom-dark-gray dark:via-gray-900 dark:to-black"
+        style={{
+          WebkitBackfaceVisibility: 'hidden',
+          transform: 'translateZ(0)'
+        }}
+      >
         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent dark:via-white/5 animate-pulse"
              style={{ animationDuration: '3s' }} />
       </div>

@@ -54,7 +54,7 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => {
                     </div>
                   </div>
                 </div>
-                <div className="lg:hidden sticky bottom-0 w-full shadow-lg before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-t before:from-gray-100 before:to-transparent dark:before:from-custom-dark-gray dark:before:to-transparent">
+                <div className="lg:hidden sticky bottom-0 w-full shadow-lg bg-white dark:bg-custom-dark-gray relative before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-t before:from-gray-100 before:to-transparent dark:before:from-custom-dark-gray dark:before:to-transparent before:-z-10" style={{ WebkitBackfaceVisibility: 'hidden', WebkitTransform: 'translateZ(0)' }}>
                     <SiteFooter />
                 </div>
               </main>
