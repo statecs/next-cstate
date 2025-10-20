@@ -620,7 +620,7 @@ const handleVoiceInputState = (isActive: boolean) => {
         {responseMessage && (
           <div className="relative text-left w-full mt-6 flex-1 p-6 whitespace-pre-wrap border rounded-2xl border-gray-200 dark:border-zinc-600/50 bg-gray-50/50 dark:bg-zinc-800/30">
             <p
-                className="text-base text-gray-900 dark:text-gray-100 max-h-[200px] lg:max-h-[450px] overflow-scroll"
+                className="text-base text-gray-900 dark:text-gray-100 max-h-[450px] overflow-scroll"
                 dangerouslySetInnerHTML={{
                   __html: responseMessage
                     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
