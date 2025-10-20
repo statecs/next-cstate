@@ -85,6 +85,10 @@ const HomePage = async () => {
                 {/* AI Assistant Section */}
                 <section className="w-full max-w-4xl mx-auto px-4 py-16 animate-fadeIn" style={{ animationDelay: '300ms' }}>
                     <div className="text-center mb-8">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-500/20 dark:to-purple-500/20 border border-blue-500/20 dark:border-blue-500/30 mb-4">
+                            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-200">AI Assistant</span>
+                        </div>
                         <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent font-serif mb-3">
                             Ask Me Anything
                         </h2>
@@ -93,8 +97,14 @@ const HomePage = async () => {
                         </p>
                     </div>
 
-                    <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 sm:p-8">
-                        <ComboBox assistantId={process.env.ASSISTANT_ID || ''} />
+                    <div className="relative">
+                        {/* Subtle glow effect */}
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 to-purple-500/20 dark:from-blue-500/30 dark:to-purple-500/30 rounded-3xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                        {/* Main container - Clean and minimal */}
+                        <div className="relative bg-white dark:bg-black/40 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200/50 dark:border-white/10 p-6 sm:p-8">
+                            <ComboBox assistantId={process.env.ASSISTANT_ID || ''} />
+                        </div>
                     </div>
                 </section>
 

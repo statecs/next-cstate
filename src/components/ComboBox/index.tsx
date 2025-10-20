@@ -617,7 +617,7 @@ const handleVoiceInputState = (isActive: boolean) => {
       </div>
     </div>
       {loading && <p aria-live="polite" aria-atomic="true" className="text-sm text-gray-500 dark:text-gray-400">Sending...</p>}
-        <div className={`relative text-left w-full mt-6 flex-1 px-4 whitespace-pre-wrap border rounded-lg border-gray-300 dark:border-zinc-700 ${!responseMessage ? 'opacity-0 ' : ''}`}>
+        <div className={`relative text-left w-full mt-6 flex-1 p-6 whitespace-pre-wrap border rounded-2xl border-gray-200 dark:border-zinc-600/50 bg-gray-50/50 dark:bg-zinc-800/30 ${!responseMessage ? 'opacity-0 ' : ''}`}>
           {responseMessage ? (
             <>
               <p
