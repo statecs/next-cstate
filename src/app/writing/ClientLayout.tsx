@@ -36,6 +36,37 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children, posts }) => {
     setIsMinimized(minimized);
   };
 
+  // Save scroll position on scroll
+  useEffect(() => {
+    const scrollContainer = listRef.current;
+    if (!scrollContainer) return;
+
+    const handleScroll = () => {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('listMenuScrollPosition', String(scrollContainer.scrollTop));
+      }
+    };
+
+    scrollContainer.addEventListener('scroll', handleScroll);
+    return () => scrollContainer.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Restore scroll position when component mounts or pathname changes
+  useEffect(() => {
+    const scrollContainer = listRef.current;
+    if (!scrollContainer) return;
+
+    if (typeof window !== 'undefined') {
+      const savedScrollPosition = localStorage.getItem('listMenuScrollPosition');
+      if (savedScrollPosition) {
+        // Use requestAnimationFrame to ensure DOM is ready
+        requestAnimationFrame(() => {
+          scrollContainer.scrollTop = parseInt(savedScrollPosition, 10);
+        });
+      }
+    }
+  }, [pathname]);
+
   // Close mobile menu when pathname changes
   useEffect(() => {
     setIsMobileMenuOpen(false);

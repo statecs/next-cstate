@@ -52,9 +52,23 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
   const [focusedIndex, setFocusedIndex] = useState(-1);
 
   const { isAuthenticated, loading } = useAuthStatus();
-  const [activeFilter, setActiveFilter] = useState<FilterType | null>(null);
+  const [activeFilter, setActiveFilter] = useState<FilterType | null>(() => {
+    // Load active filter from localStorage
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('listMenuActiveFilter');
+      return stored || null;
+    }
+    return null;
+  });
   const [categories, setCategories] = useState<string[]>([]);
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(() => {
+    // Load showFilters state from localStorage
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('listMenuShowFilters');
+      return stored === 'true';
+    }
+    return false;
+  });
 
   // Initialize with the correct state based on pathname
   const isWriting = pathname.startsWith('/writing');
@@ -131,7 +145,18 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
   }, [list, isWriting, router, pathname, isListMinimized]);
 
   const toggleFilter = (filter: FilterType) => {
-    setActiveFilter(prev => prev === filter ? null : filter);
+    setActiveFilter(prev => {
+      const newFilter = prev === filter ? null : filter;
+      // Save to localStorage
+      if (typeof window !== 'undefined') {
+        if (newFilter) {
+          localStorage.setItem('listMenuActiveFilter', newFilter);
+        } else {
+          localStorage.removeItem('listMenuActiveFilter');
+        }
+      }
+      return newFilter;
+    });
   };
 
   const filteredList = useMemo(() => list.filter(post => {
@@ -217,7 +242,14 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
           
         {!isListMinimized && (
           <button
-            onClick={() => setShowFilters(!showFilters)}
+            onClick={() => {
+              const newShowFilters = !showFilters;
+              setShowFilters(newShowFilters);
+              // Save to localStorage
+              if (typeof window !== 'undefined') {
+                localStorage.setItem('listMenuShowFilters', String(newShowFilters));
+              }
+            }}
             className="px-4 py-2 bg-gray-200 dark:bg-zinc-700 rounded-md text-xs font-medium transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-600"
           >
             {showFilters ? 'Hide Filters' : 'Show Filters'}
@@ -227,7 +259,7 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
           <button
             onClick={toggleMinimize}
             className={cn(
-              "hidden lg:block px-4 py-2 bg-gray-200 dark:bg-zinc-700 rounded-md text-xs font-medium transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-600",
+              "block px-4 py-2 bg-gray-200 dark:bg-zinc-700 rounded-md text-xs font-medium transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-600",
               isListMinimized ? "mt-2 mb-4" : ""
             )}
             aria-label={isListMinimized ? "Expand list" : "Minimize list"}
@@ -279,7 +311,7 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
       )}
 
         {showFilters && !isListMinimized && !isWriting && (
-          <div className="flex flex-wrap gap-1 p-4 lg:pb-4 lg:pt-1 overflow-hidden animate-fadeIn">
+          <div className="flex flex-wrap gap-1 p-4 lg:pb-4 lg:pt-1 overflow-hidden">
             {categories.map(category => (
               <FilterButton
                 key={category}
@@ -293,7 +325,7 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
         )}
       </div>
 
-      <nav aria-label={navLabel}>
+      <nav aria-label={navLabel} className="pb-20">
         {filteredList.length > 0 ? (
           <ul className={cn(
             'list-none p-0',
@@ -305,9 +337,9 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
                 {isListMinimized ? (
                   renderMinimizedItem(post, index)
                 ) : (
-                  <LinkList 
-                    post={post} 
-                    isMobile={isMobile} 
+                  <LinkList
+                    post={post}
+                    isMobile={isMobile}
                     isActive={pathname.startsWith(`/${isWriting ? 'writing' : 'projects'}${post.url}`)}
                     isFocused={index === focusedIndex}
                     onFocus={() => setFocusedIndex(index)}
