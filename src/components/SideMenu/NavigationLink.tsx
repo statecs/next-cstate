@@ -28,10 +28,10 @@ export const NavigationLink = memo<NavigationLinkProps>(({ href, label, icon }) 
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex font-serif items-center gap-3 rounded-lg p-2 group hover:bg-gray-200 dark:hover:bg-zinc-700"
+        className="flex font-serif items-center gap-3 rounded-lg p-2 group text-black dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-zinc-700 font-bold"
       >
         {iconCmp}
-        <span className="font-medium">{label}</span>
+        <span>{label}</span>
         <div className="flex-grow"></div>
         <ArrowUpRightIcon size={16} />
       </a>
@@ -49,8 +49,8 @@ export const NavigationLink = memo<NavigationLinkProps>(({ href, label, icon }) 
       aria-current={isActive ? 'page' : undefined}>
     <span
       className={cn(
-        'group cursor-pointer flex gap-3 items-center rounded-lg p-2',
-        isActive ? 'bg-black text-white dark:bg-zinc-700' : 'hover:bg-gray-200 dark:hover:bg-zinc-700'
+        'group cursor-pointer flex gap-3 items-center rounded-lg p-2 font-bold',
+        isActive ? 'bg-black text-white dark:bg-zinc-700' : 'text-black dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-zinc-700'
       )}
     >
       {iconCmp}

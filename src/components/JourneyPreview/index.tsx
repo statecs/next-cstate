@@ -43,7 +43,7 @@ const JourneyPreview: React.FC<JourneyPreviewProps> = ({ events }) => {
                 style={{ animationDelay: `${600 + index * 100}ms` }}
               >
                 {/* Card */}
-                <div className="relative h-full bg-white dark:bg-gray-900 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden group-hover:scale-[1.02]">
+                <div className="relative h-full bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-white/10 overflow-hidden group-hover:scale-[1.02]">
                   {/* Year Badge */}
                   <div className="absolute top-4 right-4 z-10">
                     <div className="px-4 py-2 rounded-full bg-black dark:bg-white text-white dark:text-black text-sm font-bold shadow-lg">
@@ -83,7 +83,7 @@ const JourneyPreview: React.FC<JourneyPreviewProps> = ({ events }) => {
                   </div>
 
                   {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-100/50 to-transparent dark:from-gray-800/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-100/50 to-transparent dark:from-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                 </div>
 
                 {/* Optional link wrapper */}
