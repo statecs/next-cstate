@@ -325,7 +325,10 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
         )}
       </div>
 
-      <nav aria-label={navLabel} className="pb-20">
+      <nav aria-label={navLabel} className={cn(
+        "pb-20",
+        isListMinimized ? "overflow-y-auto max-h-[calc(100vh-8rem)]" : ""
+      )}>
         {filteredList.length > 0 ? (
           <ul className={cn(
             'list-none p-0',
