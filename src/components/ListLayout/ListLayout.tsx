@@ -61,11 +61,24 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
   const basePath = isWriting ? '/writing' : '/projects';
 
   const [isListMinimized, setIsListMinimized] = useState(() => {
-    // Initialize as minimized if we're viewing a specific project/article
+    // Check if there's a manual override in localStorage first
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('listMenuManualState');
+      if (stored !== null) {
+        return stored === 'minimized';
+      }
+    }
+    // Default: Initialize as minimized if we're viewing a specific project/article
     return pathname !== '/projects' && pathname !== '/writing';
   });
-  const [manualOverride, setManualOverride] = useState(false);
-  const [prevPathname, setPrevPathname] = useState(pathname);
+
+  const [manualOverride, setManualOverride] = useState(() => {
+    // Check if manual override exists in localStorage
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('listMenuManualState') !== null;
+    }
+    return false;
+  });
 
   const navLabel = isWriting ? "Writing navigation" : "Projects navigation";
 
@@ -75,14 +88,6 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
     ));
     setCategories(uniqueCategories);
   }, [list]);
-
-  // Reset manual override when navigating to a different page
-  useEffect(() => {
-    if (pathname !== prevPathname) {
-      setManualOverride(false);
-      setPrevPathname(pathname);
-    }
-  }, [pathname, prevPathname]);
 
   useEffect(() => {
     // Don't auto-minimize if user manually toggled the state
@@ -144,6 +149,12 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
     const newMinimizedState = !isListMinimized;
     setIsListMinimized(newMinimizedState);
     setManualOverride(true);
+
+    // Save to localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('listMenuManualState', newMinimizedState ? 'minimized' : 'expanded');
+    }
+
     if (onMinimizeChange) {
       onMinimizeChange(newMinimizedState);
     }

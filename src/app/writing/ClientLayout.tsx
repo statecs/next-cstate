@@ -16,8 +16,16 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children, posts }) => {
   const pathname = usePathname();
   const prevPathnameRef = useRef(pathname);
 
-  // Initialize minimize state based on pathname
+  // Initialize minimize state based on pathname and localStorage
   const [isMinimized, setIsMinimized] = useState(() => {
+    // Check localStorage first
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('listMenuManualState');
+      if (stored !== null) {
+        return stored === 'minimized';
+      }
+    }
+    // Default behavior
     return pathname !== '/projects' && pathname !== '/writing';
   });
 
@@ -42,15 +50,6 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children, posts }) => {
     window.addEventListener('toggleMobileMenu', handleToggleMobileMenu);
     return () => window.removeEventListener('toggleMobileMenu', handleToggleMobileMenu);
   }, []);
-
-  // Only sync minimize state when pathname actually changes (navigation), not on manual toggle
-  useEffect(() => {
-    if (prevPathnameRef.current !== pathname) {
-      const shouldMinimize = pathname !== '/projects' && pathname !== '/writing';
-      setIsMinimized(shouldMinimize);
-      prevPathnameRef.current = pathname;
-    }
-  }, [pathname]);
 
   useEffect(() => {
     if (contentRef.current) {
@@ -90,7 +89,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children, posts }) => {
           left-0 lg:left-auto
           h-full lg:h-auto
           z-50 lg:z-auto
-          transition-transform duration-300 ease-in-out
+          transition-all duration-300 ease-in-out
           ${isMinimized ? "overflow-visible" : "overflow-scroll"}
         `}
         style={{

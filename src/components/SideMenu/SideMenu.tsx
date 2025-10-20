@@ -19,8 +19,16 @@ export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner, on
   const router = useRouter();
   const pathname = usePathname();
 
-  // Initialize minimize state based on pathname
+  // Initialize minimize state from localStorage
   const [isMinimized, setIsMinimized] = useState(() => {
+    // Check localStorage first
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('listMenuManualState');
+      if (stored !== null) {
+        return stored === 'minimized';
+      }
+    }
+    // Default behavior
     return pathname !== '/projects' && pathname !== '/writing';
   });
 
