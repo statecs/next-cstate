@@ -67,9 +67,14 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children, posts }) => {
     }
   }, [pathname]);
 
-  // Close mobile menu when pathname changes
+  // Close mobile menu and reset scroll position when pathname changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
+
+    // Reset scroll position to top on mobile to ensure navbar is visible
+    if (contentRef.current) {
+      contentRef.current.scrollTo({ top: 0, behavior: 'auto' });
+    }
   }, [pathname]);
 
   // Listen for mobile menu toggle events
@@ -135,10 +140,10 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children, posts }) => {
         </SideMenu>
       </div>
 
-      <div className="lg:bg-dots flex-1 h-[calc(100vh-110px)] lg:h-[calc(100vh)] overflow-hidden">
+      <div className="lg:bg-dots flex-1 h-[calc(100vh-48px)] lg:h-[calc(100vh)] overflow-hidden">
         <div
           ref={contentRef}
-          className="lg:bg-dots flex-1 h-[calc(100vh-110px)] lg:h-[calc(100vh)] overflow-scroll"
+          className="lg:bg-dots flex-1 h-[calc(100vh-48px)] lg:h-[calc(100vh)] overflow-scroll"
         >
           {children}
         </div>

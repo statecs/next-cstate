@@ -36,14 +36,14 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => {
         >
           <body style={{
             background: 'black'
-          }} className="sm:min-h-full md:flex md:flex-grow md:flex-col bg-white dark:bg-custom-dark-gray overflow-hidden">
+          }} className="sm:min-h-full md:flex md:flex-grow md:flex-col bg-white dark:bg-custom-dark-gray">
             <AuthWrapper>
               <SkipLink />
+              <div className="lg:hidden sticky top-0 z-50">
+                <SiteHeader />
+              </div>
               <main id="topElement" tabIndex={-1} vaul-drawer-wrapper=""
                     className={`${styles.responsiveStyle} md:mt-0 flex flex-col flex-grow w-full bg-white dark:bg-custom-dark-gray`}>
-                <div className="lg:hidden">
-                  <SiteHeader />
-                </div>
                 <TopNav />
                 <div className="flex flex-col flex-1 overflow-hidden">
                   <div id="main" className="flex flex-col flex-1 overflow-auto">

@@ -88,7 +88,7 @@ export default async function Journey() {
                                                       // Create a URL-friendly slug from the title for anchor links
                                                       const slug = item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
                                                       return (
-                                                    <div key={itemIndex} id={slug} className="relative flex pb-8 last:pb-0 scroll-mt-8">
+                                                    <div key={itemIndex} id={slug} className="relative flex pb-8 last:pb-0 scroll-mt-8 lg:scroll-mt-8">
                                                         <div className="absolute inset-0 flex w-6 items-center justify-center">
                                                             <div className="pointer-events-none h-full w-px border-l-[1px] border-gray-200 dark:border-zinc-700"></div>
                                                         </div>
