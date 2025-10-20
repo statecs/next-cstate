@@ -22,16 +22,17 @@ interface FeaturedBannerProps {
 const FeaturedBanner: React.FC<FeaturedBannerProps> = ({ items }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    if (!isAutoPlaying || items.length <= 1) return;
+    if (!isAutoPlaying || isPaused || items.length <= 1) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % items.length);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying, items.length]);
+  }, [isAutoPlaying, isPaused, items.length]);
 
   const goToSlide = (index: number) => {
     setCurrentIndex(index);
@@ -63,7 +64,11 @@ const FeaturedBanner: React.FC<FeaturedBannerProps> = ({ items }) => {
         </p>
       </div>
 
-      <div className="relative group">
+      <div
+        className="relative group"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
         {/* Main Banner */}
         <div className="relative w-full h-[400px] sm:h-[500px] lg:h-[600px] rounded-3xl overflow-hidden shadow-2xl">
           <Link
