@@ -53,35 +53,19 @@ const getWritingSeo = async (): Promise<MetadataRoute.Sitemap> => {
     const allWritings = await fetchWritingForSitemap();
     if (!allWritings?.length) return [];
 
+    // Filter out private or members-only writings
     const filteredWritings = allWritings.filter(
-        (writing: any) => writing.photosCollection?.items?.length > 0
+        (writing: any) => writing.isPublic && !writing.isMembersOnly
     );
     if (!filteredWritings?.length) return [];
 
-    const items = filteredWritings.reduce((acc: any[], writing: any) => {
-        const writingItem = {
-            url: `${process.env.NEXT_PUBLIC_URL}/writing/${writing.slug}`,
-            priority: writing.isFeatured ? 1 : 0.8,
-            lastModified: getLastModifiedDate(writing?.sys?.publishedAt).toISOString(),
-            changeFrequency:
-                writing.publishedAt === writing.firstPublishedAt ? 'monthly' : 'weekly'
-        };
-        const filteredPhotoItems = writing.photosCollection?.items?.filter((i: any) => i);
-
-        if (!filteredPhotoItems.length) {
-            return [...acc, writingItem];
-        }
-
-        const photoItems =
-            filteredPhotoItems.map((photo: any) => ({
-                url: `${process.env.NEXT_PUBLIC_URL}/writing/${writing.slug}/${photo.slug}`,
-                priority: writing.isFeatured ? 1 : 0.8,
-                lastModified: getLastModifiedDate(photo?.sys?.publishedAt).toISOString(),
-                changeFrequency: photo.publishedAt === photo.firstPublishedAt ? 'monthly' : 'weekly'
-            })) || [];
-
-        return [...acc, writingItem, ...photoItems];
-    }, [] as any[]);
+    const items = filteredWritings.map((writing: any) => ({
+        url: `${process.env.NEXT_PUBLIC_URL}/writing/${writing.slug}`,
+        priority: writing.isFeatured ? 1 : 0.8,
+        lastModified: getLastModifiedDate(writing?.sys?.publishedAt).toISOString(),
+        changeFrequency:
+            writing.publishedAt === writing.firstPublishedAt ? 'monthly' : 'weekly'
+    }));
 
     return items;
 };

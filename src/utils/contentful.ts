@@ -694,9 +694,9 @@ export const fetchWriting = async (
     return null;
 };
 
-export const fetchWritingForSitemap = async () => {
+export const fetchWritingForSitemap = async (skip: number = 0, limit: number = 35): Promise<any[]> => {
     const query = `query {
-        writingCollection(where: {category_not: ""}, limit: 35) {
+        writingCollection(where: {category_not: ""}, limit: ${limit}, skip: ${skip}, order: [date_DESC]) {
             items {
                 title
                 slug
@@ -721,11 +721,24 @@ export const fetchWritingForSitemap = async () => {
                     firstPublishedAt
                 }
             }
+            total
         }
     }`;
     const response: any = await fetchContent(query);
 
-    return response.data?.writingCollection?.items;
+    if (response.data?.writingCollection?.items) {
+        const items = response.data.writingCollection.items;
+
+        // If there are more items, fetch the next batch
+        if (items.length < response.data.writingCollection.total) {
+            const nextBatch = await fetchWritingForSitemap(skip + limit, limit);
+            return items.concat(nextBatch || []);
+        }
+
+        return items;
+    }
+
+    return [];
 };
 
 export const fetchAllData = async (
