@@ -25,7 +25,7 @@ const getCollectionSeo = async (): Promise<MetadataRoute.Sitemap> => {
             priority: collection.slug === 'home' || collection.isFeatured ? 1 : 0.8,
             lastModified: getLastModifiedDate(collection?.sys?.publishedAt).toISOString(),
             changeFrequency:
-                collection.publishedAt === collection.firstPublishedAt ? 'monthly' : 'weekly'
+                collection.sys?.publishedAt === collection.sys?.firstPublishedAt ? ('monthly' as const) : ('weekly' as const)
         };
         const filteredPhotoItems = collection.photosCollection?.items?.filter((i: any) => i);
 
@@ -38,7 +38,7 @@ const getCollectionSeo = async (): Promise<MetadataRoute.Sitemap> => {
                 url: `${process.env.NEXT_PUBLIC_URL}/projects/${collection.slug}/${photo.slug}`,
                 priority: collection.slug === 'home' || collection.isFeatured ? 1 : 0.8,
                 lastModified: getLastModifiedDate(photo?.sys?.publishedAt).toISOString(),
-                changeFrequency: photo.publishedAt === photo.firstPublishedAt ? 'monthly' : 'weekly'
+                changeFrequency: photo.sys?.publishedAt === photo.sys?.firstPublishedAt ? ('monthly' as const) : ('weekly' as const)
             })) || [];
 
         return [...acc, collectionItem, ...photoItems];
@@ -62,7 +62,7 @@ const getWritingSeo = async (): Promise<MetadataRoute.Sitemap> => {
         priority: writing.isFeatured ? 1 : 0.8,
         lastModified: getLastModifiedDate(writing?.sys?.publishedAt).toISOString(),
         changeFrequency:
-            writing.publishedAt === writing.firstPublishedAt ? 'monthly' : 'weekly'
+            writing.sys?.publishedAt === writing.sys?.firstPublishedAt ? ('monthly' as const) : ('weekly' as const)
     }));
 
     return items;
