@@ -1,13 +1,11 @@
 import {type MetadataRoute} from 'next';
 import {fetchCollectionsForSitemap, fetchWritingForSitemap} from '@/utils/contentful';
 
+export const revalidate = 3600; // Revalidate every hour
+
 const getLastModifiedDate = (date?: string) => {
-    if (!date || !process.env.SITEMAP_LAST_MODIFIED_MINIMUM) return new Date();
-
-    const minimum = new Date(process.env.SITEMAP_LAST_MODIFIED_MINIMUM);
-    const lastModified = new Date(date);
-
-    return lastModified.getTime() > minimum.getTime() ? lastModified : minimum;
+    if (!date) return new Date();
+    return new Date(date);
 };
 
 const getCollectionSeo = async (): Promise<MetadataRoute.Sitemap> => {
