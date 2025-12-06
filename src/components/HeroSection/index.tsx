@@ -264,7 +264,7 @@ const OrbitalElement: React.FC<OrbitalElementProps> = ({
           </Link>
         );
 
-      case 'social':
+      case 'social': {
         if (element.id === 'qr') {
           return (
             <button
@@ -298,6 +298,7 @@ const OrbitalElement: React.FC<OrbitalElementProps> = ({
             {Icon}
           </a>
         );
+      }
 
 
 
@@ -588,7 +589,7 @@ const HeroSection: React.FC = () => {
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="relative pointer-events-auto w-0 h-0">
           {/* Debug: Center crosshair (remove after testing) */}
-          {process.env.NODE_ENV !== 'development' && (
+          {process.env.NODE_ENV === 'development' && (
             <>
               <div className="absolute w-20 h-0.5 bg-red-500 -translate-x-1/2 z-50" />
               <div className="absolute h-20 w-0.5 bg-red-500 -translate-y-1/2 z-50" />

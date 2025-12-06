@@ -51,6 +51,13 @@
         animation-duration: 1s;
     }
 
+     @media (prefers-reduced-motion: reduce) {
+        .animate-float,
+        .animate-float-delayed {
+            animation: none;
+        }
+    }
+
     @keyframes float {
         0%, 100% {
             transform: translate(0, 0);
