@@ -351,12 +351,7 @@ const SimplifiedHeroMobile: React.FC<{ onQRClick: () => void }> = ({ onQRClick }
       </p>
 
       <div className="flex flex-col gap-3">
-        <Link
-          href="/projects"
-          className="px-6 py-3 border-2 border-gray-700 dark:border-gray-400 text-gray-700 dark:text-gray-400 rounded-full font-medium transition-all hover:border-gray-900 hover:text-gray-900 dark:hover:border-gray-200 dark:hover:text-gray-200"
-        >
-          View Projects
-        </Link>
+
         <button
           onClick={() => {
             const mainElement = document.getElementById('main');
@@ -382,6 +377,12 @@ const SimplifiedHeroMobile: React.FC<{ onQRClick: () => void }> = ({ onQRClick }
           </svg>
           Ask Me Anything
         </button>
+        <Link
+          href="/projects"
+          className="px-6 py-3 border-2 border-gray-700 dark:border-gray-400 text-gray-700 dark:text-gray-400 rounded-full font-medium transition-all hover:border-gray-900 hover:text-gray-900 dark:hover:border-gray-200 dark:hover:text-gray-200"
+        >
+          View Projects
+        </Link>
         <Link
           href="/writing"
           className="px-6 py-3 border-2 border-gray-700 dark:border-gray-400 text-gray-700 dark:text-gray-400 rounded-full font-medium transition-all hover:border-gray-900 hover:text-gray-900 dark:hover:border-gray-200 dark:hover:text-gray-200"
@@ -419,6 +420,20 @@ const SimplifiedHeroMobile: React.FC<{ onQRClick: () => void }> = ({ onQRClick }
           aria-label="Show LinkedIn QR Code"
         >
           <QrCode className="w-6 h-6" />
+        </button>
+      </div>
+
+      {/* Explore Scroll Indicator */}
+      <div className="mt-12">
+        <button
+          onClick={scrollToContent}
+          className="cursor-pointer group"
+          aria-label="Scroll to content"
+        >
+          <div className="flex flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-600 hover:text-gray-900 dark:hover:text-gray-100 transition-colors duration-200 animate-bounce hover:animate-none">
+            <span className="text-sm font-medium tracking-wide">Explore</span>
+            <ChevronDown className="w-6 h-6 group-hover:translate-y-1 transition-transform duration-200" />
+          </div>
         </button>
       </div>
     </motion.div>
