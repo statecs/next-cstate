@@ -2,7 +2,7 @@ const config = {
     seo: {
         title: {
             default: 'Christopher State',
-            template: '%s | Design Technologist'
+            template: '%s | Design Engineer'
         },
         description:
             'Burning passion in creating solutions that makes a difference.',
@@ -17,7 +17,7 @@ const config = {
                 }
             ],
             locale: 'en_GB',
-            siteName: 'Christopher State | Design Technologist',
+            siteName: 'Christopher State | Design Engineer',
             type: 'website',
             url: 'https://www.cstate.se'
         },
@@ -26,7 +26,7 @@ const config = {
             creator: '@statecs',
             image: 'https://cstate.se/images/chris-placeholder.jpg',
             site: '@statecs',
-            title: 'Christopher State | Design Technologist'
+            title: 'Christopher State | Design Engineer'
         },
         icons: {
             shortcut: '/images/favicon-32x32.png'

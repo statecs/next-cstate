@@ -132,14 +132,13 @@ const HeroSection: React.FC = () => {
             </span>
           </span>
           <span className="block text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium text-gray-600 dark:text-gray-400 tracking-wide">
-            UX & Accessibility Specialist
+            Design Engineer from Stockholm
           </span>
         </h1>
 
         {/* Description */}
         <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed mb-6 sm:mb-8 md:mb-10 font-light">
-          Crafting inclusive digital experiences through thoughtful design,
-          accessible interfaces, and human-centered solutions.
+          Building accessible products — from concept to code.
         </p>
 
         {/* CTA Buttons */}

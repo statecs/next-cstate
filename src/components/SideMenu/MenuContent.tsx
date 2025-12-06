@@ -42,7 +42,7 @@ export const MenuContent: React.FC = () => {
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   const userName = user ? `${user.given_name} ${user.family_name}` : 'Christopher State';
-  const userRole = roles.length > 0 ? roles[0].name : 'UX & Accessibility Specialist';
+  const userRole = roles.length > 0 ? roles[0].name : 'Design Engineer';
   const userEmail = user?.email || 'No email available';
 
   useEffect(() => {

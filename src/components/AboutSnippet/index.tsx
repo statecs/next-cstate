@@ -237,7 +237,7 @@ const AboutSnippet: React.FC<AboutSnippetProps> = ({
             {!description && (
               <div className="space-y-3 text-gray-600 dark:text-gray-300 leading-relaxed">
                 <p>
-                  I&apos;m a UX & Accessibility Specialist passionate about creating inclusive digital experiences
+                  I&apos;m a Design Engineer passionate about creating inclusive digital experiences
                   that work beautifully for everyone.
                 </p>
                 <p className="line-clamp-2">

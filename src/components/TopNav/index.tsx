@@ -27,7 +27,7 @@ export const TopNav: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const userName = user ? `${user.given_name} ${user.family_name}` : 'Christopher State';
-  const userRole = roles.length > 0 ? roles[0].name : 'UX & Accessibility Specialist';
+  const userRole = roles.length > 0 ? roles[0].name : 'Design Engineer';
   const userEmail = user?.email || 'No email available';
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
@@ -65,7 +65,7 @@ export const TopNav: React.FC = () => {
           <Image src="/images/me.jpeg" alt={userName} width={40} height={40} loading="lazy" className="rounded-full shadow-sm" unoptimized />
           <div className="text-left">
             <span className="font-semibold tracking-tight text-sm text-black dark:text-white">{userName}</span>
-            <p className="text-xs text-gray-600 dark:text-gray-400">UX & Accessibility Specialist</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Design Engineer</p>
           </div>
         </Link>
       </div>
