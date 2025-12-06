@@ -1,217 +1,495 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { ChevronDown, QrCode, Sparkles } from 'lucide-react';
+import { motion, useMotionValue, useSpring, MotionValue } from 'framer-motion';
+import { QrCode, ChevronDown } from 'lucide-react';
 import QRCodeModal from '@/components/QRCodeModal';
+import { useMousePosition } from '@/hooks/useMousePosition';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
-const HeroSection: React.FC = () => {
-  const [isInIframe, setIsInIframe] = useState(false);
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [isLinkedIn, setIsLinkedIn] = useState(false);
-  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+// Orbital element configuration - buttons above name, social icons below
+const orbitalElements = [
+  // Buttons above (top half - 90° spread to prevent overlap)
+  { id: 'ask', angle: 270, radius: 240, type: 'button', label: 'Ask Me Anything', href: '#ask-me-anything' },  // Top center (focal point)
+  { id: 'projects', angle: 225, radius: 240, type: 'button', label: 'View Projects', href: '/projects' },      // Top-left (45° from center)
+  { id: 'writing', angle: 315, radius: 240, type: 'button', label: 'Read Writing', href: '/writing' },        // Top-right (45° from center)
+
+  // Subtitle below name
+  { id: 'subtitle', angle: 180, radius: 140, type: 'text' },                                                  // Directly below name
+
+  // Social icons below (bottom half - tight horizontal row)
+  { id: 'github', angle: 75, radius: 260, type: 'social', label: 'GitHub', href: 'https://github.com/statecs' },    // Bottom-left
+  { id: 'qr', angle: 90, radius: 260, type: 'social', label: 'LinkedIn QR Code' },                               // Bottom center
+  { id: 'linkedin', angle: 105, radius: 260, type: 'social', label: 'LinkedIn', href: 'https://linkedin.com/in/state' }, // Bottom-right
+];
+
+// Convert polar coordinates to cartesian
+const toCartesian = (angle: number, radius: number) => ({
+  x: Math.cos((angle * Math.PI) / 180) * radius,
+  y: Math.sin((angle * Math.PI) / 180) * radius,
+});
+
+// Responsive radius scaling hook
+const useResponsiveRadius = () => {
+  const [scale, setScale] = useState(1);
 
   useEffect(() => {
-    // Check if we're in an iframe
-    setIsInIframe(window.self !== window.top);
-
-    // Check if we're in LinkedIn browser
-    const userAgent = navigator.userAgent || navigator.vendor;
-    const isLinkedInBrowser = /LinkedInApp/i.test(userAgent) ||
-                              (window.self !== window.top && document.referrer.includes('linkedin'));
-    setIsLinkedIn(isLinkedInBrowser);
-
-    // Check if screen is small (≤375px)
-    const checkScreenSize = () => {
-      setIsSmallScreen(window.innerWidth <= 375);
+    const handleResize = () => {
+      if (window.innerWidth < 768) setScale(0.6);        // Mobile
+      else if (window.innerWidth < 1024) setScale(0.8); // Tablet
+      else setScale(1);                                   // Desktop
     };
 
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-
-    return () => window.removeEventListener('resize', checkScreenSize);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
+  
 
-  const scrollToContent = () => {
-    // Find the main scroll container
-    const mainElement = document.getElementById('main');
 
-    if (mainElement) {
-      // Find the next section after the hero
-      const sections = mainElement.querySelectorAll('section');
-      if (sections.length > 1) {
-        // Scroll to the second section (first one after hero)
-        sections[1].scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-        // Fallback: scroll by viewport height
-        mainElement.scrollTo({
-          top: window.innerHeight,
-          behavior: 'smooth'
-        });
-      }
+
+  return scale;
+};
+
+const scrollToContent = () => {
+  // Find the main scroll container
+  const mainElement = document.getElementById('main');
+
+  if (mainElement) {
+    // Find the next section after the hero
+    const sections = mainElement.querySelectorAll('section');
+    if (sections.length > 1) {
+      // Scroll to the second section (first one after hero)
+      sections[1].scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
-      // Fallback to window scroll
-      window.scrollTo({
+      // Fallback: scroll by viewport height
+      mainElement.scrollTo({
         top: window.innerHeight,
         behavior: 'smooth'
       });
     }
-  };
+  } else {
+    // Fallback to window scroll
+    window.scrollTo({
+      top: window.innerHeight,
+      behavior: 'smooth'
+    });
+  }
+};
 
-  const scrollToAskMeAnything = () => {
-    const mainElement = document.getElementById('main');
-    if (mainElement) {
-      // Find the AI Assistant section
-      const aiSection = mainElement.querySelector('section:has(.inline-flex .animate-pulse)');
-      if (aiSection) {
-        aiSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+// Magnetic pull effect hook
+const useMagneticPull = (
+  elementRef: React.RefObject<HTMLElement>,
+  mouseX: MotionValue<number>,
+  mouseY: MotionValue<number>,
+  strength: number = 0.25,
+  range: number = 200
+) => {
+  const x = useSpring(0, { stiffness: 150, damping: 20 });
+  const y = useSpring(0, { stiffness: 150, damping: 20 });
+
+  useEffect(() => {
+    const unsubscribe = mouseX.on('change', () => {
+      if (!elementRef.current) return;
+
+      const rect = elementRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const dx = mouseX.get() - centerX;
+      const dy = mouseY.get() - centerY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < range) {
+        const pullStrength = (range - distance) / range;
+        x.set(dx * strength * pullStrength);
+        y.set(dy * strength * pullStrength);
+      } else {
+        x.set(0);
+        y.set(0);
       }
+    });
+
+    return unsubscribe;
+  }, [elementRef, mouseX, mouseY, strength, range, x, y]);
+
+  return { x, y };
+};
+
+// Center name expansion animation
+const centerVariant = {
+  hidden: { scale: 0, opacity: 0 },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      duration: 0.6,
+      ease: [0.6, 0.12, 0.38, 0.99],
+      delay: 0.2,
+    },
+  },
+};
+
+// Orbital element spiral animation (only handles opacity, scale, rotate - not position)
+const createOrbitalVariant = (index: number) => {
+  return {
+    hidden: { opacity: 0, scale: 0.5, rotate: -180 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      rotate: 0,
+      transition: {
+        duration: 0.8,
+        ease: 'easeOut',
+        delay: 0.5 + index * 0.1,
+      },
+    },
+  };
+};
+
+// Drag configuration
+const dragConfig = {
+  drag: true as const,
+  dragConstraints: { left: -80, right: 80, top: -80, bottom: 80 },
+  dragElastic: 0.7,
+  dragTransition: { bounceStiffness: 300, bounceDamping: 20 },
+  whileDrag: { scale: 1.15, zIndex: 50, cursor: 'grabbing' },
+};
+
+// Orbital Element Component
+interface OrbitalElementProps {
+  element: typeof orbitalElements[0];
+  position: { x: number; y: number };
+  index: number;
+  mouseX: MotionValue<number>;
+  mouseY: MotionValue<number>;
+  prefersReducedMotion: boolean;
+  onQRClick: () => void;
+}
+
+const OrbitalElement: React.FC<OrbitalElementProps> = ({
+  element,
+  position,
+  index,
+  mouseX,
+  mouseY,
+  prefersReducedMotion,
+  onQRClick,
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const magneticPull = useMagneticPull(ref, mouseX, mouseY, 0.25, 200);
+  const [isAnimationComplete, setIsAnimationComplete] = useState(false);
+
+  const variant = createOrbitalVariant(index);
+
+  // Calculate spiral-in start position
+  const startX = Math.cos((element.angle * Math.PI) / 180) * element.radius * 2;
+  const startY = Math.sin((element.angle * Math.PI) / 180) * element.radius * 2;
+
+  // Initialize motion values at spiral-in position, will animate to orbital position
+  const finalX = useMotionValue(startX);
+  const finalY = useMotionValue(startY);
+
+  // Animate to orbital position on mount
+  useEffect(() => {
+    const animationDelay = 500 + index * 100;
+    const animationDuration = 800;
+
+    finalX.set(position.x, { duration: animationDuration, ease: 'easeOut', delay: animationDelay });
+    finalY.set(position.y, { duration: animationDuration, ease: 'easeOut', delay: animationDelay });
+
+    // Mark animation as complete after it finishes
+    const timeout = setTimeout(() => {
+      setIsAnimationComplete(true);
+    }, animationDelay + animationDuration);
+
+    return () => clearTimeout(timeout);
+  }, [finalX, finalY, position.x, position.y, index]);
+
+  // Add magnetic effect on top of orbital position (only after animation completes)
+  useEffect(() => {
+    if (!prefersReducedMotion && isAnimationComplete) {
+      const unsubX = magneticPull.x.on('change', (latest) => {
+        finalX.set(position.x + latest);
+      });
+      const unsubY = magneticPull.y.on('change', (latest) => {
+        finalY.set(position.y + latest);
+      });
+
+      return () => {
+        unsubX();
+        unsubY();
+      };
+    }
+  }, [magneticPull.x, magneticPull.y, position.x, position.y, prefersReducedMotion, isAnimationComplete, finalX, finalY]);
+
+  const renderContent = () => {
+    switch (element.type) {
+      case 'button':
+        // Special handling for "Ask Me Anything" button
+        if (element.id === 'ask') {
+          const scrollToAskSection = () => {
+            const mainElement = document.getElementById('main');
+            if (mainElement) {
+              const aiSection = mainElement.querySelector('section:has(.inline-flex .animate-pulse)');
+              if (aiSection) {
+                aiSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }
+          };
+
+          return (
+            <button
+              onClick={scrollToAskSection}
+              className="px-7 py-3.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold text-base lg:text-lg hover:scale-105 transition-transform shadow-xl whitespace-nowrap flex items-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              {element.label}
+            </button>
+          );
+        }
+
+        return (
+          <Link
+            href={element.href!}
+            className="px-7 py-3.5 bg-black dark:bg-white text-white dark:text-black rounded-full font-semibold text-base lg:text-lg hover:scale-105 transition-transform shadow-xl whitespace-nowrap"
+          >
+            {element.label}
+          </Link>
+        );
+
+      case 'social':
+        if (element.id === 'qr') {
+          return (
+            <button
+              onClick={onQRClick}
+              className="w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:scale-110 transition-transform shadow-lg text-gray-700 dark:text-gray-300"
+              aria-label={element.label}
+            >
+              <QrCode className="w-6 h-6" />
+            </button>
+          );
+        }
+
+        const Icon = element.id === 'github' ? (
+          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+          </svg>
+        ) : (
+          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+        );
+
+        return (
+          <a
+            href={element.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:scale-110 transition-transform shadow-lg text-gray-700 dark:text-gray-300"
+            aria-label={element.label}
+          >
+            {Icon}
+          </a>
+        );
+
+
+
+      default:
+        return null;
     }
   };
 
-  // Determine the height class based on context
-  const getHeightClass = () => {
-    if (isInIframe || isSmallScreen || isLinkedIn) return 'min-h-[95dvh]'; // Other iframes and small screens
-    return 'min-h-[85vh]'; // Default
-  };
+  return (
+    <motion.div
+      ref={ref}
+      className="absolute"
+      style={{
+        x: prefersReducedMotion ? position.x : finalX,
+        y: prefersReducedMotion ? position.y : finalY,
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+        willChange: 'transform',
+      }}
+      variants={variant}
+      initial="hidden"
+      animate="visible"
+      {...(prefersReducedMotion ? {} : dragConfig)}
+    >
+      {renderContent()}
+    </motion.div>
+  );
+};
+
+// Simplified Mobile Hero
+const SimplifiedHeroMobile: React.FC<{ onQRClick: () => void }> = ({ onQRClick }) => (
+  <section className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-gradient-to-br from-white via-gray-50/80 to-gray-100/60 dark:from-custom-dark-gray dark:via-gray-900/95 dark:to-black/98">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="space-y-8 text-center max-w-lg"
+    >
+      <h1 className="text-5xl font-serif font-bold leading-tight">
+        <span className="block bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-50 dark:to-white bg-clip-text text-transparent">
+          Christopher
+        </span>
+        <span className="block bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-50 dark:to-white bg-clip-text text-transparent">
+          State
+        </span>
+      </h1>
+
+      <p className="text-base text-gray-700/90 dark:text-gray-200/90 leading-loose">
+        Building accessible products — from concept to code.
+      </p>
+
+      <div className="flex flex-col gap-3">
+        <Link
+          href="/projects"
+          className="px-7 py-3.5 bg-black dark:bg-white text-white dark:text-black rounded-full font-semibold transition-transform hover:scale-105"
+        >
+          View Projects
+        </Link>
+        <button
+          onClick={() => {
+            const mainElement = document.getElementById('main');
+            if (mainElement) {
+              const aiSection = mainElement.querySelector('section:has(.inline-flex .animate-pulse)');
+              if (aiSection) {
+                aiSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }
+          }}
+          className="px-7 py-3.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold transition-transform hover:scale-105 flex items-center justify-center gap-2"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          Ask Me Anything
+        </button>
+        <Link
+          href="/writing"
+          className="px-7 py-3.5 border-2 border-gray-900 dark:border-gray-200 text-gray-900 dark:text-gray-200 rounded-full font-semibold transition-transform hover:scale-105"
+        >
+          Read Writing
+        </Link>
+      </div>
+
+      <div className="flex gap-4 justify-center">
+        <a
+          href="https://github.com/statecs"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-300 hover:scale-110 transform"
+          aria-label="GitHub"
+        >
+          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+          </svg>
+        </a>
+        <a
+          href="https://linkedin.com/in/state"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-300 hover:scale-110 transform"
+          aria-label="LinkedIn"
+        >
+          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+        </a>
+        <button
+          onClick={onQRClick}
+          className="text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-300 hover:scale-110 transform"
+          aria-label="Show LinkedIn QR Code"
+        >
+          <QrCode className="w-6 h-6" />
+        </button>
+      </div>
+    </motion.div>
+  </section>
+);
+
+// Main Hero Section Component
+const HeroSection: React.FC = () => {
+  const { x: mouseX, y: mouseY } = useMousePosition();
+  const prefersReducedMotion = useReducedMotion();
+  const radiusScale = useResponsiveRadius();
+  const isMobile = useIsMobile(768);
+  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+
+  if (isMobile) {
+    return (
+      <>
+        <SimplifiedHeroMobile onQRClick={() => setIsQRModalOpen(true)} />
+        <QRCodeModal
+          isOpen={isQRModalOpen}
+          onClose={() => setIsQRModalOpen(false)}
+          url="https://linkedin.com/in/state"
+          title="Connect on LinkedIn"
+        />
+      </>
+    );
+  }
 
   return (
     <section
-      className={`relative ${getHeightClass()} md:min-h-[85vh] lg:min-h-[90vh] flex items-center justify-center px-4 py-6 md:py-12 lg:py-16 overflow-hidden`}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-gray-50/80 to-gray-100/60 dark:from-custom-dark-gray dark:via-gray-900/95 dark:to-black/98"
       style={{
         WebkitBackfaceVisibility: 'hidden',
-        transform: 'translate3d(0,0,0)'
+        transform: 'translate3d(0,0,0)',
       }}
     >
-      {/* Animated Background Gradient */}
-      <div
-        className="absolute inset-0 bg-gradient-to-br from-white via-gray-50/80 to-gray-100/60 dark:from-custom-dark-gray dark:via-gray-900/95 dark:to-black/98"
-        style={{
-          WebkitBackfaceVisibility: 'hidden',
-          transform: 'translateZ(0)'
-        }}
+      {/* Animated Background Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent dark:via-white/5 animate-pulse" style={{ animationDuration: '3s' }} />
+
+      {/* Center: Name */}
+      <motion.div
+        className="relative z-20 pointer-events-none"
+        variants={centerVariant}
+        initial="hidden"
+        animate="visible"
       >
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent dark:via-white/5 animate-pulse"
-             style={{ animationDuration: '3s' }} />
-      </div>
-
-      {/* Content */}
-      <div className="relative z-10 max-w-5xl mx-auto text-center animate-fadeIn">
-
-        {/* Profile Image with Glow Effect */}
-        <div className="mb-6 sm:mb-8 md:mb-10 lg:mb-12 inline-block">
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-gray-400 to-gray-600 dark:from-gray-500 dark:to-gray-300 rounded-full blur-2xl opacity-40 animate-pulse"
-                 style={{ animationDuration: '2s' }} />
-            <div className="relative">
-              <Image
-                src="/images/me.jpeg"
-                alt="Christopher State"
-                width={120}
-                height={120}
-                className="sm:w-[140px] sm:h-[140px] rounded-full shadow-2xl ring-4 ring-white dark:ring-gray-800 hover:scale-105 transition-transform duration-300"
-                priority
-                unoptimized
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Main Headline */}
-        <h1 className="mb-1">
-          <span
-            className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-7xl 2xl:text-8xl font-bold font-serif [letter-spacing:-0.015em] sm:[letter-spacing:-0.012em] md:[letter-spacing:-0.008em] lg:[letter-spacing:-0.004em] xl:[letter-spacing:0em]"
-            style={{
-              fontFeatureSettings: "'liga' 1, 'calt' 1, 'kern' 1",
-              textRendering: 'geometricPrecision',
-              WebkitFontSmoothing: 'antialiased',
-              MozOsxFontSmoothing: 'grayscale',
-              lineHeight: '1.12',
-              paddingBottom: '0.2em'
-            }}
-          >
-            <span
-              className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-50 dark:to-white bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]"
-              style={{
-                display: 'inline-block',
-                paddingBottom: '0.1em'
-              }}
-            >
-              Christopher State
-            </span>
+        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-bold text-center leading-tight">
+          <span className="block bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-50 dark:to-white bg-clip-text text-transparent">
+            Christopher
           </span>
-          
+          <span className="block bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-50 dark:to-white bg-clip-text text-transparent">
+            State
+          </span>
+
+          <p className="text-base mt-4 lg:text-lg text-gray-700 dark:text-gray-300 text-center font-light leading-relaxed px-4">
+            Building accessible products — from concept to code.
+          </p>
         </h1>
+      </motion.div>
 
-        {/* Description */}
-        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed mb-6 sm:mb-8 md:mb-10 font-light">
-          Building accessible products — from concept to code.
-        </p>
-
-        {/* CTA Buttons */}
-        <div className="flex flex-row flex-wrap gap-3 sm:gap-4 md:gap-5 justify-center items-center mb-10 sm:mb-12 md:mb-14">
-          <Link
-            href="/projects"
-            className="group relative px-7 sm:px-9 py-3.5 sm:py-4 bg-black dark:bg-white text-white dark:text-black rounded-full font-semibold tracking-tight text-base sm:text-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-          >
-            <span className="relative z-10">View Projects</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-black dark:from-gray-200 dark:to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          </Link>
-
-
-          <button
-            onClick={scrollToAskMeAnything}
-            className="group relative px-7 sm:px-9 py-3.5 sm:py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold tracking-tight text-base sm:text-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-          >
-            <span className="relative z-10 flex items-center gap-2">
-              <Sparkles className="w-5 h-5" />
-              Ask Me Anything
-            </span>
-          </button>
-
-          <Link
-            href="/writing"
-            className="group px-7 sm:px-9 py-3.5 sm:py-4 bg-transparent border-2 border-gray-900 dark:border-gray-200 text-gray-900 dark:text-gray-200 rounded-full font-semibold tracking-tight text-base sm:text-lg transition-all duration-300 hover:bg-gray-900 dark:hover:bg-gray-200 hover:text-white dark:hover:text-black hover:scale-105 hover:shadow-xl whitespace-nowrap"
-          >
-            Read Writing
-          </Link>
-
-        </div>
-
-        {/* Social Links */}
-        <div className="flex gap-4 sm:gap-6 justify-center items-center mb-6 sm:mb-8">
-          <a
-            href="https://github.com/statecs"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-300 hover:scale-110 transform"
-            aria-label="GitHub"
-          >
-            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-              <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
-            </svg>
-          </a>
-          <a
-            href="https://linkedin.com/in/state"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-300 hover:scale-110 transform"
-            aria-label="LinkedIn"
-          >
-            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-            </svg>
-          </a>
-          <button
-            onClick={() => setIsQRModalOpen(true)}
-            className="text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-300 hover:scale-110 transform"
-            aria-label="Show LinkedIn QR Code"
-          >
-            <QrCode className="w-6 h-6" />
-          </button>
+      {/* Orbital Elements */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="relative pointer-events-auto">
+          {orbitalElements.map((element, i) => {
+            const { x, y } = toCartesian(element.angle, element.radius * radiusScale);
+            return (
+              <OrbitalElement
+                key={element.id}
+                element={element}
+                position={{ x, y }}
+                index={i}
+                mouseX={mouseX}
+                mouseY={mouseY}
+                prefersReducedMotion={prefersReducedMotion}
+                onQRClick={() => setIsQRModalOpen(true)}
+              />
+            );
+          })}
         </div>
       </div>
+
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-4 sm:bottom-8 left-0 right-0 flex justify-center animate-bounce hover:animate-none">
@@ -226,23 +504,6 @@ const HeroSection: React.FC = () => {
           </div>
         </button>
       </div>
-
-      <style jsx>{`
-        @keyframes gradient {
-          0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%;
-          }
-        }
-        .animate-gradient {
-          animation: gradient 3s ease infinite;
-        }
-      `}</style>
 
       {/* QR Code Modal */}
       <QRCodeModal
