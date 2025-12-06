@@ -346,8 +346,8 @@ const SimplifiedHeroMobile: React.FC<{ onQRClick: () => void }> = ({ onQRClick }
     >
       {/* Profile Image */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="mb-6 flex justify-center"
       >
@@ -368,16 +368,16 @@ const SimplifiedHeroMobile: React.FC<{ onQRClick: () => void }> = ({ onQRClick }
         className="text-5xl font-serif font-bold leading-tight"
       >
         <motion.span
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.1 }}
           className="block bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-50 dark:to-white bg-clip-text text-transparent"
         >
           Christopher
         </motion.span>
         <motion.span
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           className="block bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-50 dark:to-white bg-clip-text text-transparent"
         >
@@ -390,7 +390,7 @@ const SimplifiedHeroMobile: React.FC<{ onQRClick: () => void }> = ({ onQRClick }
       <motion.p
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.35 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
         className="text-base text-gray-700/90 dark:text-gray-200/90 leading-loose"
       >
         Building accessible products — from concept to code.
@@ -399,9 +399,9 @@ const SimplifiedHeroMobile: React.FC<{ onQRClick: () => void }> = ({ onQRClick }
       <div className="flex flex-col gap-3">
 
         <motion.button
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.45 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => {
