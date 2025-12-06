@@ -13,9 +13,6 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 const orbitalElements = [
   // Buttons above (top half - 90° spread to prevent overlap)
   { id: 'ask', angle: 270, radius: 240, type: 'button', label: 'Ask Me Anything', href: '#ask-me-anything' },  // Top center (focal point)
-  { id: 'projects', angle: 225, radius: 240, type: 'button', label: 'View Projects', href: '/projects' },      // Top-left (45° from center)
-  { id: 'writing', angle: 315, radius: 240, type: 'button', label: 'Read Writing', href: '/writing' },        // Top-right (45° from center)
-
   // Subtitle below name
   { id: 'subtitle', angle: 180, radius: 140, type: 'text' },                                                  // Directly below name
 
@@ -260,7 +257,7 @@ const OrbitalElement: React.FC<OrbitalElementProps> = ({
         return (
           <Link
             href={element.href!}
-            className="px-7 py-3.5 bg-black dark:bg-white text-white dark:text-black rounded-full font-semibold text-base lg:text-lg hover:scale-105 transition-transform shadow-xl whitespace-nowrap"
+            className="px-6 py-3 border-2 border-gray-700 dark:border-gray-400 text-gray-700 dark:text-gray-400 rounded-full font-medium text-base lg:text-lg hover:border-gray-900 hover:text-gray-900 dark:hover:border-gray-200 dark:hover:text-gray-200 transition-all whitespace-nowrap"
           >
             {element.label}
           </Link>
@@ -356,7 +353,7 @@ const SimplifiedHeroMobile: React.FC<{ onQRClick: () => void }> = ({ onQRClick }
       <div className="flex flex-col gap-3">
         <Link
           href="/projects"
-          className="px-7 py-3.5 bg-black dark:bg-white text-white dark:text-black rounded-full font-semibold transition-transform hover:scale-105"
+          className="px-6 py-3 border-2 border-gray-700 dark:border-gray-400 text-gray-700 dark:text-gray-400 rounded-full font-medium transition-all hover:border-gray-900 hover:text-gray-900 dark:hover:border-gray-200 dark:hover:text-gray-200"
         >
           View Projects
         </Link>
@@ -387,7 +384,7 @@ const SimplifiedHeroMobile: React.FC<{ onQRClick: () => void }> = ({ onQRClick }
         </button>
         <Link
           href="/writing"
-          className="px-7 py-3.5 border-2 border-gray-900 dark:border-gray-200 text-gray-900 dark:text-gray-200 rounded-full font-semibold transition-transform hover:scale-105"
+          className="px-6 py-3 border-2 border-gray-700 dark:border-gray-400 text-gray-700 dark:text-gray-400 rounded-full font-medium transition-all hover:border-gray-900 hover:text-gray-900 dark:hover:border-gray-200 dark:hover:text-gray-200"
         >
           Read Writing
         </Link>
