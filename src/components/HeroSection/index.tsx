@@ -20,9 +20,11 @@ const orbitalElements = [
   { id: 'subtitle', angle: 180, radius: 140, type: 'text' },                                                  // Directly below name
 
   // Social icons below (bottom half - tight horizontal row)
-  { id: 'github', angle: 75, radius: 260, type: 'social', label: 'GitHub', href: 'https://github.com/statecs' },    // Bottom-left
-  { id: 'qr', angle: 90, radius: 260, type: 'social', label: 'LinkedIn QR Code' },                               // Bottom center
   { id: 'linkedin', angle: 105, radius: 260, type: 'social', label: 'LinkedIn', href: 'https://linkedin.com/in/state' }, // Bottom-right
+  { id: 'qr', angle: 90, radius: 260, type: 'social', label: 'LinkedIn QR Code' },                               // Bottom center
+  { id: 'github', angle: 75, radius: 260, type: 'social', label: 'GitHub', href: 'https://github.com/statecs' },    // Bottom-left
+
+
 ];
 
 // Convert polar coordinates to cartesian
@@ -230,6 +232,14 @@ const OrbitalElement: React.FC<OrbitalElementProps> = ({
               const aiSection = mainElement.querySelector('section:has(.inline-flex .animate-pulse)');
               if (aiSection) {
                 aiSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                // Focus the input field after scroll completes
+                setTimeout(() => {
+                  const inputElement = document.getElementById('queryInput') as HTMLInputElement;
+                  if (inputElement) {
+                    inputElement.focus();
+                  }
+                }, 500); // Delay to allow smooth scroll to complete
               }
             }
           };
@@ -357,6 +367,14 @@ const SimplifiedHeroMobile: React.FC<{ onQRClick: () => void }> = ({ onQRClick }
               const aiSection = mainElement.querySelector('section:has(.inline-flex .animate-pulse)');
               if (aiSection) {
                 aiSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                // Focus the input field after scroll completes
+                setTimeout(() => {
+                  const inputElement = document.getElementById('queryInput') as HTMLInputElement;
+                  if (inputElement) {
+                    inputElement.focus();
+                  }
+                }, 500); // Delay to allow smooth scroll to complete
               }
             }
           }}
