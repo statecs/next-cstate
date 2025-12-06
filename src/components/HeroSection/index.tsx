@@ -184,31 +184,23 @@ const OrbitalElement: React.FC<OrbitalElementProps> = ({
 
   const variant = createOrbitalVariant(index);
 
-  // Calculate spiral-in start position
-  const startX = Math.cos((element.angle * Math.PI) / 180) * element.radius * 2;
-  const startY = Math.sin((element.angle * Math.PI) / 180) * element.radius * 2;
+  // Create motion values for position
+  const finalX = useMotionValue(position.x);
+  const finalY = useMotionValue(position.y);
 
-  // Initialize motion values at spiral-in position, will animate to orbital position
-  const finalX = useMotionValue(startX);
-  const finalY = useMotionValue(startY);
-
-  // Animate to orbital position on mount
+  // Mark animation as complete after it finishes
   useEffect(() => {
     const animationDelay = 500 + index * 100;
     const animationDuration = 800;
 
-    finalX.set(position.x, { duration: animationDuration, ease: 'easeOut', delay: animationDelay });
-    finalY.set(position.y, { duration: animationDuration, ease: 'easeOut', delay: animationDelay });
-
-    // Mark animation as complete after it finishes
     const timeout = setTimeout(() => {
       setIsAnimationComplete(true);
     }, animationDelay + animationDuration);
 
     return () => clearTimeout(timeout);
-  }, [finalX, finalY, position.x, position.y, index]);
+  }, [index]);
 
-  // Add magnetic effect on top of orbital position (only after animation completes)
+  // Update position when magnetic pull changes (only after animation complete)
   useEffect(() => {
     if (!prefersReducedMotion && isAnimationComplete) {
       const unsubX = magneticPull.x.on('change', (latest) => {
@@ -217,11 +209,13 @@ const OrbitalElement: React.FC<OrbitalElementProps> = ({
       const unsubY = magneticPull.y.on('change', (latest) => {
         finalY.set(position.y + latest);
       });
-
       return () => {
         unsubX();
         unsubY();
       };
+    } else {
+      finalX.set(position.x);
+      finalY.set(position.y);
     }
   }, [magneticPull.x, magneticPull.y, position.x, position.y, prefersReducedMotion, isAnimationComplete, finalX, finalY]);
 
@@ -309,11 +303,12 @@ const OrbitalElement: React.FC<OrbitalElementProps> = ({
       ref={ref}
       className="absolute"
       style={{
-        x: prefersReducedMotion ? position.x : finalX,
-        y: prefersReducedMotion ? position.y : finalY,
         left: '50%',
         top: '50%',
-        transform: 'translate(-50%, -50%)',
+        x: finalX,
+        y: finalY,
+        translateX: '-50%',
+        translateY: '-50%',
         willChange: 'transform',
       }}
       variants={variant}
@@ -471,7 +466,23 @@ const HeroSection: React.FC = () => {
 
       {/* Orbital Elements */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="relative pointer-events-auto">
+        <div className="relative pointer-events-auto w-0 h-0">
+          {/* Debug: Center crosshair (remove after testing) */}
+          {process.env.NODE_ENV !== 'development' && (
+            <>
+              <div className="absolute w-20 h-0.5 bg-red-500 -translate-x-1/2 z-50" />
+              <div className="absolute h-20 w-0.5 bg-red-500 -translate-y-1/2 z-50" />
+              <div
+                className="absolute border-2 border-blue-500/30 rounded-full pointer-events-none"
+                style={{
+                  width: `${240 * radiusScale * 2}px`,
+                  height: `${240 * radiusScale * 2}px`,
+                  transform: 'translate(-50%, -50%)'
+                }}
+              />
+            </>
+          )}
+
           {orbitalElements.map((element, i) => {
             const { x, y } = toCartesian(element.angle, element.radius * radiusScale);
             return (
