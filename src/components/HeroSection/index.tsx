@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronDown, QrCode } from 'lucide-react';
+import { ChevronDown, QrCode, Sparkles } from 'lucide-react';
 import QRCodeModal from '@/components/QRCodeModal';
 
 const HeroSection: React.FC = () => {
@@ -59,6 +59,17 @@ const HeroSection: React.FC = () => {
     }
   };
 
+  const scrollToAskMeAnything = () => {
+    const mainElement = document.getElementById('main');
+    if (mainElement) {
+      // Find the AI Assistant section
+      const aiSection = mainElement.querySelector('section:has(.inline-flex .animate-pulse)');
+      if (aiSection) {
+        aiSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
+
   // Determine the height class based on context
   const getHeightClass = () => {
     if (isInIframe || isSmallScreen || isLinkedIn) return 'min-h-[95dvh]'; // Other iframes and small screens
@@ -75,7 +86,7 @@ const HeroSection: React.FC = () => {
     >
       {/* Animated Background Gradient */}
       <div
-        className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-custom-dark-gray dark:via-gray-900 dark:to-black"
+        className="absolute inset-0 bg-gradient-to-br from-white via-gray-50/80 to-gray-100/60 dark:from-custom-dark-gray dark:via-gray-900/95 dark:to-black/98"
         style={{
           WebkitBackfaceVisibility: 'hidden',
           transform: 'translateZ(0)'
@@ -89,7 +100,7 @@ const HeroSection: React.FC = () => {
       <div className="relative z-10 max-w-5xl mx-auto text-center animate-fadeIn">
 
         {/* Profile Image with Glow Effect */}
-        <div className="mb-4 sm:mb-6 md:mb-8 inline-block">
+        <div className="mb-6 sm:mb-8 md:mb-10 lg:mb-12 inline-block">
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-gray-400 to-gray-600 dark:from-gray-500 dark:to-gray-300 rounded-full blur-2xl opacity-40 animate-pulse"
                  style={{ animationDuration: '2s' }} />
@@ -108,21 +119,20 @@ const HeroSection: React.FC = () => {
         </div>
 
         {/* Main Headline */}
-        <h1 className="mb-4 sm:mb-5 md:mb-6">
+        <h1 className="mb-1">
           <span
-            className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight font-serif mb-2 sm:mb-3 md:mb-4"
+            className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-7xl 2xl:text-8xl font-bold font-serif [letter-spacing:-0.015em] sm:[letter-spacing:-0.012em] md:[letter-spacing:-0.008em] lg:[letter-spacing:-0.004em] xl:[letter-spacing:0em]"
             style={{
-              fontFeatureSettings: 'normal',
+              fontFeatureSettings: "'liga' 1, 'calt' 1, 'kern' 1",
               textRendering: 'geometricPrecision',
               WebkitFontSmoothing: 'antialiased',
               MozOsxFontSmoothing: 'grayscale',
-              letterSpacing: '-0.02em',
-              lineHeight: '1.2',
-              paddingBottom: '0.15em'
+              lineHeight: '1.12',
+              paddingBottom: '0.2em'
             }}
           >
             <span
-              className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 dark:from-white dark:via-gray-200 dark:to-white bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]"
+              className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-50 dark:to-white bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]"
               style={{
                 display: 'inline-block',
                 paddingBottom: '0.1em'
@@ -131,9 +141,7 @@ const HeroSection: React.FC = () => {
               Christopher State
             </span>
           </span>
-          <span className="block text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium text-gray-600 dark:text-gray-400 tracking-wide">
-            Design Engineer from Stockholm
-          </span>
+          
         </h1>
 
         {/* Description */}
@@ -142,21 +150,33 @@ const HeroSection: React.FC = () => {
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12">
+        <div className="flex flex-row flex-wrap gap-3 sm:gap-4 md:gap-5 justify-center items-center mb-10 sm:mb-12 md:mb-14">
           <Link
             href="/projects"
-            className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-black dark:bg-white text-white dark:text-black rounded-full font-semibold text-base sm:text-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+            className="group relative px-7 sm:px-9 py-3.5 sm:py-4 bg-black dark:bg-white text-white dark:text-black rounded-full font-semibold tracking-tight text-base sm:text-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl"
           >
             <span className="relative z-10">View Projects</span>
             <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-black dark:from-gray-200 dark:to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </Link>
 
+
+          <button
+            onClick={scrollToAskMeAnything}
+            className="group relative px-7 sm:px-9 py-3.5 sm:py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold tracking-tight text-base sm:text-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          >
+            <span className="relative z-10 flex items-center gap-2">
+              <Sparkles className="w-5 h-5" />
+              Ask Me Anything
+            </span>
+          </button>
+
           <Link
             href="/writing"
-            className="group px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-gray-900 dark:border-gray-200 text-gray-900 dark:text-gray-200 rounded-full font-semibold text-base sm:text-lg transition-all duration-300 hover:bg-gray-900 dark:hover:bg-gray-200 hover:text-white dark:hover:text-black hover:scale-105 hover:shadow-xl whitespace-nowrap"
+            className="group px-7 sm:px-9 py-3.5 sm:py-4 bg-transparent border-2 border-gray-900 dark:border-gray-200 text-gray-900 dark:text-gray-200 rounded-full font-semibold tracking-tight text-base sm:text-lg transition-all duration-300 hover:bg-gray-900 dark:hover:bg-gray-200 hover:text-white dark:hover:text-black hover:scale-105 hover:shadow-xl whitespace-nowrap"
           >
             Read Writing
           </Link>
+
         </div>
 
         {/* Social Links */}
@@ -165,7 +185,7 @@ const HeroSection: React.FC = () => {
             href="https://github.com/statecs"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-200 hover:scale-110 transform"
+            className="text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-300 hover:scale-110 transform"
             aria-label="GitHub"
           >
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -176,7 +196,7 @@ const HeroSection: React.FC = () => {
             href="https://linkedin.com/in/state"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-200 hover:scale-110 transform"
+            className="text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-300 hover:scale-110 transform"
             aria-label="LinkedIn"
           >
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -185,7 +205,7 @@ const HeroSection: React.FC = () => {
           </a>
           <button
             onClick={() => setIsQRModalOpen(true)}
-            className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-200 hover:scale-110 transform"
+            className="text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-300 hover:scale-110 transform"
             aria-label="Show LinkedIn QR Code"
           >
             <QrCode className="w-6 h-6" />
