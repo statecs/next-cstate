@@ -44,3 +44,7 @@ sitemap.xml
 data/
 .env.production
 .env.development
+
+# Contentful cache
+.contentful-cache/
+/tmp/.contentful-cache/

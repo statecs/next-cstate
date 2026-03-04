@@ -28,6 +28,6 @@ export const generateMetadata = async () => {
     return { ...config.seo, ...getEditorialSeo({ slug: 'links', title: 'Links' }) };
 };
 
-export const revalidate = 60;
+export const revalidate = 86400; // 24 hours
 
 export default LinksPage;

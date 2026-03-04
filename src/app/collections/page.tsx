@@ -59,6 +59,6 @@ export const generateMetadata = async () => {
     };
 };
 
-export const revalidate = 60;
+export const revalidate = 86400; // 24 hours
 
 export default CollectionsPage;

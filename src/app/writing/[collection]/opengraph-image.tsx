@@ -15,5 +15,4 @@ const handler = async ({params}: {params: {collection: string}}) => {
     return getOgImage(photos.map(photo => photo.fullSize.url));
 };
 
-export const runtime = 'edge';
 export default handler;

@@ -14,7 +14,7 @@ export const generateMetadata = async () => {
     return { ...config.seo, ...getEditorialSeo(page) };
 };
 
-export const revalidate = 60;
+export const revalidate = 86400; // 24 hours
 
 async function fetchData() {
     const collections = await fetchAllJourneys();

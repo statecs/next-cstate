@@ -1,7 +1,11 @@
 import {cache} from 'react';
 import 'server-only';
+import {readCache, writeCache, generateCacheKey} from './cache';
 
-const fetchContent = cache(async (query: string, preview: boolean = false) => {
+/**
+ * Fetch from Contentful GraphQL API
+ */
+const fetchFromContentful = async (query: string, preview: boolean = false) => {
     try {
         const data = await fetch(
             `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}`,
@@ -24,6 +28,47 @@ const fetchContent = cache(async (query: string, preview: boolean = false) => {
         console.log(error);
         throw new Error('Could not fetch data from Contentful!');
     }
+};
+
+/**
+ * Fetch content with persistent file caching
+ * @param query - GraphQL query string
+ * @param preview - Whether to use preview API
+ * @param contentType - Content type for cache organization
+ */
+const fetchContent = cache(async (
+    query: string,
+    preview: boolean = false,
+    contentType: string = 'generic'
+) => {
+    // Always bypass cache in preview mode
+    // Note: preview parameter should be set based on draftMode() by the caller
+    if (preview) {
+        return await fetchFromContentful(query, preview);
+    }
+
+    // Generate cache key
+    const cacheKey = generateCacheKey(query, preview);
+
+    // Try to read from cache first
+    const cachedData = await readCache(cacheKey, contentType);
+
+    if (cachedData) {
+        console.log(`[Cache HIT] ${contentType}: ${cacheKey.substring(0, 8)}...`);
+        return cachedData;
+    }
+
+    console.log(`[Cache MISS] ${contentType}: ${cacheKey.substring(0, 8)}...`);
+
+    // Fetch from Contentful
+    const data = await fetchFromContentful(query, preview);
+
+    // Write to cache asynchronously (non-blocking)
+    writeCache(cacheKey, data, contentType, preview).catch(err => {
+        console.error('[Cache Write Error]', err);
+    });
+
+    return data;
 });
 
 const sortPhotos = (collection: PhotoCollection) => {
@@ -95,7 +140,7 @@ export const fetchEditorialPage = async (slug: string) => {
             }
         }
     }`;
-    const response: any = await fetchContent(query);
+    const response: any = await fetchContent(query, false, 'editorial');
 
     return response.data?.editorialCollection?.items?.[0] || null;
 };
@@ -123,14 +168,14 @@ export const fetchLinksPage = async () => {
                             url
                             sys {
                                 publishedAt
-                            }   
+                            }
                         }
                     }
                 }
             }
         }
     }`;
-    const response: any = await fetchContent(query);
+    const response: any = await fetchContent(query, false, 'links');
 
     return response.data?.linksPageCollection?.items?.[0] || null;
 };
@@ -162,7 +207,7 @@ export const fetchCollectionNavigation = async (): Promise<Link[]> => {
             }
         }
     }`;
-    const response: any = await fetchContent(query);
+    const response: any = await fetchContent(query, false, 'navigation');
     const items =
         response?.data?.collectionNavigationCollection?.items?.[0]?.collectionsCollection?.items?.map(
             (item: PhotoCollection) => ({
@@ -233,7 +278,7 @@ export const fetchAllCollections = async (
             total
         }
     }`;
-    const response: any = await fetchContent(query, preview);
+    const response: any = await fetchContent(query, preview, 'collections');
 
     if (response.data?.collectionCollection?.items) {
         const formattedCollections = response.data.collectionCollection.items.map(
@@ -335,7 +380,7 @@ export const fetchCollection = async (
             }
         }
     }`;
-    const response: any = await fetchContent(query, preview);
+    const response: any = await fetchContent(query, preview, 'collections');
 
     if (response?.data?.collectionCollection?.items?.length > 0) {
         const collection = response.data.collectionCollection.items[0];
@@ -367,7 +412,7 @@ export const fetchPhotosLinkedCollections = async (entryId: string) => {
             }
         }
     }`;
-    const response: any = await fetchContent(query);
+    const response: any = await fetchContent(query, false, 'collections');
     const collectionSlugs =
         response.data?.photoCollection?.items?.[0]?.linkedFrom?.collectionCollection?.items?.map(
             (i: any) => i.slug
@@ -404,7 +449,7 @@ export const fetchCollectionsForSitemap = async () => {
             }
         }
     }`;
-    const response: any = await fetchContent(query);
+    const response: any = await fetchContent(query, false, 'sitemap');
 
     return response.data?.collectionCollection?.items;
 };
@@ -440,8 +485,8 @@ export const fetchAllJourneys = async (
             total
         }
     }`;
-    
-    const response: any = await fetchContent(query, preview);
+
+    const response: any = await fetchContent(query, preview, 'journeys');
 
     if (response.data?.journeyCollection?.items) {
         const formattedJourneys = response.data.journeyCollection.items.map(
@@ -502,7 +547,7 @@ export const fetchWritingNavigation = async (): Promise<Link[]> => {
             }
         }
     }`;
-    const response: any = await fetchContent(query);
+    const response: any = await fetchContent(query, false, 'navigation');
     const items =
         response?.data?.writingNavigationCollection?.items?.[0]?.writingsCollection?.items?.map(
             (item: PhotoCollection) => ({
@@ -575,7 +620,7 @@ export const fetchAllWritings = async (
             total
         }
     }`;
-    const response: any = await fetchContent(query, preview);
+    const response: any = await fetchContent(query, preview, 'writings');
 
     if (response.data?.writingCollection?.items) {
         const formattedWritings = response.data.writingCollection.items.map(
@@ -677,7 +722,7 @@ export const fetchWriting = async (
             }
         }
     }`;
-    const response: any = await fetchContent(query, preview);
+    const response: any = await fetchContent(query, preview, 'writings');
 
     if (response?.data?.writingCollection?.items?.length > 0) {
         const collection = response.data.writingCollection.items[0];
@@ -724,7 +769,7 @@ export const fetchWritingForSitemap = async (skip: number = 0, limit: number = 3
             total
         }
     }`;
-    const response: any = await fetchContent(query);
+    const response: any = await fetchContent(query, false, 'sitemap');
 
     if (response.data?.writingCollection?.items) {
         const items = response.data.writingCollection.items;

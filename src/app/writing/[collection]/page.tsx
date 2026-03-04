@@ -17,7 +17,7 @@ export const generateMetadata = async ({params}: Props) => {
   return {...config.seo, ...collectionSeo};
 };
 
-export const revalidate = 60;
+export const revalidate = 86400; // 24 hours
 
 export default async function CollectionPage({ params }: Props) {
   const { isEnabled: isDraftModeEnabled } = draftMode();
