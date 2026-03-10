@@ -87,16 +87,6 @@ export const LINKS: Link[] = [
     icon: <StickerIcon size={16} />
   },
   {
-    href: '/writing',
-    label: 'Writing',
-    icon: <PencilLineIcon size={16} />
-  },
-  {
-    href: '/links',
-    label: 'Links',
-    icon: <BookmarkIcon size={16} />
-  },
-  {
     href: '/contact',
     label: 'Contact',
     icon: <ContactIcon size={16} />

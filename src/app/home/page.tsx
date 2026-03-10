@@ -1,94 +1,52 @@
 import config from '@/utils/config';
-import { fetchEditorialPage, fetchCollectionNavigation, fetchWritingNavigation, fetchAllJourneys } from '@/utils/contentful';
+import { fetchEditorialPage, fetchCollectionNavigation, fetchWritingNavigation } from '@/utils/contentful';
 import { getEditorialSeo } from '@/utils/helpers';
-import HeroSection from '@/components/HeroSection';
-import FeaturedBanner from '@/components/FeaturedBanner';
-import JourneyPreview from '@/components/JourneyPreview';
+import SimpleHero from '@/components/SimpleHero';
 import ComboBox from '@/components/ComboBox';
+import ClientLogos from '@/components/ClientLogos';
 
 const HomePage = async () => {
-    const [projectLinks, writingLinks, aboutPage, journeyData] = await Promise.all([
+    const [projectLinks, writingLinks, aboutPage] = await Promise.all([
         fetchCollectionNavigation(),
         fetchWritingNavigation(),
-        fetchEditorialPage('about'),
-        fetchAllJourneys()
+        fetchEditorialPage('about')
     ]);
 
-    // Get featured items for banner (mix of featured projects and writings)
-    const featuredProjects = projectLinks
-        .filter(link => link.image) // Only include items with images
-        .slice(0, 3)
-        .map(link => ({
-            title: link.title,
-            description: link.description || undefined,
-            image: link.image as string,
-            url: `/projects${link.url}`,
-            category: link.category || undefined,
-            type: 'project' as const
-        }));
-
-    const featuredWritings = writingLinks
-        .filter(link => !link.isMembersOnly && link.image) // Only include items with images
-        .slice(0, 2)
-        .map(link => ({
-            title: link.title,
-            description: link.description || undefined,
-            image: link.image as string,
-            url: `/writing${link.url}`,
-            category: link.category || undefined,
-            type: 'writing' as const
-        }));
-
-    // Combine and shuffle featured items
-    const featuredItems = [...featuredProjects, ...featuredWritings]
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 5);
-
-    // Prepare showcase items
-    const showcaseProjects = projectLinks
-        .filter(link => link.image) // Only include items with images
-        .slice(0, 4)
-        .map(link => ({
-            title: link.title,
-            image: link.image as string,
-            url: `/projects${link.url}`,
-            category: link.category || undefined
-        }));
-
-    const showcaseWritings = writingLinks
-        .filter(link => !link.isMembersOnly && link.image) // Only include items with images
-        .slice(0, 4)
-        .map(link => ({
-            title: link.title,
-            image: link.image as string,
-            url: `/writing${link.url}`,
-            category: link.category || undefined
-        }));
-
-    // Prepare journey events
-    const journeyEvents = journeyData && Array.isArray(journeyData)
-        ? journeyData
-            .sort((a, b) => new Date(b.year).getFullYear() - new Date(a.year).getFullYear())
-            .map(item => {
-                // Create a URL-friendly slug from the title
-                const slug = item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-                return {
-                    title: item.title,
-                    description: item.description,
-                    year: new Date(item.year).getFullYear().toString(),
-                    url: `/about#${slug}`
-                };
-            })
-        : [];
 
     return (
         <div className="flex flex-grow h-[calc(100vh)] overflow-hidden">
             <div className="w-full overflow-y-auto">
                 {/* Hero Section */}
-                <HeroSection />
+                <SimpleHero />
+
+                {/* Bio Section */}
+                <section className="w-full max-w-5xl mx-auto px-4 py-16 animate-fadeIn" style={{ animationDelay: '200ms' }}>
+                    <h2
+                        className="text-3xl sm:text-4xl font-bold font-serif mb-4 text-gray-900 dark:text-white"
+                        style={{ lineHeight: '1.3' }}
+                    >
+                        About Me
+                    </h2>
+                    <p className="text-gray-700 dark:text-gray-300 text-lg sm:text-xl leading-relaxed mb-8 max-w-3xl">
+                        Design Engineer based in Stockholm, working at the intersection of design and code. Focus on accessibility and user experience. Currently exploring how AI can support accessible design.
+                    </p>
+
+                    {/* Top Skills */}
+                    <div className="mt-8">
+                        <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                            Top skills
+                        </h3>
+                        <p className="text-gray-700 dark:text-gray-300 text-lg">
+                            UX Research • Accessibility • Prompt Engineering
+                        </p>
+                    </div>
+                </section>
+
+                {/* Client Logos */}
+                <ClientLogos />
 
                 {/* AI Assistant Section */}
-                <section className="w-full max-w-4xl mx-auto px-4 py-16 animate-fadeIn" style={{ animationDelay: '300ms' }}>
+                <section id="ai-assistant" className="w-full max-w-4xl mx-auto px-4 py-16 animate-fadeIn" style={{ animationDelay: '300ms' }}>
                     <div className="text-center mb-8">
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-500/20 dark:to-purple-500/20 border border-blue-500/20 dark:border-blue-500/30 mb-4">
                             <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
@@ -123,18 +81,6 @@ const HomePage = async () => {
                         </div>
                     </div>
                 </section>
-
-                {/* Featured Banner Carousel */}
-                {featuredItems.length > 0 && (
-                    <FeaturedBanner items={featuredItems} />
-                )}
-
-                {/* Journey Preview */}
-                {journeyEvents.length > 0 && (
-                    <JourneyPreview events={journeyEvents} />
-                )}
-
-
 
                 {/* Contact CTA Section */}
                 <section className="w-full max-w-5xl mx-auto px-4 py-16 mb-12 animate-fadeIn" style={{ animationDelay: '800ms' }}>
