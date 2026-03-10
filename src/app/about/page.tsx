@@ -106,11 +106,11 @@ export default async function Journey() {
                                                                 <h4 className="font-semibold text-l sm:text-xl tracking-tight font-serif pb-4 text-black dark:text-white">{item.title}</h4>
                                                             )}
                                                             {item.description ? (
-                                                            <div className="text-sm prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base text-gray-800 dark:text-gray-300">
+                                                            <div className="text-sm prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base text-gray-900 dark:text-gray-300">
                                                                 {item.description}
                                                             </div>
                                                             ) : (
-                                                            <h3 className="text-sm text-gray-600 dark:text-gray-500">Description not available.</h3>
+                                                            <h3 className="text-sm text-gray-900 dark:text-gray-500">Description not available.</h3>
                                                             )}
                                                             {Array.isArray(item.imageCollection?.items) && item.imageCollection.items.map((image: Image, imgIndex: number) => (
                                                             <div key={imgIndex} className="mt-2.5 overflow-hidden rounded-xl bg-white shadow">

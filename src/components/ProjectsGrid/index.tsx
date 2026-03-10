@@ -164,7 +164,7 @@ const ProjectsGrid: React.FC<ProjectsGridProps> = ({ projects }) => {
                     {project.category.split(', ').slice(0, 2).map((tag, index) => (
                       <span
                         key={index}
-                        className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gray-800 text-gray-300 border border-gray-700"
+                        className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-900 border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700"
                       >
                         {tag.trim()}
                       </span>
