@@ -22,37 +22,23 @@ const HomePage = async () => {
                 {/* Bio Section */}
                 <section className="w-full max-w-5xl mx-auto px-4 py-16 animate-fadeIn" style={{ animationDelay: '200ms' }}>
                     <h2
-                        className="text-3xl sm:text-4xl font-bold font-serif mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent"
+                        className="text-3xl sm:text-4xl font-bold font-serif mb-4 text-gray-900 dark:text-white"
                         style={{ lineHeight: '1.3' }}
                     >
                         About Me
                     </h2>
-                    <p className="text-gray-300 dark:text-gray-300 text-lg sm:text-xl leading-relaxed mb-12 max-w-3xl">
+                    <p className="text-gray-700 dark:text-gray-300 text-lg sm:text-xl leading-relaxed mb-8 max-w-3xl">
                         Design Engineer based in Stockholm, working at the intersection of design and code. Focus on accessibility and user experience. Currently exploring how AI can support accessible design.
                     </p>
 
-                    {/* Skills Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div className="bg-gray-900 dark:bg-gray-800 rounded-xl p-6 border border-gray-800 dark:border-gray-700 hover:border-gray-700 dark:hover:border-gray-600 transition-all duration-300 hover:scale-105">
-                            <div className="text-4xl mb-3">♿</div>
-                            <h3 className="text-white font-semibold text-lg mb-2">Accessibility</h3>
-                            <p className="text-gray-400 text-sm">Building inclusive experiences for all users</p>
-                        </div>
-                        <div className="bg-gray-900 dark:bg-gray-800 rounded-xl p-6 border border-gray-800 dark:border-gray-700 hover:border-gray-700 dark:hover:border-gray-600 transition-all duration-300 hover:scale-105">
-                            <div className="text-4xl mb-3">🎨</div>
-                            <h3 className="text-white font-semibold text-lg mb-2">Design Systems</h3>
-                            <p className="text-gray-400 text-sm">Creating scalable, consistent UI components</p>
-                        </div>
-                        <div className="bg-gray-900 dark:bg-gray-800 rounded-xl p-6 border border-gray-800 dark:border-gray-700 hover:border-gray-700 dark:hover:border-gray-600 transition-all duration-300 hover:scale-105">
-                            <div className="text-4xl mb-3">⚡</div>
-                            <h3 className="text-white font-semibold text-lg mb-2">Full-Stack Development</h3>
-                            <p className="text-gray-400 text-sm">From frontend to backend implementation</p>
-                        </div>
-                        <div className="bg-gray-900 dark:bg-gray-800 rounded-xl p-6 border border-gray-800 dark:border-gray-700 hover:border-gray-700 dark:hover:border-gray-600 transition-all duration-300 hover:scale-105">
-                            <div className="text-4xl mb-3">🔧</div>
-                            <h3 className="text-white font-semibold text-lg mb-2">UX Engineering</h3>
-                            <p className="text-gray-400 text-sm">Bridging design and development</p>
-                        </div>
+                    {/* Top Skills */}
+                    <div className="mt-8">
+                        <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                            Top skills
+                        </h3>
+                        <p className="text-gray-700 dark:text-gray-300 text-lg">
+                            UX Research • Accessibility • Prompt Engineering
+                        </p>
                     </div>
                 </section>
 

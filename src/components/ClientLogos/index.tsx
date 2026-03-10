@@ -22,7 +22,7 @@ const ClientLogos: React.FC = () => {
   return (
     <section className="w-full max-w-6xl mx-auto px-4 py-16 animate-fadeIn" style={{ animationDelay: '400ms' }}>
       <h2
-        className="text-3xl sm:text-4xl font-bold font-serif mb-12 text-center bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent"
+        className="text-3xl sm:text-4xl font-bold font-serif mb-12 text-center text-gray-900 dark:text-white"
         style={{ lineHeight: '1.3' }}
       >
         I&apos;ve worked with:
