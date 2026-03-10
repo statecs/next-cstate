@@ -94,7 +94,7 @@ const HomePage = async () => {
                 <ClientLogos />
 
                 {/* AI Assistant Section */}
-                <section className="w-full max-w-4xl mx-auto px-4 py-16 animate-fadeIn" style={{ animationDelay: '300ms' }}>
+                <section id="ai-assistant" className="w-full max-w-4xl mx-auto px-4 py-16 animate-fadeIn" style={{ animationDelay: '300ms' }}>
                     <div className="text-center mb-8">
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-500/20 dark:to-purple-500/20 border border-blue-500/20 dark:border-blue-500/30 mb-4">
                             <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />

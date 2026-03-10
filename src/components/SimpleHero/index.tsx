@@ -2,32 +2,40 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 const SimpleHero: React.FC = () => {
-  const scrollToContent = () => {
+  const router = useRouter();
+
+  const scrollToChat = () => {
     // Find the main scroll container
     const mainElement = document.getElementById('main');
+    const chatSection = document.getElementById('ai-assistant');
 
-    if (mainElement) {
-      // Find the next section after the hero
+    if (chatSection) {
+      // Scroll to the AI assistant section by ID
+      chatSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (mainElement) {
+      // Fallback: scroll to AI section by index (4th section)
       const sections = mainElement.querySelectorAll('section');
-      if (sections.length > 1) {
-        // Scroll to the second section (first one after hero)
-        sections[1].scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-        // Fallback: scroll by viewport height
-        mainElement.scrollTo({
-          top: window.innerHeight,
-          behavior: 'smooth'
-        });
+      if (sections.length > 3) {
+        sections[3].scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     } else {
-      // Fallback to window scroll
+      // Last resort: scroll to a calculated position
       window.scrollTo({
-        top: window.innerHeight,
+        top: window.innerHeight * 3,
         behavior: 'smooth'
       });
     }
+
+    // Focus on the chat input field after scrolling
+    setTimeout(() => {
+      const chatInput = document.getElementById('queryInput');
+      if (chatInput) {
+        chatInput.focus();
+      }
+    }, 800); // Delay to allow smooth scroll to complete
   };
 
   return (
@@ -62,29 +70,56 @@ const SimpleHero: React.FC = () => {
           Building accessible products — from concept to code.
         </p>
 
-        {/* CTA Button */}
-        <button
-          onClick={scrollToContent}
-          className="inline-flex items-center gap-2 px-8 py-4 bg-white dark:bg-white text-black rounded-full font-semibold text-lg hover:scale-105 hover:bg-gray-100 dark:hover:bg-gray-200 transition-all duration-300 shadow-xl hover:shadow-2xl animate-fadeIn"
-          style={{ animationDelay: '800ms' }}
-          aria-label="Scroll to view my work"
-        >
-          View My Work
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
+        {/* CTA Buttons */}
+        <div className="flex flex-col items-center gap-3 sm:gap-4">
+          {/* Primary CTA - View My Work */}
+          <button
+            onClick={() => router.push('/projects')}
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white dark:bg-white text-black rounded-full font-semibold text-lg hover:scale-105 hover:bg-gray-100 dark:hover:bg-gray-200 transition-all duration-300 shadow-xl hover:shadow-2xl animate-fadeIn"
+            style={{ animationDelay: '800ms' }}
+            aria-label="View my projects"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </button>
+            View My Work
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 7l5 5m0 0l-5 5m5-5H6"
+              />
+            </svg>
+          </button>
+
+          {/* Secondary CTA - Ask Me Anything */}
+          <button
+            onClick={scrollToChat}
+            className="inline-flex items-center gap-2 px-8 py-4 bg-transparent border-2 border-white text-white rounded-full font-semibold text-lg hover:scale-105 hover:bg-white hover:text-black transition-all duration-300 shadow-xl hover:shadow-2xl animate-fadeIn"
+            style={{ animationDelay: '1000ms' }}
+            aria-label="Scroll to chat with AI assistant"
+          >
+            Ask me anything
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
+          </button>
+        </div>
 
         {/* Optional: Scroll indicator */}
         <div
