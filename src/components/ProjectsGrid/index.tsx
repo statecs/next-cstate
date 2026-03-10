@@ -14,6 +14,7 @@ interface ProjectsGridProps {
 const ProjectsGrid: React.FC<ProjectsGridProps> = ({ projects }) => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     const uniqueCategories = Array.from(new Set(
@@ -52,26 +53,58 @@ const ProjectsGrid: React.FC<ProjectsGridProps> = ({ projects }) => {
   );
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-8 animate-fadeIn animate-duration-700">
-      {/* Filter Section - Always Visible */}
-      <div className="mb-8">
-        <div className="flex flex-wrap justify-center gap-2 mb-4">
-          {categories.map(category => (
-            <FilterButton
-              key={category}
-              filter={category}
-              activeFilter={activeFilter}
-              onClick={toggleFilter}
-            />
-          ))}
-        </div>
-        {activeFilter && (
-          <div className="text-center">
-            <button
-              onClick={() => setActiveFilter(null)}
-              className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 underline transition-colors"
-            >
-              Clear filter
-            </button>
+      {/* Subtle Filter Toggle at Top */}
+      <div className="flex justify-end mb-2">
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className="group inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors duration-200"
+        >
+          <svg
+            className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
+          </svg>
+          <span>filters</span>
+          {activeFilter && (
+            <span className="flex items-center justify-center w-4 h-4 bg-black dark:bg-white text-white dark:text-black text-xs rounded-full font-bold ml-1">
+              1
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* Filter Section */}
+      <div className="mb-4 sm:mb-8">
+        {showFilters && (
+          <div className="animate-fadeIn">
+            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-100 dark:border-gray-700/50">
+              <h3 className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 text-center">
+                Filter by Category
+              </h3>
+              <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
+                {categories.map(category => (
+                  <FilterButton
+                    key={category}
+                    filter={category}
+                    activeFilter={activeFilter}
+                    onClick={toggleFilter}
+                  />
+                ))}
+              </div>
+              {activeFilter && (
+                <div className="mt-4 text-center">
+                  <button
+                    onClick={() => setActiveFilter(null)}
+                    className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 underline transition-colors"
+                  >
+                    Clear all filters
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
