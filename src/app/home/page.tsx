@@ -62,7 +62,7 @@ const HomePage = async () => {
                         About Me
                     </h2>
                     <p className="text-gray-300 dark:text-gray-300 text-lg sm:text-xl leading-relaxed mb-12 max-w-3xl">
-                        I&apos;m a broad designer that does UX, UI, design research and strategy. Over the past 15 years, I&apos;ve led projects and designers through discovery, prototyping, launch and continuous improvement.
+                        Design Engineer based in Stockholm, working at the intersection of design and code. Focus on accessibility and user experience. Currently exploring how AI can support accessible design.
                     </p>
 
                     {/* Skills Grid */}
