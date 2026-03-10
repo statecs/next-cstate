@@ -1,10 +1,11 @@
 import config from '@/utils/config';
 import { fetchEditorialPage, fetchCollectionNavigation, fetchWritingNavigation, fetchAllJourneys } from '@/utils/contentful';
 import { getEditorialSeo } from '@/utils/helpers';
-import HeroSection from '@/components/HeroSection';
+import SimpleHero from '@/components/SimpleHero';
 import FeaturedBanner from '@/components/FeaturedBanner';
 import JourneyPreview from '@/components/JourneyPreview';
 import ComboBox from '@/components/ComboBox';
+import ClientLogos from '@/components/ClientLogos';
 
 const HomePage = async () => {
     const [projectLinks, writingLinks, aboutPage, journeyData] = await Promise.all([
@@ -14,10 +15,10 @@ const HomePage = async () => {
         fetchAllJourneys()
     ]);
 
-    // Get featured items for banner (mix of featured projects and writings)
+    // Get featured items for banner (projects only)
     const featuredProjects = projectLinks
         .filter(link => link.image) // Only include items with images
-        .slice(0, 3)
+        .slice(0, 4)
         .map(link => ({
             title: link.title,
             description: link.description || undefined,
@@ -27,43 +28,8 @@ const HomePage = async () => {
             type: 'project' as const
         }));
 
-    const featuredWritings = writingLinks
-        .filter(link => !link.isMembersOnly && link.image) // Only include items with images
-        .slice(0, 2)
-        .map(link => ({
-            title: link.title,
-            description: link.description || undefined,
-            image: link.image as string,
-            url: `/writing${link.url}`,
-            category: link.category || undefined,
-            type: 'writing' as const
-        }));
-
-    // Combine and shuffle featured items
-    const featuredItems = [...featuredProjects, ...featuredWritings]
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 5);
-
-    // Prepare showcase items
-    const showcaseProjects = projectLinks
-        .filter(link => link.image) // Only include items with images
-        .slice(0, 4)
-        .map(link => ({
-            title: link.title,
-            image: link.image as string,
-            url: `/projects${link.url}`,
-            category: link.category || undefined
-        }));
-
-    const showcaseWritings = writingLinks
-        .filter(link => !link.isMembersOnly && link.image) // Only include items with images
-        .slice(0, 4)
-        .map(link => ({
-            title: link.title,
-            image: link.image as string,
-            url: `/writing${link.url}`,
-            category: link.category || undefined
-        }));
+    // Use featured projects only (no writings)
+    const featuredItems = featuredProjects;
 
     // Prepare journey events
     const journeyEvents = journeyData && Array.isArray(journeyData)
@@ -85,7 +51,47 @@ const HomePage = async () => {
         <div className="flex flex-grow h-[calc(100vh)] overflow-hidden">
             <div className="w-full overflow-y-auto">
                 {/* Hero Section */}
-                <HeroSection />
+                <SimpleHero />
+
+                {/* Bio Section */}
+                <section className="w-full max-w-5xl mx-auto px-4 py-16 animate-fadeIn" style={{ animationDelay: '200ms' }}>
+                    <h2
+                        className="text-3xl sm:text-4xl font-bold font-serif mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent"
+                        style={{ lineHeight: '1.3' }}
+                    >
+                        About Me
+                    </h2>
+                    <p className="text-gray-300 dark:text-gray-300 text-lg sm:text-xl leading-relaxed mb-12 max-w-3xl">
+                        I&apos;m a broad designer that does UX, UI, design research and strategy. Over the past 15 years, I&apos;ve led projects and designers through discovery, prototyping, launch and continuous improvement.
+                    </p>
+
+                    {/* Skills Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="bg-gray-900 dark:bg-gray-800 rounded-xl p-6 border border-gray-800 dark:border-gray-700 hover:border-gray-700 dark:hover:border-gray-600 transition-all duration-300 hover:scale-105">
+                            <div className="text-4xl mb-3">♿</div>
+                            <h3 className="text-white font-semibold text-lg mb-2">Accessibility</h3>
+                            <p className="text-gray-400 text-sm">Building inclusive experiences for all users</p>
+                        </div>
+                        <div className="bg-gray-900 dark:bg-gray-800 rounded-xl p-6 border border-gray-800 dark:border-gray-700 hover:border-gray-700 dark:hover:border-gray-600 transition-all duration-300 hover:scale-105">
+                            <div className="text-4xl mb-3">🎨</div>
+                            <h3 className="text-white font-semibold text-lg mb-2">Design Systems</h3>
+                            <p className="text-gray-400 text-sm">Creating scalable, consistent UI components</p>
+                        </div>
+                        <div className="bg-gray-900 dark:bg-gray-800 rounded-xl p-6 border border-gray-800 dark:border-gray-700 hover:border-gray-700 dark:hover:border-gray-600 transition-all duration-300 hover:scale-105">
+                            <div className="text-4xl mb-3">⚡</div>
+                            <h3 className="text-white font-semibold text-lg mb-2">Full-Stack Development</h3>
+                            <p className="text-gray-400 text-sm">From frontend to backend implementation</p>
+                        </div>
+                        <div className="bg-gray-900 dark:bg-gray-800 rounded-xl p-6 border border-gray-800 dark:border-gray-700 hover:border-gray-700 dark:hover:border-gray-600 transition-all duration-300 hover:scale-105">
+                            <div className="text-4xl mb-3">🔧</div>
+                            <h3 className="text-white font-semibold text-lg mb-2">UX Engineering</h3>
+                            <p className="text-gray-400 text-sm">Bridging design and development</p>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Client Logos */}
+                <ClientLogos />
 
                 {/* AI Assistant Section */}
                 <section className="w-full max-w-4xl mx-auto px-4 py-16 animate-fadeIn" style={{ animationDelay: '300ms' }}>

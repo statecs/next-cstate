@@ -14,8 +14,6 @@ interface ProjectsGridProps {
 const ProjectsGrid: React.FC<ProjectsGridProps> = ({ projects }) => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
-  const [showFilters, setShowFilters] = useState(false);
-  const [expandedTags, setExpandedTags] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     const uniqueCategories = Array.from(new Set(
@@ -54,59 +52,26 @@ const ProjectsGrid: React.FC<ProjectsGridProps> = ({ projects }) => {
   );
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-8 animate-fadeIn animate-duration-700">
-      {/* Subtle Filter Toggle at Top */}
-      <div className="flex justify-end mb-2">
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="group inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors duration-200"
-        >
-          <svg 
-            className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
-          </svg>
-          <span>filters</span>
-          {activeFilter && (
-            <span className="flex items-center justify-center w-4 h-4 bg-black dark:bg-white text-white dark:text-black text-xs rounded-full font-bold ml-1">
-              1
-            </span>
-          )}
-        </button>
-      </div>
-
-      {/* Filter Section */}
-      <div className="mb-4 sm:mb-8">
-        
-        {showFilters && (
-          <div className="animate-fadeIn">
-            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-100 dark:border-gray-700/50">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 text-center">
-                Filter by Category
-              </h3>
-              <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
-                {categories.map(category => (
-                  <FilterButton
-                    key={category}
-                    filter={category}
-                    activeFilter={activeFilter}
-                    onClick={toggleFilter}
-                  />
-                ))}
-              </div>
-              {activeFilter && (
-                <div className="mt-4 text-center">
-                  <button
-                    onClick={() => setActiveFilter(null)}
-                    className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 underline transition-colors"
-                  >
-                    Clear all filters
-                  </button>
-                </div>
-              )}
-            </div>
+      {/* Filter Section - Always Visible */}
+      <div className="mb-8">
+        <div className="flex flex-wrap justify-center gap-2 mb-4">
+          {categories.map(category => (
+            <FilterButton
+              key={category}
+              filter={category}
+              activeFilter={activeFilter}
+              onClick={toggleFilter}
+            />
+          ))}
+        </div>
+        {activeFilter && (
+          <div className="text-center">
+            <button
+              onClick={() => setActiveFilter(null)}
+              className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 underline transition-colors"
+            >
+              Clear filter
+            </button>
           </div>
         )}
       </div>
@@ -161,53 +126,18 @@ const ProjectsGrid: React.FC<ProjectsGridProps> = ({ projects }) => {
                 <h3 className="text-gray-900 dark:text-gray-100 font-semibold text-lg sm:text-xl md:text-xl line-clamp-2 group-hover:text-black dark:group-hover:text-white transition-colors duration-200 leading-snug font-serif">
                   {project.title}
                 </h3>
-                {project.category && (() => {
-                  const tags = project.category.split(', ').map(tag => tag.trim());
-                  const projectKey = project.slug;
-                  const showAllTags = expandedTags[projectKey] || false;
-                  const visibleTags = showAllTags ? tags : tags.slice(0, 2);
-                  const hasMoreTags = tags.length > 2;
-
-                  return (
-                    <div className="mt-3">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        {visibleTags.map((tag, index) => (
-                          <button
-                            key={index}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              toggleFilter(tag);
-                            }}
-                            className={cn(
-                              "inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 shadow-sm hover:shadow-md border cursor-pointer",
-                              activeFilter === tag
-                                ? "bg-black text-white dark:bg-white dark:text-black border-black dark:border-white"
-                                : "bg-gray-50 text-gray-600 dark:bg-gray-800/50 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/70 border-gray-200/50 dark:border-gray-700/50"
-                            )}
-                          >
-                            {tag}
-                          </button>
-                        ))}
-                        {hasMoreTags && (
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setExpandedTags(prev => ({
-                                ...prev,
-                                [projectKey]: !showAllTags
-                              }));
-                            }}
-                            className="inline-flex items-center px-2 py-1.5 rounded-full text-xs font-medium text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors duration-200"
-                          >
-                            {showAllTags ? '−' : `+${tags.length - 2}`}
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })()}
+                {project.category && (
+                  <div className="mt-3 flex gap-2 flex-wrap">
+                    {project.category.split(', ').slice(0, 2).map((tag, index) => (
+                      <span
+                        key={index}
+                        className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gray-800 text-gray-300 border border-gray-700"
+                      >
+                        {tag.trim()}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </Link>
           </div>
