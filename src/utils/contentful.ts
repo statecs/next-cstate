@@ -54,11 +54,8 @@ const fetchContent = cache(async (
     const cachedData = await readCache(cacheKey, contentType);
 
     if (cachedData) {
-        console.log(`[Cache HIT] ${contentType}: ${cacheKey.substring(0, 8)}...`);
         return cachedData;
     }
-
-    console.log(`[Cache MISS] ${contentType}: ${cacheKey.substring(0, 8)}...`);
 
     // Fetch from Contentful
     const data = await fetchFromContentful(query, preview);
