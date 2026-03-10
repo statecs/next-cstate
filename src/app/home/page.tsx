@@ -1,51 +1,17 @@
 import config from '@/utils/config';
-import { fetchEditorialPage, fetchCollectionNavigation, fetchWritingNavigation, fetchAllJourneys } from '@/utils/contentful';
+import { fetchEditorialPage, fetchCollectionNavigation, fetchWritingNavigation } from '@/utils/contentful';
 import { getEditorialSeo } from '@/utils/helpers';
 import SimpleHero from '@/components/SimpleHero';
-import FeaturedBanner from '@/components/FeaturedBanner';
-import JourneyPreview from '@/components/JourneyPreview';
 import ComboBox from '@/components/ComboBox';
 import ClientLogos from '@/components/ClientLogos';
 
 const HomePage = async () => {
-    const [projectLinks, writingLinks, aboutPage, journeyData] = await Promise.all([
+    const [projectLinks, writingLinks, aboutPage] = await Promise.all([
         fetchCollectionNavigation(),
         fetchWritingNavigation(),
-        fetchEditorialPage('about'),
-        fetchAllJourneys()
+        fetchEditorialPage('about')
     ]);
 
-    // Get featured items for banner (projects only)
-    const featuredProjects = projectLinks
-        .filter(link => link.image) // Only include items with images
-        .slice(0, 4)
-        .map(link => ({
-            title: link.title,
-            description: link.description || undefined,
-            image: link.image as string,
-            url: `/projects${link.url}`,
-            category: link.category || undefined,
-            type: 'project' as const
-        }));
-
-    // Use featured projects only (no writings)
-    const featuredItems = featuredProjects;
-
-    // Prepare journey events
-    const journeyEvents = journeyData && Array.isArray(journeyData)
-        ? journeyData
-            .sort((a, b) => new Date(b.year).getFullYear() - new Date(a.year).getFullYear())
-            .map(item => {
-                // Create a URL-friendly slug from the title
-                const slug = item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-                return {
-                    title: item.title,
-                    description: item.description,
-                    year: new Date(item.year).getFullYear().toString(),
-                    url: `/about#${slug}`
-                };
-            })
-        : [];
 
     return (
         <div className="flex flex-grow h-[calc(100vh)] overflow-hidden">
@@ -129,18 +95,6 @@ const HomePage = async () => {
                         </div>
                     </div>
                 </section>
-
-                {/* Featured Banner Carousel */}
-                {featuredItems.length > 0 && (
-                    <FeaturedBanner items={featuredItems} />
-                )}
-
-                {/* Journey Preview */}
-                {journeyEvents.length > 0 && (
-                    <JourneyPreview events={journeyEvents} />
-                )}
-
-
 
                 {/* Contact CTA Section */}
                 <section className="w-full max-w-5xl mx-auto px-4 py-16 mb-12 animate-fadeIn" style={{ animationDelay: '800ms' }}>
