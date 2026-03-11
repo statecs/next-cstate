@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 
 export const useReducedMotion = () => {
+  // Default to false (motion enabled) for SSR-safe consistency
+  // Most users prefer motion, and this prevents hydration mismatch
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {

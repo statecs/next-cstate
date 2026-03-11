@@ -9,4 +9,9 @@
     border-radius: 8px;
     overflow: hidden;
   }
+
+  /* Disable transitions on initial load to prevent flash during hydration */
+  .responsiveStyle.disable-transitions {
+    transition: none !important;
+  }
 }

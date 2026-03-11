@@ -94,7 +94,7 @@ export const TopNav: React.FC = () => {
       </ul>
 
       {/* Right: Secondary Actions */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4" suppressHydrationWarning>
         <Link
           href="/collections"
           className="text-sm font-medium text-black dark:text-white hover:underline underline-offset-4"

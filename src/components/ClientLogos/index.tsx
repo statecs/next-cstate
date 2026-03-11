@@ -19,7 +19,7 @@ const companies: Company[] = [
 
 const ClientLogos: React.FC = () => {
   return (
-    <section className="w-full max-w-6xl mx-auto px-4 py-16 animate-fadeIn" style={{ animationDelay: '400ms' }}>
+    <section className="w-full max-w-6xl mx-auto px-4 py-16 animate-fadeIn opacity-0" style={{ animationDelay: '400ms' }}>
       <h2
         className="text-3xl sm:text-4xl font-bold font-serif mb-12 text-center text-gray-900 dark:text-white"
         style={{ lineHeight: '1.3' }}

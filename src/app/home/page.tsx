@@ -20,7 +20,7 @@ const HomePage = async () => {
                 <SimpleHero />
 
                 {/* Bio Section */}
-                <section className="w-full max-w-5xl mx-auto px-4 py-16 animate-fadeIn" style={{ animationDelay: '200ms' }}>
+                <section className="w-full max-w-5xl mx-auto px-4 py-16 animate-fadeIn opacity-0" style={{ animationDelay: '200ms' }}>
                     <h2
                         className="text-3xl sm:text-4xl font-bold font-serif mb-4 text-gray-900 dark:text-white"
                         style={{ lineHeight: '1.3' }}
@@ -46,7 +46,7 @@ const HomePage = async () => {
                 <ClientLogos />
 
                 {/* AI Assistant Section */}
-                <section id="ai-assistant" className="w-full max-w-4xl mx-auto px-4 py-16 animate-fadeIn" style={{ animationDelay: '300ms' }}>
+                <section id="ai-assistant" className="w-full max-w-4xl mx-auto px-4 py-16 animate-fadeIn opacity-0" style={{ animationDelay: '300ms' }}>
                     <div className="text-center mb-8">
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-500/20 dark:to-purple-500/20 border border-blue-500/20 dark:border-blue-500/30 mb-4">
                             <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
@@ -76,14 +76,14 @@ const HomePage = async () => {
 
                     <div className="relative">
                         {/* Main container - Clean and minimal */}
-                        <div className="relative bg-white dark:bg-transparent rounded-3xl shadow-xl dark:shadow-none border border-gray-200/50 dark:border-transparent p-6 sm:p-8 animate-fadeIn">
+                        <div className="relative bg-white dark:bg-transparent rounded-3xl shadow-xl dark:shadow-none border border-gray-200/50 dark:border-transparent p-6 sm:p-8 animate-fadeIn opacity-0">
                             <ComboBox assistantId={process.env.ASSISTANT_ID || ''} />
                         </div>
                     </div>
                 </section>
 
                 {/* Contact CTA Section */}
-                <section className="w-full max-w-5xl mx-auto px-4 py-16 mb-12 animate-fadeIn" style={{ animationDelay: '800ms' }}>
+                <section className="w-full max-w-5xl mx-auto px-4 py-16 mb-12 animate-fadeIn opacity-0" style={{ animationDelay: '800ms' }}>
                     <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-black to-gray-800 dark:from-white dark:to-gray-200 p-12 sm:p-16 text-center shadow-2xl">
                         {/* Background pattern */}
                         <div className="absolute inset-0 opacity-10">

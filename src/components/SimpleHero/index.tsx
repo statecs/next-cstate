@@ -39,10 +39,10 @@ const SimpleHero: React.FC = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-black dark:bg-custom-dark-gray px-4 py-20 animate-fadeIn">
+    <section className="relative min-h-screen flex items-center justify-center bg-black dark:bg-custom-dark-gray px-4 py-20 animate-fadeIn opacity-0">
       <div className="max-w-4xl mx-auto text-center">
         {/* Profile Image */}
-        <div className="mb-8 flex justify-center animate-fadeIn" style={{ animationDelay: '200ms' }}>
+        <div className="mb-8 flex justify-center animate-fadeIn opacity-0" style={{ animationDelay: '200ms' }}>
           <div className="relative w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden ring-4 ring-gray-800 dark:ring-gray-700">
             <Image
               src="/images/me.jpeg"
@@ -56,7 +56,7 @@ const SimpleHero: React.FC = () => {
 
         {/* Heading */}
         <h1
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold font-serif text-white mb-6 animate-fadeIn"
+          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold font-serif text-white mb-6 animate-fadeIn opacity-0"
           style={{ animationDelay: '400ms', lineHeight: '1.1' }}
         >
           Hi, I&apos;m Christopher State.
@@ -64,7 +64,7 @@ const SimpleHero: React.FC = () => {
 
         {/* Subtitle */}
         <p
-          className="text-xl sm:text-2xl md:text-3xl text-gray-300 dark:text-gray-400 mb-12 max-w-3xl mx-auto animate-fadeIn"
+          className="text-xl sm:text-2xl md:text-3xl text-gray-300 dark:text-gray-400 mb-12 max-w-3xl mx-auto animate-fadeIn opacity-0"
           style={{ animationDelay: '600ms' }}
         >
           Building accessible products — from concept to code.
@@ -75,7 +75,7 @@ const SimpleHero: React.FC = () => {
           {/* Primary CTA - View My Work */}
           <button
             onClick={() => router.push('/projects')}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white dark:bg-white text-black rounded-full font-semibold text-lg hover:scale-105 hover:bg-gray-100 dark:hover:bg-gray-200 transition-all duration-300 shadow-xl hover:shadow-2xl animate-fadeIn"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white dark:bg-white text-black rounded-full font-semibold text-lg hover:scale-105 hover:bg-gray-100 dark:hover:bg-gray-200 transition-all duration-300 shadow-xl hover:shadow-2xl animate-fadeIn opacity-0"
             style={{ animationDelay: '800ms' }}
             aria-label="View my projects"
           >
@@ -99,7 +99,7 @@ const SimpleHero: React.FC = () => {
           {/* Secondary CTA - Ask Me Anything */}
           <button
             onClick={scrollToChat}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-transparent border-2 border-white text-white rounded-full font-semibold text-lg hover:scale-105 hover:bg-white hover:text-black transition-all duration-300 shadow-xl hover:shadow-2xl animate-fadeIn"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-transparent border-2 border-white text-white rounded-full font-semibold text-lg hover:scale-105 hover:bg-white hover:text-black transition-all duration-300 shadow-xl hover:shadow-2xl animate-fadeIn opacity-0"
             style={{ animationDelay: '1000ms' }}
             aria-label="Scroll to chat with AI assistant"
           >
@@ -123,7 +123,7 @@ const SimpleHero: React.FC = () => {
 
         {/* Optional: Scroll indicator */}
         <div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-fadeIn"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-fadeIn opacity-0"
           style={{ animationDelay: '1000ms' }}
         >
           <div className="w-6 h-10 border-2 border-gray-600 rounded-full flex items-start justify-center p-2">

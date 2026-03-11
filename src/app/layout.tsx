@@ -8,8 +8,8 @@ import MobileFooter from '@/components/MobileFooter';
 import SkipLink from '@/components/SkipLink';
 import SiteHeader from '@/components/SiteHeader';
 import TopNav from '@/components/TopNav';
+import { MainWrapper } from '@/components/MainWrapper';
 import config from '@/utils/config';
-import styles from './rootLayout.module.css';
 import './globals.css';
 import { AuthWrapper } from '@/contexts//AuthWrapper';
 
@@ -42,8 +42,7 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => {
               <div className="lg:hidden sticky top-0 z-50">
                 <SiteHeader />
               </div>
-              <main id="topElement" tabIndex={-1} vaul-drawer-wrapper=""
-                    className={`${styles.responsiveStyle} md:mt-0 flex flex-col flex-grow w-full bg-white dark:bg-custom-dark-gray`}>
+              <MainWrapper>
                 <TopNav />
                 <div className="flex flex-col flex-1 overflow-hidden">
                   <div id="main" className="flex flex-col flex-1 overflow-auto">
@@ -54,7 +53,7 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => {
                   </div>
                 </div>
                 <MobileFooter />
-              </main>
+              </MainWrapper>
               {process.env.NODE_ENV !== 'development' && (
             <>
               <Script

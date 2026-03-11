@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 
 export const useIsMobile = (breakpoint: number = 640) => {
-  const [isMobile, setIsMobile] = useState(false);
+  // Return undefined during SSR to prevent hydration mismatch
+  const [isMobile, setIsMobile] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
     const checkMobile = () => {
