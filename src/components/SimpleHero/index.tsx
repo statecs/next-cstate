@@ -49,7 +49,7 @@ const SimpleHero: React.FC = () => {
               alt="Christopher State"
               fill
               className="object-cover"
-              priority
+              unoptimized
             />
           </div>
         </div>
