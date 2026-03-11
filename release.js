@@ -38,13 +38,17 @@ async function deploy() {
    if (result.stderr) console.error('Build stderr:', result.stderr);
 
    console.log('Updating PM2...');
-   result = await ssh.execCommand('pm2 delete prod', { cwd: remoteDir });
-   if (result.stdout) console.log('Build stdout:', result.stdout);
-   if (result.stderr) console.error('Build stderr:', result.stderr);
+   result = await ssh.execCommand('pm2 delete portfolio-prod || true', { cwd: remoteDir });
+   if (result.stdout) console.log('PM2 delete stdout:', result.stdout);
+   if (result.stderr) console.error('PM2 delete stderr:', result.stderr);
 
-   result = await ssh.execCommand('pm2 start --name=prod  npm -- start', { cwd: remoteDir });
-   if (result.stdout) console.log('Start stdout:', result.stdout);
-   if (result.stderr) console.error('Start stderr:', result.stderr);
+   result = await ssh.execCommand('pm2 start npm --name portfolio-prod --cwd ' + remoteDir + ' -- start', { cwd: remoteDir });
+   if (result.stdout) console.log('PM2 start stdout:', result.stdout);
+   if (result.stderr) console.error('PM2 start stderr:', result.stderr);
+
+   result = await ssh.execCommand('pm2 save', { cwd: remoteDir });
+   if (result.stdout) console.log('PM2 save stdout:', result.stdout);
+   if (result.stderr) console.error('PM2 save stderr:', result.stderr);
 
  } catch (err) {
    console.error('Error:', err);
