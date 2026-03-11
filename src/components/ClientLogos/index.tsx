@@ -10,12 +10,11 @@ interface Company {
 }
 
 const companies: Company[] = [
-  { name: 'Cartina', logo: '/images/logos/cartina.svg', url: 'https://cartina.se/' },
+  { name: 'Siemens', logo: '/images/logos/siemens.svg' },
   { name: 'Vattenfall', logo: '/images/logos/Vattenfall_logo2.svg', url: 'https://www.vattenfall.se/' },
   { name: 'SJ', logo: '/images/logos/SJ.svg', url: 'https://www.sj.se/' },
   { name: 'ICA', logo: '/images/logos/ICA_logo.svg', url: 'https://www.icagruppen.se/' },
   { name: 'Axfood', logo: '/images/logos/AXFO.ST_BIG.svg', url: 'https://www.axfood.se/' },
-  { name: 'KTH', logo: '/images/logos/KTH_logo_RGB_vit.svg', url: 'https://www.kth.se/' },
 ];
 
 const ClientLogos: React.FC = () => {
@@ -29,7 +28,7 @@ const ClientLogos: React.FC = () => {
       </h2>
 
       {/* Logos Grid */}
-      <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
+      <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 place-content-center">
         {companies.map((company) => (
           <div
             key={company.name}
