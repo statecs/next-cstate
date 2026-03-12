@@ -54,7 +54,6 @@ module.exports = {
     },
     async redirects() {
         return [
-            {source: '/x', destination: '/project/x', permanent: true},
             {source: '/login', destination: '/api/auth/login', permanent: true},
         ];
     },
