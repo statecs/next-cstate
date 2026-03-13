@@ -40,15 +40,24 @@ async function deploy() {
    console.log('Updating PM2...');
    result = await ssh.execCommand('pm2 delete portfolio-prod || true', { cwd: remoteDir });
    if (result.stdout) console.log('PM2 delete stdout:', result.stdout);
-   if (result.stderr) console.error('PM2 delete stderr:', result.stderr);
 
-   result = await ssh.execCommand('pm2 start npm --name portfolio-prod --cwd ' + remoteDir + ' -- start', { cwd: remoteDir });
+   result = await ssh.execCommand('pm2 start ecosystem.config.js', { cwd: remoteDir });
    if (result.stdout) console.log('PM2 start stdout:', result.stdout);
-   if (result.stderr) console.error('PM2 start stderr:', result.stderr);
 
    result = await ssh.execCommand('pm2 save', { cwd: remoteDir });
    if (result.stdout) console.log('PM2 save stdout:', result.stdout);
-   if (result.stderr) console.error('PM2 save stderr:', result.stderr);
+
+   // Verify deployment
+   console.log('Verifying deployment...');
+   result = await ssh.execCommand('cat .next/BUILD_ID', { cwd: remoteDir });
+   const buildId = result.stdout.trim();
+   console.log('Deployed BUILD_ID:', buildId);
+
+   // Wait for PM2 to start
+   await new Promise(resolve => setTimeout(resolve, 3000));
+
+   result = await ssh.execCommand('pm2 logs portfolio-prod --lines 10 --nostream', { cwd: remoteDir });
+   console.log('PM2 startup logs:\n', result.stdout);
 
  } catch (err) {
    console.error('Error:', err);
