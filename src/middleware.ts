@@ -4,6 +4,21 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
+    // ============================================================================
+    // Security: Block malformed Server Action requests
+    // ============================================================================
+    // Bots and attackers send POST requests with invalid 'next-action' headers.
+    // Legitimate Server Action IDs are 40+ character cryptographic hashes.
+    // Short values like "x", "test", "1" are clearly malicious/malformed.
+    // Blocking these prevents "Failed to find Server Action" errors in logs.
+    if (request.method === 'POST') {
+        const nextAction = request.headers.get('next-action');
+
+        if (nextAction && nextAction.length < 10) {
+            return new NextResponse('Bad Request', { status: 400 });
+        }
+    }
+
     // Skip root path explicitly - let rewrite handle it
     if (pathname === '/' || pathname === '') {
         return NextResponse.next();

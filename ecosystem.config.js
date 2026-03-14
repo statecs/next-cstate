@@ -9,6 +9,7 @@ module.exports = {
     env: {
       NODE_ENV: 'production',
       PORT: 3000,
+      NEXT_SERVER_ACTIONS_ENCRYPTION_KEY: process.env.NEXT_SERVER_ACTIONS_ENCRYPTION_KEY,
     },
     max_memory_restart: '1G',
     log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
