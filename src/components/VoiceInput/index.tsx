@@ -5,11 +5,10 @@ import { useAudioBufferManager } from '../../hooks/useAudioBufferManager';
 interface VoiceInputProps {
   onVoiceInput: (input: string) => void;
   onAssistantResponse: (response: string) => void;
-  assistantId: string;
   onVoiceInputStateChange: (state: boolean) => void;
 }
 
-const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantResponse, assistantId, onVoiceInputStateChange }) => {
+const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantResponse, onVoiceInputStateChange }) => {
   const [isListening, setIsListening] = useState(false);
   const [isInterrupted, setIsInterrupted] = useState(false);
   const isInterruptedRef = useRef(false);

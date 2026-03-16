@@ -77,7 +77,7 @@ const HomePage = async () => {
                     <div className="relative">
                         {/* Main container - Clean and minimal */}
                         <div className="relative bg-white dark:bg-transparent rounded-3xl shadow-xl dark:shadow-none border border-gray-200/50 dark:border-transparent p-6 sm:p-8 animate-fadeIn opacity-0">
-                            <ComboBox assistantId={process.env.ASSISTANT_ID || ''} />
+                            <ComboBox />
                         </div>
                     </div>
                 </section>

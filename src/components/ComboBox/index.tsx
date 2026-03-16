@@ -1,17 +1,13 @@
 'use client';
 
 import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
-import { sendMessageToThread, sendMessageToThreadStream, sendMessageToClaudeAPI, textToSpeech } from '@/utils/threadService';
+import { sendMessageToResponseStream, sendMessageToClaudeAPI, textToSpeech } from '@/utils/threadService';
 import { useAtom } from 'jotai';
 import { footerVisibilityAtom, responseMessageLengthAtom } from '@/utils/store';
 import { Volume2Icon, PauseIcon, LoaderIcon } from 'lucide-react';
 import VoiceInput from '../VoiceInput'; // Import the new VoiceInput component
 
-interface ComboBoxProps {
-  assistantId: string;
-}
-
-const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
+const ComboBox: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [isFilled, setIsFilled] = useState(false);
@@ -21,7 +17,6 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
   const responseMessageRef = useRef<string | null>(null);
-  const [eventSource, setEventSource] = useState<EventSource | null>(null);
   const suggestions: string[] = ["Who is Christopher?", "What are your skills?", "What are your hobbies?"];
   const inputRef = useRef<HTMLInputElement>(null);
   const [, setResponseMessageLength] = useAtom(responseMessageLengthAtom);
@@ -40,8 +35,8 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
 
   const [isVoiceInputActive, setIsVoiceInputActive] = useState(false);
 
-  const getThreadIdFromLocalStorage = () => {
-    return localStorage.getItem('threadId');
+  const getPreviousResponseId = () => {
+    return localStorage.getItem('previousResponseId');
   };
 
   useEffect(() => {
@@ -55,159 +50,69 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
     }
   }, [responseMessage, setResponseMessageLength]);
 
-  // Retrieve cached response on component mount and input change
+  // Retrieve cached response on component mount only
   useEffect(() => {
     const cachedResponse = localStorage.getItem("chatResponse");
     if (cachedResponse) {
       setResponseMessage(cachedResponse);
     }
-  }, [inputValue]);
+  }, []);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event) return; 
-    
+    if (!event) return;
+
     const value = event.target.value;
     setIsFilled(value.length > 0);
-    setInputValue(value); 
+    setInputValue(value);
     setFilteredSuggestions(suggestions.filter(suggestion =>
      !value || suggestion.toLowerCase().includes(value.toLowerCase())
     ));
   };
 
-  const generateNewThreadId = async () => {
-    // Function to get the threadId from localStorage
-    const getThreadIdFromLocalStorage = () => {
-      return localStorage.getItem('threadId');
-    };
-
-    // Check if threadId exists in localStorage
-    let threadId = getThreadIdFromLocalStorage();
-
-    // If threadId exists in localStorage, use it
-    if (threadId) {
-      return threadId;
-    }
-
-    // Otherwise, make the API call to get a new threadId
-    const baseUrl = process.env.NEXT_PUBLIC_URL;
-    const controller = new AbortController();
-    const signal = controller.signal;
-  
-    try {
-      const response = await fetch(`${baseUrl}/api/thread`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        signal: signal
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-  
-      const data = await response.json();
-
-      // Store threadId in localStorage
-      localStorage.setItem('threadId', data.threadId);
-      return data.threadId; // Assuming the thread ID is returned like this
-    } catch (error) {
-      console.error('Failed to generate new thread ID:', error);
-      return null; // Handle errors or define fallback behavior
-    }
-  };
-
   const sendMessage = async (message: string) => {
-    // Reset message and set loading state before any asynchronous operation
     setLoading(true);
     setResponseMessageLength(1);
     setResponseMessage(null);
-    setInputValue('');  // Clear input field immediately
+    setInputValue('');
     setIsFocused(false);
     setIsFilled(false);
 
     try {
-      // Generate a new thread ID with timeout
-      const threadIdPromise = generateNewThreadId();
-      const timeoutPromise = new Promise<string | null>(resolve => {
-        setTimeout(() => resolve(null), 2000); // 5 seconds timeout
-      });
+      const response = await sendMessageToResponseStream(message, getPreviousResponseId());
 
-      const threadId = await Promise.race([threadIdPromise, timeoutPromise]);
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
 
-      // Ensure a valid threadId is obtained before proceeding
-      if (!threadId) {
-        setResponseMessage('Failed to obtain thread ID in time.');
-        setLoading(false);
-        return;
+      if (!reader) {
+        throw new Error('No response body');
       }
 
-      // Close existing event source if one exists
-      if (eventSource) {
-        eventSource.close();
-        setLoading(false); 
-        setEventSource(null);
-      }
+      let buffer = '';
 
-      const newEventSource = await sendMessageToThreadStream(threadId, message, [], assistantId);
-      setEventSource(newEventSource);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-      setResponseMessage(null);
-      setLoading(true);
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
 
-      newEventSource.onmessage = async (event) => {
-        const newMessage = JSON.parse(event.data);
-        if (newMessage.error === "Internal Server Error") {
-          newEventSource.close();
-          
-          // Remove the old threadId in localStorage
-          localStorage.removeItem('threadId');
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const data = JSON.parse(line.slice(6));
 
-          // Generate a new thread ID
-          const newThreadId = await generateNewThreadId();
-          
-          if (newThreadId) {
-            // Try sending with the new thread ID
-            const retryEventSource = await sendMessageToThreadStream(newThreadId, message, [], assistantId);
-            setEventSource(retryEventSource);
-            
-            // Setup handlers for the new event source
-            retryEventSource.onmessage = (retryEvent) => {
-              // Handle messages from retry event source
-              const retryMessage = JSON.parse(retryEvent.data);
-              setResponseMessage(prevMessages => {
-                const updatedMessages = prevMessages ? `${prevMessages}${retryMessage.value}` : retryMessage.value;
-                localStorage.setItem("chatResponse", updatedMessages);
-                return updatedMessages;
-              });
-            };
-            
-            retryEventSource.onerror = () => {
-              setResponseMessage("Oops! Our API decided to take a coffee break. While it's sipping espresso, why not grab a book? Who knows, you might learn something before our code remembers how to function. Error: \"Failed to receive message\" (and basic manners, apparently).");
-              retryEventSource.close();
-              setLoading(false);
-            };
-          } else {
+          if (data.type === 'delta') {
+            setResponseMessage(prev => {
+              const updated = prev ? `${prev}${data.value}` : data.value;
+              localStorage.setItem("chatResponse", updated);
+              return updated;
+            });
+          } else if (data.type === 'done') {
+            localStorage.setItem('previousResponseId', data.responseId);
             setLoading(false);
           }
-          return;
         }
-      
-        // Update local state
-        setResponseMessage(prevMessages => {
-          const updatedMessages = prevMessages ? `${prevMessages}${newMessage.value}` : newMessage.value;
-
-          // Save to localStorage
-          localStorage.setItem("chatResponse", updatedMessages);
-          return updatedMessages;
-        });
-      };
-
-      newEventSource.onerror = () => {
-        newEventSource.close();
-        setLoading(false);
-      };
-
+      }
     } catch (error) {
       console.error('Failed to send message:', error);
       setResponseMessage('Failed to send message');
@@ -246,7 +151,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
       inputRef.current?.focus();
       return; // Exit the function after focusing the input.
     }
-  
+
     if (inputValue.trim() !== '') {
       handleSendMessage(inputValue.trim());
     }
@@ -276,7 +181,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
     } else {
      sendMessage(suggestion);
     }
-   
+
   };
 
   useEffect(() => {
@@ -284,15 +189,6 @@ const ComboBox: React.FC<ComboBoxProps> = ({ assistantId }) => {
       setFilteredSuggestions(suggestions);
     }
   }, [inputValue]);
-
-  // Cleanup EventSource when component unmounts
-  useEffect(() => {
-    return () => {
-      if (eventSource) {
-        eventSource.close();
-      }
-    };
-  }, [eventSource]);
 
 useEffect(() => {
   window.copyCode = (id: string) => {
@@ -320,7 +216,7 @@ const sendMessageToClaude = async (message: string) => {
 
   try {
     const response = await sendMessageToClaudeAPI(message);
-    
+
     // Update local state
     setResponseMessage(response);
 
@@ -361,10 +257,10 @@ const sendMessageToClaude = async (message: string) => {
   useEffect(() => {
     adjustSelectWidth();
   }, [selectedModel]);
-  
+
   const handleTextToSpeech = async () => {
     if (!responseMessage) return;
-  
+
     try {
       setIsLoading(true);
       if (!audioUrl) {
@@ -376,7 +272,7 @@ const sendMessageToClaude = async (message: string) => {
           audioRef.current.load();
         }
       }
-  
+
       if (audioRef.current) {
         if (isPlaying) {
           audioRef.current.pause();
@@ -391,13 +287,13 @@ const sendMessageToClaude = async (message: string) => {
       setIsLoading(false);
     }
   };
-  
+
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.onended = () => setIsPlaying(false);
     }
   }, []);
-  
+
   useEffect(() => {
     return () => {
       if (audioUrl) {
@@ -405,7 +301,7 @@ const sendMessageToClaude = async (message: string) => {
       }
     };
   }, [audioUrl]);
-  
+
   useEffect(() => {
     setAudioUrl(null);
     setIsPlaying(false);
@@ -468,49 +364,17 @@ useEffect(() => {
   };
 }, [isFocused, inputValue, labels, isHovered]);
 
-// Function to handle voice input
+// Function to handle voice input — transcript goes directly to sendMessage
 const handleVoiceInput = async (transcript: string) => {
   setInputValue(transcript);
   setIsFilled(transcript.length > 0);
-
-  try {
-    // Retrieve the thread ID, or generate a new one if not available
-    const threadId = await generateNewThreadId();
-
-    if (!threadId) {
-      console.error("Failed to obtain thread ID.");
-      return;
-    }
-
-    const role = 'user';
-    await sendMessageToThread(threadId, transcript, [], assistantId, role); // Use the thread ID
-  } catch (error) {
-    console.error('Failed to send message to thread:', error);
-  }
+  await sendMessage(transcript);
 };
 
-// Function to handle assistant response
-const handleAssistantResponse = async (response: string) => {
-  // Update state and ref immediately
+// Function to handle assistant response from voice
+const handleAssistantResponse = (response: string) => {
   setResponseMessage(response);
   responseMessageRef.current = response;
-
-  try {
-    // Check if threadId exists in localStorage
-    let threadId = getThreadIdFromLocalStorage();
-
-    if (!threadId) {
-      console.error("Failed to obtain thread ID.");
-      return;
-    }
-
-    const role = 'assistant';
-    await sendMessageToThread(threadId, response, [], assistantId, role); // Use the thread ID
-  } catch (error) {
-    console.error('Failed to send message to thread:', error);
-  }
-
-  // Save to localStorage
   localStorage.setItem("chatResponse", response);
 };
 
@@ -540,8 +404,8 @@ const handleVoiceInputState = (isActive: boolean) => {
           autoComplete="off"
           disabled={loading}
         />
-        <VoiceInput onVoiceInput={handleVoiceInput} onAssistantResponse={handleAssistantResponse} assistantId={assistantId} onVoiceInputStateChange={handleVoiceInputState} />
-        <button 
+        <VoiceInput onVoiceInput={handleVoiceInput} onAssistantResponse={handleAssistantResponse} onVoiceInputStateChange={handleVoiceInputState} />
+        <button
           aria-label="Send message"
           disabled={loading}
           className="absolute bottom-3 md:bottom-1.5 right-3 md:right-2 bg-black dark:bg-white rounded-lg border border-black p-0.5 text-white transition-colors disabled:text-gray-400 disabled:opacity-10 dark:border-white dark:bg-white dark:hover:bg-white md:bottom-3 md:right-3"
@@ -577,7 +441,7 @@ const handleVoiceInputState = (isActive: boolean) => {
           ))}
         </div>
       )}
-      
+
       <div className="w-full flex justify-start items-center">
       <label htmlFor="assistant-select" className="sr-only text-[10px] text-gray-500 dark:text-gray-400 whitespace-nowrap">
         Assistant:
@@ -594,7 +458,7 @@ const handleVoiceInputState = (isActive: boolean) => {
             }}
             className="
               w-auto py-0.5 pl-1 pr-4 text-[10px]
-              text-gray-500 dark:text-gray-400 
+              text-gray-500 dark:text-gray-400
               bg-transparent
               border-none outline-none
               cursor-pointer
@@ -651,10 +515,10 @@ const handleVoiceInputState = (isActive: boolean) => {
                         </div>
                       `.trim();
                     })
-                   
+
                     .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="w-full h-auto" />')
                     .replace(
-                      /\[([^\]]+)\]\(([^)]+)\)/g, 
+                      /\[([^\]]+)\]\(([^)]+)\)/g,
                       '<a href="$2" class="underline underline-offset-4 dark:text-white hover:text-gray-400 inline-flex items-center" target="_blank" rel="noopener noreferrer">$1<svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>'
                     ) }}
               />

@@ -1,71 +1,20 @@
-export async function sendMessageToThread(threadId: string, message: string, file_ids: string[], assistantId: string, role: string)  {
-  
-  if (!threadId || !assistantId) {
-    throw new Error('threadId and assistantId must be provided');
+export async function sendMessageToResponseStream(message: string, previousResponseId: string | null): Promise<Response> {
+  const response = await fetch(`${process.env.API_BASE_URL}/responses/stream`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      message,
+      previousResponseId,
+      instructionText: process.env.INSTRUCTION_TEXT,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to start response stream: ${response.status}`);
   }
 
-  const controller = new AbortController(); // For potential request cancellation
-  const signal = controller.signal;
-
-  try {
-    const response = await fetch(`${process.env.API_BASE_URL}/threads/${threadId}/messages-only`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        message, 
-        assistantId, 
-        file_ids, 
-        role
-      }),
-      signal: signal,
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-  } catch (error) {
-    console.error('Error sending assistant message to thread:', error);
-  }
+  return response;
 }
-
-// Function to send a message and open an SSE connection
-export async function sendMessageToThreadStream(threadId: string, message: string, file_ids: string[], assistantId: string) {
-  if (!threadId || !assistantId) {
-      throw new Error('threadId and assistantId must be provided');
-  }
-
-  const controller = new AbortController();
-  const signal = controller.signal;
-
-  try {
-      const response = await fetch(`${process.env.API_BASE_URL}/threads/${threadId}/messagesStream`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message, assistantId, file_ids }),
-          signal: signal
-      });
-
-      if (response.status === 200) {
-          const url = `${process.env.API_BASE_URL}/threads/${threadId}/messagesStream`;
-          const eventSource = new EventSource(url);
-
-          eventSource.onerror = () => {
-              eventSource.close();
-          };
-
-          return eventSource; // Return the eventSource for further control outside this function
-      } else {
-          throw new Error(`Failed to send message: ${response.status}`);
-      }
-  } catch (error) {
-      console.error('Error sending message to thread:', error);
-      throw error; // Re-throw to handle in component
-  }
-}
-
 
 export async function sendMessageToClaudeAPI(message: string): Promise<string> {
   try {
