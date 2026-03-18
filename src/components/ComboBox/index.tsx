@@ -320,24 +320,30 @@ const sendMessageToClaude = async (message: string) => {
 }
 
 const labels: string[] = shuffleArray([
+  // English
   'Let\'s chat!',
+  'Who is Christopher?',
+  'What can you do?',
+  'What are your skills?',
+  'Let\'s discuss my projects!',
+  'Ask me anything...',
+  'What are you working on?',
+  'Tell me about yourself!',
+  'What technologies do you use?',
+  'What are your passions?',
+  // Swedish
+  'Fråga mig vad som helst...',
+  'Låt oss prata!',
+  'Vem är Christopher?',
+  'Vad kan du göra?',
+  'Berätta om dig själv!',
+  'Vilka teknologier använder du?',
+  'Vad jobbar du med?',
+  // Romanian
   'Întreabă-mă orice...',
   'La ce te gândești?',
   'Cum te pot ajuta?',
   'Hai să vorbim!',
-  'Fråga mig vad som helst...',
-  'Låt oss prata!',
-  'Who is Christopher?',
-  'Vem är Christopher?',
-  'What can you do?',
-  'What are your skills?',
-  'Let\'s discuss my projects!',
-  'Quelles sont mes passions?', // French: What are my passions?
-  'Cosa posso fare per te?', // Italian: What can I do for you?
-  '¿Quién es Christopher?', // Spanish: Who is Christopher?
-  'Quali tecnologie conosco?', // Italian: What technologies do I know?
-  '¿Qué tecnologías domino?', // Spanish: What technologies do I master?
-
 ]);
 
 
