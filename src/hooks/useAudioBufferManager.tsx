@@ -15,16 +15,9 @@ class AudioBufferManager {
 
   setOnPlaybackComplete(callback: () => void) {
     this.onPlaybackComplete = callback;
-    this.isPlaying = false;
   }
 
   addAudioChunk(chunk: Float32Array) {
-    // Stop the currently playing audio if a new chunk arrives
-    if (this.currentSource) {
-      this.currentSource.stop(); // Stop the current audio source
-      this.currentSource = null; // Clear reference to the current source
-    }
-
     this.audioQueue.push(chunk);
     this.playNext();
   }
@@ -75,43 +68,55 @@ class AudioBufferManager {
 
   export const useAudioBufferManager = () => {
     const [isPlaying, setIsPlaying] = useState(false);
+    const isPlayingRef = useRef(false);
     const audioContextRef = useRef<AudioContext | null>(null);
     const bufferManagerRef = useRef<AudioBufferManager | null>(null);
-  
+
     const initializeAudio = useCallback(() => {
       if (!audioContextRef.current) {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
       }
       if (!bufferManagerRef.current) {
         bufferManagerRef.current = new AudioBufferManager(audioContextRef.current);
+        bufferManagerRef.current.setOnPlaybackComplete(() => {
+          setIsPlaying(false);
+          isPlayingRef.current = false;
+        });
       }
     }, []);
-  
+
     const addAudioChunk = useCallback((chunk: Float32Array) => {
       if (!bufferManagerRef.current) {
         initializeAudio();
       }
       bufferManagerRef.current!.addAudioChunk(chunk);
       setIsPlaying(true);
+      isPlayingRef.current = true;
     }, [initializeAudio]);
-  
+
     const stopAudio = useCallback(() => {
       if (bufferManagerRef.current) {
         bufferManagerRef.current.reset();
       }
       setIsPlaying(false);
+      isPlayingRef.current = false;
     }, []);
-  
+
     const setOnPlaybackComplete = useCallback((callback: () => void) => {
       if (bufferManagerRef.current) {
-        bufferManagerRef.current.setOnPlaybackComplete(callback);
+        bufferManagerRef.current.setOnPlaybackComplete(() => {
+          setIsPlaying(false);
+          isPlayingRef.current = false;
+          callback();
+        });
       }
     }, []);
-  
-    return { 
-      isPlaying, 
-      addAudioChunk, 
-      stopAudio, 
+
+    return {
+      isPlaying,
+      isPlayingRef,
+      addAudioChunk,
+      stopAudio,
       setOnPlaybackComplete
     };
   };

@@ -364,11 +364,11 @@ useEffect(() => {
   };
 }, [isFocused, inputValue, labels, isHovered]);
 
-// Function to handle voice input — transcript goes directly to sendMessage
-const handleVoiceInput = async (transcript: string) => {
+// Function to handle voice input — response comes from audio-stream WebSocket, not /responses/stream
+const handleVoiceInput = (transcript: string) => {
   setInputValue(transcript);
   setIsFilled(transcript.length > 0);
-  await sendMessage(transcript);
+  setResponseMessage(null);
 };
 
 // Function to handle assistant response from voice

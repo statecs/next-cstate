@@ -18,7 +18,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
   const [error, setError] = useState<string | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
-  const { isPlaying, addAudioChunk, stopAudio, setOnPlaybackComplete } = useAudioBufferManager();
+  const { isPlaying, isPlayingRef, addAudioChunk, stopAudio, setOnPlaybackComplete } = useAudioBufferManager();
 
   useEffect(() => {
     return () => {
@@ -28,11 +28,9 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
 
   useEffect(() => {
     setOnPlaybackComplete(() => {
-      if (isListening) {
-        startListening();
-      }
+      // Playback done — mic is already active, server VAD handles next turn
     });
-  }, [isListening, setOnPlaybackComplete]);
+  }, [setOnPlaybackComplete]);
 
   useEffect(() => {
     isInterruptedRef.current = isInterrupted;
@@ -93,7 +91,9 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
 
   const setupAudioStream = async () => {
     try {
-      mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+      });
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
       const source = audioContextRef.current.createMediaStreamSource(mediaStreamRef.current);
       processorRef.current = audioContextRef.current.createScriptProcessor(4096, 1, 1);
@@ -102,7 +102,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
       processorRef.current.connect(audioContextRef.current.destination);
   
       processorRef.current.onaudioprocess = (e) => {
-        if (!isInterruptedRef.current && socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+        if (!isInterruptedRef.current && !isPlayingRef.current && socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
           const audioData = e.inputBuffer.getChannelData(0);
           const int16Data = floatTo16BitPCM(audioData);
           socketRef.current.send(int16Data);
