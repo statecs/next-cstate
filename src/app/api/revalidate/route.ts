@@ -143,6 +143,7 @@ export async function POST(request: NextRequest) {
 
             case 'caseStudy': {
                 await invalidateCache('caseStudies/*');
+                await invalidateCache('navigation/*');
                 const slug = payload?.fields?.slug?.['en-US'];
                 if (slug) {
                     await revalidatePath(`/projects/${slug}`);
