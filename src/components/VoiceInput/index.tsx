@@ -8,12 +8,16 @@ interface VoiceInputProps {
   onVoiceInputStateChange: (state: boolean) => void;
 }
 
+const SPEECH_RMS_THRESHOLD = 0.025;
+const SPEECH_CONFIRM_FRAMES = 2;
+
 const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantResponse, onVoiceInputStateChange }) => {
   const [isListening, setIsListening] = useState(false);
   const [isInterrupted, setIsInterrupted] = useState(false);
   const isInterruptedRef = useRef(false);
   const audioContextRef = useRef<AudioContext | null>(null);
   const processorRef = useRef<ScriptProcessorNode | null>(null);
+  const speechDetectionCounterRef = useRef(0);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
@@ -102,8 +106,27 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
       processorRef.current.connect(audioContextRef.current.destination);
   
       processorRef.current.onaudioprocess = (e) => {
-        if (!isInterruptedRef.current && !isPlayingRef.current && socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-          const audioData = e.inputBuffer.getChannelData(0);
+        const audioData = e.inputBuffer.getChannelData(0);
+
+        // Auto-interrupt: detect speech while assistant is playing
+        if (isPlayingRef.current && !isInterruptedRef.current) {
+          const rms = calculateRMS(audioData);
+          if (rms > SPEECH_RMS_THRESHOLD) {
+            speechDetectionCounterRef.current++;
+            if (speechDetectionCounterRef.current >= SPEECH_CONFIRM_FRAMES) {
+              speechDetectionCounterRef.current = 0;
+              autoInterruptAndResume();
+            }
+          } else {
+            speechDetectionCounterRef.current = 0;
+          }
+          return;
+        }
+
+        speechDetectionCounterRef.current = 0;
+
+        // Normal audio sending when not playing
+        if (!isInterruptedRef.current && socketRef.current?.readyState === WebSocket.OPEN) {
           const int16Data = floatTo16BitPCM(audioData);
           socketRef.current.send(int16Data);
         }
@@ -157,6 +180,26 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
     stopAudio();
   };
 
+  const autoInterruptAndResume = async () => {
+    stopAudio();
+    if (socketRef.current?.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify({ type: 'interrupt' }));
+      socketRef.current.send(JSON.stringify({ type: 'reset' }));
+    }
+    if (mediaStreamRef.current) {
+      mediaStreamRef.current.getTracks().forEach(track => track.stop());
+    }
+    if (processorRef.current && audioContextRef.current) {
+      processorRef.current.disconnect();
+      audioContextRef.current.close();
+    }
+    try {
+      await setupAudioStream();
+    } catch (err) {
+      console.error('Error auto-resuming after interrupt:', err);
+    }
+  };
+
   const resumeVoiceInput = async () => {
     setIsInterrupted(false);
     isInterruptedRef.current = false;
@@ -170,6 +213,14 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
       setError('Failed to resume listening. Please try again.');
     }
   };
+  const calculateRMS = (buffer: Float32Array): number => {
+    let sum = 0;
+    for (let i = 0; i < buffer.length; i++) {
+      sum += buffer[i] * buffer[i];
+    }
+    return Math.sqrt(sum / buffer.length);
+  };
+
   const floatTo16BitPCM = (input: Float32Array): ArrayBuffer => {
     const buffer = new ArrayBuffer(input.length * 2);
     const view = new DataView(buffer);
