@@ -141,6 +141,19 @@ export async function POST(request: NextRequest) {
                 break;
             }
 
+            case 'caseStudy': {
+                await invalidateCache('caseStudies/*');
+                const slug = payload?.fields?.slug?.['en-US'];
+                if (slug) {
+                    await revalidatePath(`/projects/${slug}`);
+                    console.log(`[Webhook] Revalidated /projects/${slug}`);
+                }
+                await revalidatePath('/projects');
+                await revalidatePath('/projects', 'layout');
+                await invalidateCache('sitemap/*');
+                break;
+            }
+
             case 'photo': {
                 // Photo was updated - invalidate collections that contain it
                 await invalidateCache('collections/*');

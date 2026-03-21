@@ -794,3 +794,100 @@ export const fetchAllData = async (
     return { collections, writings };
 };
 
+export const fetchCaseStudy = async (
+    slug: string,
+    preview: boolean = false
+): Promise<CaseStudy | null> => {
+    const query = `query {
+        caseStudyCollection(
+            limit: 1,
+            preview: ${preview ? 'true' : 'false'},
+            where: {OR: [{slug: "${slug}"}, {sys: {id: "${slug}"}}]}
+        ) {
+            items {
+                title
+                titleHighlight
+                subtitle
+                slug
+                tags
+                isPublic
+                metaRole
+                metaTools
+                metaDuration
+                metaResponses
+                backgroundLabel
+                backgroundHeading
+                backgroundBody
+                stats
+                ratingDistributionData
+                avgRatingPerModuleData
+                responseVolumeData
+                quotes
+                methodologyCards
+                resultsHeading
+                resultsSummary
+                resultsBullets
+                seoDescription
+                coverImage {
+                    url(transform: {width: 1200})
+                    width
+                    height
+                    description
+                }
+                sys {
+                    publishedAt
+                    firstPublishedAt
+                }
+            }
+        }
+    }`;
+    const response: any = await fetchContent(query, preview, 'caseStudies');
+
+    return response?.data?.caseStudyCollection?.items?.[0] || null;
+};
+
+export const fetchAllCaseStudies = async (
+    preview: boolean = false
+): Promise<CaseStudy[] | null> => {
+    const query = `query {
+        caseStudyCollection(
+            limit: 50,
+            preview: ${preview ? 'true' : 'false'}
+        ) {
+            items {
+                title
+                slug
+                tags
+                isPublic
+                coverImage {
+                    url(transform: {width: 800})
+                    width
+                    height
+                    description
+                }
+            }
+        }
+    }`;
+    const response: any = await fetchContent(query, preview, 'caseStudies');
+
+    return response?.data?.caseStudyCollection?.items || null;
+};
+
+export const fetchCaseStudiesForSitemap = async (): Promise<CaseStudy[]> => {
+    const query = `query {
+        caseStudyCollection(limit: 50) {
+            items {
+                slug
+                isPublic
+                sys {
+                    publishedAt
+                    firstPublishedAt
+                }
+            }
+        }
+    }`;
+    const response: any = await fetchContent(query, false, 'sitemap');
+
+    return response?.data?.caseStudyCollection?.items || [];
+};
+

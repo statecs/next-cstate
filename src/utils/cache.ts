@@ -41,6 +41,7 @@ const CACHE_TTL: {[key: string]: number} = {
     writings: 7 * 24 * 60 * 60 * 1000, // 7 days
     journeys: 7 * 24 * 60 * 60 * 1000, // 7 days
     links: 7 * 24 * 60 * 60 * 1000, // 7 days
+    caseStudies: 7 * 24 * 60 * 60 * 1000, // 7 days
     sitemap: 24 * 60 * 60 * 1000, // 1 day
     preview: 0, // Never cache preview
     generic: 7 * 24 * 60 * 60 * 1000 // 7 days default

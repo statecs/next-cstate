@@ -39,6 +39,11 @@ export function middleware(request: NextRequest) {
 
     const slug = segments[0];
 
+    // Skip static file paths (sitemap.xml, robots.txt, etc.)
+    if (slug.includes('.')) {
+        return NextResponse.next();
+    }
+
     // Exclude known routes
     const excludedRoutes = [
         'home', 'about', 'dashboard', 'contact',

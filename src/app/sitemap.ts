@@ -1,5 +1,5 @@
 import {type MetadataRoute} from 'next';
-import {fetchCollectionsForSitemap, fetchWritingForSitemap} from '@/utils/contentful';
+import {fetchCollectionsForSitemap, fetchWritingForSitemap, fetchCaseStudiesForSitemap} from '@/utils/contentful';
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -68,11 +68,29 @@ const getWritingSeo = async (): Promise<MetadataRoute.Sitemap> => {
     return items;
 };
 
+const getCaseStudiesSeo = async (): Promise<MetadataRoute.Sitemap> => {
+    const allCaseStudies = await fetchCaseStudiesForSitemap();
+    if (!allCaseStudies?.length) return [];
+
+    return allCaseStudies
+        .filter((cs: CaseStudy) => cs.isPublic !== false)
+        .map((cs: CaseStudy) => ({
+            url: `${process.env.NEXT_PUBLIC_URL}/projects/${cs.slug}`,
+            priority: 0.8,
+            lastModified: getLastModifiedDate(cs.sys?.publishedAt).toISOString(),
+            changeFrequency:
+                cs.sys?.publishedAt === cs.sys?.firstPublishedAt
+                    ? ('monthly' as const)
+                    : ('weekly' as const),
+        }));
+};
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const [collections, writings] = await Promise.all([
+    const [collections, writings, caseStudies] = await Promise.all([
         getCollectionSeo(),
-        getWritingSeo()
+        getWritingSeo(),
+        getCaseStudiesSeo(),
     ]);
 
-    return [...collections, ...writings];
+    return [...collections, ...writings, ...caseStudies];
 }
