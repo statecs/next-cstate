@@ -63,7 +63,14 @@ const CollectionPage = async ({params}: Props) => {
                             description={collection?.showDescription ? collection.description : null}
                         />
                     </div>
+                                    {/* Photo slider at the bottom — renders nothing when photosCollection is empty */}
+                <div className="flex flex-grow px-4 sm:px-8 md:justify-center">
+                    <div className="max-w-5xl mx-auto w-full">
+                        <BannerPhotoCollection {...collection} key={collection.slug} />
+                    </div>
                 </div>
+                </div>
+
             </ScrollArea>
         );
     }
