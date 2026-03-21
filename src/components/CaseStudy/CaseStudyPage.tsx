@@ -16,7 +16,7 @@ interface CaseStudyPageProps {
 export const CaseStudyPage = ({ caseStudy }: CaseStudyPageProps) => {
     return (
         <ScrollArea useScrollAreaId>
-            <div className="min-h-screen text-white">
+            <div className="min-h-screen text-white pb-24">
             <FloatingHeader scrollTitle="Projects" goBackLink="/projects" />
             <CaseStudyHeader
                 title={caseStudy.title}
