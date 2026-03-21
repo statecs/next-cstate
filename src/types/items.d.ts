@@ -1,6 +1,6 @@
 export interface Item {
     slug: string;
-    type: 'collection' | 'writing';  // Keep this as a union type
+    type: 'collection' | 'writing' | 'caseStudy';
     title: string;
     category?: string;
     ctaLabel?: string;

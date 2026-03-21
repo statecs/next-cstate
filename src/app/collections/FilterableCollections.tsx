@@ -10,7 +10,8 @@ import { Item } from '@/types/items.d';  // Import the shared type
 const FILTERS = {
   ALL: 'All',
   COLLECTIONS: 'Projects',
-  WRITINGS: 'Writings'
+  WRITINGS: 'Writings',
+  CASE_STUDIES: 'Case Studies',
 } as const;
 
 type FilterType = typeof FILTERS[keyof typeof FILTERS];
@@ -50,10 +51,11 @@ const FilterableCollections: React.FC<FilterableCollectionsProps> = ({ items }) 
     setActiveFilter(filter);
   };
 
-  const filteredItems = items.filter(item => 
-    activeFilter === FILTERS.ALL || 
+  const filteredItems = items.filter(item =>
+    activeFilter === FILTERS.ALL ||
     (activeFilter === FILTERS.COLLECTIONS && item.type === 'collection') ||
-    (activeFilter === FILTERS.WRITINGS && item.type === 'writing')
+    (activeFilter === FILTERS.WRITINGS && item.type === 'writing') ||
+    (activeFilter === FILTERS.CASE_STUDIES && item.type === 'caseStudy')
   );
 
   return (
@@ -96,10 +98,14 @@ const FilterableCollections: React.FC<FilterableCollectionsProps> = ({ items }) 
                 href={item.type === 'writing' ? `/writing/${item.slug}` : `/projects/${item.slug}`}
                 aria-label={`View ${item.title}`}
               >
-                <ThumbnailImage
-                  {...item.photosCollection.items[0]?.fullSize}
-                  base64={item.photosCollection.items[0]?.base64}
-                />
+                {item.photosCollection.items[0]?.fullSize?.url ? (
+                  <ThumbnailImage
+                    {...item.photosCollection.items[0].fullSize}
+                    base64={item.photosCollection.items[0].base64}
+                  />
+                ) : (
+                  <span className="block min-h-[100px] bg-gray-100 dark:bg-gray-900" />
+                )}
                 <span className="flex flex-row justify-between space-x-4 pb-2 pt-2 sm:pb-4">
                   <span className="text-sm tracking-wide text-gray-600 underline-offset-4 group-hover:underline group-focus:underline dark:text-gray-400 dark:group-hover:text-white">
                     {item.title}     

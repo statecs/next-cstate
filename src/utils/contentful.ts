@@ -785,13 +785,14 @@ export const fetchWritingForSitemap = async (skip: number = 0, limit: number = 3
 
 export const fetchAllData = async (
     preview: boolean = false
-): Promise<{ collections: PhotoCollection[] | null, writings: PhotoCollection[] | null }> => {
-    const [collections, writings] = await Promise.all([
+): Promise<{ collections: PhotoCollection[] | null, writings: PhotoCollection[] | null, caseStudies: CaseStudy[] | null }> => {
+    const [collections, writings, caseStudies] = await Promise.all([
         fetchAllCollections(preview),
         fetchAllWritings(preview),
+        fetchAllCaseStudies(preview),
     ]);
 
-    return { collections, writings };
+    return { collections, writings, caseStudies };
 };
 
 export const fetchCaseStudy = async (
@@ -864,6 +865,9 @@ export const fetchAllCaseStudies = async (
                     width
                     height
                     description
+                }
+                sys {
+                    firstPublishedAt
                 }
             }
         }

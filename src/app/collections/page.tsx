@@ -9,19 +9,30 @@ import { Item } from '@/types/items.d';
 
 const CollectionsPage = async () => {
     const { isEnabled: isDraftModeEnabled } = draftMode();
-    const { collections, writings } = await fetchAllData(isDraftModeEnabled);
-    if (!collections && !writings) redirect('/');
+    const { collections, writings, caseStudies } = await fetchAllData(isDraftModeEnabled);
+    if (!collections && !writings && !caseStudies) redirect('/');
 
     const allItems: Item[] = [
         ...(collections || []).map(item => ({
             ...item,
-            type: 'collection' as const,  // Use 'as const' to narrow the type
+            type: 'collection' as const,
             sys: item.sys ? { published: item.sys.published } : undefined
         })),
         ...(writings || []).map(item => ({
             ...item,
-            type: 'writing' as const,  // Use 'as const' to narrow the type
+            type: 'writing' as const,
             sys: item.sys ? { published: item.sys.published } : undefined
+        })),
+        ...(caseStudies || []).map(item => ({
+            slug: item.slug,
+            title: item.title,
+            type: 'caseStudy' as const,
+            photosCollection: {
+                items: item.coverImage
+                    ? [{ fullSize: { url: item.coverImage.url, width: item.coverImage.width, height: item.coverImage.height, description: item.coverImage.description }, base64: undefined }]
+                    : []
+            },
+            sys: item.sys ? { published: item.sys.firstPublishedAt } : undefined,
         })),
     ];
 
