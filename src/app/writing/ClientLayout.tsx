@@ -143,7 +143,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children, posts }) => {
       <div className="lg:bg-dots flex-1 h-[calc(100vh-48px)] lg:h-[calc(100vh)] overflow-hidden">
         <div
           ref={contentRef}
-          className="lg:bg-dots flex-1 h-[calc(100vh-48px)] lg:h-[calc(100vh)] overflow-scroll"
+          className="lg:bg-dots flex-1 h-[calc(100vh-48px)] lg:h-[calc(100vh)] overflow-scroll overscroll-contain"
         >
           {children}
         </div>
