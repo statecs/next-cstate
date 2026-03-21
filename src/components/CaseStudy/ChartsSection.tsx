@@ -70,13 +70,13 @@ export const ChartsSection = ({
                 <p className="text-xs font-semibold uppercase tracking-widest text-yellow-500 mb-2">
                     {metaResponses ? `· LEARNER FEEDBACK · ${metaResponses}` : 'DATA & INSIGHTS'}
                 </p>
-                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-10">
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-10">
                     Data &amp; Insights
                 </h2>
                 <div className="grid gap-10 lg:grid-cols-2">
                     {ratingDistributionData && (
-                        <div className="group cursor-default rounded-xl border border-zinc-700/50 bg-zinc-800/60 p-6 border-t-2 border-t-yellow-500/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 hover:border-zinc-600/70">
-                            <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-4">
+                        <div className="group cursor-default rounded-xl border border-gray-200 bg-white dark:border-zinc-700/50 dark:bg-zinc-800/60 p-6 border-t-2 border-t-yellow-500/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 hover:border-gray-300 dark:hover:border-zinc-600/70">
+                            <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-zinc-400 mb-4">
                                 Rating Distribution
                             </h3>
                             <div className="flex justify-center">
@@ -103,7 +103,7 @@ export const ChartsSection = ({
                                     />
                                     {avgScore && (
                                         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                            <span className="text-2xl font-bold text-white">{avgScore}</span>
+                                            <span className="text-2xl font-bold text-gray-900 dark:text-white">{avgScore}</span>
                                             <span className="text-yellow-400 text-sm">★ avg</span>
                                         </div>
                                     )}
@@ -117,7 +117,7 @@ export const ChartsSection = ({
                                             className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0"
                                             style={{ backgroundColor: RATING_COLORS[i % RATING_COLORS.length] }}
                                         />
-                                        <span className="text-xs text-zinc-400">{label}</span>
+                                        <span className="text-xs text-gray-500 dark:text-zinc-400">{label}</span>
                                     </div>
                                 ))}
                             </div>
@@ -125,8 +125,8 @@ export const ChartsSection = ({
                     )}
 
                     {avgRatingPerModuleData && (
-                        <div className="group cursor-default rounded-xl border border-zinc-700/50 bg-zinc-800/60 p-6 border-t-2 border-t-yellow-500/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 hover:border-zinc-600/70">
-                            <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-4">
+                        <div className="group cursor-default rounded-xl border border-gray-200 bg-white dark:border-zinc-700/50 dark:bg-zinc-800/60 p-6 border-t-2 border-t-yellow-500/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 hover:border-gray-300 dark:hover:border-zinc-600/70">
+                            <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-zinc-400 mb-4">
                                 Avg. Rating per Module
                             </h3>
                             <Bar
@@ -166,8 +166,8 @@ export const ChartsSection = ({
                     )}
 
                     {responseVolumeData && (
-                        <div className="group cursor-default rounded-xl border border-zinc-700/50 bg-zinc-800/60 p-6 border-t-2 border-t-blue-500/60 lg:col-span-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 hover:border-zinc-600/70">
-                            <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-4">
+                        <div className="group cursor-default rounded-xl border border-gray-200 bg-white dark:border-zinc-700/50 dark:bg-zinc-800/60 p-6 border-t-2 border-t-blue-500/60 lg:col-span-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 hover:border-gray-300 dark:hover:border-zinc-600/70">
+                            <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-zinc-400 mb-4">
                                 Response Volume by Module
                             </h3>
                             <div className="h-56">

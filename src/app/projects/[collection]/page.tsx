@@ -57,7 +57,7 @@ const CollectionPage = async ({params}: Props) => {
                     ctaLabel={collection.ctaLabel}
                     ctaUrl={collection.ctaUrl}
                 />
-                <div className="min-h-screen text-white pb-24">
+                <div className="min-h-screen pb-24">
                     <div className="max-w-3xl mx-auto px-6 py-12">
                         <PageHeader
                             description={collection?.showDescription ? collection.description : null}
