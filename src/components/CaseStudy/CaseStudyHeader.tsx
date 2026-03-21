@@ -1,6 +1,8 @@
 'use client';
 
 import { useLayoutEffect, useState } from 'react';
+import Link from 'next/link';
+import { ExternalLinkIcon } from 'lucide-react';
 
 interface CaseStudyHeaderProps {
     title: string;
@@ -12,6 +14,8 @@ interface CaseStudyHeaderProps {
     metaDuration?: string;
     metaResponses?: string;
     coverImage?: string;
+    ctaLabel?: string;
+    ctaUrl?: string;
 }
 
 export const CaseStudyHeader = ({
@@ -24,6 +28,8 @@ export const CaseStudyHeader = ({
     metaDuration,
     metaResponses,
     coverImage,
+    ctaLabel,
+    ctaUrl,
 }: CaseStudyHeaderProps) => {
     const [animate, setAnimate] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
@@ -103,6 +109,20 @@ export const CaseStudyHeader = ({
                         ))}
                     </dl>
                 ) : null}
+
+                {ctaLabel && ctaUrl && (
+                    <div className={`mt-8 opacity-0${animate ? ' animate-fadeInUp animate-delay-[300ms]' : ''}`}>
+                        <Link
+                            href={ctaUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-6 py-3 border border-white text-white text-xs font-semibold uppercase tracking-widest hover:bg-white hover:text-black transition-colors duration-200"
+                        >
+                            <span>{ctaLabel}</span>
+                            <ExternalLinkIcon size={14} />
+                        </Link>
+                    </div>
+                )}
             </div>
         </div>
     );

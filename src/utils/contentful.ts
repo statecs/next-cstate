@@ -268,6 +268,17 @@ export const fetchAllCollections = async (
                 description {
                     json
                 }
+                coverImage {
+                    url(transform: { width: 1200 })
+                    width
+                    height
+                    description
+                }
+                titleHighlight
+                subtitle
+                metaRole
+                metaTools
+                metaDuration
                 photoSort
                 photosCollection(limit: 50) {
                     items {
@@ -366,6 +377,17 @@ export const fetchCollection = async (
                 isFeatured
                 isPublic
                 showDescription
+                coverImage {
+                    url(transform: { width: 1200 })
+                    width
+                    height
+                    description
+                }
+                titleHighlight
+                subtitle
+                metaRole
+                metaTools
+                metaDuration
                 photoSort
                 photosCollection(limit: 50) {
                     items {

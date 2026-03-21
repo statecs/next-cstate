@@ -9,6 +9,7 @@ import { ScrollArea } from '@/components/SideMenu/ScrollArea';
 import { FloatingHeader } from '@/components/ListLayout/FloatingHeader';
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { CaseStudyPage } from '@/components/CaseStudy/CaseStudyPage';
+import { CaseStudyHeader } from '@/components/CaseStudy/CaseStudyHeader';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,6 +39,33 @@ const CollectionPage = async ({params}: Props) => {
     if (collection?.isPublic == false && !authStatus) {
         const baseUrl = process.env.NEXT_PUBLIC_URL;
         redirect(`${baseUrl}/api/auth/login?post_login_redirect_url=${baseUrl}/projects`);
+    }
+
+    if (collection.coverImage) {
+        return (
+            <ScrollArea useScrollAreaId>
+                <FloatingHeader scrollTitle="Projects" goBackLink="/projects" />
+                <CaseStudyHeader
+                    title={collection.title}
+                    titleHighlight={collection.titleHighlight}
+                    subtitle={collection.subtitle}
+                    tags={collection.category?.split(',').map(t => t.trim())}
+                    metaRole={collection.metaRole}
+                    metaTools={collection.metaTools}
+                    metaDuration={collection.metaDuration}
+                    coverImage={collection.coverImage.url}
+                    ctaLabel={collection.ctaLabel}
+                    ctaUrl={collection.ctaUrl}
+                />
+                <div className="min-h-screen text-white pb-24">
+                    <div className="max-w-3xl mx-auto px-6 py-12">
+                        <PageHeader
+                            description={collection?.showDescription ? collection.description : null}
+                        />
+                    </div>
+                </div>
+            </ScrollArea>
+        );
     }
 
     return (

@@ -28,6 +28,12 @@ interface PhotoCollection {
     photosCollection: {
         items: Photo[];
     };
+    coverImage?: { url: string; width: number; height: number; description?: string };
+    titleHighlight?: string;
+    subtitle?: string;
+    metaRole?: string;
+    metaTools?: string;
+    metaDuration?: string;
     description?: string;
     isFeatured?: boolean;
     isPublic?: boolean;
