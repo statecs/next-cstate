@@ -181,23 +181,39 @@ export const fetchCollectionNavigation = async (): Promise<Link[]> => {
     const query = `query {
         collectionNavigationCollection(limit: 1, order: [sys_publishedAt_DESC]) {
             items {
-                collectionsCollection{
+                collectionsCollection {
                     items {
-                        title
-                        slug
-                        category
-                        date
-                        isPublic
-                      	photosCollection(limit: 1){
-                          items {
-                            fullSize {
-                                url
+                        __typename
+                        ... on Collection {
+                            title
+                            slug
+                            category
+                            date
+                            isPublic
+                            photosCollection(limit: 1) {
+                                items {
+                                    fullSize {
+                                        url
+                                        description
+                                    }
+                                }
+                            }
+                            sys {
+                                published: firstPublishedAt
+                            }
+                        }
+                        ... on CaseStudy {
+                            title
+                            slug
+                            tags
+                            isPublic
+                            coverImage {
+                                url(transform: {width: 800})
                                 description
                             }
-                          }
-                        }
-                        sys {
-                            published: firstPublishedAt
+                            sys {
+                                published: firstPublishedAt
+                            }
                         }
                     }
                 }
@@ -207,15 +223,21 @@ export const fetchCollectionNavigation = async (): Promise<Link[]> => {
     const response: any = await fetchContent(query, false, 'navigation');
     const items =
         response?.data?.collectionNavigationCollection?.items?.[0]?.collectionsCollection?.items?.map(
-            (item: PhotoCollection) => ({
-                published: item?.sys?.published,
-                title: item.title,
-                url: `/${item.slug}`,
-                date: item.date,
-                isPublic: item.isPublic,
-                category: item.category,
-                image: item.photosCollection.items[0]?.fullSize?.url || ''
-            })
+            (item: any) => {
+                const image = item.__typename === 'CaseStudy'
+                    ? item.coverImage?.url || ''
+                    : item.photosCollection?.items?.[0]?.fullSize?.url || '';
+
+                return {
+                    published: item?.sys?.published,
+                    title: item.title,
+                    url: `/${item.slug}`,
+                    date: item.date,
+                    isPublic: item.isPublic,
+                    category: item.category,
+                    image,
+                };
+            }
         );
 
     return items || [];

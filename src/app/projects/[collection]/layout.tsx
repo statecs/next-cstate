@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Suspense } from 'react'
 import config from '@/utils/config';
-import { fetchEditorialPage, fetchCollectionNavigation } from '@/utils/contentful';
+import { fetchEditorialPage, fetchCollectionNavigation, fetchAllCaseStudies } from '@/utils/contentful';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { getEditorialSeo } from '@/utils/helpers';
 import ClientLayout from '../ClientLayout';
@@ -12,9 +12,12 @@ interface LayoutProps {
 
 const CollectionLayout: React.FC<LayoutProps> = async ({ children }) => {
   try {
-    const links = await fetchCollectionNavigation();
+    const [links, caseStudies] = await Promise.all([
+      fetchCollectionNavigation(),
+      fetchAllCaseStudies(),
+    ]);
 
-    const posts: Post[] = (links || []).map((link) => ({
+    const navPosts: Post[] = (links || []).map((link) => ({
       url: link.url,
       title: link.title,
       slug: link.url,
@@ -25,6 +28,23 @@ const CollectionLayout: React.FC<LayoutProps> = async ({ children }) => {
       category: link.category,
       published: link.published || 'Not specified',
     }));
+
+    const caseStudyPosts: Post[] = (caseStudies || []).map((cs) => ({
+      url: `/${cs.slug}`,
+      title: cs.title,
+      slug: `/${cs.slug}`,
+      image: cs.coverImage?.url || '',
+      date: undefined,
+      isPublic: cs.isPublic,
+      category: cs.tags?.join(', ') || '',
+      published: cs.sys?.firstPublishedAt || 'Not specified',
+    }));
+
+    const seen = new Set(navPosts.map(p => p.url));
+    const posts = [
+      ...navPosts,
+      ...caseStudyPosts.filter(p => !seen.has(p.url)),
+    ].sort((a, b) => (b.published > a.published ? 1 : -1));
 
     return (
       <ClientLayout posts={posts} key="projects-layout">
