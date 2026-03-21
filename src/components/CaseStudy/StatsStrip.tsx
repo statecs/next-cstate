@@ -6,16 +6,14 @@ export const StatsStrip = ({ stats }: StatsStripProps) => {
     if (!stats?.length) return null;
 
     return (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="flex flex-wrap bg-zinc-900">
             {stats.map((stat, i) => (
                 <div
                     key={i}
-                    className="rounded-xl bg-gray-50 dark:bg-zinc-800/60 p-4 text-center"
+                    className={`flex-1 py-8 px-6 transition-colors duration-200 hover:bg-zinc-800 ${i < stats.length - 1 ? 'border-r border-zinc-800' : ''}`}
                 >
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {stat.num}
-                    </div>
-                    <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 whitespace-pre-line leading-snug">
+                    <div className="text-5xl font-bold text-white">{stat.num}</div>
+                    <div className="text-xs text-zinc-400 mt-1 whitespace-pre-line leading-snug">
                         {stat.desc}
                     </div>
                 </div>

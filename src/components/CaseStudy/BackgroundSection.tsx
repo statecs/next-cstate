@@ -16,7 +16,7 @@ export const BackgroundSection = ({
     if (!backgroundLabel && !backgroundHeading && !backgroundBody && !stats?.length) return null;
 
     return (
-        <section className="py-12 px-4 sm:px-8">
+        <section className="py-16 px-4 sm:px-8">
             <div className="max-w-3xl mx-auto">
                 {backgroundLabel && (
                     <p className="text-xs font-semibold uppercase tracking-widest text-yellow-500 mb-3">

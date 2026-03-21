@@ -16,6 +16,7 @@ interface CaseStudyPageProps {
 export const CaseStudyPage = ({ caseStudy }: CaseStudyPageProps) => {
     return (
         <ScrollArea useScrollAreaId>
+            <div className="min-h-screen text-white">
             <FloatingHeader scrollTitle="Projects" goBackLink="/projects" />
             <CaseStudyHeader
                 title={caseStudy.title}
@@ -40,6 +41,7 @@ export const CaseStudyPage = ({ caseStudy }: CaseStudyPageProps) => {
                     ratingDistributionData={caseStudy.ratingDistributionData}
                     avgRatingPerModuleData={caseStudy.avgRatingPerModuleData}
                     responseVolumeData={caseStudy.responseVolumeData}
+                    metaResponses={caseStudy.metaResponses}
                 />
             )}
             {caseStudy.quotes?.length ? <QuoteWall quotes={caseStudy.quotes} /> : null}
@@ -55,6 +57,7 @@ export const CaseStudyPage = ({ caseStudy }: CaseStudyPageProps) => {
                     resultsBullets={caseStudy.resultsBullets}
                 />
             ) : null}
+            </div>
         </ScrollArea>
     );
 };

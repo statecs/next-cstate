@@ -28,7 +28,7 @@ module.exports = {
                 'enter-right': 'enter-right 0.6s cubic-bezier(.6,.12,.38,.99) forwards',
                 'enter-left': 'enter-left 0.6s cubic-bezier(.6,.12,.38,.99) forwards',
                 fadeIn: 'fadeIn 0.6s cubic-bezier(.6,.12,.38,.99) forwards',
-                fadeInUp: 'fadeInUp 0.6s cubic-bezier(.6,.12,.38,.99) forwards',
+                fadeInUp: 'fadeInUp 0.4s cubic-bezier(.6,.12,.38,.99) forwards',
                 'menu-open': 'menu-open 0.4s cubic-bezier(.6,.12,.38,.99) forwards',
                 'menu-closed': 'menu-closed 0.2s cubic-bezier(.6,.12,.38,.99) forwards',
                 'menu-open-overlay': 'menu-open-overlay 0.4s cubic-bezier(.6,.12,.38,.99) forwards',

@@ -5,43 +5,41 @@ interface QuoteWallProps {
 export const QuoteWall = ({ quotes }: QuoteWallProps) => {
     if (!quotes?.length) return null;
 
-    const likes = quotes.filter(q => q.type === 'like');
-    const improvements = quotes.filter(q => q.type === 'improve');
-
-    const renderGroup = (items: CaseStudyQuote[], label: string, accent: string) => {
-        if (!items.length) return null;
-        return (
-            <div>
-                <h3 className={`text-sm font-semibold uppercase tracking-widest mb-4 ${accent}`}>
-                    {label}
-                </h3>
-                <div className="grid gap-3 sm:grid-cols-2">
-                    {items.map((q, i) => (
-                        <div
-                            key={i}
-                            className="rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-4"
-                        >
-                            <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
-                                &ldquo;{q.text}&rdquo;
-                            </p>
-                            <span className="text-xs text-gray-400 dark:text-gray-500">
-                                {q.label}
-                            </span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        );
-    };
-
     return (
         <section className="py-12 px-4 sm:px-8">
-            <div className="max-w-5xl mx-auto space-y-10">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                    Learner Feedback
-                </h2>
-                {renderGroup(likes, 'What they liked', 'text-green-500')}
-                {renderGroup(improvements, 'What to improve', 'text-orange-400')}
+            <div className="max-w-5xl mx-auto">
+                <p className="text-xs font-semibold uppercase tracking-widest text-yellow-500 mb-2">
+                    QUALITATIVE FEEDBACK
+                </p>
+                <h2 className="text-3xl font-bold text-white mb-2">Voice of the learner</h2>
+                <p className="text-sm text-zinc-500 mb-8">
+                    Selected verbatim comments from learners across all modules.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                    {quotes.map((q, i) => {
+                        const isLike = q.type === 'like';
+                        const chipBg = isLike ? 'bg-green-900/60 text-green-400' : 'bg-orange-900/60 text-orange-400';
+                        return (
+                            <div
+                                key={i}
+                                className="rounded-xl border border-zinc-700 bg-zinc-800/60 p-4 w-full sm:w-[calc(50%-0.375rem)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/30 hover:border-zinc-600/70"
+                            >
+                                <p className="text-xs text-zinc-600 font-mono mb-2">#{i + 1}</p>
+                                <p className="text-sm text-gray-200 leading-relaxed mb-3">
+                                    &ldquo;{q.text}&rdquo;
+                                </p>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-xs text-zinc-500">{q.label}</span>
+                                    {q.type && (
+                                        <span className={`text-[10px] uppercase tracking-widest font-semibold px-2 py-0.5 rounded ${chipBg}`}>
+                                            {q.type}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
         </section>
     );
