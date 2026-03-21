@@ -11,6 +11,7 @@ interface CaseStudyHeaderProps {
     metaTools?: string;
     metaDuration?: string;
     metaResponses?: string;
+    coverImage?: string;
 }
 
 export const CaseStudyHeader = ({
@@ -22,12 +23,21 @@ export const CaseStudyHeader = ({
     metaTools,
     metaDuration,
     metaResponses,
+    coverImage,
 }: CaseStudyHeaderProps) => {
     const [animate, setAnimate] = useState(false);
+    const [imageLoaded, setImageLoaded] = useState(false);
 
     useLayoutEffect(() => {
         setAnimate(true);
     }, []);
+
+    useLayoutEffect(() => {
+        if (!coverImage) return;
+        const img = new Image();
+        img.onload = () => setImageLoaded(true);
+        img.src = coverImage;
+    }, [coverImage]);
 
     const parts = titleHighlight ? title.split(titleHighlight) : [title];
 
@@ -39,8 +49,19 @@ export const CaseStudyHeader = ({
     ].filter(item => item.value);
 
     return (
-        <div className="bg-gray-900 dark:bg-zinc-950 text-white px-4 sm:px-8 py-20 sm:py-28">
-            <div className="max-w-5xl mx-auto">
+        <div
+            className="relative text-white px-4 sm:px-8 py-20 sm:py-28 bg-gray-900 dark:bg-zinc-950 bg-cover bg-center"
+            style={coverImage && imageLoaded ? { backgroundImage: `url(${coverImage})` } : undefined}
+        >
+            {coverImage && imageLoaded && (
+                <div className="absolute inset-0 bg-black/70" aria-hidden="true" />
+            )}
+            {coverImage && !imageLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
+                    <div className="w-8 h-8 rounded-full border-2 border-zinc-600 border-t-white animate-spin" />
+                </div>
+            )}
+            <div className="relative z-10 max-w-5xl mx-auto">
                 {tags?.length ? (
                     <div className={`flex flex-wrap gap-2 mb-6 opacity-0${animate ? ' animate-fadeInUp' : ''}`}>
                         {tags.map(tag => (

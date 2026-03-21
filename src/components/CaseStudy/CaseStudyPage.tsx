@@ -27,6 +27,7 @@ export const CaseStudyPage = ({ caseStudy }: CaseStudyPageProps) => {
                 metaTools={caseStudy.metaTools}
                 metaDuration={caseStudy.metaDuration}
                 metaResponses={caseStudy.metaResponses}
+                coverImage={caseStudy.coverImage?.url}
             />
             <BackgroundSection
                 backgroundLabel={caseStudy.backgroundLabel}
