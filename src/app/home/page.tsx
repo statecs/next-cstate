@@ -21,24 +21,38 @@ const HomePage = async () => {
 
                 {/* Bio Section */}
                 <section className="w-full max-w-5xl mx-auto px-4 py-16 animate-fadeIn opacity-0" style={{ animationDelay: '200ms' }}>
-                    <h2
-                        className="text-3xl sm:text-4xl font-bold font-serif mb-4 text-gray-900 dark:text-white"
-                        style={{ lineHeight: '1.3' }}
-                    >
-                        About Me
-                    </h2>
-                    <p className="text-gray-700 dark:text-gray-300 text-lg sm:text-xl leading-relaxed mb-8 max-w-3xl">
-                        Design Engineer based in Stockholm, working at the intersection of design and code. Focus on accessibility and user experience. Currently exploring how AI can support accessible design.
-                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+                        {/* Left: Bio */}
+                        <div className="text-gray-700 dark:text-gray-300 text-lg sm:text-xl leading-relaxed">
+                            Design Engineer based in Stockholm, working at the intersection of design and code. Focus on accessibility and user experience. Currently exploring how AI can support accessible design.
+                        </div>
 
-                    {/* Top Skills */}
-                    <div className="mt-8">
-                        <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
-                            Top skills
-                        </h3>
-                        <p className="text-gray-700 dark:text-gray-300 text-lg">
-                            UX Research • Accessibility • Prompt Engineering
-                        </p>
+                        {/* Right: Skills + Location */}
+                        <div className="space-y-6">
+                            <div>
+                                <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3 uppercase tracking-wider">
+                                    Top skills
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {['UX Research', 'Accessibility', 'Prompt Engineering'].map(skill => (
+                                        <span
+                                            key={skill}
+                                            className="px-3 py-1.5 rounded-full text-sm font-medium bg-transparent text-gray-500 dark:text-gray-500 border border-gray-300/40 dark:border-gray-600/40"
+                                        >
+                                            {skill}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                                <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <span className="text-sm">Stockholm, Sweden</span>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -49,7 +63,7 @@ const HomePage = async () => {
                 <section id="ai-assistant" className="w-full max-w-4xl mx-auto px-4 py-16 animate-fadeIn opacity-0" style={{ animationDelay: '300ms' }}>
                     <div className="text-center mb-8">
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-500/20 dark:to-purple-500/20 border border-blue-500/20 dark:border-blue-500/30 mb-4">
-                            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
                             <span className="text-sm font-medium text-gray-700 dark:text-gray-200">AI Assistant</span>
                         </div>
                         <h2

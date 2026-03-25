@@ -46,7 +46,7 @@ const SimpleHero: React.FC = () => {
           <div className="relative w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden ring-4 ring-gray-800 dark:ring-gray-700">
             <Image
               src="/images/me.jpeg"
-              alt="Christopher State"
+              alt="A young man with glasses smiles warmly against a purple background. His expression conveys friendliness and approachability."
               fill
               className="object-cover"
               unoptimized
@@ -59,7 +59,7 @@ const SimpleHero: React.FC = () => {
           className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold font-serif text-white mb-6 animate-fadeIn opacity-0"
           style={{ animationDelay: '400ms', lineHeight: '1.1' }}
         >
-          Hi, I&apos;m Christopher State.
+          Hi, I&apos;m Christopher.
         </h1>
 
         {/* Subtitle */}
