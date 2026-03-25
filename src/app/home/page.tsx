@@ -37,7 +37,7 @@ const HomePage = async () => {
                                     {['UX Research', 'Accessibility', 'Prompt Engineering'].map(skill => (
                                         <span
                                             key={skill}
-                                            className="px-3 py-1.5 rounded-full text-sm font-medium bg-transparent text-gray-500 dark:text-gray-500 border border-gray-300/40 dark:border-gray-600/40"
+                                            className="px-3 py-1.5 rounded-full text-sm font-medium bg-transparent text-gray-500 dark:text-gray-400 border border-gray-300/40 dark:border-gray-600/40"
                                         >
                                             {skill}
                                         </span>
