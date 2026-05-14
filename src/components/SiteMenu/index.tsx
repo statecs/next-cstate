@@ -34,7 +34,7 @@ const SiteMenu: React.FC = () => {
     return isAuthenticated ? (
         <nav aria-label="Authenticated user navigation" className="py-2 sm:mb-16 space-y-0.5 sm:py-8 sm:space-y-0 md:sticky md:top-16 md:py-0">
             <div>
-                <div className="mt-2 border-t border-gray-200 pt-4 dark:border-zinc-700">
+                <div>
                     <div className="py-4 flex flex-col dark:text-gray-300 text-sm w-full justify-left items-start space-y-3">
 
                         {isNewUser && (
@@ -72,15 +72,7 @@ const SiteMenu: React.FC = () => {
                 </div>
             </div>
         </nav>
-    ) : (
-        // Non-authenticated navigation structure
-        <nav aria-label="Guest navigation" className="py-2 sm:mb-16 space-y-0.5 sm:py-8 sm:space-y-0 md:sticky md:top-16 md:py-0">
-            <div>
-                <div className="mt-2 border-t border-gray-200 pt-4 dark:border-zinc-700">
-                </div>
-            </div>
-        </nav>
-    );
+    ) : null;
 };
 
 export default SiteMenu;
