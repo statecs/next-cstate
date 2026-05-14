@@ -44,7 +44,7 @@ function TypeBadge({ kind }: { kind?: Post['kind'] }) {
     'writing': 'Writing',
   };
   return (
-    <span className={`font-mono text-[9px] uppercase tracking-widest px-1.5 py-0.5 ${map[kind]}`}>
+    <span className={`font-mono text-[9px] uppercase tracking-widest px-1.5 py-0.5 rounded ${map[kind]}`}>
       {label[kind]}
     </span>
   );
@@ -58,7 +58,7 @@ function WritingThumb({ title }: { title: string }) {
         backgroundImage: 'repeating-linear-gradient(45deg,var(--hatching,#E8E4DB) 0 10px,transparent 10px 20px)',
       }}
     >
-      <span className="font-serif text-base leading-snug text-zinc-700 dark:text-zinc-200 line-clamp-3">
+      <span className="text-base font-medium leading-snug text-zinc-700 dark:text-zinc-200 line-clamp-3">
         {title}
       </span>
     </div>
@@ -72,11 +72,11 @@ function GridCard({ post }: { post: EntryWithIndex }) {
   const isNew = isCollectionNew(post.date);
 
   return (
-    <article className="relative flex flex-col border-r border-b border-zinc-200 dark:border-zinc-800 group transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/30">
+    <article className="relative flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden group transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/30">
       <Link href={href} className="flex flex-col flex-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600">
 
         {/* Thumb */}
-        <div className="aspect-[4/3] overflow-hidden border-b border-zinc-200 dark:border-zinc-800 relative bg-zinc-100 dark:bg-zinc-900">
+        <div className="aspect-[4/3] overflow-hidden border-b border-zinc-200 dark:border-zinc-800 relative bg-zinc-100 dark:bg-zinc-900 rounded-t-md">
           {post.image ? (
             <Image
               src={post.image}
@@ -108,7 +108,7 @@ function GridCard({ post }: { post: EntryWithIndex }) {
 
         {/* Body */}
         <div className="p-4 flex flex-col gap-2 flex-1">
-          <h3 className="font-serif text-[22px] leading-tight text-zinc-900 dark:text-zinc-50 line-clamp-2">
+          <h3 className="font-serif text-xl leading-snug font-normal text-gray-900 dark:text-gray-100 line-clamp-2">
             {post.title}
           </h3>
 
@@ -117,7 +117,7 @@ function GridCard({ post }: { post: EntryWithIndex }) {
               {tags.map(tag => (
                 <span
                   key={tag}
-                  className="font-mono text-[9.5px] uppercase tracking-widest px-1.5 py-0.5 border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400"
+                  className="px-2.5 py-0.5 rounded-full text-xs font-medium border border-gray-300/50 dark:border-zinc-600/50 text-zinc-500 dark:text-zinc-400"
                 >
                   {tag}
                 </span>
@@ -158,7 +158,7 @@ function ListRow({ post }: { post: EntryWithIndex }) {
         {tags.map(tag => (
           <span
             key={tag}
-            className="font-mono text-[9px] uppercase tracking-widest px-1 py-0.5 border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 whitespace-nowrap"
+            className="px-2.5 py-0.5 rounded-full text-xs font-medium border border-gray-300/50 dark:border-zinc-600/50 text-zinc-500 dark:text-zinc-400 whitespace-nowrap"
           >
             {tag}
           </span>
@@ -202,7 +202,7 @@ const ProjectsGrid: React.FC<ProjectsGridProps> = ({ entries, view = 'grid', pro
   }
 
   return (
-    <div className="border-l border-t border-zinc-200 dark:border-zinc-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 p-3 sm:p-4">
       {items.map(post => (
         <GridCard key={post.slug} post={post} />
       ))}

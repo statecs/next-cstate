@@ -155,12 +155,12 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
                   key={chip.value}
                   onClick={() => setKindFilter(chip.value)}
                   className={[
-                    'font-mono text-[11px] uppercase tracking-widest px-2.5 py-1 border transition-colors',
+                    'font-mono text-[11px] uppercase tracking-widest px-2.5 py-1 border rounded-full transition-colors',
                     kindFilter === chip.value
                       ? chip.value === 'all'
                         ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white'
                         : 'bg-red-600 text-white border-red-600'
-                      : 'bg-white dark:bg-transparent text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 dark:hover:border-zinc-500',
+                      : 'bg-white dark:bg-transparent text-zinc-600 dark:text-zinc-400 border-gray-300/50 dark:border-zinc-600/50 hover:border-zinc-500 dark:hover:border-zinc-500',
                   ].join(' ')}
                 >
                   {chip.label} <span className="opacity-60">{chip.count}</span>
@@ -174,10 +174,10 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
                 <button
                   onClick={() => setTagFilter(null)}
                   className={[
-                    'font-mono text-[11px] uppercase tracking-widest px-2.5 py-1 border transition-colors',
+                    'font-mono text-[11px] uppercase tracking-widest px-2.5 py-1 border rounded-full transition-colors',
                     tagFilter === null
                       ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white'
-                      : 'bg-white dark:bg-transparent text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-zinc-500',
+                      : 'bg-white dark:bg-transparent text-zinc-600 dark:text-zinc-400 border-gray-300/50 dark:border-zinc-600/50 hover:border-zinc-500',
                   ].join(' ')}
                 >
                   Any
@@ -187,10 +187,10 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
                     key={tag}
                     onClick={() => setTagFilter(prev => prev === tag ? null : tag)}
                     className={[
-                      'font-mono text-[11px] uppercase tracking-widest px-2.5 py-1 border transition-colors',
+                      'font-mono text-[11px] uppercase tracking-widest px-2.5 py-1 border rounded-full transition-colors',
                       tagFilter === tag
                         ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white'
-                        : 'bg-white dark:bg-transparent text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-zinc-500',
+                        : 'bg-white dark:bg-transparent text-zinc-600 dark:text-zinc-400 border-gray-300/50 dark:border-zinc-600/50 hover:border-zinc-500',
                     ].join(' ')}
                   >
                     {tag}
