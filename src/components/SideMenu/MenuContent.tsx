@@ -8,8 +8,8 @@ import { PROFILES, LINKS } from '@/utils/constants';
 import { useAtom } from 'jotai';
 import { drawerAtom, userAtom, rolesAtom } from '@/utils/store';
 import { useAuthStatus } from '@/contexts/AuthContext';
-import { ChevronDown, LayoutDashboard, LogOut, LogIn, X, UserCircle } from 'lucide-react';
-import { LogoutLink, LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import { ChevronDown, LayoutDashboard, LogOut, UserCircle } from 'lucide-react';
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 
 interface LinkItem {
   href: string;
@@ -29,13 +29,6 @@ export const MenuContent: React.FC = () => {
   const [roles] = useAtom(rolesAtom);
   const { isAuthenticated } = useAuthStatus();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [showWelcomeMessage, setShowWelcomeMessage] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('showWelcomeMessage');
-      return stored !== null ? JSON.parse(stored) : true;
-    }
-    return true;
-  });
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const closeDrawer = () => setIsOpen(false);
@@ -65,15 +58,6 @@ export const MenuContent: React.FC = () => {
       document.removeEventListener('keydown', handleEscapeKey);
     };
   }, []);
-
-  useEffect(() => {
-    // Update localStorage when showWelcomeMessage changes
-    localStorage.setItem('showWelcomeMessage', JSON.stringify(showWelcomeMessage));
-  }, [showWelcomeMessage]);
-
-  const toggleWelcomeMessage = () => {
-    setShowWelcomeMessage((prev: boolean) => !prev);
-  };
 
   const handleButtonClick = () => {
     closeDrawer();
@@ -120,36 +104,14 @@ export const MenuContent: React.FC = () => {
               </div>
             )}
           </div>
-        ) : showWelcomeMessage ? (
-          <button
-          onClick={toggleWelcomeMessage}
-          className="link-card inline-flex items-center gap-2 p-2 w-full text-left mt-4 lg:mt-0"
-        >
-          <Image src="/images/me.jpeg" alt={userName} width={40} height={40} loading="lazy" className="rounded-full shadow-sm" unoptimized />
-          <div className="flex-grow">
-            <span className="font-semibold tracking-tight">{userName}</span>
-            <p className="text-gray-600 dark:text-gray-400">{userRole}</p>
-          </div>
-          <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
-        </button>
-
-         
         ) : (
-          <div className="relative p-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow-md mt-6 lg:mt-0">
-          <button
-            onClick={toggleWelcomeMessage}
-            className="absolute top-2 right-2 text-white hover:text-gray-200"
-            aria-label="Close welcome message"
-          >
-            <X size={20} />
-          </button>
-          <h2 className="text-xl font-bold text-white mb-2">Welcome to My Site</h2>
-          <p className="text-white mb-4">Sign in to access all features and personalize your experience.</p>
-          <LoginLink className="inline-flex items-center px-4 py-2 bg-white text-blue-600 rounded-md hover:bg-blue-50 transition duration-300 ease-in-out">
-            <LogIn className="w-4 h-4 mr-2" />
-            Sign In
-          </LoginLink>
-        </div>
+          <div className="link-card inline-flex items-center gap-2 p-2 w-full text-left mt-4 lg:mt-0">
+            <Image src="/images/me.jpeg" alt={userName} width={40} height={40} loading="lazy" className="rounded-full shadow-sm" unoptimized />
+            <div className="flex-grow">
+              <span className="font-semibold tracking-tight">{userName}</span>
+              <p className="text-gray-600 dark:text-gray-400">{userRole}</p>
+            </div>
+          </div>
         )}
 
         <ul className="flex flex-col gap-1 list-none">

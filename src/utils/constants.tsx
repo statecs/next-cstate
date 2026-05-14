@@ -8,7 +8,6 @@ import {
     NavigationIcon,
     BookmarkIcon,
     CircleUserIcon,
-    ContactIcon,
     StickerIcon
   } from 'lucide-react'
 
@@ -85,10 +84,5 @@ export const LINKS: Link[] = [
     href: '/projects',
     label: 'Projects',
     icon: <StickerIcon size={16} />
-  },
-  {
-    href: '/contact',
-    label: 'Contact',
-    icon: <ContactIcon size={16} />
   },
 ];

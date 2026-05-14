@@ -8,8 +8,8 @@ import { PROFILES, LINKS } from '@/utils/constants';
 import { useAtom } from 'jotai';
 import { userAtom, rolesAtom } from '@/utils/store';
 import { useAuthStatus } from '@/contexts/AuthContext';
-import { ChevronDown, LayoutDashboard, LogOut, LogIn, UserCircle, ArrowUpRightIcon } from 'lucide-react';
-import { LogoutLink, LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import { ChevronDown, LayoutDashboard, LogOut, UserCircle, ArrowUpRightIcon } from 'lucide-react';
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { cn } from '@/utils/helpers';
 
 interface LinkItem {
@@ -58,7 +58,7 @@ export const TopNav: React.FC = () => {
   };
 
   return (
-    <nav className="hidden lg:flex items-center justify-between w-full px-6 py-4 border-b dark:border-zinc-700 bg-white dark:bg-custom-light-gray">
+    <nav className="hidden lg:flex items-center justify-between w-full px-6 py-4 border-b dark:border-zinc-700 bg-white dark:bg-custom-light-gray relative">
       {/* Left: Logo/Home Link */}
       <div className="flex items-center gap-6">
         <Link href="/" className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity">
@@ -71,7 +71,7 @@ export const TopNav: React.FC = () => {
       </div>
 
       {/* Center: Navigation Links */}
-      <ul className="flex items-center gap-1">
+      <ul className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1">
         {LINKS.filter(link => link.href !== '/').map((link: LinkItem) => {
           const active = isActive(link.href);
           return (
@@ -95,13 +95,6 @@ export const TopNav: React.FC = () => {
 
       {/* Right: Secondary Actions */}
       <div className="flex items-center gap-4" suppressHydrationWarning>
-        <Link
-          href="/collections"
-          className="text-sm font-medium text-black dark:text-white hover:underline underline-offset-4"
-        >
-          All collections
-        </Link>
-
         {isAuthenticated ? (
           <div className="relative" ref={dropdownRef}>
             <button
@@ -136,12 +129,7 @@ export const TopNav: React.FC = () => {
               </div>
             )}
           </div>
-        ) : (
-          <LoginLink postLoginRedirectURL="/dashboard" className="inline-flex items-center gap-2 px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition font-bold text-sm">
-            <LogIn className="w-4 h-4" />
-            <span>Sign In</span>
-          </LoginLink>
-        )}
+        ) : null}
       </div>
     </nav>
   );
