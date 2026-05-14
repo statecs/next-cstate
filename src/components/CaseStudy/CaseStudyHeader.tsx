@@ -1,8 +1,6 @@
 'use client';
 
-import { useLayoutEffect, useState } from 'react';
-import Link from 'next/link';
-import { ExternalLinkIcon } from 'lucide-react';
+import Image from 'next/image';
 
 interface CaseStudyHeaderProps {
     title: string;
@@ -14,6 +12,8 @@ interface CaseStudyHeaderProps {
     metaDuration?: string;
     metaResponses?: string;
     coverImage?: string;
+    coverImageDescription?: string;
+    slug?: string;
     ctaLabel?: string;
     ctaUrl?: string;
 }
@@ -28,23 +28,11 @@ export const CaseStudyHeader = ({
     metaDuration,
     metaResponses,
     coverImage,
+    coverImageDescription,
+    slug,
     ctaLabel,
     ctaUrl,
 }: CaseStudyHeaderProps) => {
-    const [animate, setAnimate] = useState(false);
-    const [imageLoaded, setImageLoaded] = useState(false);
-
-    useLayoutEffect(() => {
-        setAnimate(true);
-    }, []);
-
-    useLayoutEffect(() => {
-        if (!coverImage) return;
-        const img = new Image();
-        img.onload = () => setImageLoaded(true);
-        img.src = coverImage;
-    }, [coverImage]);
-
     const parts = titleHighlight ? title.split(titleHighlight) : [title];
 
     const metaItems = [
@@ -55,37 +43,43 @@ export const CaseStudyHeader = ({
     ].filter(item => item.value);
 
     return (
-        <div
-            className="relative text-white px-4 sm:px-8 py-20 sm:py-28 bg-gray-900 dark:bg-zinc-950 bg-cover bg-center"
-            style={coverImage && imageLoaded ? { backgroundImage: `url(${coverImage})` } : undefined}
-        >
-            {coverImage && imageLoaded && (
-                <div className="absolute inset-0 bg-black/70" aria-hidden="true" />
-            )}
-            {coverImage && !imageLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
-                    <div className="w-8 h-8 rounded-full border-2 border-zinc-600 border-t-white animate-spin" />
-                </div>
-            )}
-            <div className="relative z-10 max-w-5xl mx-auto">
-                {tags?.length ? (
-                    <div className={`flex flex-wrap gap-2 mb-6 opacity-0${animate ? ' animate-fadeInUp' : ''}`}>
-                        {tags.map(tag => (
-                            <span
-                                key={tag}
-                                className="rounded-full border border-zinc-600/50 px-2.5 py-0.5 text-xs font-medium text-zinc-400"
-                            >
-                                {tag}
+        <div className="bg-[#F4F1EA] dark:bg-zinc-950">
+            {/* Hero */}
+            <div className="px-8 pt-16 pb-12 border-b border-zinc-900 dark:border-zinc-700">
+              <div className="max-w-[60%] mx-auto">
+                {/* Kicker row */}
+                <div className="flex items-center justify-between mb-10 font-mono text-[11px] uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-400">
+                    <span>
+                        <span className="text-red-600 dark:text-red-500">§ 00</span>
+                        {' — Case file'}
+                        {slug ? ` · ${slug}` : ''}
+                    </span>
+                    <div className="flex items-center gap-3">
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-red-600 dark:bg-red-500 inline-block" />
+                            Active
+                        </span>
+                        {tags?.length ? (
+                            <span className="hidden sm:flex items-center gap-2">
+                                {tags.slice(0, 3).map(tag => (
+                                    <span key={tag} className="border border-zinc-400 dark:border-zinc-600 px-2 py-0.5 text-[10px]">
+                                        {tag}
+                                    </span>
+                                ))}
                             </span>
-                        ))}
+                        ) : null}
                     </div>
-                ) : null}
+                </div>
 
-                <h1 className={`text-6xl sm:text-7xl lg:text-8xl font-bold leading-none tracking-tight mb-4 opacity-0${animate ? ' animate-fadeInUp animate-delay-[75ms]' : ''}`}>
+                {/* H1 */}
+                <h1
+                    className="font-serif leading-[0.86] tracking-[-0.045em] text-zinc-900 dark:text-zinc-50 mb-6"
+                    style={{ fontSize: 'clamp(48px, 10vw, 140px)' }}
+                >
                     {titleHighlight ? (
                         <>
                             {parts[0]}
-                            <em className="text-yellow-400 not-italic">{titleHighlight}</em>
+                            <em className="text-red-600 dark:text-red-500">{titleHighlight}</em>
                             {parts[1]}
                         </>
                     ) : (
@@ -93,37 +87,70 @@ export const CaseStudyHeader = ({
                     )}
                 </h1>
 
+                {/* Lede */}
                 {subtitle && (
-                    <p className={`text-base sm:text-lg text-zinc-400 mt-3 mb-0 opacity-0${animate ? ' animate-fadeInUp animate-delay-[150ms]' : ''}`}>{subtitle}</p>
+                    <p
+                        className="font-serif text-zinc-600 dark:text-zinc-400 max-w-[720px]"
+                        style={{ fontSize: 'clamp(18px, 2.5vw, 26px)' }}
+                    >
+                        {subtitle}
+                    </p>
                 )}
-
-                {metaItems.length ? (
-                    <dl className={`grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-4 mt-10 border-t border-zinc-700 pt-8 opacity-0${animate ? ' animate-fadeInUp animate-delay-[225ms]' : ''}`}>
-                        {metaItems.map(item => (
-                            <div key={item.label}>
-                                <dt className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-1">
-                                    {item.label}
-                                </dt>
-                                <dd className="text-sm text-zinc-200">{item.value}</dd>
-                            </div>
-                        ))}
-                    </dl>
-                ) : null}
-
-                {ctaLabel && ctaUrl && (
-                    <div className={`mt-8 opacity-0${animate ? ' animate-fadeInUp animate-delay-[300ms]' : ''}`}>
-                        <Link
-                            href={ctaUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-6 py-3 rounded-md border border-white text-white text-xs font-semibold uppercase tracking-widest hover:bg-white hover:text-black transition-colors duration-200"
-                        >
-                            <span>{ctaLabel}</span>
-                            <ExternalLinkIcon size={14} />
-                        </Link>
-                    </div>
-                )}
+              </div>
             </div>
+
+            {/* Cover image */}
+            {coverImage && (
+                <div className="max-w-[60%] mx-auto">
+                <div className="relative bg-zinc-900 dark:bg-zinc-950 border-b border-zinc-900 dark:border-zinc-700">
+                    <div className="relative w-full aspect-[16/7] overflow-hidden">
+                        <Image
+                            src={coverImage}
+                            alt={coverImageDescription ?? title}
+                            fill
+                            className="object-cover opacity-90"
+                            priority
+                        />
+                        {/* Corner marks */}
+                        <span className="absolute top-3 left-3 w-4 h-4 border-t border-l border-white/60 pointer-events-none" />
+                        <span className="absolute top-3 right-3 w-4 h-4 border-t border-r border-white/60 pointer-events-none" />
+                        <span className="absolute bottom-3 left-3 w-4 h-4 border-b border-l border-white/60 pointer-events-none" />
+                        <span className="absolute bottom-3 right-3 w-4 h-4 border-b border-r border-white/60 pointer-events-none" />
+                        {/* Label pill */}
+                        {coverImageDescription && (
+                            <div className="absolute bottom-4 left-4 bg-zinc-900/80 text-white font-mono text-[10px] uppercase tracking-[0.08em] px-2.5 py-1">
+                                Fig. 01 — {coverImageDescription}
+                            </div>
+                        )}
+                        {/* Ticker */}
+                        <div className="absolute bottom-4 right-4 font-mono text-[10px] text-white/50 uppercase tracking-[0.08em]">
+                            {slug ?? 'CS'}
+                        </div>
+                    </div>
+                </div>
+                </div>
+            )}
+
+            {/* Meta grid */}
+            {metaItems.length > 0 && (
+                <div className="max-w-[60%] mx-auto">
+                <dl className="grid grid-cols-2 sm:grid-cols-4 border-b border-zinc-900 dark:border-zinc-700">
+                    {metaItems.map((item, i) => (
+                        <div
+                            key={item.label}
+                            className={`p-6 ${i < metaItems.length - 1 ? 'border-r border-zinc-900 dark:border-zinc-700' : ''}`}
+                        >
+                            <dt className="font-mono text-[10px] uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-400 mb-2">
+                                {item.label}
+                            </dt>
+                            <dd className="font-serif text-lg leading-snug text-zinc-900 dark:text-zinc-50">
+                                {item.value}
+                            </dd>
+                        </div>
+                    ))}
+                </dl>
+                </div>
+            )}
         </div>
     );
 };

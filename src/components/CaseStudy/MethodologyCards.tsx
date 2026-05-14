@@ -6,30 +6,75 @@ export const MethodologyCards = ({ methodologyCards }: MethodologyCardsProps) =>
     if (!methodologyCards?.length) return null;
 
     return (
-        <section className="py-12 px-4 sm:px-8 bg-gray-50 dark:bg-zinc-900/50">
-            <div className="max-w-5xl mx-auto">
-                <p className="text-xs font-semibold uppercase tracking-widest text-yellow-500 mb-2">
-                    APPROACH
-                </p>
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-8">
-                    Methodology
+        <section id="section-4" className="border-b border-zinc-900 dark:border-zinc-700 py-16 px-8 bg-[#F4F1EA] dark:bg-zinc-950">
+            {/* 3-col section header */}
+            <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr_220px] gap-6 mb-10 pb-8 border-b border-dashed border-zinc-200 dark:border-zinc-700">
+                <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-400 pt-1">
+                    <span className="text-red-600 dark:text-red-500">§04</span>
+                    {' · APPROACH'}
+                </div>
+                <h2
+                    className="font-serif leading-[0.94] tracking-[-0.025em] text-zinc-900 dark:text-zinc-50"
+                    style={{ fontSize: 'clamp(32px, 5vw, 72px)' }}
+                >
+                    Methodology.
                 </h2>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {methodologyCards.map((card, i) => (
+                <div className="font-mono text-[11px] text-zinc-400 dark:text-zinc-500 sm:text-right pt-1" />
+            </div>
+
+            {/* Steps grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border border-zinc-900 dark:border-zinc-700">
+                {methodologyCards.map((card, i) => {
+                    const col = i % 3;
+                    const row = Math.floor(i / 3);
+                    const totalRows = Math.ceil(methodologyCards.length / 3);
+                    const isLastRow = row === totalRows - 1;
+                    const isLastCol = col === 2 || i === methodologyCards.length - 1;
+
+                    return (
                         <div
                             key={i}
-                            className="rounded-xl border border-gray-200 bg-white dark:border-zinc-700/50 dark:bg-zinc-800/80 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/30 hover:border-gray-300 dark:hover:border-zinc-600/70"
+                            className={`p-6 ${!isLastCol ? 'border-r border-zinc-900 dark:border-zinc-700' : ''} ${!isLastRow ? 'border-b border-zinc-900 dark:border-zinc-700' : ''}`}
                         >
-                            <div className="text-2xl mb-3">{card.icon}</div>
-                            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                            {/* Head row */}
+                            <div className="flex items-start justify-between mb-4">
+                                <span
+                                    className="font-serif leading-none tracking-[-0.025em] text-zinc-900 dark:text-zinc-50"
+                                    style={{ fontSize: '42px' }}
+                                >
+                                    <span className="text-red-600 dark:text-red-500">
+                                        {String(i + 1).padStart(2, '0')}
+                                    </span>
+                                </span>
+                                <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-zinc-400 dark:text-zinc-500 mt-1">
+                                    Phase
+                                </span>
+                            </div>
+
+                            {/* Title */}
+                            <h3 className="font-serif text-[26px] leading-tight tracking-[-0.015em] text-zinc-900 dark:text-zinc-50 mb-3">
                                 {card.name}
                             </h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+
+                            {/* Description */}
+                            <p className="text-[14px] text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
                                 {card.steps}
                             </p>
+
+                            {/* Meta footer */}
+                            <footer className="border-t border-dashed border-zinc-200 dark:border-zinc-700 pt-3 flex items-center justify-between">
+                                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-zinc-400 dark:text-zinc-500">
+                                    Step {i + 1}/{methodologyCards.length}
+                                </span>
+                                {card.icon && (
+                                    <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-500">
+                                        {card.icon}
+                                    </span>
+                                )}
+                            </footer>
                         </div>
-                    ))}
-                </div>
+                    );
+                })}
             </div>
         </section>
     );

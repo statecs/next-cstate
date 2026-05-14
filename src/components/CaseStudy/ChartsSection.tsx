@@ -20,22 +20,22 @@ interface ChartsSectionProps {
     metaResponses?: string;
 }
 
-const RATING_COLORS = ['#facc15', '#f97316', '#22d3ee', '#4ade80', '#a78bfa'];
+const RATING_COLORS = ['#E63322', '#0F0F0F', '#6B6B66', '#b5b5b0', '#e8e4da'];
 
 const VOLUME_COLORS = [
-    'rgba(250,204,21,0.85)',
-    'rgba(251,146,60,0.85)',
-    'rgba(52,211,153,0.85)',
-    'rgba(96,165,250,0.85)',
-    'rgba(167,139,250,0.85)',
-    'rgba(244,114,182,0.85)',
+    'rgba(230,51,34,0.85)',
+    'rgba(15,15,15,0.80)',
+    'rgba(107,107,102,0.75)',
+    'rgba(181,181,176,0.70)',
+    'rgba(230,51,34,0.60)',
+    'rgba(15,15,15,0.55)',
 ];
 
 function ratingColor(value: number): string {
-    if (value >= 4.5) return '#4ade80';
-    if (value >= 4.0) return '#facc15';
-    if (value >= 3.0) return '#f97316';
-    return '#f87171';
+    if (value >= 4.5) return '#0F0F0F';
+    if (value >= 4.0) return '#E63322';
+    if (value >= 3.0) return '#6B6B66';
+    return '#b5b5b0';
 }
 
 export const ChartsSection = ({
@@ -64,149 +64,154 @@ export const ChartsSection = ({
           })()
         : null;
 
+    const tickColor = '#6B6B66';
+
     return (
-        <section className="py-12 px-4 sm:px-8 bg-gray-50 dark:bg-zinc-900/50">
-            <div className="max-w-5xl mx-auto">
-                <p className="text-xs font-semibold uppercase tracking-widest text-yellow-500 mb-2">
-                    {metaResponses ? `· LEARNER FEEDBACK · ${metaResponses}` : 'DATA & INSIGHTS'}
-                </p>
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-10">
-                    Data &amp; Insights
+        <section id="section-2" className="border-b border-zinc-900 dark:border-zinc-700 py-16 px-8 bg-[#F4F1EA] dark:bg-zinc-950">
+            {/* 3-col section header */}
+            <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr_220px] gap-6 mb-10 pb-8 border-b border-dashed border-zinc-200 dark:border-zinc-700">
+                <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-400 pt-1">
+                    <span className="text-red-600 dark:text-red-500">§02</span>
+                    {' · DATA & INSIGHTS'}
+                </div>
+                <h2
+                    className="font-serif leading-[0.94] tracking-[-0.025em] text-zinc-900 dark:text-zinc-50"
+                    style={{ fontSize: 'clamp(32px, 5vw, 72px)' }}
+                >
+                    Where the data lands.
                 </h2>
-                <div className="grid gap-10 lg:grid-cols-2">
-                    {ratingDistributionData && (
-                        <div className="group cursor-default rounded-xl border border-gray-200 bg-white dark:border-zinc-700/50 dark:bg-zinc-800/60 p-6 border-t-2 border-t-yellow-500/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 hover:border-gray-300 dark:hover:border-zinc-600/70">
-                            <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-zinc-400 mb-4">
-                                Rating Distribution
-                            </h3>
-                            <div className="flex justify-center">
-                                <div className="relative w-56 h-56">
-                                    <Doughnut
-                                        data={{
-                                            labels: ratingDistributionData.labels,
-                                            datasets: [
-                                                {
-                                                    data: ratingDistributionData.data,
-                                                    backgroundColor: RATING_COLORS,
-                                                    borderWidth: 0,
-                                                },
-                                            ],
-                                        }}
-                                        options={{
-                                            responsive: true,
-                                            cutout: '72%',
-                                            animation: { animateRotate: true, duration: 800 },
-                                            plugins: {
-                                                legend: { display: false },
-                                            },
-                                        }}
-                                    />
-                                    {avgScore && (
-                                        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                            <span className="text-2xl font-bold text-gray-900 dark:text-white">{avgScore}</span>
-                                            <span className="text-yellow-400 text-sm">★ avg</span>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                            {/* Custom HTML legend */}
-                            <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-4">
-                                {(ratingDistributionData.labels ?? []).map((label, i) => (
-                                    <div key={label} className="flex items-center gap-1.5">
-                                        <span
-                                            className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0"
-                                            style={{ backgroundColor: RATING_COLORS[i % RATING_COLORS.length] }}
-                                        />
-                                        <span className="text-xs text-gray-500 dark:text-zinc-400">{label}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                <div className="font-mono text-[11px] text-zinc-400 dark:text-zinc-500 sm:text-right pt-1">
+                    {metaResponses ? `${metaResponses} responses` : ''}
+                </div>
+            </div>
 
-                    {avgRatingPerModuleData && (
-                        <div className="group cursor-default rounded-xl border border-gray-200 bg-white dark:border-zinc-700/50 dark:bg-zinc-800/60 p-6 border-t-2 border-t-yellow-500/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 hover:border-gray-300 dark:hover:border-zinc-600/70">
-                            <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-zinc-400 mb-4">
-                                Avg. Rating per Module
-                            </h3>
-                            <Bar
-                                data={{
-                                    labels: avgRatingPerModuleData.labels,
-                                    datasets: [
-                                        {
-                                            data: avgRatingPerModuleData.data,
-                                            backgroundColor: avgRatingPerModuleData.data.map(ratingColor),
-                                            borderRadius: 8,
-                                            barThickness: 20,
-                                        },
-                                    ],
-                                }}
-                                options={{
-                                    responsive: true,
-                                    indexAxis: 'y' as const,
-                                    animation: { duration: 600 },
-                                    plugins: {
-                                        legend: { display: false },
-                                    },
-                                    scales: {
-                                        x: {
-                                            min: 0,
-                                            max: 5,
-                                            grid: { display: false },
-                                            ticks: { color: '#9ca3af', font: { size: 11 } },
-                                        },
-                                        y: {
-                                            grid: { display: false },
-                                            ticks: { color: '#9ca3af', font: { size: 11 } },
-                                        },
-                                    },
-                                }}
-                            />
-                        </div>
-                    )}
-
-                    {responseVolumeData && (
-                        <div className="group cursor-default rounded-xl border border-gray-200 bg-white dark:border-zinc-700/50 dark:bg-zinc-800/60 p-6 border-t-2 border-t-blue-500/60 lg:col-span-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 hover:border-gray-300 dark:hover:border-zinc-600/70">
-                            <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-zinc-400 mb-4">
-                                Response Volume by Module
-                            </h3>
-                            <div className="h-56">
-                                <Bar
+            {/* Charts grid */}
+            <div className="grid gap-px border border-zinc-900 dark:border-zinc-700 lg:grid-cols-2 bg-zinc-900 dark:bg-zinc-700">
+                {ratingDistributionData && (
+                    <div className="bg-[#F4F1EA] dark:bg-zinc-950 p-6">
+                        <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-zinc-500 dark:text-zinc-400 mb-6">
+                            Rating Distribution
+                        </h3>
+                        <div className="flex justify-center">
+                            <div className="relative w-52 h-52">
+                                <Doughnut
                                     data={{
-                                        labels: responseVolumeData.labels,
+                                        labels: ratingDistributionData.labels,
                                         datasets: [
                                             {
-                                                data: responseVolumeData.data,
-                                                backgroundColor: responseVolumeData.data.map(
-                                                    (_, i) => VOLUME_COLORS[i % VOLUME_COLORS.length]
-                                                ),
-                                                borderRadius: 10,
+                                                data: ratingDistributionData.data,
+                                                backgroundColor: RATING_COLORS,
+                                                borderWidth: 0,
                                             },
                                         ],
                                     }}
                                     options={{
                                         responsive: true,
-                                        maintainAspectRatio: false,
-                                        animation: { duration: 600 },
-                                        plugins: {
-                                            legend: { display: false },
-                                        },
-                                        scales: {
-                                            x: {
-                                                grid: { display: false },
-                                                ticks: { color: '#9ca3af', font: { size: 11 } },
-                                            },
-                                            y: {
-                                                grid: { color: 'rgba(128,128,128,0.15)' },
-                                                ticks: { color: '#9ca3af', font: { size: 11 } },
-                                            },
-                                        },
+                                        cutout: '72%',
+                                        animation: { animateRotate: true, duration: 800 },
+                                        plugins: { legend: { display: false } },
                                     }}
                                 />
+                                {avgScore && (
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                        <span className="font-serif text-2xl text-zinc-900 dark:text-zinc-50">{avgScore}</span>
+                                        <span className="font-mono text-[10px] text-red-600 dark:text-red-500 uppercase tracking-[0.08em]">avg</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
-                    )}
-                </div>
+                        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-4">
+                            {(ratingDistributionData.labels ?? []).map((label, i) => (
+                                <div key={label} className="flex items-center gap-1.5">
+                                    <span
+                                        className="inline-block w-2 h-2 flex-shrink-0"
+                                        style={{ backgroundColor: RATING_COLORS[i % RATING_COLORS.length] }}
+                                    />
+                                    <span className="font-mono text-[10px] text-zinc-500 dark:text-zinc-400">{label}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {avgRatingPerModuleData && (
+                    <div className="bg-[#F4F1EA] dark:bg-zinc-950 p-6">
+                        <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-zinc-500 dark:text-zinc-400 mb-6">
+                            Avg. Rating per Module
+                        </h3>
+                        <Bar
+                            data={{
+                                labels: avgRatingPerModuleData.labels,
+                                datasets: [
+                                    {
+                                        data: avgRatingPerModuleData.data,
+                                        backgroundColor: avgRatingPerModuleData.data.map(ratingColor),
+                                        borderRadius: 0,
+                                        barThickness: 18,
+                                    },
+                                ],
+                            }}
+                            options={{
+                                responsive: true,
+                                indexAxis: 'y' as const,
+                                animation: { duration: 600 },
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    x: {
+                                        min: 0,
+                                        max: 5,
+                                        grid: { display: false },
+                                        ticks: { color: tickColor, font: { size: 11, family: 'monospace' } },
+                                    },
+                                    y: {
+                                        grid: { display: false },
+                                        ticks: { color: tickColor, font: { size: 11, family: 'monospace' } },
+                                    },
+                                },
+                            }}
+                        />
+                    </div>
+                )}
+
+                {responseVolumeData && (
+                    <div className="bg-[#F4F1EA] dark:bg-zinc-950 p-6 lg:col-span-2">
+                        <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-zinc-500 dark:text-zinc-400 mb-6">
+                            Response Volume by Module
+                        </h3>
+                        <div className="h-52">
+                            <Bar
+                                data={{
+                                    labels: responseVolumeData.labels,
+                                    datasets: [
+                                        {
+                                            data: responseVolumeData.data,
+                                            backgroundColor: responseVolumeData.data.map(
+                                                (_, i) => VOLUME_COLORS[i % VOLUME_COLORS.length]
+                                            ),
+                                            borderRadius: 0,
+                                        },
+                                    ],
+                                }}
+                                options={{
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    animation: { duration: 600 },
+                                    plugins: { legend: { display: false } },
+                                    scales: {
+                                        x: {
+                                            grid: { display: false },
+                                            ticks: { color: tickColor, font: { size: 11, family: 'monospace' } },
+                                        },
+                                        y: {
+                                            grid: { color: 'rgba(15,15,15,0.08)' },
+                                            ticks: { color: tickColor, font: { size: 11, family: 'monospace' } },
+                                        },
+                                    },
+                                }}
+                            />
+                        </div>
+                    </div>
+                )}
             </div>
         </section>
     );
