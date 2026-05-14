@@ -1,197 +1,211 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { cn } from '@/utils/helpers';
-import NewBadge from '@/components/PhotoCollection/New';
 import { isCollectionNew } from '@/utils/helpers';
+import NewBadge from '@/components/PhotoCollection/New';
+
+type EntryWithIndex = Post & { _index?: number };
 
 interface ProjectsGridProps {
-  projects: Post[];
+  entries: EntryWithIndex[];
+  view?: 'grid' | 'list';
+  // Legacy prop — old callers pass `projects` without view
+  projects?: Post[];
 }
 
-const ProjectsGrid: React.FC<ProjectsGridProps> = ({ projects }) => {
-  const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [showFilters, setShowFilters] = useState(false);
+function getHref(post: Post): string {
+  if (post.kind === 'writing') return `/writing${post.url}`;
+  return `/projects${post.url}`;
+}
 
-  useEffect(() => {
-    const uniqueCategories = Array.from(new Set(
-      projects.flatMap(project => project.category?.split(', ') || [])
-    ));
-    setCategories(uniqueCategories);
-  }, [projects]);
+function formatYear(published: string): string {
+  if (!published || published === 'Not specified') return '—';
+  const d = new Date(published);
+  return isNaN(d.getFullYear()) ? '—' : String(d.getFullYear());
+}
 
-  const toggleFilter = (filter: string) => {
-    setActiveFilter(prev => prev === filter ? null : filter);
+function padIndex(n: number | undefined): string {
+  if (n == null) return '№';
+  return `№ ${String(n).padStart(3, '0')}`;
+}
+
+function TypeBadge({ kind }: { kind?: Post['kind'] }) {
+  if (!kind) return null;
+  const map: Record<string, string> = {
+    'project': 'border border-zinc-400 dark:border-zinc-600 text-zinc-600 dark:text-zinc-400',
+    'case-study': 'bg-red-600 text-white',
+    'writing': 'border border-zinc-400 dark:border-zinc-600 text-zinc-600 dark:text-zinc-400',
   };
-
-  const filteredProjects = useMemo(() => projects.filter(project => {
-    if (!activeFilter) return true;
-    return project.category?.split(', ').includes(activeFilter);
-  }), [projects, activeFilter]);
-
-  const FilterButton: React.FC<{
-    filter: string;
-    activeFilter: string | null;
-    onClick: (filter: string) => void;
-  }> = ({ filter, activeFilter, onClick }) => (
-    <button 
-      className={cn(
-        "px-3 py-1.5 sm:px-4 sm:py-2 rounded-full font-medium text-xs sm:text-sm border transition-all duration-200 hover:scale-105 hover:shadow-sm",
-        activeFilter === filter 
-          ? "bg-black dark:bg-white text-white dark:text-black border-black dark:border-white shadow-md" 
-          : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
-      )}
-      onClick={() => onClick(filter)}
-      aria-pressed={activeFilter === filter}
-      aria-label={`Filter by ${filter}`}
-    >
-      {filter}
-    </button>
-  );
+  const label: Record<string, string> = {
+    'project': 'Project',
+    'case-study': 'Case Study',
+    'writing': 'Writing',
+  };
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-8 animate-fadeIn animate-duration-700">
-      {/* Subtle Filter Toggle at Top */}
-      <div className="flex justify-end mb-2">
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="group inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors duration-200"
-        >
-          <svg
-            className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
-          </svg>
-          <span>filters</span>
-          {activeFilter && (
-            <span className="flex items-center justify-center w-4 h-4 bg-black dark:bg-white text-white dark:text-black text-xs rounded-full font-bold ml-1">
-              1
-            </span>
+    <span className={`font-mono text-[9px] uppercase tracking-widest px-1.5 py-0.5 ${map[kind]}`}>
+      {label[kind]}
+    </span>
+  );
+}
+
+function WritingThumb({ title }: { title: string }) {
+  return (
+    <div
+      className="w-full h-full flex items-end p-3"
+      style={{
+        backgroundImage: 'repeating-linear-gradient(45deg,var(--hatching,#E8E4DB) 0 10px,transparent 10px 20px)',
+      }}
+    >
+      <span className="font-serif text-base leading-snug text-zinc-700 dark:text-zinc-200 line-clamp-3">
+        {title}
+      </span>
+    </div>
+  );
+}
+
+function GridCard({ post }: { post: EntryWithIndex }) {
+  const href = getHref(post);
+  const year = formatYear(post.published);
+  const tags = (post.category || '').split(',').map(t => t.trim()).filter(Boolean).slice(0, 3);
+  const isNew = isCollectionNew(post.date);
+
+  return (
+    <article className="relative flex flex-col border-r border-b border-zinc-200 dark:border-zinc-800 group transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/30">
+      <Link href={href} className="flex flex-col flex-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600">
+
+        {/* Thumb */}
+        <div className="aspect-[4/3] overflow-hidden border-b border-zinc-200 dark:border-zinc-800 relative bg-zinc-100 dark:bg-zinc-900">
+          {post.image ? (
+            <Image
+              src={post.image}
+              alt={post.title}
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.015] saturate-[0.92] contrast-[1.03]"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+            />
+          ) : (
+            <WritingThumb title={post.title} />
           )}
-        </button>
-      </div>
 
-      {/* Filter Section */}
-      <div className="mb-4 sm:mb-8">
-        {showFilters && (
-          <div className="animate-fadeIn">
-            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-100 dark:border-gray-700/50">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 text-center">
-                Filter by Category
-              </h3>
-              <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
-                {categories.map(category => (
-                  <FilterButton
-                    key={category}
-                    filter={category}
-                    activeFilter={activeFilter}
-                    onClick={toggleFilter}
-                  />
-                ))}
-              </div>
-              {activeFilter && (
-                <div className="mt-4 text-center">
-                  <button
-                    onClick={() => setActiveFilter(null)}
-                    className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 underline transition-colors"
-                  >
-                    Clear all filters
-                  </button>
-                </div>
-              )}
+          {/* Index badge */}
+          <span className="absolute top-2 left-2 font-mono text-[9px] bg-zinc-900/80 text-zinc-100 px-1.5 py-0.5 leading-none">
+            {padIndex(post._index)}
+          </span>
+
+          {/* Badges top-right */}
+          <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
+            {isNew && <NewBadge />}
+            <TypeBadge kind={post.kind} />
+          </div>
+
+          {/* Watermark */}
+          <span className="absolute bottom-2 right-2 font-mono text-[9px] text-white/40 mix-blend-difference select-none pointer-events-none">
+            CST · {String(post._index ?? '').padStart(3, '0')}
+          </span>
+        </div>
+
+        {/* Body */}
+        <div className="p-4 flex flex-col gap-2 flex-1">
+          <h3 className="font-serif text-[22px] leading-tight text-zinc-900 dark:text-zinc-50 line-clamp-2">
+            {post.title}
+          </h3>
+
+          {tags.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {tags.map(tag => (
+                <span
+                  key={tag}
+                  className="font-mono text-[9.5px] uppercase tracking-widest px-1.5 py-0.5 border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400"
+                >
+                  {tag}
+                </span>
+              ))}
             </div>
-          </div>
-        )}
-      </div>
+          )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        {filteredProjects.map((project) => (
-          <div key={project.slug} className="group">
-            <Link 
-              href={`/projects${project.url}`}
-              className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white focus-visible:ring-offset-2 rounded-2xl"
-            >
-              <div className="relative overflow-hidden rounded-2xl bg-gray-50 dark:bg-gray-900 aspect-square shadow-md hover:shadow-xl transition-all duration-300 group-hover:scale-[1.03] group-hover:-translate-y-1">
-                {project.image ? (
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-600">
-                    <span className="text-sm">No Image</span>
-                  </div>
-                )}
-                
-                {/* Overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                
-                {/* New badge */}
-                {isCollectionNew(project.date) && (
-                  <div className="absolute top-3 right-3 z-10">
-                    <NewBadge />
-                  </div>
-                )}
-                
-                {/* Title overlay */}
-                <div className="absolute inset-x-0 bottom-0 p-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                  <h3 className="text-white font-bold text-lg sm:text-xl md:text-xl line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 leading-tight font-serif">
-                    {project.title}
-                  </h3>
-                  {project.description && (
-                    <p className="text-white/70 text-sm mt-2 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75 font-light leading-relaxed">
-                      {project.description}
-                    </p>
-                  )}
-                </div>
-              </div>
-              
-              {/* Title below image */}
-              <div className="mt-4 px-1">
-                <h3 className="text-gray-900 dark:text-gray-100 font-semibold text-lg sm:text-xl md:text-xl line-clamp-2 group-hover:text-black dark:group-hover:text-white transition-colors duration-200 leading-snug font-serif">
-                  {project.title}
-                </h3>
-                {project.category && (
-                  <div className="mt-3 flex gap-2 flex-wrap">
-                    {project.category.split(', ').slice(0, 2).map((tag, index) => (
-                      <span
-                        key={index}
-                        className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-900 border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700"
-                      >
-                        {tag.trim()}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </Link>
+          {/* Meta line */}
+          <div className="mt-auto pt-2 border-t border-dashed border-zinc-200 dark:border-zinc-700 flex justify-between items-center">
+            <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-500">{year}</span>
+            <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-500 group-hover:text-red-600 transition-colors">
+              View →
+            </span>
           </div>
+        </div>
+
+      </Link>
+    </article>
+  );
+}
+
+function ListRow({ post }: { post: EntryWithIndex }) {
+  const href = getHref(post);
+  const year = formatYear(post.published);
+  const tags = (post.category || '').split(',').map(t => t.trim()).filter(Boolean).slice(0, 2);
+
+  return (
+    <a
+      href={href}
+      className="grid grid-cols-[2.5rem_1fr_4rem_5rem] sm:grid-cols-[2.5rem_1fr_1fr_auto_3rem_6rem] gap-x-3 sm:gap-x-4 items-baseline px-4 sm:px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors group"
+    >
+      <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums">{padIndex(post._index)}</span>
+      <span className="font-serif text-sm sm:text-base text-zinc-900 dark:text-zinc-50 truncate min-w-0">{post.title}</span>
+      {/* Subtitle — hidden on mobile */}
+      <span className="hidden sm:block font-mono text-[11px] text-zinc-500 dark:text-zinc-400 truncate">{post.description || ''}</span>
+      {/* Tags — hidden on mobile */}
+      <div className="hidden sm:flex gap-1 flex-wrap">
+        {tags.map(tag => (
+          <span
+            key={tag}
+            className="font-mono text-[9px] uppercase tracking-widest px-1 py-0.5 border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 whitespace-nowrap"
+          >
+            {tag}
+          </span>
         ))}
       </div>
-      
-      {filteredProjects.length === 0 && (
-        <div className="text-center py-12 col-span-full">
-          <p className="text-gray-500 dark:text-gray-400">
-            {activeFilter ? `No projects found for "${activeFilter}"` : 'No projects available'}
-          </p>
-          {activeFilter && (
-            <button
-              onClick={() => setActiveFilter(null)}
-              className="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
-            >
-              Clear filter
-            </button>
-          )}
+      <span className="font-mono text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums text-right">{year}</span>
+      <span className="flex justify-end"><TypeBadge kind={post.kind} /></span>
+    </a>
+  );
+}
+
+const ProjectsGrid: React.FC<ProjectsGridProps> = ({ entries, view = 'grid', projects }) => {
+  // Legacy support: if called with `projects` prop (old API), render as grid
+  const items: EntryWithIndex[] = entries ?? (projects ?? []).map((p, i) => ({ ...p, _index: i + 1 }));
+
+  if (items.length === 0) {
+    return (
+      <div className="px-6 py-16 text-center">
+        <p className="font-mono text-sm text-zinc-400 dark:text-zinc-500">No entries match the current filters.</p>
+      </div>
+    );
+  }
+
+  if (view === 'list') {
+    return (
+      <div className="w-full">
+        {/* Header row */}
+        <div className="grid grid-cols-[2.5rem_1fr_4rem_5rem] sm:grid-cols-[2.5rem_1fr_1fr_auto_3rem_6rem] gap-x-3 sm:gap-x-4 items-baseline px-4 sm:px-6 py-2 border-b border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900">
+          {['№', 'Title', 'Year', 'Type'].map(h => (
+            <span key={h} className="font-mono text-[9px] uppercase tracking-widest text-zinc-400 dark:text-zinc-500 sm:hidden">{h}</span>
+          ))}
+          {['№', 'Title', 'Subtitle', 'Tags', 'Year', 'Type'].map(h => (
+            <span key={`d-${h}`} className="hidden sm:block font-mono text-[9px] uppercase tracking-widest text-zinc-400 dark:text-zinc-500">{h}</span>
+          ))}
         </div>
-      )}
+        {items.map(post => (
+          <ListRow key={post.slug} post={post} />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="border-l border-t border-zinc-200 dark:border-zinc-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {items.map(post => (
+        <GridCard key={post.slug} post={post} />
+      ))}
     </div>
   );
 };

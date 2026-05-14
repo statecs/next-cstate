@@ -21,6 +21,7 @@ const ProjectPage = async () => {
     isPublic: link.isPublic,
     category: link.category,
     published: link.published || 'Not specified',
+    kind: 'project' as const,
   }));
 
   const caseStudyPosts: Post[] = (caseStudies || []).map((cs) => ({
@@ -32,6 +33,7 @@ const ProjectPage = async () => {
     isPublic: cs.isPublic,
     category: cs.tags?.join(', ') || '',
     published: cs.sys?.firstPublishedAt || 'Not specified',
+    kind: 'case-study' as const,
   }));
 
   const seen = new Set(navProjects.map(p => p.url));
@@ -51,6 +53,7 @@ const ProjectPage = async () => {
     isMembersOnly: link.isMembersOnly,
     category: link.category,
     published: link.published || 'Not specified',
+    kind: 'writing' as const,
   }));
 
     return <ProjectsTabs projects={projects} writings={writings} />;

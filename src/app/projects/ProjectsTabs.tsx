@@ -1,164 +1,248 @@
 'use client';
 
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { useCallback, useEffect } from 'react';
-import { Folder, FileText } from 'lucide-react';
-import { cn } from '@/utils/helpers';
+import React, { useState, useMemo } from 'react';
 import ProjectsGrid from '@/components/ProjectsGrid';
-import WritingGrid from '@/components/WritingGrid';
-import { Suspense } from 'react';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 interface ProjectsTabsProps {
   projects: Post[];
   writings: Post[];
 }
 
-type TabType = 'projects' | 'writing';
-
 const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const [kindFilter, setKindFilter] = useState<'all' | 'project' | 'case-study' | 'writing'>('all');
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
+  const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [sort, setSort] = useState<'Newest' | 'Oldest' | 'A–Z'>('Newest');
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
-  // Read tab from URL, default to 'projects'
-  const currentTab: TabType = (searchParams.get('tab') as TabType) || 'projects';
+  const allEntries = useMemo(() => {
+    const merged = [...projects, ...writings];
+    return merged.map((entry, i) => ({ ...entry, _index: i + 1 }));
+  }, [projects, writings]);
 
-  // Handle tab changes with URL update
-  const handleTabChange = useCallback((newTab: TabType) => {
-    const params = new URLSearchParams(searchParams.toString());
+  const byKind = useMemo(() => ({
+    project: allEntries.filter(e => e.kind === 'project').length,
+    'case-study': allEntries.filter(e => e.kind === 'case-study').length,
+    writing: allEntries.filter(e => e.kind === 'writing').length,
+  }), [allEntries]);
 
-    // Remove param for default tab (cleaner URLs)
-    if (newTab === 'projects') {
-      params.delete('tab');
+  const topTags = useMemo(() => {
+    const freq: Record<string, number> = {};
+    allEntries.forEach(e => {
+      (e.category || '').split(',').forEach(t => {
+        const tag = t.trim();
+        if (tag) freq[tag] = (freq[tag] || 0) + 1;
+      });
+    });
+    return Object.entries(freq)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 12)
+      .map(([tag]) => tag);
+  }, [allEntries]);
+
+  const filtered = useMemo(() => {
+    let result = allEntries.filter(e => {
+      if (kindFilter !== 'all' && e.kind !== kindFilter) return false;
+      if (tagFilter) {
+        const tags = (e.category || '').split(',').map(t => t.trim());
+        if (!tags.includes(tagFilter)) return false;
+      }
+      return true;
+    });
+
+    if (sort === 'Newest') {
+      result = [...result].sort((a, b) => (b.published > a.published ? 1 : -1));
+    } else if (sort === 'Oldest') {
+      result = [...result].sort((a, b) => (a.published > b.published ? 1 : -1));
     } else {
-      params.set('tab', newTab);
+      result = [...result].sort((a, b) => a.title.localeCompare(b.title));
     }
 
-    const queryString = params.toString();
-    const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
+    return result;
+  }, [allEntries, kindFilter, tagFilter, sort]);
 
-    // Update URL without page reload, scroll: false maintains scroll position
-    router.push(newUrl, { scroll: false });
-  }, [router, pathname, searchParams]);
-
-  // Update document title when tab changes
-  useEffect(() => {
-    const titles = {
-      projects: 'Projects | Christopher State',
-      writing: 'Writing | Christopher State'
-    };
-
-    document.title = titles[currentTab];
-  }, [currentTab]);
-
-  // Keyboard navigation for accessibility
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowLeft') {
-      handleTabChange('projects');
-    } else if (e.key === 'ArrowRight') {
-      handleTabChange('writing');
-    }
+  const cycleSort = () => {
+    setSort(prev =>
+      prev === 'Newest' ? 'Oldest' : prev === 'Oldest' ? 'A–Z' : 'Newest'
+    );
   };
 
+  const now = new Date();
+  const updatedStr = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+  const kindChips: { label: string; value: 'all' | 'project' | 'case-study' | 'writing'; count: number }[] = [
+    { label: 'All', value: 'all', count: allEntries.length },
+    { label: 'Project', value: 'project', count: byKind.project },
+    { label: 'Case Study', value: 'case-study', count: byKind['case-study'] },
+    { label: 'Writing', value: 'writing', count: byKind.writing },
+  ];
+
   return (
-    <div className="flex flex-grow h-[calc(100vh-110px)] overflow-hidden">
-      <div className="w-full overflow-y-auto">
-        <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="flex flex-grow overflow-auto">
+      <div className="w-full lg:max-w-[60%] lg:mx-auto">
 
-          {/* Page Header */}
-          <div className="text-center mb-8 animate-fadeIn">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 tracking-tight font-serif"
-                style={{ lineHeight: '1.2', paddingBottom: '0.1em' }}>
-              <span className="bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent"
-                    style={{ display: 'inline-block', paddingBottom: '0.08em' }}>
-                Projects & Writing
-              </span>
+        {/* Hero */}
+        <section className="border-b border-zinc-200 dark:border-zinc-700 px-6 py-10 md:py-14">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-6">
+            § 01 — Index of work &nbsp;·&nbsp; A complete log, newest first
+          </p>
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
+            <h1 className="font-serif text-4xl md:text-5xl xl:text-6xl leading-tight text-zinc-900 dark:text-zinc-50 max-w-2xl">
+              Projects / Writing &amp; notes,<br className="hidden md:block" /> filed by year.
             </h1>
-            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-              Creative work, experiments, and thoughts on design and technology
-            </p>
-            <div className="mt-6 h-1 w-20 bg-gradient-to-r from-black to-gray-400 dark:from-white dark:to-gray-500 mx-auto rounded-full"></div>
+            {/* Meta card */}
+            <div className="border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 font-mono text-xs shrink-0 min-w-[200px]">
+              {[
+                ['Entries', allEntries.length],
+                ['Projects', byKind.project],
+                ['Case studies', byKind['case-study']],
+                ['Writing', byKind.writing],
+                ['Updated', updatedStr],
+              ].map(([label, val]) => (
+                <div key={String(label)} className="flex justify-between px-4 py-2 border-b border-zinc-200 dark:border-zinc-800 last:border-b-0">
+                  <span className="text-zinc-500 dark:text-zinc-400 uppercase tracking-widest text-[10px]">{label}</span>
+                  <span className="text-zinc-900 dark:text-zinc-100">{val}</span>
+                </div>
+              ))}
+            </div>
           </div>
+        </section>
 
-          {/* Tab Navigation */}
-          <div className="flex justify-center items-center mb-12">
-            <div role="tablist"
-                 aria-label="Content categories"
-                 className="inline-flex gap-2 p-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700"
-                 onKeyDown={handleKeyDown}>
-
-              {/* Projects Tab */}
-              <button
-                role="tab"
-                aria-selected={currentTab === 'projects'}
-                aria-controls="projects-panel"
-                id="projects-tab"
-                onClick={() => handleTabChange('projects')}
-                className={cn(
-                  "flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-md font-medium text-sm sm:text-base transition-all duration-200",
-                  currentTab === 'projects'
-                    ? "bg-black text-white dark:bg-white dark:text-black shadow-md"
-                    : "bg-transparent text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-700/50"
-                )}
-              >
-                <Folder size={20} className="hidden sm:block" />
-                <Folder size={18} className="sm:hidden" />
-                <span>Projects</span>
-              </button>
-
-              {/* Writing Tab */}
-              <button
-                role="tab"
-                aria-selected={currentTab === 'writing'}
-                aria-controls="writing-panel"
-                id="writing-tab"
-                onClick={() => handleTabChange('writing')}
-                className={cn(
-                  "flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-md font-medium text-sm sm:text-base transition-all duration-200",
-                  currentTab === 'writing'
-                    ? "bg-black text-white dark:bg-white dark:text-black shadow-md"
-                    : "bg-transparent text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-700/50"
-                )}
-              >
-                <FileText size={20} className="hidden sm:block" />
-                <FileText size={18} className="sm:hidden" />
-                <span>Writing</span>
-              </button>
-
+        {/* Filter strip */}
+        <section className="border-b border-zinc-200 dark:border-zinc-700">
+          {/* Mobile toggle row */}
+          <div className="flex items-center justify-between px-4 sm:px-6 py-2 sm:hidden">
+            <button
+              onClick={() => setFiltersOpen(o => !o)}
+              className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-zinc-500 dark:text-zinc-400"
+            >
+              <span>Filters</span>
+              {(kindFilter !== 'all' || tagFilter) && (
+                <span className="w-4 h-4 rounded-full bg-red-600 text-white text-[9px] flex items-center justify-center">
+                  {(kindFilter !== 'all' ? 1 : 0) + (tagFilter ? 1 : 0)}
+                </span>
+              )}
+              <span className="text-zinc-400">{filtersOpen ? '▲' : '▼'}</span>
+            </button>
+            {/* View toggle always visible on mobile */}
+            <div className="flex border border-zinc-300 dark:border-zinc-700 overflow-hidden">
+              {(['grid', 'list'] as const).map(v => (
+                <button
+                  key={v}
+                  onClick={() => setView(v)}
+                  className={[
+                    'font-mono text-[11px] uppercase tracking-widest px-3 py-1 transition-colors',
+                    view === v
+                      ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900'
+                      : 'bg-white dark:bg-transparent text-zinc-500 dark:text-zinc-400',
+                  ].join(' ')}
+                >
+                  {v}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Tab Panels - use show/hide to preserve filter state */}
-          <div
-            role="tabpanel"
-            id="projects-panel"
-            aria-labelledby="projects-tab"
-            className={cn(
-              "animate-fadeIn animate-duration-300",
-              currentTab === 'projects' ? 'block' : 'hidden'
-            )}
-          >
-            <Suspense fallback={<LoadingSpinner />}>
-              <ProjectsGrid projects={projects} />
-            </Suspense>
-          </div>
+          {/* Filter content — always visible on sm+, toggleable on mobile */}
+          <div className={[
+            'px-4 sm:px-6 py-3 flex flex-wrap items-center gap-x-6 gap-y-2',
+            filtersOpen ? 'flex' : 'hidden sm:flex',
+          ].join(' ')}>
+            {/* Kind chips */}
+            <div className="flex flex-wrap gap-1.5">
+              {kindChips.map(chip => (
+                <button
+                  key={chip.value}
+                  onClick={() => setKindFilter(chip.value)}
+                  className={[
+                    'font-mono text-[11px] uppercase tracking-widest px-2.5 py-1 border transition-colors',
+                    kindFilter === chip.value
+                      ? chip.value === 'all'
+                        ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white'
+                        : 'bg-red-600 text-white border-red-600'
+                      : 'bg-white dark:bg-transparent text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 dark:hover:border-zinc-500',
+                  ].join(' ')}
+                >
+                  {chip.label} <span className="opacity-60">{chip.count}</span>
+                </button>
+              ))}
+            </div>
 
-          <div
-            role="tabpanel"
-            id="writing-panel"
-            aria-labelledby="writing-tab"
-            className={cn(
-              "animate-fadeIn animate-duration-300",
-              currentTab === 'writing' ? 'block' : 'hidden'
+            {/* Tag chips */}
+            {topTags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                <button
+                  onClick={() => setTagFilter(null)}
+                  className={[
+                    'font-mono text-[11px] uppercase tracking-widest px-2.5 py-1 border transition-colors',
+                    tagFilter === null
+                      ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white'
+                      : 'bg-white dark:bg-transparent text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-zinc-500',
+                  ].join(' ')}
+                >
+                  Any
+                </button>
+                {topTags.map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => setTagFilter(prev => prev === tag ? null : tag)}
+                    className={[
+                      'font-mono text-[11px] uppercase tracking-widest px-2.5 py-1 border transition-colors',
+                      tagFilter === tag
+                        ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white'
+                        : 'bg-white dark:bg-transparent text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-zinc-500',
+                    ].join(' ')}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
             )}
-          >
-            <Suspense fallback={<LoadingSpinner />}>
-              <WritingGrid posts={writings} />
-            </Suspense>
-          </div>
 
-        </div>
+            {/* View toggle — desktop only (mobile has it in the toggle row) */}
+            <div className="ml-auto hidden sm:flex border border-zinc-300 dark:border-zinc-700 overflow-hidden shrink-0">
+              {(['grid', 'list'] as const).map(v => (
+                <button
+                  key={v}
+                  onClick={() => setView(v)}
+                  className={[
+                    'font-mono text-[11px] uppercase tracking-widest px-3 py-1 transition-colors',
+                    view === v
+                      ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900'
+                      : 'bg-white dark:bg-transparent text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800',
+                  ].join(' ')}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Count bar */}
+        <section className="border-b border-zinc-200 dark:border-zinc-700 px-6 py-2 flex items-center justify-between">
+          <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400 uppercase tracking-widest">
+            Showing {filtered.length} / {allEntries.length} entries
+          </span>
+          <button
+            onClick={cycleSort}
+            className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400 uppercase tracking-widest hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+          >
+            Sort [{sort} ↕]
+          </button>
+        </section>
+
+        {/* Tick strip */}
+        <div
+          className="h-5 border-b border-zinc-200 dark:border-zinc-700"
+          style={{
+            backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 39px, var(--tick-color, #d4d4d8) 39px, var(--tick-color, #d4d4d8) 40px)',
+          }}
+        />
+
+        {/* Grid / List */}
+        <ProjectsGrid entries={filtered} view={view} />
+
       </div>
     </div>
   );

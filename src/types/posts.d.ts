@@ -9,8 +9,9 @@ interface Post {
     isPublic?: boolean;
     isMembersOnly?: boolean;
     category?: string;
+    kind?: 'project' | 'case-study' | 'writing';
   }
-  
+
 
   interface LinkListProps {
     post: Post;
@@ -25,8 +26,8 @@ interface Post {
     list: (Post)[];
     isMobile: boolean;
   }
-  
-  
+
+
   interface LayoutProps {
     children: ReactNode;
   }
