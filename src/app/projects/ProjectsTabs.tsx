@@ -91,7 +91,7 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
               Projects / Writing &amp; notes,<br className="hidden md:block" /> filed by year.
             </h1>
             {/* Meta card */}
-            <div className="border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 font-mono text-xs shrink-0 min-w-[200px]">
+            <div className="hidden sm:block border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 font-mono text-xs shrink-0 min-w-[200px]">
               {[
                 ['Entries', allEntries.length],
                 ['Projects', byKind.project],

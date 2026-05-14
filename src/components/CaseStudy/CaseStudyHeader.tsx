@@ -73,7 +73,7 @@ export const CaseStudyHeader = ({
                         {tags.map(tag => (
                             <span
                                 key={tag}
-                                className="rounded border border-zinc-600 px-2 py-0.5 text-[10px] uppercase tracking-widest font-semibold text-zinc-400"
+                                className="rounded-full border border-zinc-600/50 px-2.5 py-0.5 text-xs font-medium text-zinc-400"
                             >
                                 {tag}
                             </span>
@@ -101,7 +101,7 @@ export const CaseStudyHeader = ({
                     <dl className={`grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-4 mt-10 border-t border-zinc-700 pt-8 opacity-0${animate ? ' animate-fadeInUp animate-delay-[225ms]' : ''}`}>
                         {metaItems.map(item => (
                             <div key={item.label}>
-                                <dt className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-1">
+                                <dt className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-1">
                                     {item.label}
                                 </dt>
                                 <dd className="text-sm text-zinc-200">{item.value}</dd>
@@ -116,7 +116,7 @@ export const CaseStudyHeader = ({
                             href={ctaUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-6 py-3 border border-white text-white text-xs font-semibold uppercase tracking-widest hover:bg-white hover:text-black transition-colors duration-200"
+                            className="inline-flex items-center gap-2 px-6 py-3 rounded-md border border-white text-white text-xs font-semibold uppercase tracking-widest hover:bg-white hover:text-black transition-colors duration-200"
                         >
                             <span>{ctaLabel}</span>
                             <ExternalLinkIcon size={14} />
