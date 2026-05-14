@@ -65,14 +65,18 @@ function WritingThumb({ title }: { title: string }) {
   );
 }
 
-function GridCard({ post }: { post: EntryWithIndex }) {
+function isFeatured(i: number, post: EntryWithIndex): boolean {
+  return post.kind === 'case-study' || i % 7 === 0;
+}
+
+function GridCard({ post, featured = false }: { post: EntryWithIndex; featured?: boolean }) {
   const href = getHref(post);
   const year = formatYear(post.published);
   const tags = (post.category || '').split(',').map(t => t.trim()).filter(Boolean).slice(0, 3);
   const isNew = isCollectionNew(post.date);
 
   return (
-    <article className="relative flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden group transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/30">
+    <article className={`relative flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden group transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/30${featured ? ' sm:col-span-2' : ''}`}>
       <Link href={href} className="flex flex-col flex-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600">
 
         {/* Thumb */}
@@ -83,7 +87,10 @@ function GridCard({ post }: { post: EntryWithIndex }) {
               alt={post.title}
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-[1.015] saturate-[0.92] contrast-[1.03]"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+              sizes={featured
+                ? "(max-width: 640px) 100vw, (max-width: 1280px) 66vw, 50vw"
+                : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+              }
             />
           ) : (
             <WritingThumb title={post.title} />
@@ -108,9 +115,15 @@ function GridCard({ post }: { post: EntryWithIndex }) {
 
         {/* Body */}
         <div className="p-4 flex flex-col gap-2 flex-1">
-          <h3 className="font-serif text-xl leading-snug font-normal text-gray-900 dark:text-gray-100 line-clamp-2">
+          <h3 className={`font-serif text-xl leading-snug font-normal text-gray-900 dark:text-gray-100 ${featured ? 'line-clamp-3' : 'line-clamp-2'}`}>
             {post.title}
           </h3>
+
+          {featured && post.description && (
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2 -mt-1">
+              {post.description}
+            </p>
+          )}
 
           {tags.length > 0 && (
             <div className="flex flex-wrap gap-1">
@@ -202,9 +215,9 @@ const ProjectsGrid: React.FC<ProjectsGridProps> = ({ entries, view = 'grid', pro
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 p-3 sm:p-4">
-      {items.map(post => (
-        <GridCard key={post.slug} post={post} />
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 p-3 sm:p-4 grid-flow-row-dense">
+      {items.map((post, i) => (
+        <GridCard key={post.slug} post={post} featured={isFeatured(i, post)} />
       ))}
     </div>
   );
