@@ -40,7 +40,7 @@ const SimpleHero: React.FC = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-black dark:bg-custom-dark-gray px-4 py-20 animate-fadeIn opacity-0">
-      <div className="max-w-4xl mx-auto text-center">
+      <div className="max-w-6xl mx-auto text-center">
         {/* Profile Image */}
         <div className="mb-8 flex justify-center animate-fadeIn opacity-0" style={{ animationDelay: '200ms' }}>
           <div className="relative w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden ring-4 ring-gray-800 dark:ring-gray-700">

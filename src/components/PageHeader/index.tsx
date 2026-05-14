@@ -284,7 +284,7 @@ const PageHeader: React.FC<Props> = ({
                     )}
                     <div className="text-gray-900 dark:text-white pt-2 text-sm">
                         <span>{formattedDate}</span>
-                        {isWriting && readTimeMinutes > 0 && (
+                        {date && isWriting && readTimeMinutes > 0 && (
                             <span className="ml-4">Total read: {readTimeMinutes} minute{readTimeMinutes !== 1 ? 's' : ''}</span>
                         )}
                     </div>
@@ -293,7 +293,7 @@ const PageHeader: React.FC<Props> = ({
                       {category?.split(',').map((cat) => (
                         <div
                           key={cat.trim()}
-                          className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100/80 text-gray-700 dark:text-zinc-300 dark:bg-zinc-700/60"
+                          className="px-2 py-0.5 border border-zinc-400/50 dark:border-zinc-600 text-[10px] font-mono uppercase tracking-[0.06em] text-zinc-600 dark:text-zinc-400"
                         >
                           {cat.trim()}
                         </div>

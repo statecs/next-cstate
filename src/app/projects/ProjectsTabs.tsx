@@ -79,7 +79,7 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
 
   return (
     <div className="flex flex-grow overflow-auto">
-      <div className="max-w-[60%] mx-auto">
+      <div className="max-w-6xl mx-auto">
 
         {/* Hero */}
         <section className="border-b border-zinc-200 dark:border-zinc-700 px-6 py-10 md:py-14">

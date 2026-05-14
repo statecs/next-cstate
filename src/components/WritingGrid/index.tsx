@@ -55,7 +55,7 @@ const WritingGrid: React.FC<WritingGridProps> = ({ posts }) => {
 
   return (
     <div className="w-full">
-      <div className="max-w-[60%] mx-auto py-10">
+      <div className="max-w-6xl mx-auto py-10">
         {/* Filter toggle row */}
         <div className="flex items-center justify-between mb-6">
           <button

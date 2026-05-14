@@ -1,5 +1,6 @@
 import {draftMode} from 'next/headers';
 import {redirect} from 'next/navigation';
+import Link from 'next/link';
 import PageHeader from '@/components/PageHeader';
 import PhotoCarousel from '@/components/PhotoCarousel';
 import config from '@/utils/config';
@@ -33,32 +34,45 @@ const PhotoPage = async ({params}: Props) => {
 
     return (
         <>
-        <FloatingHeader scrollTitle={collection.title} goBackLink={`/writing/${collection.slug}`}></FloatingHeader>
-            <div className="flex flex-grow flex-col h-screen border-spacing-4 py-4 px-8 md:justify-center">
-                <PageHeader
-                    animate={false}
-                    backUrl={`${collection.slug}`}
-                    title={collection.title}
-                    currentPage="writing"
-                />
-                <PhotoCarousel photo={params.photo} collection={collection} />
-                <div>
-                    {collection.photosCollection.items.map((photo, index) => (
-                        photo.slug === params.photo && (
-                            <div key={index}>
-                                <PageHeader
-                                    animate={false}
-                                    backUrl={`/${collection.slug}`}
-                                    ctaLabel={collection.ctaLabel}
-                                    ctaUrl={collection.ctaUrl}
-                                    description={photo.description}
-                                />
-                            </div>
-                        )
-                    ))}
+          <FloatingHeader scrollTitle={collection.title} goBackLink={`/writing/${collection.slug}`} />
+          <div className="bg-[#F4F1EA] dark:bg-zinc-950 min-h-screen">
+            {/* Kicker header */}
+            <div className="px-8 pt-10 pb-6 border-b border-zinc-200 dark:border-zinc-800">
+              <div className="max-w-6xl mx-auto">
+                <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-400">
+                  <Link href={`/writing/${collection.slug}`}>
+                    <span className="text-red-600 dark:text-red-500">§</span>
+                    {' — '}{collection.title}
+                  </Link>
                 </div>
+              </div>
             </div>
-            </>
+            {/* Carousel */}
+            <div className="px-8 py-6">
+              <div className="max-w-6xl mx-auto">
+                <PhotoCarousel photo={params.photo} collection={collection} />
+              </div>
+            </div>
+            {/* Description / CTA */}
+            <div className="px-8 pb-10">
+              <div className="max-w-6xl mx-auto">
+                {collection.photosCollection.items.map((photo, index) =>
+                  photo.slug === params.photo && (
+                    <div key={index}>
+                      <PageHeader
+                        animate={false}
+                        backUrl={`/${collection.slug}`}
+                        ctaLabel={collection.ctaLabel}
+                        ctaUrl={collection.ctaUrl}
+                        description={photo.description}
+                      />
+                    </div>
+                  )
+                )}
+              </div>
+            </div>
+          </div>
+        </>
     );
 };
 

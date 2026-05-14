@@ -29,7 +29,7 @@ const WritingPage = async () => {
       <div className="w-full overflow-y-auto bg-[#F4F1EA] dark:bg-zinc-950">
         {/* Header */}
         <div className="px-8 pt-16 pb-12 border-b border-zinc-900 dark:border-zinc-700">
-          <div className="max-w-[60%] mx-auto">
+          <div className="max-w-6xl mx-auto">
             {/* Kicker */}
             <div className="flex items-center justify-between mb-10 font-mono text-[11px] uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-400">
               <span><span className="text-red-600 dark:text-red-500">§ 00</span>{' — Writing'}</span>

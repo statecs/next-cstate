@@ -65,7 +65,7 @@ const CollectionPage = async ({params}: Props) => {
                     </div>
                                     {/* Photo slider at the bottom — renders nothing when photosCollection is empty */}
                 <div className="flex flex-grow px-4 sm:px-8 md:justify-center">
-                    <div className="max-w-5xl mx-auto w-full">
+                    <div className="max-w-6xl mx-auto w-full">
                         <BannerPhotoCollection {...collection} key={collection.slug} />
                     </div>
                 </div>
@@ -80,7 +80,7 @@ const CollectionPage = async ({params}: Props) => {
         <FloatingHeader scrollTitle="Projects" goBackLink="/projects"></FloatingHeader>
         <div className="flex flex-grow py-8 px-4 sm:px-8 md:justify-center">
             <div className="flex flex-col space-y-8 w-full">
-                <div className="max-w-5xl mx-auto w-full">
+                <div className="max-w-6xl mx-auto w-full">
                     {/* Banner Photo Collection */}
                     <BannerPhotoCollection {...collection} key={collection.slug} />
 

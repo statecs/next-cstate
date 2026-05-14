@@ -46,7 +46,7 @@ export const CaseStudyHeader = ({
         <div className="bg-[#F4F1EA] dark:bg-zinc-950">
             {/* Hero */}
             <div className="px-8 pt-16 pb-12 border-b border-zinc-900 dark:border-zinc-700">
-              <div className="max-w-[60%] mx-auto">
+              <div className="max-w-6xl mx-auto">
                 {/* Kicker row */}
                 <div className="flex items-center justify-between mb-10 font-mono text-[11px] uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-400">
                     <span>
@@ -101,7 +101,7 @@ export const CaseStudyHeader = ({
 
             {/* Cover image */}
             {coverImage && (
-                <div className="max-w-[60%] mx-auto">
+                <div className="max-w-6xl mx-auto">
                 <div className="relative bg-zinc-900 dark:bg-zinc-950 border-b border-zinc-900 dark:border-zinc-700">
                     <div className="relative w-full aspect-[16/7] overflow-hidden">
                         <Image
@@ -133,7 +133,7 @@ export const CaseStudyHeader = ({
 
             {/* Meta grid */}
             {metaItems.length > 0 && (
-                <div className="max-w-[60%] mx-auto">
+                <div className="max-w-6xl mx-auto">
                 <dl className="grid grid-cols-2 sm:grid-cols-4 border-b border-zinc-900 dark:border-zinc-700">
                     {metaItems.map((item, i) => (
                         <div

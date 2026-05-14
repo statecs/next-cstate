@@ -39,10 +39,10 @@ const BannerPhotoCollection: React.FC<Props> = ({ photosCollection, slug }) => {
   return (
     <div className="relative w-full mb-8 animate-fadeIn animate-duration-1000">
       {/* Main Banner Image */}
-      <div className="relative w-full h-[300px] sm:h-[400px] lg:h-[500px] rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group">
+      <div className="relative w-full h-[300px] sm:h-[400px] lg:h-[500px] rounded-none overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 group">
         <Link
           href={`${basePath}/${currentPhoto.collection || slug}/${currentPhoto.slug}`}
-          className="block w-full h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white focus-visible:ring-offset-2 rounded-2xl"
+          className="block w-full h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white focus-visible:ring-offset-2"
         >
           <Image
             src={currentPhoto.fullSize.url}
@@ -74,7 +74,7 @@ const BannerPhotoCollection: React.FC<Props> = ({ photosCollection, slug }) => {
           <>
             <button
               onClick={prevImage}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white dark:hover:bg-gray-700 shadow-lg"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-none flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white dark:hover:bg-gray-700 shadow-lg"
               aria-label="Previous image"
             >
               <ChevronLeft size={20} className="text-gray-800 dark:text-gray-200" />
@@ -82,7 +82,7 @@ const BannerPhotoCollection: React.FC<Props> = ({ photosCollection, slug }) => {
             
             <button
               onClick={nextImage}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white dark:hover:bg-gray-700 shadow-lg"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-none flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white dark:hover:bg-gray-700 shadow-lg"
               aria-label="Next image"
             >
               <ChevronRight size={20} className="text-gray-800 dark:text-gray-200" />
@@ -92,7 +92,7 @@ const BannerPhotoCollection: React.FC<Props> = ({ photosCollection, slug }) => {
 
         {/* Image Counter */}
         {hasMultipleImages && (
-          <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white text-sm px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white border border-white/60 px-2 py-0.5 text-[10px] font-mono opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             {currentImageIndex + 1} / {photos.length}
           </div>
         )}
@@ -125,7 +125,7 @@ const BannerPhotoCollection: React.FC<Props> = ({ photosCollection, slug }) => {
               key={index}
               onClick={() => goToImage(index)}
               className={clsx(
-                "relative flex-shrink-0 w-20 h-16 sm:w-24 sm:h-20 rounded-lg overflow-hidden transition-all duration-300 hover:scale-105",
+                "relative flex-shrink-0 w-20 h-16 sm:w-24 sm:h-20 rounded-none overflow-hidden transition-all duration-300 hover:scale-105",
                 index === currentImageIndex
                   ? "ring-2 ring-black dark:ring-white shadow-lg"
                   : "opacity-70 hover:opacity-100"

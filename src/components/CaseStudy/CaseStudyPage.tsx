@@ -56,7 +56,7 @@ export const CaseStudyPage = ({ caseStudy }: CaseStudyPageProps) => {
                     slug={caseStudy.slug}
                 />
 
-                <div className="max-w-[60%] mx-auto">
+                <div className="max-w-6xl mx-auto">
 
                 {/* Sticky TOC */}
                 <nav className="sticky top-0 z-20 flex items-center overflow-x-auto bg-[#F4F1EA] dark:bg-zinc-950 border-b border-zinc-900 dark:border-zinc-700 font-mono text-[11px] uppercase tracking-[0.1em]">
