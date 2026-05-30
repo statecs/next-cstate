@@ -652,6 +652,357 @@ body.noanim .aurora-cursor-dot {
     animation: cs-pulse 2.4s infinite;
 }
 
+/* --- AMA input + pills + segmented model picker + response --- */
+
+.aurora-ama-form {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.aurora-ama-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--aurora-line2);
+    border-radius: 16px;
+    padding: 0;
+    transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.aurora-ama-input:focus-within {
+    border-color: rgba(167, 139, 250, 0.45);
+    box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.08);
+}
+
+.aurora-ama-input input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--aurora-text);
+    font-family: var(--aurora-sans);
+    font-size: 1rem;
+    line-height: 1.4;
+    padding: 18px 110px 18px 22px;
+    width: 100%;
+    min-width: 0;
+}
+
+.aurora-ama-input input::placeholder {
+    color: var(--aurora-faint);
+}
+
+.aurora-ama-input input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Override VoiceInput's absolute wrapper so the mic sits vertically centered */
+.aurora-ama-input > div.absolute {
+    right: 58px !important;
+    left: auto !important;
+    bottom: auto !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    display: flex;
+    align-items: center;
+}
+
+/* Override VoiceInput's mic button styling inside the aurora input */
+.aurora-ama-input button.rounded-full {
+    background: transparent !important;
+    padding: 6px !important;
+    display: grid;
+    place-items: center;
+    transition: color 0.2s;
+}
+
+.aurora-ama-input button.rounded-full:hover {
+    background: transparent !important;
+}
+
+.aurora-ama-input button.rounded-full svg {
+    color: var(--aurora-muted) !important;
+    width: 18px !important;
+    height: 18px !important;
+    transition: color 0.2s;
+}
+
+.aurora-ama-input button.rounded-full:hover svg {
+    color: var(--aurora-text) !important;
+}
+
+.aurora-ama-send {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--aurora-vio), var(--aurora-lav));
+    color: #fff;
+    display: grid;
+    place-items: center;
+    transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+    box-shadow: 0 6px 20px rgba(167, 139, 250, 0.4);
+}
+
+.aurora-ama-send:hover:not(:disabled) {
+    transform: translateY(-52%);
+    filter: brightness(1.1);
+    box-shadow: 0 10px 28px rgba(167, 139, 250, 0.55);
+}
+
+.aurora-ama-send:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.aurora-ama-send svg {
+    width: 18px;
+    height: 18px;
+}
+
+.aurora-ama-suggest {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 8px);
+    z-index: 10;
+    list-style: none;
+    margin: 0;
+    background: rgba(7, 6, 17, 0.85);
+    border: 1px solid var(--aurora-line2);
+    border-radius: 14px;
+    padding: 6px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+}
+
+.aurora-ama-suggest li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.aurora-ama-suggest button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: transparent;
+    border: none;
+    color: var(--aurora-muted);
+    font-family: var(--aurora-sans);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.aurora-ama-suggest button:hover,
+.aurora-ama-suggest button[aria-selected="true"] {
+    background: var(--aurora-glass2);
+    color: var(--aurora-text);
+}
+
+.aurora-ama-pills {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+    justify-content: center;
+}
+
+.aurora-ama-pills button {
+    font-family: var(--aurora-sans);
+    font-size: 0.85rem;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--aurora-line);
+    background: var(--aurora-glass);
+    color: var(--aurora-muted);
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.aurora-ama-pills button:hover {
+    color: var(--aurora-text);
+    border-color: var(--aurora-line2);
+    transform: translateY(-1px);
+}
+
+.aurora-ama-pills button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.aurora-ama-modeltabs-wrap {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin-top: 22px;
+    padding: 0 4px;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+.aurora-ama-modeltabs-wrap:hover,
+.aurora-ama-modeltabs-wrap:focus-within {
+    opacity: 1;
+}
+
+.aurora-ama-modeltabs-label {
+    font-family: var(--aurora-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--aurora-faint);
+}
+
+.aurora-ama-modeltabs {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+
+.aurora-ama-modeltabs button {
+    font-family: var(--aurora-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 4px 2px;
+    border: none;
+    border-bottom: 1px solid transparent;
+    background: transparent;
+    color: var(--aurora-faint);
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.aurora-ama-modeltabs button + button {
+    margin-left: 6px;
+}
+
+.aurora-ama-modeltabs button:hover {
+    color: var(--aurora-text);
+}
+
+.aurora-ama-modeltabs button[aria-pressed="true"] {
+    color: var(--aurora-text);
+    border-bottom-color: var(--aurora-lav);
+}
+
+.aurora-ama-response {
+    position: relative;
+    text-align: left;
+    margin-top: 28px;
+    padding: 24px 28px;
+    border-radius: 18px;
+    border: 1px solid var(--aurora-line);
+    background: rgba(0, 0, 0, 0.35);
+    color: var(--aurora-text);
+}
+
+.aurora-ama-response p {
+    color: var(--aurora-text);
+    font-size: 0.98rem;
+    line-height: 1.65;
+    max-height: 450px;
+    overflow: auto;
+    margin: 0;
+}
+
+.aurora-ama-response a {
+    color: var(--aurora-lav);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.aurora-ama-response a:hover {
+    color: var(--aurora-pink);
+}
+
+.aurora-ama-response ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+}
+
+.aurora-ama-response strong {
+    color: var(--aurora-text);
+    font-weight: 600;
+}
+
+.aurora-ama-response pre {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--aurora-line);
+    border-radius: 10px;
+    padding: 14px;
+    margin: 12px 0;
+    overflow-x: auto;
+    font-family: var(--aurora-mono);
+    font-size: 0.85rem;
+    color: var(--aurora-text);
+}
+
+.aurora-ama-loading {
+    margin-top: 14px;
+    text-align: center;
+    color: var(--aurora-muted);
+    font-family: var(--aurora-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.aurora-ama-audio-btn {
+    position: absolute;
+    bottom: -16px;
+    right: 18px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 999px;
+    border: 1px solid var(--aurora-line2);
+    background: rgba(7, 6, 17, 0.85);
+    color: var(--aurora-muted);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.aurora-ama-audio-btn:hover {
+    color: var(--aurora-text);
+    border-color: var(--aurora-lav);
+}
+
+@media (max-width: 560px) {
+    .aurora-ama-input input {
+        font-size: 0.95rem;
+        padding: 16px 100px 16px 18px;
+    }
+    .aurora-ama-send {
+        right: 8px;
+        width: 38px;
+        height: 38px;
+    }
+    .aurora-ama-pills button {
+        font-size: 0.82rem;
+        padding: 9px 14px;
+    }
+}
+
 /* --- page heads (about/projects) --- */
 
 .aurora-page-head {

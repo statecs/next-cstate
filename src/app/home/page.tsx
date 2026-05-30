@@ -4,6 +4,7 @@ import { fetchEditorialPage } from '@/utils/contentful';
 import { getEditorialSeo } from '@/utils/helpers';
 import ComboBox from '@/components/ComboBox';
 import AuroraMarquee from '@/components/AuroraMarquee';
+import AuroraAskCta from '@/components/AuroraAskCta';
 
 const CLIENTS = ['Siemens', 'Vattenfall', 'SJ', 'ICA', 'Axfood', 'Cartina'];
 
@@ -30,9 +31,7 @@ const HomePage = async () => {
                         <Link href="/projects" className="aurora-btn primary" data-magnetic>
                             View my work <span className="arr" aria-hidden="true">→</span>
                         </Link>
-                        <a href="#ama" className="aurora-btn" data-magnetic>
-                            Ask me anything
-                        </a>
+                        <AuroraAskCta />
                     </div>
                 </div>
                 <div className="aurora-scrollcue" aria-hidden="true">
@@ -62,9 +61,7 @@ const HomePage = async () => {
                         </span>
                         <h2>Ask Me Anything</h2>
                         <p>Have questions? Chat with my AI assistant, trained on my work and experience.</p>
-                        <div style={{ maxWidth: '720px', margin: '0 auto', textAlign: 'left' }}>
-                            <ComboBox />
-                        </div>
+                        <ComboBox />
                     </div>
                 </div>
             </section>

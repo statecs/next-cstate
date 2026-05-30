@@ -1,72 +1,66 @@
 'use client';
 
-import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
+import React, { useState, useRef, useEffect, useMemo, KeyboardEvent } from 'react';
 import { sendMessageToResponseStream, sendMessageToClaudeAPI, textToSpeech } from '@/utils/threadService';
 import { useAtom } from 'jotai';
 import { footerVisibilityAtom, responseMessageLengthAtom } from '@/utils/store';
 import { Volume2Icon, PauseIcon, LoaderIcon } from 'lucide-react';
-import VoiceInput from '../VoiceInput'; // Import the new VoiceInput component
+import VoiceInput from '../VoiceInput';
+
+const SUGGESTIONS: string[] = [
+  "What's your approach to accessibility?",
+  'Walk me through your latest project',
+  'How do you use AI in design?',
+];
 
 const ComboBox: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-  const [isFilled, setIsFilled] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [, setFooterVisible] = useAtom(footerVisibilityAtom);
-  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
   const responseMessageRef = useRef<string | null>(null);
-  const suggestions: string[] = ["Who is Christopher?", "What are your skills?", "What are your hobbies?"];
   const inputRef = useRef<HTMLInputElement>(null);
   const [, setResponseMessageLength] = useAtom(responseMessageLengthAtom);
-  const [selectedModel, setSelectedModel] = useState<string>("assistant"); // New state for model selection
-  const selectRef = useRef<HTMLSelectElement>(null);
+  const [selectedModel, setSelectedModel] = useState<string>('assistant');
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [currentLabel, setCurrentLabel] = useState('Ask me anything...');
-  const [isVisible, setIsVisible] = useState(true);
-  const intervalRef = useRef<number | null>(null);
-  const [isHovered, setIsHovered] = useState(false);
-
   const [isVoiceInputActive, setIsVoiceInputActive] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [highlightIdx, setHighlightIdx] = useState(-1);
 
-  const getPreviousResponseId = () => {
-    return localStorage.getItem('previousResponseId');
-  };
+  const filtered = useMemo(
+    () =>
+      SUGGESTIONS.filter(
+        s => !inputValue.trim() || s.toLowerCase().includes(inputValue.toLowerCase())
+      ),
+    [inputValue]
+  );
+
+  const showSuggestList = isFocused && filtered.length > 0 && !loading && !responseMessage;
+
+  const getPreviousResponseId = () => localStorage.getItem('previousResponseId');
 
   useEffect(() => {
     responseMessageRef.current = responseMessage;
   }, [responseMessage]);
 
-
   useEffect(() => {
-    if (responseMessage) {
-      setResponseMessageLength(responseMessage.length);
-    }
+    if (responseMessage) setResponseMessageLength(responseMessage.length);
   }, [responseMessage, setResponseMessageLength]);
 
-  // Retrieve cached response on component mount only
+  // Retrieve cached response on mount
   useEffect(() => {
-    const cachedResponse = localStorage.getItem("chatResponse");
-    if (cachedResponse) {
-      setResponseMessage(cachedResponse);
-    }
+    const cachedResponse = localStorage.getItem('chatResponse');
+    if (cachedResponse) setResponseMessage(cachedResponse);
   }, []);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event) return;
-
-    const value = event.target.value;
-    setIsFilled(value.length > 0);
-    setInputValue(value);
-    setFilteredSuggestions(suggestions.filter(suggestion =>
-     !value || suggestion.toLowerCase().includes(value.toLowerCase())
-    ));
+    setInputValue(event.target.value);
   };
 
   const sendMessage = async (message: string) => {
@@ -74,25 +68,17 @@ const ComboBox: React.FC = () => {
     setResponseMessageLength(1);
     setResponseMessage(null);
     setInputValue('');
-    setIsFocused(false);
-    setIsFilled(false);
 
     try {
       const response = await sendMessageToResponseStream(message, getPreviousResponseId());
-
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
-
-      if (!reader) {
-        throw new Error('No response body');
-      }
+      if (!reader) throw new Error('No response body');
 
       let buffer = '';
-
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-
         buffer += decoder.decode(value, { stream: true });
         const lines = buffer.split('\n');
         buffer = lines.pop() || '';
@@ -100,11 +86,10 @@ const ComboBox: React.FC = () => {
         for (const line of lines) {
           if (!line.startsWith('data: ')) continue;
           const data = JSON.parse(line.slice(6));
-
           if (data.type === 'delta') {
             setResponseMessage(prev => {
               const updated = prev ? `${prev}${data.value}` : data.value;
-              localStorage.setItem("chatResponse", updated);
+              localStorage.setItem('chatResponse', updated);
               return updated;
             });
           } else if (data.type === 'done') {
@@ -120,147 +105,113 @@ const ComboBox: React.FC = () => {
     }
   };
 
-  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      if (selectedIndex >= 0 && selectedIndex < filteredSuggestions.length) {
-        handleSendMessage(filteredSuggestions[selectedIndex]);
-        setSelectedIndex(-1);
-      } else if (inputValue.trim() !== '') {
-        handleSendMessage(inputValue.trim());
-      }
-    } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-      e.preventDefault(); // Prevent cursor movement
-      let newIndex = selectedIndex;
-      if (e.key === 'ArrowDown') {
-        newIndex = (selectedIndex + 1) % filteredSuggestions.length;
-      } else if (e.key === 'ArrowUp') {
-        newIndex = (selectedIndex - 1 + filteredSuggestions.length) % filteredSuggestions.length;
-      }
-      setSelectedIndex(newIndex);
-      setInputValue(filteredSuggestions[newIndex]); // Update input value
-      setIsFilled(filteredSuggestions.length > 0);
-    } else if (e.key === 'Escape') {
-      setIsFocused(false);
+  const sendMessageToClaude = async (message: string) => {
+    setLoading(true);
+    setResponseMessage(null);
+    setInputValue('');
+
+    try {
+      const response = await sendMessageToClaudeAPI(message);
+      setResponseMessage(response);
+      localStorage.setItem('chatResponse', response);
+    } catch (error) {
+      console.error('Failed to send message to Claude:', error);
+      setResponseMessage('Failed to send message to Claude');
+    } finally {
+      setLoading(false);
     }
   };
-
-
-  const handleButtonClick = () => {
-    // If the input value is empty and the input is not focused, focus the input.
-    if (inputValue.trim() === '' && !isFocused) {
-      inputRef.current?.focus();
-      return; // Exit the function after focusing the input.
-    }
-
-    if (inputValue.trim() !== '') {
-      handleSendMessage(inputValue.trim());
-    }
-  };
-
-  const handleFocus = () => {
-    setIsFocused(true);
-    setFooterVisible(false);
-  };
-
-  const handleBlur = () => {
-    // Delay the blur action to allow the click event to fire on the suggestions.
-    setTimeout(() => {
-      setIsFocused(false);
-      setFooterVisible(true);
-    }, 200);
-  };
-
-  const handleSuggestionClick = (suggestion: string) => {
-    setInputValue(suggestion);
-    setIsFocused(false);
-    setFooterVisible(true);
-    setIsFilled(suggestion.length > 0);
-
-    if (selectedModel === "claude") {
-      sendMessageToClaude(suggestion);
-    } else {
-     sendMessage(suggestion);
-    }
-
-  };
-
-  useEffect(() => {
-    if (inputValue === '') {
-      setFilteredSuggestions(suggestions);
-    }
-  }, [inputValue]);
-
-useEffect(() => {
-  window.copyCode = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      const range = document.createRange();
-      range.selectNodeContents(el);
-      const selection = window.getSelection();
-      if (selection) {
-        selection.removeAllRanges();
-        selection.addRange(range);
-        document.execCommand('copy');
-        selection.removeAllRanges();
-      }
-    }
-  };
-}, []);
-
-const sendMessageToClaude = async (message: string) => {
-  setLoading(true);
-  setResponseMessage(null);
-  setInputValue('');
-  setIsFocused(false);
-  setIsFilled(false);
-
-  try {
-    const response = await sendMessageToClaudeAPI(message);
-
-    // Update local state
-    setResponseMessage(response);
-
-    // Save to localStorage
-    localStorage.setItem("chatResponse", response);
-
-  } catch (error) {
-    console.error('Failed to send message to Claude:', error);
-    setResponseMessage('Failed to send message to Claude');
-  } finally {
-    setLoading(false);
-  }
-};
 
   const handleSendMessage = async (message: string) => {
-    if (selectedModel === "claude") {
+    if (selectedModel === 'claude') {
       await sendMessageToClaude(message);
     } else {
       await sendMessage(message);
     }
   };
 
-  const adjustSelectWidth = () => {
-    if (selectRef.current) {
-      const selectedOption = selectRef.current.options[selectRef.current.selectedIndex];
-      const tempSpan = document.createElement('span');
-      tempSpan.style.visibility = 'hidden';
-      tempSpan.style.position = 'absolute';
-      tempSpan.style.fontSize = '10px'; // Match the font size of your select
-      tempSpan.textContent = selectedOption.textContent;
-      document.body.appendChild(tempSpan);
-      const width = tempSpan.getBoundingClientRect().width;
-      document.body.removeChild(tempSpan);
-      selectRef.current.style.width = `${width + 22}px`; // Add some padding
+  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      if (showSuggestList && highlightIdx >= 0 && highlightIdx < filtered.length) {
+        e.preventDefault();
+        handleSuggestionClick(filtered[highlightIdx]);
+        setHighlightIdx(-1);
+        setIsFocused(false);
+        return;
+      }
+      if (inputValue.trim() !== '') {
+        handleSendMessage(inputValue.trim());
+      }
+      return;
+    }
+    if (e.key === 'ArrowDown') {
+      if (!showSuggestList) return;
+      e.preventDefault();
+      setHighlightIdx(prev => (prev + 1) % filtered.length);
+      return;
+    }
+    if (e.key === 'ArrowUp') {
+      if (!showSuggestList) return;
+      e.preventDefault();
+      setHighlightIdx(prev => (prev - 1 + filtered.length) % filtered.length);
+      return;
+    }
+    if (e.key === 'Escape') {
+      setIsFocused(false);
+      setHighlightIdx(-1);
     }
   };
 
+  const handleButtonClick = () => {
+    if (inputValue.trim() === '') {
+      inputRef.current?.focus();
+      return;
+    }
+    handleSendMessage(inputValue.trim());
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setInputValue(suggestion);
+    setFooterVisible(true);
+    handleSendMessage(suggestion);
+  };
+
   useEffect(() => {
-    adjustSelectWidth();
-  }, [selectedModel]);
+    const onAskShow = () => {
+      setResponseMessage(null);
+      localStorage.removeItem('chatResponse');
+      window.setTimeout(() => {
+        inputRef.current?.focus({ preventScroll: true });
+      }, 0);
+    };
+    document.addEventListener('aurora:ask-show', onAskShow);
+    return () => document.removeEventListener('aurora:ask-show', onAskShow);
+  }, []);
+
+  useEffect(() => {
+    // Reset highlight when filtered list changes (typing narrows the list)
+    setHighlightIdx(-1);
+  }, [filtered.length]);
+
+  useEffect(() => {
+    (window as any).copyCode = (id: string) => {
+      const el = document.getElementById(id);
+      if (el) {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const selection = window.getSelection();
+        if (selection) {
+          selection.removeAllRanges();
+          selection.addRange(range);
+          document.execCommand('copy');
+          selection.removeAllRanges();
+        }
+      }
+    };
+  }, []);
 
   const handleTextToSpeech = async () => {
     if (!responseMessage) return;
-
     try {
       setIsLoading(true);
       if (!audioUrl) {
@@ -272,13 +223,9 @@ const sendMessageToClaude = async (message: string) => {
           audioRef.current.load();
         }
       }
-
       if (audioRef.current) {
-        if (isPlaying) {
-          audioRef.current.pause();
-        } else {
-          await audioRef.current.play();
-        }
+        if (isPlaying) audioRef.current.pause();
+        else await audioRef.current.play();
         setIsPlaying(!isPlaying);
       }
     } catch (error) {
@@ -289,16 +236,12 @@ const sendMessageToClaude = async (message: string) => {
   };
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.onended = () => setIsPlaying(false);
-    }
+    if (audioRef.current) audioRef.current.onended = () => setIsPlaying(false);
   }, []);
 
   useEffect(() => {
     return () => {
-      if (audioUrl) {
-        URL.revokeObjectURL(audioUrl);
-      }
+      if (audioUrl) URL.revokeObjectURL(audioUrl);
     };
   }, [audioUrl]);
 
@@ -311,244 +254,202 @@ const sendMessageToClaude = async (message: string) => {
     }
   }, [responseMessage]);
 
-  function shuffleArray<T>(array: T[]): T[] {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
-
-const labels: string[] = shuffleArray([
-  // English
-  'Let\'s chat!',
-  'Who is Christopher?',
-  'What can you do?',
-  'What are your skills?',
-  'Let\'s discuss my projects!',
-  'Ask me anything...',
-  'What are you working on?',
-  'Tell me about yourself!',
-  'What technologies do you use?',
-  'What are your passions?',
-  // Swedish
-  'Fråga mig vad som helst...',
-  'Låt oss prata!',
-  'Vem är Christopher?',
-  'Vad kan du göra?',
-  'Berätta om dig själv!',
-  'Vilka teknologier använder du?',
-  'Vad jobbar du med?',
-  // Romanian
-  'Întreabă-mă orice...',
-  'La ce te gândești?',
-  'Cum te pot ajuta?',
-  'Hai să vorbim!',
-]);
-
-
-useEffect(() => {
-  let currentIndex = 0;
-
-  const changeLabel = () => {
-    if (!isFocused && !inputValue && !isHovered) {
-      setIsVisible(false);
-      setTimeout(() => {
-        currentIndex = (currentIndex + 1) % labels.length;
-        setCurrentLabel(labels[currentIndex]);
-        setIsVisible(true);
-      }, 300);
-    }
+  const handleVoiceInput = (transcript: string) => {
+    setInputValue(transcript);
+    setResponseMessage(null);
   };
 
-  intervalRef.current = window.setInterval(changeLabel, 4000);
-
-  return () => {
-    if (intervalRef.current !== null) {
-      clearInterval(intervalRef.current);
-    }
+  const handleAssistantResponse = (response: string) => {
+    setResponseMessage(response);
+    responseMessageRef.current = response;
+    localStorage.setItem('chatResponse', response);
   };
-}, [isFocused, inputValue, labels, isHovered]);
 
-// Function to handle voice input — response comes from audio-stream WebSocket, not /responses/stream
-const handleVoiceInput = (transcript: string) => {
-  setInputValue(transcript);
-  setIsFilled(transcript.length > 0);
-  setResponseMessage(null);
-};
+  const handleVoiceInputState = (isActive: boolean) => setIsVoiceInputActive(isActive);
 
-// Function to handle assistant response from voice
-const handleAssistantResponse = (response: string) => {
-  setResponseMessage(response);
-  responseMessageRef.current = response;
-  localStorage.setItem("chatResponse", response);
-};
-
-// Function to handle voice input state
-const handleVoiceInputState = (isActive: boolean) => {
-  setIsVoiceInputActive(isActive);
-};
+  const hideSuggestions = loading || !!responseMessage;
 
   return (
-    <>
-    <div className="relative flex flex-col space-y-2 w-full max-w-[400px] mx-auto justify-center items-center">
-      <div className="flex items-center relative w-full">
+    <div className="aurora-ama-form">
+      <div className="aurora-ama-input">
         <input
           ref={inputRef}
           id="queryInput"
-          className="peer p-2 pt-5 px-4 w-full min-w-[270px] text-base border border-gray-300 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none disabled:bg-gray-200 dark:border-zinc-700 dark:bg-transparent dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-300 dark:disabled:bg-zinc-700"
           type="text"
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyPress}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          placeholder=" "
-          list="suggestions"
+          onFocus={() => {
+            setIsFocused(true);
+            setFooterVisible(false);
+          }}
+          onBlur={() => {
+            window.setTimeout(() => {
+              setIsFocused(false);
+              setHighlightIdx(-1);
+              setFooterVisible(true);
+            }, 180);
+          }}
+          placeholder="Ask me anything about my work…"
           autoComplete="off"
           disabled={loading}
+          aria-label="Ask me anything"
+          aria-autocomplete="list"
+          aria-expanded={showSuggestList}
+          aria-controls="aurora-ama-suggest-list"
+          aria-activedescendant={
+            showSuggestList && highlightIdx >= 0
+              ? `aurora-ama-suggest-${highlightIdx}`
+              : undefined
+          }
+          role="combobox"
         />
-        <VoiceInput onVoiceInput={handleVoiceInput} onAssistantResponse={handleAssistantResponse} onVoiceInputStateChange={handleVoiceInputState} />
+        <VoiceInput
+          onVoiceInput={handleVoiceInput}
+          onAssistantResponse={handleAssistantResponse}
+          onVoiceInputStateChange={handleVoiceInputState}
+        />
         <button
+          type="button"
           aria-label="Send message"
-          disabled={loading}
-          className="absolute bottom-3 md:bottom-1.5 right-3 md:right-2 bg-black dark:bg-white rounded-lg border border-black p-0.5 text-white transition-colors disabled:text-gray-400 disabled:opacity-10 dark:border-white dark:bg-white dark:hover:bg-white md:bottom-3 md:right-3"
+          disabled={loading || inputValue.trim() === ''}
+          className="aurora-ama-send"
           onClick={handleButtonClick}
         >
-          <span data-state="closed">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white dark:text-black">
-              <path d="M7 11L12 6L17 11M12 18V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
-            </svg>
-          </span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7 11L12 6L17 11M12 18V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </button>
+
+        {showSuggestList && (
+          <ul
+            id="aurora-ama-suggest-list"
+            role="listbox"
+            className="aurora-ama-suggest"
+          >
+            {filtered.map((s, i) => (
+              <li key={s} role="presentation">
+                <button
+                  id={`aurora-ama-suggest-${i}`}
+                  type="button"
+                  role="option"
+                  aria-selected={highlightIdx === i}
+                  onMouseEnter={() => setHighlightIdx(i)}
+                  onMouseDown={e => e.preventDefault() /* keep input focused */}
+                  onClick={() => {
+                    handleSuggestionClick(s);
+                    setIsFocused(false);
+                    setHighlightIdx(-1);
+                  }}
+                >
+                  {s}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-      <label
-        htmlFor="queryInput"
-        className={`
-          absolute left-4 transition-all duration-300
-          ${isFocused || isFilled ? '-top-1 text-xs text-blue-500' : 'top-2 text-sm text-gray-500'}
-          ${isVisible ? 'opacity-100' : 'opacity-0'}
-      `}
-    >
-      {currentLabel}
-    </label>
-      {isFocused && filteredSuggestions.length > 0 && (
-        <div className="absolute text-base text-left z-50 w-full md:mt-10 top-12 md:top-10 left-0 mt-1 p-2 bg-white dark:bg-custom-light-gray dark:text-white border border-gray-300 rounded-md">
-          {filteredSuggestions.map((suggestion, index) => (
+
+      {!hideSuggestions && (
+        <div className="aurora-ama-pills" role="group" aria-label="Suggested questions">
+          {SUGGESTIONS.map(s => (
             <button
-              key={index}
-              className={`w-full text-left block p-2 ${index === selectedIndex ? 'bg-zinc-700' : ''} dark:hover:bg-zinc-700 cursor-pointer`}
-              onClick={() => handleSuggestionClick(suggestion)}
+              key={s}
+              type="button"
+              onClick={() => handleSuggestionClick(s)}
+              disabled={loading}
             >
-              {suggestion}
+              {s}
             </button>
           ))}
         </div>
       )}
 
-      <div className="w-full flex justify-start items-center">
-      <label htmlFor="assistant-select" className="sr-only text-[10px] text-gray-500 dark:text-gray-400 whitespace-nowrap">
-        Assistant:
-      </label>
-      <div className="flex flex-row items-center space-x-1">
-        <div className="relative inline-block -mt-2 mb-1">
-          <select
-           ref={selectRef}
-            id="assistant-select"
-            value={selectedModel}
-            onChange={(e) => {
-              setSelectedModel(e.target.value);
-              adjustSelectWidth();
-            }}
-            className="
-              w-auto py-0.5 pl-1 pr-4 text-[10px]
-              text-gray-500 dark:text-gray-400
-              bg-transparent
-              border-none outline-none
-              cursor-pointer
-              appearance-none
-              transition-all duration-300
-              hover:bg-gray-100 dark:hover:bg-zinc-700
-              focus:bg-gray-100 dark:focus:bg-zinc-700
-              rounded-md
-            "
+      <div className="aurora-ama-modeltabs-wrap">
+        <span className="aurora-ama-modeltabs-label" aria-hidden="true">Model</span>
+        <div className="aurora-ama-modeltabs" role="group" aria-label="Assistant model">
+          <button
+            type="button"
+            aria-pressed={selectedModel === 'assistant'}
+            onClick={() => setSelectedModel('assistant')}
           >
-            <option value="assistant">GPT</option>
-            <option value="claude">Claude</option>
-          </select>
-          <div className="pointer-events-none absolute pt-1 inset-y-0 right-0 flex items-center text-gray-500 dark:text-gray-400">
-            <svg className="fill-current h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-              <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-            </svg>
-          </div>
+            GPT
+          </button>
+          <button
+            type="button"
+            aria-pressed={selectedModel === 'claude'}
+            onClick={() => setSelectedModel('claude')}
+          >
+            Claude
+          </button>
         </div>
       </div>
-    </div>
-      {loading && <p aria-live="polite" aria-atomic="true" className="text-sm text-gray-500 dark:text-gray-400">Sending...</p>}
-        {responseMessage && (
-          <div className="relative text-left w-full mt-6 flex-1 p-6 whitespace-pre-wrap border rounded-2xl border-gray-200 dark:border-zinc-600/50 bg-gray-50/50 dark:bg-zinc-800/30">
-            <p
-                className="text-base text-gray-900 dark:text-gray-100 max-h-[450px] overflow-scroll"
-                dangerouslySetInnerHTML={{
-                  __html: responseMessage
-                    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-                    .replace(/^- (.*)/gm, "<li>$1</li>")
-                    .replace(/<li>/, "<ul class='list-disc pl-5 whitespace-normal'><li>")
-                    .replace(/<\/li>$/, "</li></ul>")
-                    .replace(/```(\w+)?\s*([\s\S]*?)```/g, (_, lang, content) => {
-                      const trimmedContent = content.trim();
-                      const escapedContent = trimmedContent
-                        .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;');
-                      const language = lang
-                        ? `<div class="text-sm font-semibold dark:text-gray-300 truncate">${lang}</div>`
-                        : '';
-                      const id = Math.random().toString(36).substr(2, 9);
-                      return `
-                        <div class="relative flex flex-col bg-zinc-50 dark:bg-custom-light-gray border dark:border-zinc-700 rounded-md overflow-hidden my-4 w-full max-w-full">
-                          <div class="flex justify-between items-center p-2 bg-gray-100 dark:bg-zinc-700 max-h-5 overflow-hidden">
-                            <div class="flex-grow mr-2 overflow-hidden">
-                              ${language}
-                            </div>
-                            <button onclick="window.copyCode('${id}')" class="flex-shrink-0 text-xs dark:hover:bg-gray-500 dark:text-gray-200 font-bold py-0.5 px-1.5 rounded inline-flex items-center">
-                              <svg class="fill-current w-3 h-3 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M17 6h-5V2H7C5.346 2 4 3.346 4 5v10c0 1.654 1.346 3 3 3h10c1.654 0 3-1.346 3-3V9a3 3 0 00-3-3zm1 9c0 .551-.449 1-1 1H7c-.551 0-1-.449-1-1V5c0-.551.449-1 1-1h4v3h6v8z"/></svg>
-                              <span class="hidden sm:inline">Copy</span>
-                            </button>
-                          </div>
-                          <pre id="${id}" class="overflow-x-auto whitespace-pre-wrap break-words font-mono text-sm leading-6 text-gray-800 dark:text-gray-200 max-h-60 bg-zinc-50 dark:bg-custom-light-gray">${escapedContent}</pre>
-                        </div>
-                      `.trim();
-                    })
 
-                    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="w-full h-auto" />')
-                    .replace(
-                      /\[([^\]]+)\]\(([^)]+)\)/g,
-                      '<a href="$2" class="underline underline-offset-4 dark:text-white hover:text-gray-400 inline-flex items-center" target="_blank" rel="noopener noreferrer">$1<svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>'
-                    ) }}
-              />
-              {!isVoiceInputActive && (
-                <button
-                  onClick={handleTextToSpeech}
-                  className="absolute -bottom-4 right-2.5 p-1.5 rounded-full bg-gray-200 dark:bg-zinc-700 hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors duration-200"
-                  aria-label={isPlaying ? "Audio playing" : isLoading ? "Loading audio" : "Play audio"}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <LoaderIcon className="h-4 w-4 text-gray-500 dark:text-gray-400 animate-spin" />
-                  ) : isPlaying ? (
-                    <PauseIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                  ) : (
-                    <Volume2Icon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                  )}
-                </button>
+      {loading && (
+        <p aria-live="polite" aria-atomic="true" className="aurora-ama-loading">
+          Sending…
+        </p>
+      )}
+
+      {responseMessage && (
+        <div className="aurora-ama-response">
+          <p
+            dangerouslySetInnerHTML={{
+              __html: responseMessage
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/^- (.*)/gm, '<li>$1</li>')
+                .replace(/<li>/, "<ul class='list-disc pl-5 whitespace-normal'><li>")
+                .replace(/<\/li>$/, '</li></ul>')
+                .replace(/```(\w+)?\s*([\s\S]*?)```/g, (_, lang, content) => {
+                  const trimmedContent = content.trim();
+                  const escapedContent = trimmedContent
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+                  const language = lang
+                    ? `<div class="text-sm font-semibold truncate" style="color:var(--aurora-muted)">${lang}</div>`
+                    : '';
+                  const id = Math.random().toString(36).substr(2, 9);
+                  return `
+                    <div class="relative flex flex-col rounded-md overflow-hidden my-4 w-full max-w-full" style="background:rgba(0,0,0,.35);border:1px solid var(--aurora-line)">
+                      <div class="flex justify-between items-center p-2 max-h-5 overflow-hidden" style="background:rgba(255,255,255,.04)">
+                        <div class="flex-grow mr-2 overflow-hidden">${language}</div>
+                        <button onclick="window.copyCode('${id}')" class="flex-shrink-0 text-xs font-bold py-0.5 px-1.5 rounded inline-flex items-center" style="color:var(--aurora-muted)">
+                          <svg class="fill-current w-3 h-3 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M17 6h-5V2H7C5.346 2 4 3.346 4 5v10c0 1.654 1.346 3 3 3h10c1.654 0 3-1.346 3-3V9a3 3 0 00-3-3zm1 9c0 .551-.449 1-1 1H7c-.551 0-1-.449-1-1V5c0-.551.449-1 1-1h4v3h6v8z"/></svg>
+                          <span class="hidden sm:inline">Copy</span>
+                        </button>
+                      </div>
+                      <pre id="${id}">${escapedContent}</pre>
+                    </div>
+                  `.trim();
+                })
+                .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="w-full h-auto" />')
+                .replace(
+                  /\[([^\]]+)\]\(([^)]+)\)/g,
+                  '<a href="$2" target="_blank" rel="noopener noreferrer">$1<svg class="ml-1 h-4 w-4 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>'
+                ),
+            }}
+          />
+          {!isVoiceInputActive && (
+            <button
+              onClick={handleTextToSpeech}
+              className="aurora-ama-audio-btn"
+              aria-label={isPlaying ? 'Audio playing' : isLoading ? 'Loading audio' : 'Play audio'}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <LoaderIcon className="h-4 w-4 animate-spin" />
+              ) : isPlaying ? (
+                <PauseIcon className="h-4 w-4" />
+              ) : (
+                <Volume2Icon className="h-4 w-4" />
               )}
-          </div>
-        )}
-      </div>
+            </button>
+          )}
+        </div>
+      )}
+
       <audio ref={audioRef} style={{ display: 'none' }} />
-    </>
+    </div>
   );
 };
 
