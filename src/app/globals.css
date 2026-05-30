@@ -1387,7 +1387,7 @@ body.noanim .aurora-cursor-dot {
     font-family: var(--aurora-sans);
 }
 
-.aurora-foot-btn {
+.aurora-foot-card .aurora-foot-btn {
     background: #16121d;
     color: #fff;
     padding: 16px 28px;
@@ -1402,7 +1402,7 @@ body.noanim .aurora-cursor-dot {
     font-family: var(--aurora-sans);
 }
 
-.aurora-foot-btn:hover {
+.aurora-foot-card .aurora-foot-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 14px 40px rgba(0, 0, 0, 0.3);
 }
