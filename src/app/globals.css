@@ -603,7 +603,7 @@ body.noanim .aurora-cursor-dot {
 }
 
 .aurora-mtrack-logo img {
-    height: 44px;
+    height: 20px;
     width: auto;
     display: block;
     filter: brightness(0) invert(1);
@@ -611,6 +611,10 @@ body.noanim .aurora-cursor-dot {
 
 .aurora-mtrack-logo:hover {
     opacity: 1;
+}
+
+.aurora-logo-grid {
+    display: none;
 }
 
 /* --- AMA / glass card --- */
@@ -1588,6 +1592,35 @@ body.aurora :focus-visible {
     }
     .aurora-page-head {
         padding: 104px 0 12px;
+    }
+    .aurora-marquee {
+        display: none;
+    }
+    .aurora-logo-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    .aurora-logo-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 22px 20px;
+        border: 1px solid var(--aurora-line);
+        border-radius: var(--aurora-r);
+        background: var(--aurora-glass);
+        backdrop-filter: blur(10px);
+        min-height: 80px;
+        transition: border-color 0.3s;
+    }
+    .aurora-logo-box:hover {
+        border-color: var(--aurora-line2);
+    }
+    .aurora-logo-box img {
+        height: 22px;
+        width: auto;
+        filter: brightness(0) invert(1);
+        opacity: 0.65;
     }
 }
 
