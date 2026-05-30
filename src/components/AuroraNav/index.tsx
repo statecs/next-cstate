@@ -13,7 +13,6 @@ const LINKS: { href: string; label: string }[] = [
     { href: '/home', label: 'Home' },
     { href: '/about', label: 'About' },
     { href: '/projects', label: 'Projects' },
-    { href: '/writing', label: 'Writing' },
 ];
 
 const MOTION_KEY = 'cs-motion-off';

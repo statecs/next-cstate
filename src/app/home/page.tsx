@@ -14,12 +14,6 @@ const HomePage = async () => {
             {/* HERO */}
             <section className="aurora-hero" aria-label="Home">
                 <div className="aurora-hero-inner">
-                    <span className="aurora-eyebrow">
-                        <span className="dot" aria-hidden="true" />
-                        <span className="aurora-mono" style={{ color: 'var(--aurora-muted)' }}>
-                            Available for new work · Stockholm
-                        </span>
-                    </span>
                     <h1 className="aurora-title">
                         Hi, I&apos;m<br />
                         <em>Christopher.</em>
