@@ -1151,6 +1151,7 @@ body.noanim .aurora-cursor-dot {
     overflow: hidden;
     border-radius: 14px;
     border: 1px solid var(--aurora-line);
+    max-width: 520px;
 }
 
 /* --- reveal (intersection observer toggles .in) --- */
