@@ -3,11 +3,13 @@ import { Analytics } from '@/components/Analytics'
 import { GA_TRACKING_ID } from '@/lib/gtag'
 import Script from 'next/script'
 import localFont from 'next/font/local';
-import ConditionalStickyFooter from '@/components/ConditionalStickyFooter';
-import MobileFooter from '@/components/MobileFooter';
+import { Instrument_Serif, Hanken_Grotesk, JetBrains_Mono } from 'next/font/google';
+import AuroraNav from '@/components/AuroraNav';
+import AuroraBackground from '@/components/AuroraBackground';
+import AuroraFooter from '@/components/AuroraFooter';
+import AuroraReveal from '@/components/AuroraReveal';
+import AuroraMagnetic from '@/components/AuroraMagnetic';
 import SkipLink from '@/components/SkipLink';
-import SiteHeader from '@/components/SiteHeader';
-import TopNav from '@/components/TopNav';
 import { MainWrapper } from '@/components/MainWrapper';
 import config from '@/utils/config';
 import './globals.css';
@@ -26,45 +28,62 @@ const bodyFont = localFont({
     variable: '--font-body'
 });
 
+const serif = Instrument_Serif({
+    subsets: ['latin'],
+    weight: '400',
+    style: ['normal', 'italic'],
+    display: 'swap',
+    variable: '--font-serif',
+});
 
-const RootLayout = async ({children}: {children: React.ReactNode}) => {
+const sans = Hanken_Grotesk({
+    subsets: ['latin'],
+    weight: ['400', '500', '600', '700'],
+    display: 'swap',
+    variable: '--font-sans',
+});
 
+const mono = JetBrains_Mono({
+    subsets: ['latin'],
+    weight: ['400', '500'],
+    display: 'swap',
+    variable: '--font-mono',
+});
+
+const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     return (
         <html
-          lang="en" 
-          className={`flex flex-grow flex-col bg-white antialiased md:min-h-full dark:bg-custom-dark-gray ${titleFont.variable} ${bodyFont.variable}`}
+            lang="en"
+            className={`aurora flex flex-grow flex-col antialiased md:min-h-full ${titleFont.variable} ${bodyFont.variable} ${serif.variable} ${sans.variable} ${mono.variable}`}
         >
-          <body style={{
-            background: 'black'
-          }} className="sm:min-h-full md:flex md:flex-grow md:flex-col bg-white dark:bg-custom-dark-gray">
-            <AuthWrapper>
-              <SkipLink />
-              <div className="lg:hidden sticky top-0 z-50">
-                <SiteHeader />
-              </div>
-              <MainWrapper>
-                <TopNav />
-                <div className="flex flex-col flex-1 overflow-hidden">
-                  <div id="main" className="flex flex-col flex-1 overflow-auto">
-                    <div className="flex-1">
-                      {children}
-                    </div>
-                    <ConditionalStickyFooter />
-                  </div>
-                </div>
-                <MobileFooter />
-              </MainWrapper>
-              {process.env.NODE_ENV !== 'development' && (
-            <>
-              <Script
-                strategy="afterInteractive"
-                src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-              />
-              <Script
-                id="gtag-init"
-                strategy="afterInteractive"
-                dangerouslySetInnerHTML={{
-                  __html: `
+            <body className="aurora sm:min-h-full md:flex md:flex-grow md:flex-col">
+                <AuthWrapper>
+                    <SkipLink />
+                    <AuroraBackground />
+                    <AuroraNav />
+                    <MainWrapper>
+                        <div className="flex flex-col flex-1 overflow-hidden">
+                            <div id="main" className="flex flex-col flex-1 overflow-auto">
+                                <div className="flex-1">
+                                    {children}
+                                </div>
+                                <AuroraFooter />
+                            </div>
+                        </div>
+                    </MainWrapper>
+                    <AuroraReveal />
+                    <AuroraMagnetic />
+                    {process.env.NODE_ENV !== 'development' && (
+                        <>
+                            <Script
+                                strategy="afterInteractive"
+                                src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+                            />
+                            <Script
+                                id="gtag-init"
+                                strategy="afterInteractive"
+                                dangerouslySetInnerHTML={{
+                                    __html: `
                     window.dataLayer = window.dataLayer || [];
                     function gtag(){dataLayer.push(arguments);}
                     gtag('js', new Date());
@@ -72,16 +91,16 @@ const RootLayout = async ({children}: {children: React.ReactNode}) => {
                       page_path: window.location.pathname,
                     });
                   `,
-                }}
-              />
-              <GoogleAnalytics gaId={GA_TRACKING_ID} />
-              <Analytics />
-            </>
-          )}
-            </AuthWrapper>
-          </body>
+                                }}
+                            />
+                            <GoogleAnalytics gaId={GA_TRACKING_ID} />
+                            <Analytics />
+                        </>
+                    )}
+                </AuthWrapper>
+            </body>
         </html>
-      );
+    );
 };
 
 export const metadata = {

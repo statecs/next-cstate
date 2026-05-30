@@ -1,10 +1,9 @@
-import { Suspense } from 'react'
-import { PlusIcon, ArrowUpRightIcon } from 'lucide-react'
+import { Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { ArrowUpRightIcon } from 'lucide-react';
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import config from '@/utils/config';
-import { ScrollArea } from '@/components/SideMenu/ScrollArea';
-import PageHeader from '@/components/PageHeader';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { fetchAllJourneys, fetchEditorialPage } from '@/utils/contentful';
 import { getEditorialSeo } from '@/utils/helpers';
@@ -14,145 +13,141 @@ export const generateMetadata = async () => {
     return { ...config.seo, ...getEditorialSeo(page) };
 };
 
-export const revalidate = 86400; // 24 hours
+export const revalidate = 86400;
+
+const SKILLS = ['UX Research', 'Accessibility', 'Prompt Engineering', 'Design Systems', 'Front-end', 'Prototyping'];
 
 async function fetchData() {
     const collections = await fetchAllJourneys();
-  
-    // If collections is not an array, handle the error or return
     if (!Array.isArray(collections)) {
-      console.error('Fetched data is not an array:', collections);
-      return { allCollections: {} };
+        return { allCollections: {} as CollectionsByYear };
     }
-  
     const allCollections = collections.reduce<CollectionsByYear>((acc, log) => {
-      const year = new Date(log.year).getFullYear().toString(); // Use year as a key
-  
-      if (!acc[year]) {
-        acc[year] = [];
-      }
-  
-      acc[year].push({ ...log, year });
-  
-      return acc;
+        const year = new Date(log.year).getFullYear().toString();
+        if (!acc[year]) acc[year] = [];
+        acc[year].push({ ...log, year });
+        return acc;
     }, {});
-  
     return { allCollections };
-  }
+}
 
-export default async function Journey() {
-  const allCollections = await fetchData();
-  const page = await fetchEditorialPage('about') || {};
+export default async function AboutPage() {
+    const { allCollections } = await fetchData();
+    const page = (await fetchEditorialPage('about')) || {};
 
-  return (
-    <div className="flex flex-grow h-[calc(100vh-110px)] overflow-hidden">
-        <div className="w-full overflow-y-auto">
-            <div className="flex justify-center pr-4">
-                <div className="flex flex-col space-y-2 max-w-[700px] py-4 px-8">    
-                
-                        <PageHeader description={page.content} title={page.title} />
-                        
-                        {page.photo && 
-                            <Image
-                            alt={page.photo?.description}
-                            className="max-w-full sm:max-w-[260px] pb-6 py-3"
-                            height={page.photo?.height}
-                            placeholder="empty"
-                            priority={false}
-                            quality={90}
-                            sizes="(max-width: 768px) 250px, 100vw"
-                            src={page.photo?.url}
-                            width={page.photo?.width}
-                            />
-                        }
-                     
-                        <div className="max-w-[800px] animate-fadeIn">
-                            <div className="lg:col-span-3">
-                                <h2 className="max-w-5xl pb-4 sm:pb-8 space-x-2 text-balance break-normal font-serif text-xl text-black underline-offset-4 group-hover:underline sm:text-2xl md:max-w-5xl md:text-3xl dark:text-white">Journey</h2>
-                            </div>
-                            <ScrollArea useScrollAreaId>
-                            <div className="content-wrapper text-gray-900 dark:text-gray-300">
-                                <div className="content">
-                                <Suspense fallback={<LoadingSpinner />}>
-                                    <div className="flex flex-col items-stretch gap-12">
-                                    {Object.entries(allCollections.allCollections).length > 0 ? (
-                                        Object.entries(allCollections.allCollections).sort(([yearA], [yearB]) => yearB.localeCompare(yearA)).map(([year, events], index) => (
-                                            Array.isArray(events) && (
-                                            <div key={index} className="flex flex-col items-baseline gap-6 md:flex-row md:gap-12">
-                                                <div className="flex items-center">
-                                                    <h3 className="text-black dark:text-white">{year}</h3>
-                                                    <hr className="my-0 ml-4 flex-1 border-dashed border-gray-300 dark:border-gray-200" />
-                                                </div>
-                                                <section>
-                                                    {events.map((item, itemIndex) => {
-                                                      // Create a URL-friendly slug from the title for anchor links
-                                                      const slug = item.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || '';
-                                                      return (
-                                                    <div key={itemIndex} id={slug} className="relative flex pb-8 last:pb-0 scroll-mt-8 lg:scroll-mt-8">
-                                                        <div className="absolute inset-0 flex w-6 items-center justify-center">
-                                                            <div className="pointer-events-none h-full w-px border-l-[1px] border-gray-200 dark:border-zinc-700"></div>
-                                                        </div>
+    const description: any = page.content;
+    const bio =
+        description && typeof description !== 'string' && description.json
+            ? documentToReactComponents(description.json)
+            : description && typeof description === 'string'
+                ? <p>{description}</p>
+                : null;
 
-                                                        <div className="z-0 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black align-middle text-white">
-                                                            <PlusIcon size={16} />
-                                                        </div>
+    const years = Object.entries(allCollections).sort(([a], [b]) => b.localeCompare(a));
 
-                                                        <div className="flex-grow pl-8">
-                                                            {item.url ? (
-                                                                <Link href={item.url} className="hover:underline underline-offset-4 transition duration-200">
-                                                                    <h4 className="flex font-semibold text-l sm:text-xl tracking-tight font-serif pb-4 text-black dark:text-white">{item.title} <ArrowUpRightIcon size={28} /></h4>
-                                                                </Link>
-                                                            ) : (
-                                                                <h4 className="font-semibold text-l sm:text-xl tracking-tight font-serif pb-4 text-black dark:text-white">{item.title}</h4>
-                                                            )}
-                                                            {item.description ? (
-                                                            <div className="text-sm prose-sm max-w-2xl text-balance leading-relaxed tracking-wide lg:prose-base text-gray-900 dark:text-gray-300">
-                                                                {item.description}
-                                                            </div>
-                                                            ) : (
-                                                            <h3 className="text-sm text-gray-900 dark:text-gray-500">Description not available.</h3>
-                                                            )}
-                                                            {Array.isArray(item.imageCollection?.items) && item.imageCollection.items.map((image: Image, imgIndex: number) => (
-                                                            <div key={imgIndex} className="mt-2.5 overflow-hidden rounded-xl bg-white shadow">
-                                                                <Suspense fallback={<LoadingSpinner />}>
-                                                                    <Image
+    return (
+        <div className="aurora-main aurora-page-shell">
+            <div className="aurora-wrap">
+                <div className="aurora-page-head">
+                    <p className="aurora-mono">§ About — design × code × access</p>
+                    <h1>
+                        A Design Engineer<br />
+                        at the seam of<br />
+                        <em>design &amp; code.</em>
+                    </h1>
+                </div>
+
+                <div className="aurora-about-grid">
+                    <div className="aurora-bio aurora-reveal">
+                        {bio || (
+                            <>
+                                <p>
+                                    Hi, I&apos;m Christopher State, a Design Engineer based in Stockholm.
+                                    I work at the intersection of design and code, focusing on accessibility
+                                    and user experience.
+                                </p>
+                                <p>
+                                    Previously, I led accessibility initiatives at SJ, shaped digital products
+                                    at ICA, and supported Vattenfall&apos;s ERP transformation through UX-focused
+                                    training programmes. Currently, I&apos;m exploring how AI can support
+                                    accessible design.
+                                </p>
+                            </>
+                        )}
+                    </div>
+
+                    <aside className="aurora-side-card aurora-reveal">
+                        <h3>Top skills</h3>
+                        <div className="aurora-chips">
+                            {SKILLS.map(skill => (
+                                <span key={skill} className="aurora-chip">{skill}</span>
+                            ))}
+                        </div>
+                        <div className="aurora-loc">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                                <path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11Z" />
+                                <circle cx="12" cy="10" r="2.4" />
+                            </svg>
+                            <span>Stockholm, Sweden</span>
+                        </div>
+                    </aside>
+                </div>
+
+                <section className="aurora-block" style={{ padding: 'clamp(40px,8vh,90px) 0' }} aria-label="Journey">
+                    <div className="aurora-sec-head">
+                        <h2>Journey</h2>
+                        <span className="aurora-mono">Newest first</span>
+                    </div>
+                    <div className="aurora-timeline">
+                        <Suspense fallback={<LoadingSpinner />}>
+                            {years.length > 0 ? (
+                                years.flatMap(([year, events]) =>
+                                    (Array.isArray(events) ? events : []).map((item, i) => {
+                                        const slug = item.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || `${year}-${i}`;
+                                        return (
+                                            <article key={`${year}-${slug}-${i}`} id={slug} className="aurora-tl-item aurora-reveal">
+                                                <div className="aurora-tl-year">{year}</div>
+                                                <div>
+                                                    <h3>
+                                                        {item.url ? (
+                                                            <Link href={item.url}>
+                                                                {item.title}
+                                                                <ArrowUpRightIcon size={20} aria-hidden="true" />
+                                                            </Link>
+                                                        ) : (
+                                                            item.title
+                                                        )}
+                                                    </h3>
+                                                    {item.description && (
+                                                        <div className="aurora-tl-body">{item.description}</div>
+                                                    )}
+                                                    {Array.isArray(item.imageCollection?.items) &&
+                                                        item.imageCollection!.items.slice(0, 1).map((image: Image, imgIndex: number) => (
+                                                            <div key={imgIndex} className="aurora-tl-img">
+                                                                <Image
                                                                     src={image.url}
                                                                     alt={image.description || ''}
                                                                     width={0}
                                                                     height={0}
-                                                                    sizes="(max-width: 768px) 250px, 100vw"
+                                                                    sizes="(max-width: 768px) 100vw, 700px"
                                                                     style={{ width: '100%', height: 'auto' }}
-                                                                    loading={imgIndex < 3 ? 'eager' : 'lazy'}
-                                                                    className="animate-reveal w-full object-cover"
-                                                                    />
-                                                                </Suspense>
+                                                                    loading={imgIndex < 1 ? 'eager' : 'lazy'}
+                                                                    className="w-full object-cover"
+                                                                />
                                                             </div>
-                                                            ))}
-                                                        </div>
-
-                                                    </div>
-                                                      );
-                                                    })}
-                                                </section>
-                                            </div>
-                                            )
-                                        ))
-                                        ) : (
-                                        <div>No collections to display.</div>
-                                        )}
-
-                                    </div>
-                                </Suspense>
-                                </div>
-                            </div>
-                            </ScrollArea>
+                                                        ))}
+                                                </div>
+                                            </article>
+                                        );
+                                    })
+                                )
+                            ) : (
+                                <p style={{ color: 'var(--aurora-muted)' }}>No journey entries to display.</p>
+                            )}
+                        </Suspense>
                     </div>
-                  
-                    
-                    </div>
-                </div>
+                </section>
             </div>
         </div>
-
-  )
+    );
 }
