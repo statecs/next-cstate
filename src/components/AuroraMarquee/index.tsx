@@ -2,8 +2,14 @@
 
 import React from 'react';
 
+interface MarqueeItem {
+    name: string;
+    logo?: string;
+    height?: number;
+}
+
 interface AuroraMarqueeProps {
-    items: string[];
+    items: MarqueeItem[];
 }
 
 const AuroraMarquee: React.FC<AuroraMarqueeProps> = ({ items }) => {
@@ -11,9 +17,19 @@ const AuroraMarquee: React.FC<AuroraMarqueeProps> = ({ items }) => {
     return (
         <div className="aurora-marquee" aria-label="Selected partners">
             <div className="aurora-mtrack">
-                {doubled.map((item, i) => (
-                    <span key={i}>{item}</span>
-                ))}
+                {doubled.map((item, i) =>
+                    item.logo ? (
+                        <div key={i} className="aurora-mtrack-logo">
+                            <img
+                                src={item.logo}
+                                alt={item.name}
+                                style={{ height: item.height ?? 44 }}
+                            />
+                        </div>
+                    ) : (
+                        <span key={i}>{item.name}</span>
+                    )
+                )}
             </div>
         </div>
     );

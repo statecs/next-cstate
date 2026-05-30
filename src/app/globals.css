@@ -570,6 +570,7 @@ body.noanim .aurora-cursor-dot {
 
 .aurora-mtrack {
     display: flex;
+    align-items: center;
     gap: 64px;
     width: max-content;
     animation: scrollx 16s linear infinite;
@@ -590,6 +591,24 @@ body.noanim .aurora-cursor-dot {
 
 .aurora-mtrack span:hover {
     color: var(--aurora-pink);
+}
+
+.aurora-mtrack-logo {
+    display: flex;
+    align-items: center;
+    opacity: 0.45;
+    transition: opacity 0.3s;
+}
+
+.aurora-mtrack-logo img {
+    height: 44px;
+    width: auto;
+    display: block;
+    filter: brightness(0) invert(1);
+}
+
+.aurora-mtrack-logo:hover {
+    opacity: 1;
 }
 
 /* --- AMA / glass card --- */

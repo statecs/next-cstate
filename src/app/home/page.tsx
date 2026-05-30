@@ -6,7 +6,14 @@ import ComboBox from '@/components/ComboBox';
 import AuroraMarquee from '@/components/AuroraMarquee';
 import AuroraAskCta from '@/components/AuroraAskCta';
 
-const CLIENTS = ['Siemens', 'Vattenfall', 'SJ', 'ICA', 'Axfood', 'Cartina'];
+const CLIENTS = [
+    { name: 'Siemens',    logo: '/images/logos/siemens.svg',          height: 72 },
+    { name: 'Vattenfall', logo: '/images/logos/Vattenfall_logo2.svg',  height: 44 },
+    { name: 'SJ',         logo: '/images/logos/SJ.svg',               height: 44 },
+    { name: 'ICA',        logo: '/images/logos/ICA_logo.svg',         height: 44 },
+    { name: 'Axfood',     logo: '/images/logos/AXFO.ST_BIG.svg',      height: 44 },
+    { name: 'Friends',    logo: '/images/logos/Friends_logo.svg',     height: 44 },
+];
 
 const HomePage = async () => {
     return (
