@@ -1190,6 +1190,68 @@ body.noanim .aurora-cursor-dot {
     max-width: 520px;
 }
 
+/* --- contact --- */
+
+.aurora-contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 60px;
+    align-items: start;
+    padding-bottom: clamp(40px, 8vh, 80px);
+}
+
+.aurora-contact-desc p {
+    font-size: 1.1rem;
+    color: var(--aurora-muted);
+    margin-bottom: 20px;
+    max-width: 55ch;
+    font-family: var(--aurora-sans);
+    line-height: 1.7;
+}
+
+.aurora-contact-desc h1,
+.aurora-contact-desc h2,
+.aurora-contact-desc h3 {
+    font-family: var(--aurora-serif);
+    color: var(--aurora-text);
+    font-weight: 400;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    margin: 0 0 16px;
+}
+
+.aurora-contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1rem;
+    color: var(--aurora-text);
+    text-decoration: underline !important;
+    text-underline-offset: 4px;
+    font-family: var(--aurora-sans);
+    transition: color 0.2s;
+}
+
+.aurora-contact-link:hover {
+    color: var(--aurora-lav);
+}
+
+.aurora-contact-photo-wrap {
+    width: 100%;
+    border-radius: var(--aurora-r);
+    overflow: hidden;
+}
+
+@media (max-width: 767px) {
+    .aurora-contact-layout {
+        grid-template-columns: 1fr;
+    }
+    .aurora-contact-photo-wrap {
+        max-width: 240px;
+    }
+}
+
 /* --- reveal (intersection observer toggles .in) --- */
 
 .aurora-reveal {

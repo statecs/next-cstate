@@ -1,53 +1,83 @@
-import PageHeader from '@/components/PageHeader';
 import Image from 'next/image';
-import Link from 'next/link';
+import { ExternalLinkIcon } from 'lucide-react';
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import { INLINES } from '@contentful/rich-text-types';
 import config from '@/utils/config';
 import {fetchEditorialPage} from '@/utils/contentful';
 import {getEditorialSeo} from '@/utils/helpers';
 
+const richTextOptions = {
+    renderNode: {
+        [INLINES.HYPERLINK]: (node: any, children: React.ReactNode) => (
+            <a
+                href={node.data.uri}
+                className="aurora-contact-link"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                {children}
+                <ExternalLinkIcon size={14} aria-hidden="true" />
+            </a>
+        ),
+    },
+};
+
 const ContactPage = async () => {
     const page = await fetchEditorialPage('contact') || {};
+    const content: any = page.content;
+    const body = content && typeof content !== 'string' && content.json
+        ? documentToReactComponents(content.json, richTextOptions)
+        : content && typeof content === 'string'
+        ? <p>{content}</p>
+        : null;
 
     return (
-        <div className="flex h-[calc(100vh-110px)] overflow-hidden">
-          <div className="w-full overflow-y-auto">
-            <div className="flex justify-center min-h-full pr-4">
-              <div className="w-full max-w-[700px] py-4 px-8">
-                <div className="flex flex-col space-y-2">
-                  <div className="grid w-full gap-4 lg:grid-cols-4 lg:gap-10">
-                    <div className="lg:col-span-3">
-                      <PageHeader 
-                        description={page.content} 
-                        title={page.title} 
-                        currentPage={page.slug} 
-                      />
-                      <h1 className="text-xl font-serif dark:text-white">
-                        {page.ctaUrl && 
-                          <Link href={page.ctaUrl} title={page.ctaLabel}>
-                            {page.ctaLabel}
-                          </Link>
-                        }
-                      </h1>
-                    </div>
-                    
-                    <Image
-                      alt={page.photo?.description}
-                      className="max-w-full sm:max-w-[260px] lg:mt-20"
-                      height={page.photo?.height}
-                      placeholder="empty"
-                      priority={false}
-                      quality={90}
-                      sizes="(max-width: 768px) 250px, 100vw"
-                      src={page.photo?.url}
-                      width={page.photo?.width}
-                    />
-                  </div>
+        <div className="aurora-main aurora-page-shell">
+            <div className="aurora-wrap">
+                <div className="aurora-page-head">
+                    <p className="aurora-mono">§ Contact</p>
+                    {page.title && <h1>{page.title}</h1>}
                 </div>
-              </div>
+
+                <div className="aurora-contact-layout">
+                    <div className="aurora-contact-content">
+                        {body && (
+                            <div className="aurora-contact-desc">
+                                {body}
+                            </div>
+                        )}
+                        {page.ctaUrl && !content?.json && (
+                            <a
+                                href={page.ctaUrl}
+                                className="aurora-contact-link"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {page.ctaLabel}
+                                <ExternalLinkIcon size={16} aria-hidden="true" />
+                            </a>
+                        )}
+                    </div>
+
+                    {page.photo?.url && (
+                        <div className="aurora-contact-photo-wrap">
+                            <Image
+                                alt={page.photo?.description || ''}
+                                style={{ width: '100%', height: 'auto' }}
+                                placeholder="empty"
+                                priority={false}
+                                quality={90}
+                                sizes="300px"
+                                src={page.photo?.url}
+                                width={page.photo?.width}
+                                height={page.photo?.height}
+                            />
+                        </div>
+                    )}
+                </div>
             </div>
-          </div>
         </div>
-      );
+    );
 };
 
 export const generateMetadata = async () => {
@@ -55,6 +85,6 @@ export const generateMetadata = async () => {
     return {...config.seo, ...getEditorialSeo(page)};
 };
 
-export const revalidate = 86400; // 24 hours
+export const revalidate = 86400;
 
 export default ContactPage;

@@ -1,19 +1,29 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+const HIDE_CARD_PATHS = ['/contact'];
 
 const AuroraFooter: React.FC = () => {
+    const pathname = usePathname();
+    const hideCard = HIDE_CARD_PATHS.includes(pathname);
+
     return (
         <footer className="aurora-footer">
-            <div className="aurora-foot-card aurora-reveal">
-                <div>
-                    <h2>Let&apos;s Work Together</h2>
-                    <p>Have a project in mind or want to collaborate? I&apos;d love to hear from you.</p>
+            {!hideCard && (
+                <div className="aurora-foot-card aurora-reveal">
+                    <div>
+                        <h2>Let&apos;s Work Together</h2>
+                        <p>Have a project in mind or want to collaborate? I&apos;d love to hear from you.</p>
+                    </div>
+                    <Link href="mailto:hej@cstate.se" className="aurora-foot-btn" data-magnetic>
+                        Start a conversation
+                        <span aria-hidden="true">→</span>
+                    </Link>
                 </div>
-                <Link href="mailto:hej@cstate.se" className="aurora-foot-btn" data-magnetic>
-                    Start a conversation
-                    <span aria-hidden="true">→</span>
-                </Link>
-            </div>
+            )}
             <div className="aurora-foot-meta">
                 <span>© {new Date().getFullYear()} Christopher State · Stockholm</span>
                 <span>Aurora · Flux</span>
