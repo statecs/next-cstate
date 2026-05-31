@@ -95,19 +95,19 @@ const AuroraCanvas: React.FC = () => {
 
         const frame = () => {
             t += 0.0019;
-            fade(0.11);
+            fade(isLightMode() ? 0.14 : 0.11);
             const AX = (0.5 + Math.cos(t * 0.7) * 0.3) * W;
             const AY = (0.5 + Math.sin(t * 0.9) * 0.27) * H;
 
-            ctx.globalCompositeOperation = isLightMode() ? 'multiply' : 'lighter';
+            ctx.globalCompositeOperation = isLightMode() ? 'source-over' : 'lighter';
             const bc = ramp(t * 0.06);
             const bg = ctx.createRadialGradient(AX, AY, 0, AX, AY, 0.42 * Math.min(W, H));
-            bg.addColorStop(0, `rgba(${bc[0] | 0},${bc[1] | 0},${bc[2] | 0},.05)`);
+            bg.addColorStop(0, `rgba(${bc[0] | 0},${bc[1] | 0},${bc[2] | 0},${isLightMode() ? .005 : .05})`);
             bg.addColorStop(1, 'rgba(0,0,0,0)');
             ctx.fillStyle = bg;
             ctx.fillRect(0, 0, W, H);
 
-            ctx.lineWidth = DPR * 1.1;
+            ctx.lineWidth = DPR * (isLightMode() ? 2.4 : 1.1);
             const R = (coarse ? 120 : 155) * DPR;
             const hShift = t * 0.1;
 
@@ -156,7 +156,7 @@ const AuroraCanvas: React.FC = () => {
                 else if (p.y > H) p.y -= H;
                 if (Math.abs(p.x - ox) < 60 * DPR && Math.abs(p.y - oy) < 60 * DPR) {
                     const c = ramp(p.hue + hShift);
-                    ctx.strokeStyle = `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},.52)`;
+                    ctx.strokeStyle = `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${isLightMode() ? .48 : .52})`;
                     ctx.beginPath();
                     ctx.moveTo(ox, oy);
                     ctx.lineTo(p.x, p.y);
@@ -173,7 +173,7 @@ const AuroraCanvas: React.FC = () => {
 
         const staticWash = () => {
             ctx.clearRect(0, 0, W, H);
-            ctx.globalCompositeOperation = isLightMode() ? 'multiply' : 'lighter';
+            ctx.globalCompositeOperation = isLightMode() ? 'source-over' : 'lighter';
             const blobs: Array<[number, number, number, number, number, number]> = [
                 [201, 182, 255, 0.28, 0.3, 0.32],
                 [255, 111, 216, 0.22, 0.72, 0.66],
@@ -196,7 +196,7 @@ const AuroraCanvas: React.FC = () => {
         };
 
         const start = () => {
-            if (reduce || document.body.classList.contains('noanim') || isLightMode()) {
+            if (reduce || document.body.classList.contains('noanim')) {
                 running = false;
                 cancelAnimationFrame(raf);
                 ctx.clearRect(0, 0, W, H);
@@ -225,16 +225,7 @@ const AuroraCanvas: React.FC = () => {
             else start();
         };
 
-        const onTheme = () => {
-            if (isLightMode()) {
-                running = false;
-                cancelAnimationFrame(raf);
-                ctx.clearRect(0, 0, W, H);
-            } else {
-                resize();
-                start();
-            }
-        };
+        const onTheme = () => { resize(); start(); };
 
         resize();
         addEventListener('resize', onResize);

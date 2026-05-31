@@ -1683,8 +1683,7 @@ body.noanim .aurora-mouse::after {
 
 /* --- light mode component overrides --- */
 
-/* Hide canvas, vignette, reduce grain */
-html.light .aurora-canvas   { display: none; }
+/* Hide vignette, reduce grain; canvas stays visible for interactive animation */
 html.light .aurora-vignette { display: none; }
 html.light .aurora-grain    { opacity: 0.015; }
 
