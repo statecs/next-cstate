@@ -18,6 +18,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
   const audioContextRef = useRef<AudioContext | null>(null);
   const workletNodeRef = useRef<AudioWorkletNode | null>(null);
   const speechDetectionCounterRef = useRef(0);
+  const playbackStartTimeRef = useRef<number>(0);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
@@ -39,6 +40,12 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
   useEffect(() => {
     isInterruptedRef.current = isInterrupted;
   }, [isInterrupted]);
+
+  useEffect(() => {
+    if (isPlaying) {
+      playbackStartTimeRef.current = Date.now();
+    }
+  }, [isPlaying]);
 
   const startListening = async () => {
     setError(null);
@@ -116,6 +123,9 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
       }
 
       audioContextRef.current = new AudioContext({ sampleRate: 24000 });
+      if (audioContextRef.current.state === 'suspended') {
+        await audioContextRef.current.resume();
+      }
       await audioContextRef.current.audioWorklet.addModule('/audio-worklet-processor.js');
 
       const source = audioContextRef.current.createMediaStreamSource(mediaStreamRef.current);
@@ -125,6 +135,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
         const audioData: Float32Array = event.data;
 
         if (isPlayingRef.current && !isInterruptedRef.current) {
+          if (Date.now() - playbackStartTimeRef.current < 600) return;
           const rms = calculateRMS(audioData);
           if (rms > SPEECH_RMS_THRESHOLD) {
             speechDetectionCounterRef.current++;

@@ -36,7 +36,10 @@ class AudioBufferManager {
   }
 
   private playAudio(audioBuffer: Float32Array): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
+      if (this.audioContext.state === 'suspended') {
+        await this.audioContext.resume();
+      }
       const audioBufferObj = this.audioContext.createBuffer(1, audioBuffer.length, this.audioContext.sampleRate);
       audioBufferObj.copyToChannel(audioBuffer, 0);
 
@@ -44,7 +47,7 @@ class AudioBufferManager {
       source.buffer = audioBufferObj;
       source.connect(this.audioContext.destination);
 
-      this.currentSource = source; // Keep track of the current playing source
+      this.currentSource = source;
 
       source.onended = () => {
         resolve();
