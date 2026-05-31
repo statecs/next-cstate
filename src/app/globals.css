@@ -1531,6 +1531,9 @@ body.aurora :focus-visible {
     body.aurora {
         font-size: 16px;
     }
+    .aurora-bio p {
+        font-size: 1rem;
+    }
     .aurora-avatar {
         width: 36px;
         height: 36px;
