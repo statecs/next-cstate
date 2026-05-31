@@ -35,13 +35,13 @@ const PhotoPage = async ({params}: Props) => {
     return (
         <>
           <FloatingHeader scrollTitle={collection.title} goBackLink={`/writing/${collection.slug}`} />
-          <div className="bg-[#F4F1EA] dark:bg-zinc-950 min-h-screen">
+          <div className="aurora-main bg-[var(--aurora-bg)] min-h-screen">
             {/* Kicker header */}
-            <div className="px-8 pt-10 pb-6 border-b border-zinc-200 dark:border-zinc-800">
+            <div className="px-8 pt-10 pb-6 border-b border-[var(--aurora-line)]">
               <div className="max-w-6xl mx-auto">
-                <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-400">
+                <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--aurora-muted)]">
                   <Link href={`/writing/${collection.slug}`}>
-                    <span className="text-red-600 dark:text-red-500">§</span>
+                    <span className="text-red-500">§</span>
                     {' — '}{collection.title}
                   </Link>
                 </div>

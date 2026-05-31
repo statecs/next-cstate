@@ -39,7 +39,7 @@ export const CaseStudyPage = ({ caseStudy }: CaseStudyPageProps) => {
 
     return (
         <ScrollArea useScrollAreaId>
-            <div className="min-h-screen pb-24 bg-[#F4F1EA] dark:bg-zinc-950">
+            <div className="aurora-main min-h-screen pb-24 bg-[var(--aurora-bg)]">
                 <FloatingHeader scrollTitle="Projects" goBackLink="/projects" />
 
                 <CaseStudyHeader
@@ -59,14 +59,14 @@ export const CaseStudyPage = ({ caseStudy }: CaseStudyPageProps) => {
                 <div className="max-w-6xl mx-auto">
 
                 {/* Sticky TOC */}
-                <nav className="sticky top-0 z-20 flex items-center overflow-x-auto bg-[#F4F1EA] dark:bg-zinc-950 border-b border-zinc-900 dark:border-zinc-700 font-mono text-[11px] uppercase tracking-[0.1em]">
+                <nav className="sticky top-0 z-20 flex items-center overflow-x-auto bg-[var(--aurora-bg)] border-b border-[var(--aurora-line2)] font-mono text-[11px] uppercase tracking-[0.1em]">
                     {TOC_ITEMS.map((item) => (
                         <a
                             key={item.section}
                             href={`#section-${item.section}`}
-                            className="px-4 py-3 border-r border-zinc-900 dark:border-zinc-700 whitespace-nowrap text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors"
+                            className="px-4 py-3 border-r border-[var(--aurora-line2)] whitespace-nowrap text-[var(--aurora-muted)] hover:text-[var(--aurora-text)] transition-colors"
                         >
-                            <span className="text-red-600 dark:text-red-500 mr-2">§0{item.section}</span>
+                            <span className="text-red-500 mr-2">§0{item.section}</span>
                             {item.label}
                         </a>
                     ))}
@@ -107,32 +107,32 @@ export const CaseStudyPage = ({ caseStudy }: CaseStudyPageProps) => {
                 ) : null}
 
                 {/* Colophon */}
-                <div className="border-b border-zinc-900 dark:border-zinc-700 p-8 grid grid-cols-1 sm:grid-cols-[1fr_320px] gap-10 bg-[#F4F1EA] dark:bg-zinc-950">
+                <div className="border-b border-[var(--aurora-line2)] p-8 grid grid-cols-1 sm:grid-cols-[1fr_320px] gap-10 bg-[var(--aurora-bg)]">
                     <div
-                        className="font-serif leading-[0.95] tracking-[-0.03em] text-zinc-900 dark:text-zinc-50"
+                        className="font-serif leading-[0.95] tracking-[-0.03em] text-[var(--aurora-text)]"
                         style={{ fontSize: 'clamp(46px, 6vw, 88px)' }}
                     >
                         End of file —<br />
-                        <em className="text-red-600 dark:text-red-500 not-italic">everything passes,</em><br />
+                        <em className="text-red-500 not-italic">everything passes,</em><br />
                         eventually.
                     </div>
-                    <aside className="font-mono text-[11px] tracking-[0.04em] text-zinc-500 dark:text-zinc-400 border border-zinc-900 dark:border-zinc-700 p-5 self-start space-y-3">
+                    <aside className="font-mono text-[11px] tracking-[0.04em] text-[var(--aurora-muted)] border border-[var(--aurora-line2)] p-5 self-start space-y-3">
                         {filed && (
                             <div>
-                                <div className="uppercase tracking-[0.1em] text-[10px] text-zinc-400 dark:text-zinc-600 mb-0.5">Filed</div>
+                                <div className="uppercase tracking-[0.1em] text-[10px] text-[var(--aurora-faint)] mb-0.5">Filed</div>
                                 <div>{filed}</div>
                             </div>
                         )}
                         {revised && (
                             <div>
-                                <div className="uppercase tracking-[0.1em] text-[10px] text-zinc-400 dark:text-zinc-600 mb-0.5">Revised</div>
+                                <div className="uppercase tracking-[0.1em] text-[10px] text-[var(--aurora-faint)] mb-0.5">Revised</div>
                                 <div>{revised}</div>
                             </div>
                         )}
                         {caseStudy.slug && (
                             <div>
-                                <div className="uppercase tracking-[0.1em] text-[10px] text-zinc-400 dark:text-zinc-600 mb-0.5">Ref</div>
-                                <div className="text-zinc-900 dark:text-zinc-50">{caseStudy.slug}</div>
+                                <div className="uppercase tracking-[0.1em] text-[10px] text-[var(--aurora-faint)] mb-0.5">Ref</div>
+                                <div className="text-[var(--aurora-text)]">{caseStudy.slug}</div>
                             </div>
                         )}
                     </aside>

@@ -67,29 +67,29 @@ export const ChartsSection = ({
     const tickColor = '#6B6B66';
 
     return (
-        <section id="section-2" className="border-b border-zinc-900 dark:border-zinc-700 py-16 px-8 bg-[#F4F1EA] dark:bg-zinc-950">
+        <section id="section-2" className="border-b border-[var(--aurora-line2)] py-16 px-8 bg-[var(--aurora-bg)]">
             {/* 3-col section header */}
-            <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr_220px] gap-6 mb-10 pb-8 border-b border-dashed border-zinc-200 dark:border-zinc-700">
-                <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-400 pt-1">
-                    <span className="text-red-600 dark:text-red-500">§02</span>
+            <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr_220px] gap-6 mb-10 pb-8 border-b border-dashed border-[var(--aurora-line)]">
+                <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--aurora-muted)] pt-1">
+                    <span className="text-red-500">§02</span>
                     {' · DATA & INSIGHTS'}
                 </div>
                 <h2
-                    className="font-serif leading-[0.94] tracking-[-0.025em] text-zinc-900 dark:text-zinc-50"
+                    className="font-serif leading-[0.94] tracking-[-0.025em] text-[var(--aurora-text)]"
                     style={{ fontSize: 'clamp(32px, 5vw, 72px)' }}
                 >
                     Where the data lands.
                 </h2>
-                <div className="font-mono text-[11px] text-zinc-400 dark:text-zinc-500 sm:text-right pt-1">
+                <div className="font-mono text-[11px] text-[var(--aurora-faint)] sm:text-right pt-1">
                     {metaResponses ? `${metaResponses} responses` : ''}
                 </div>
             </div>
 
             {/* Charts grid */}
-            <div className="grid gap-px border border-zinc-900 dark:border-zinc-700 lg:grid-cols-2 bg-zinc-900 dark:bg-zinc-700">
+            <div className="grid gap-px border border-[var(--aurora-line2)] lg:grid-cols-2 bg-[var(--aurora-line2)]">
                 {ratingDistributionData && (
-                    <div className="bg-[#F4F1EA] dark:bg-zinc-950 p-6">
-                        <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-zinc-500 dark:text-zinc-400 mb-6">
+                    <div className="bg-[var(--aurora-bg)] p-6">
+                        <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--aurora-muted)] mb-6">
                             Rating Distribution
                         </h3>
                         <div className="flex justify-center">
@@ -114,8 +114,8 @@ export const ChartsSection = ({
                                 />
                                 {avgScore && (
                                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                        <span className="font-serif text-2xl text-zinc-900 dark:text-zinc-50">{avgScore}</span>
-                                        <span className="font-mono text-[10px] text-red-600 dark:text-red-500 uppercase tracking-[0.08em]">avg</span>
+                                        <span className="font-serif text-2xl text-[var(--aurora-text)]">{avgScore}</span>
+                                        <span className="font-mono text-[10px] text-red-500 uppercase tracking-[0.08em]">avg</span>
                                     </div>
                                 )}
                             </div>
@@ -127,7 +127,7 @@ export const ChartsSection = ({
                                         className="inline-block w-2 h-2 flex-shrink-0"
                                         style={{ backgroundColor: RATING_COLORS[i % RATING_COLORS.length] }}
                                     />
-                                    <span className="font-mono text-[10px] text-zinc-500 dark:text-zinc-400">{label}</span>
+                                    <span className="font-mono text-[10px] text-[var(--aurora-muted)]">{label}</span>
                                 </div>
                             ))}
                         </div>
@@ -135,8 +135,8 @@ export const ChartsSection = ({
                 )}
 
                 {avgRatingPerModuleData && (
-                    <div className="bg-[#F4F1EA] dark:bg-zinc-950 p-6">
-                        <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-zinc-500 dark:text-zinc-400 mb-6">
+                    <div className="bg-[var(--aurora-bg)] p-6">
+                        <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--aurora-muted)] mb-6">
                             Avg. Rating per Module
                         </h3>
                         <Bar
@@ -174,8 +174,8 @@ export const ChartsSection = ({
                 )}
 
                 {responseVolumeData && (
-                    <div className="bg-[#F4F1EA] dark:bg-zinc-950 p-6 lg:col-span-2">
-                        <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-zinc-500 dark:text-zinc-400 mb-6">
+                    <div className="bg-[var(--aurora-bg)] p-6 lg:col-span-2">
+                        <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--aurora-muted)] mb-6">
                             Response Volume by Module
                         </h3>
                         <div className="h-52">

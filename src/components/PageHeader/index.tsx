@@ -11,7 +11,6 @@ import { getExternalUrl } from '@/utils/helpers';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { BLOCKS, INLINES, Block, Inline } from "@contentful/rich-text-types";
 
-// Updated estimateReadTime function with error handling
 const estimateReadTime = (content: string | undefined): number => {
   if (!content) return 0;
   const wordsPerMinute = 200;
@@ -39,7 +38,7 @@ export interface Props {
     hasBottomPadding?: boolean;
     title?: string;
     category?: string;
-    date?: string;  // Ensure date is part of the props
+    date?: string;
     currentPage?: string;
 }
 
@@ -68,7 +67,7 @@ const renderOptions = {
       }, []);
     },
   };
-  
+
 
   function contentfulRenderOptions(links: Description['links']) {
     const assetMap = new Map();
@@ -81,7 +80,7 @@ const renderOptions = {
       renderNode: {
         [BLOCKS.EMBEDDED_ASSET]: (node: Block | Inline) => {
           const asset = assetMap.get(node.data.target.sys.id);
-  
+
           switch (asset.contentType) {
             case "video/mp4":
               return (
@@ -136,8 +135,6 @@ const renderOptions = {
                   <ExternalLinkIcon className="ml-1 h-4 w-4 inline-block" size={14} />
                 </>
               );
-
-           
             }
             return null;
           }
@@ -145,37 +142,37 @@ const renderOptions = {
 
         [BLOCKS.HEADING_1]: (node: Block | Inline, children: React.ReactNode) => {
             if (node.nodeType === 'heading-1') {
-              return <h1 className="text-black dark:text-white font-serif">{children}</h1>;
+              return <h1 className="text-[var(--aurora-text)] font-serif">{children}</h1>;
             }
             return null;
           },
           [BLOCKS.HEADING_2]: (node: Block | Inline, children: React.ReactNode) => {
             if (node.nodeType === 'heading-2') {
-              return <h2 className="text-black dark:text-white font-serif">{children}</h2>;
+              return <h2 className="text-[var(--aurora-text)] font-serif">{children}</h2>;
             }
             return null;
           },
           [BLOCKS.HEADING_3]: (node: Block | Inline, children: React.ReactNode) => {
             if (node.nodeType === 'heading-3') {
-              return <h3 className="text-black dark:text-white font-serif">{children}</h3>;
+              return <h3 className="text-[var(--aurora-text)] font-serif">{children}</h3>;
             }
             return null;
           },
           [BLOCKS.HEADING_4]: (node: Block | Inline, children: React.ReactNode) => {
             if (node.nodeType === 'heading-4') {
-              return <h4 className="text-black dark:text-white font-serif">{children}</h4>;
+              return <h4 className="text-[var(--aurora-text)] font-serif">{children}</h4>;
             }
             return null;
           },
           [BLOCKS.HEADING_5]: (node: Block | Inline, children: React.ReactNode) => {
             if (node.nodeType === 'heading-5') {
-              return <h5 className="text-black dark:text-white font-serif">{children}</h5>;
+              return <h5 className="text-[var(--aurora-text)] font-serif">{children}</h5>;
             }
             return null;
           },
           [BLOCKS.HEADING_6]: (node: Block | Inline, children: React.ReactNode) => {
             if (node.nodeType === 'heading-6') {
-              return <h6 className="text-black dark:text-white font-serif">{children}</h6>;
+              return <h6 className="text-[var(--aurora-text)] font-serif">{children}</h6>;
             }
             return null;
           },
@@ -189,14 +186,12 @@ const renderOptions = {
             return <li className="ml-2 [&>p]:mb-0 [&>p]:mt-0">{children}</li>;
           },
           [BLOCKS.PARAGRAPH]: (node: ContentNode, children: React.ReactNode) => {
-            // Handle entire code block paragraph
-            if (node.content?.length === 1 && 
+            if (node.content?.length === 1 &&
                 node.content[0].marks?.some(mark => mark.type === 'code')) {
               return <CodeBlock text={node.content[0].value || ''} />;
             }
-            
-            // Handle mixed content paragraph with code
-            if (node.content?.some(content => 
+
+            if (node.content?.some(content =>
                 content.marks?.some(mark => mark.type === 'code'))) {
               return <p>
                 {node.content.map((content, i) => {
@@ -207,19 +202,18 @@ const renderOptions = {
                 })}
               </p>;
             }
-            
-            // Regular paragraph
+
             return <p className="mb-4">{children}</p>;
           }
-       
+
       },
       renderText: renderOptions.renderText,
     };
   }
-  
+
 
   const formatDate = (date: string | number | Date) => {
-    if (!date) return '';  
+    if (!date) return '';
     const dateObject = new Date(date);
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
@@ -247,10 +241,9 @@ const PageHeader: React.FC<Props> = ({
     const basePath = isWriting ? '/writing' : '/projects';
 
     const descriptionClass = currentPage === 'contact'
-    ? "prose-sm max-w-2xl leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-900 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-300 prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-6"
-    : "prose-sm max-w-2xl leading-relaxed tracking-wide lg:prose-base dark:prose-invert prose-p:text-gray-900 lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide dark:prose-p:text-gray-300";
+    ? "prose-sm max-w-2xl leading-relaxed tracking-wide lg:prose-base prose-p:text-[var(--aurora-text)] lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-6"
+    : "prose-sm max-w-2xl leading-relaxed tracking-wide lg:prose-base prose-p:text-[var(--aurora-text)] lg:max-w-5xl lg:prose-p:leading-relaxed lg:prose-p:tracking-wide";
 
-    // Estimate reading time
     const readTimeMinutes = useMemo(() => {
       const content = typeof description === 'string' ? description : JSON.stringify(description?.json);
       return estimateReadTime(content);
@@ -269,20 +262,20 @@ const PageHeader: React.FC<Props> = ({
                             {backUrl ? (
                                 <Link
                                     href={`${basePath}/${backUrl}`}
-                                    className="group space-x-2 focus:outline-dotted focus:outline-2 focus:outline-offset-2 focus:outline-black sm:inline-flex sm:items-baseline"
+                                    className="group space-x-2 focus:outline-dotted focus:outline-2 focus:outline-offset-2 focus:outline-[var(--aurora-text)] sm:inline-flex sm:items-baseline"
                                 >
-                                    <h1 className="max-w-5xl space-x-2 text-balance break-normal font-serif text-xl text-black underline-offset-4 group-hover:underline sm:text-2xl md:max-w-5xl md:text-3xl dark:text-white">
+                                    <h1 className="max-w-5xl space-x-2 text-balance break-normal font-serif text-xl text-[var(--aurora-text)] underline-offset-4 group-hover:underline sm:text-2xl md:max-w-5xl md:text-3xl">
                                         <span>{title}</span>
                                     </h1>
                                 </Link>
                             ) : (
-                                <h1 className="max-w-5xl space-x-2 text-balance break-normal font-serif text-xl text-black underline-offset-4 group-hover:underline sm:text-2xl md:max-w-5xl md:text-3xl dark:text-white">
+                                <h1 className="max-w-5xl space-x-2 text-balance break-normal font-serif text-xl text-[var(--aurora-text)] underline-offset-4 group-hover:underline sm:text-2xl md:max-w-5xl md:text-3xl">
                                     <span>{title}</span>
                                 </h1>
                             )}
                         </>
                     )}
-                    <div className="text-gray-900 dark:text-white pt-2 text-sm">
+                    <div className="text-[var(--aurora-text)] pt-2 text-sm">
                         <span>{formattedDate}</span>
                         {date && isWriting && readTimeMinutes > 0 && (
                             <span className="ml-4">Total read: {readTimeMinutes} minute{readTimeMinutes !== 1 ? 's' : ''}</span>
@@ -293,7 +286,7 @@ const PageHeader: React.FC<Props> = ({
                       {category?.split(',').map((cat) => (
                         <div
                           key={cat.trim()}
-                          className="px-2 py-0.5 border border-zinc-400/50 dark:border-zinc-600 text-[10px] font-mono uppercase tracking-[0.06em] text-zinc-600 dark:text-zinc-400"
+                          className="px-2 py-0.5 border border-[var(--aurora-line2)] text-[10px] font-mono uppercase tracking-[0.06em] text-[var(--aurora-muted)]"
                         >
                           {cat.trim()}
                         </div>
@@ -304,7 +297,7 @@ const PageHeader: React.FC<Props> = ({
 
                 {ctaLabel && ctaUrl && typeof description !== 'string' && description?.json && (
                     <Button
-                        className="mt-2 sm:mt-0 px-0 py-0 sm:text-sm sm:px-4 sm:py-3" // Adjusted text size and padding
+                        className="mt-2 sm:mt-0 px-0 py-0 sm:text-sm sm:px-4 sm:py-3"
                         href={getExternalUrl(ctaUrl)}
                         rel="noopener noreferrer"
                         target="_blank"
@@ -313,22 +306,22 @@ const PageHeader: React.FC<Props> = ({
                     </Button>
                 )}
                 </div>
-            
+
             {(children || description) && (
                 <div className="mt-4 md:mt-6">
                     {description && typeof description !== 'string' && description.json && (
-                           <div className={`text-gray-900 dark:text-gray-300 ${descriptionClass}`}>
+                           <div className={`text-[var(--aurora-text)] ${descriptionClass}`}>
                             {documentToReactComponents(description.json, contentfulRenderOptions(description.links))}
                         </div>
                     )}
 
                     {description && typeof description == 'string' && (
-                         <div className={`text-gray-900 dark:text-gray-300 ${descriptionClass}`}>
+                         <div className={`text-[var(--aurora-text)] ${descriptionClass}`}>
                             {description}
                         </div>
 
                     )}
-                    
+
                     {children}
                 </div>
             )}

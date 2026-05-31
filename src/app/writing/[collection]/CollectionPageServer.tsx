@@ -23,17 +23,17 @@ interface Props {
   roles: any[];
 }
 
-export const CollectionPageServer: React.FC<Props> = ({ 
-  params, 
-  collection, 
-  isAuthenticated, 
+export const CollectionPageServer: React.FC<Props> = ({
+  params,
+  collection,
+  isAuthenticated,
   roles
 }) => {
   if (!collection) return notFound();
 
   if (!collection.isPublic && !isAuthenticated) {
     const baseUrl = process.env.NEXT_PUBLIC_URL;
-    
+
     if (!baseUrl) {
       throw new Error('NEXT_PUBLIC_URL is not set in the environment');
     }
@@ -53,16 +53,16 @@ export const CollectionPageServer: React.FC<Props> = ({
   return (
     <ScrollArea useScrollAreaId>
       <FloatingHeader scrollTitle="Writing" goBackLink="/writing" />
-      <div className="bg-[#F4F1EA] dark:bg-zinc-950">
+      <div className="aurora-main bg-[var(--aurora-bg)]">
         {/* Editorial Header */}
-        <div className="px-8 pt-16 pb-12 border-b border-zinc-900 dark:border-zinc-700">
+        <div className="px-8 pt-16 pb-12 border-b border-[var(--aurora-line2)]">
           <div className="max-w-6xl mx-auto">
-            <div className="flex items-center justify-between mb-10 font-mono text-[11px] uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-400">
-              <span><span className="text-red-600 dark:text-red-500">§ 01</span>{' — '}{collection.title}</span>
+            <div className="aurora-mono flex items-center justify-between mb-10">
+              <span>§ 01{' — '}{collection.title}</span>
               {collection.date && <span>{formatDate(collection.date)}</span>}
             </div>
             <h1
-              className="font-serif leading-[0.86] tracking-[-0.045em] text-zinc-900 dark:text-zinc-50 mb-6"
+              className="font-serif leading-[0.86] tracking-[-0.045em] text-[var(--aurora-text)] mb-6"
               style={{ fontSize: 'clamp(36px, 7vw, 100px)' }}
             >
               {collection.title}
@@ -74,27 +74,27 @@ export const CollectionPageServer: React.FC<Props> = ({
           <div className="max-w-6xl mx-auto">
             <BannerPhotoCollection {...collection} key={collection.slug} />
             {/* Metadata Strip */}
-            <div className="border border-zinc-200 dark:border-zinc-800 grid grid-cols-3 divide-x divide-zinc-200 dark:divide-zinc-800 mb-8">
+            <div className="border border-[var(--aurora-line)] grid grid-cols-3 divide-x divide-[var(--aurora-line)] mb-8">
               <div className="px-6 py-4">
-                <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-500 mb-2">Date Published</p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--aurora-muted)] mb-2">Date Published</p>
                 {collection.date && (
-                  <p className="font-serif text-zinc-900 dark:text-zinc-100 text-base">{formatDate(collection.date)}</p>
+                  <p className="font-serif text-[var(--aurora-text)] text-base">{formatDate(collection.date)}</p>
                 )}
               </div>
               <div className="px-6 py-4">
-                <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-500 mb-2">Total Read</p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--aurora-muted)] mb-2">Total Read</p>
                 {collection.description && (
-                  <p className="font-serif text-zinc-900 dark:text-zinc-100 text-base">
+                  <p className="font-serif text-[var(--aurora-text)] text-base">
                     {estimateReadTime(collection.description)} min
                   </p>
                 )}
               </div>
               <div className="px-6 py-4">
-                <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-500 mb-2">Tags</p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--aurora-muted)] mb-2">Tags</p>
                 {collection.category && (
                   <div className="flex flex-wrap gap-1">
                     {collection.category.split(',').map((cat: string) => (
-                      <span key={cat.trim()} className="font-mono text-[10px] uppercase tracking-[0.06em] text-zinc-600 dark:text-zinc-400 border border-zinc-400/50 dark:border-zinc-600 px-2 py-0.5">
+                      <span key={cat.trim()} className="font-mono text-[10px] uppercase tracking-[0.06em] text-[var(--aurora-muted)] border border-[var(--aurora-line2)] px-2 py-0.5">
                         {cat.trim()}
                       </span>
                     ))}

@@ -37,7 +37,8 @@ module.exports = {
             },
             fontFamily: {
                 sans: ['var(--font-body)'],
-                serif: ['var(--font-title)']
+                serif: ['var(--font-serif)'],
+                title: ['var(--font-title)'],
             },
             keyframes: {
                 'enter-right': {
