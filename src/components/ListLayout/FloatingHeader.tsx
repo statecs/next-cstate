@@ -2,8 +2,7 @@
 
 import { memo, ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import { ArrowLeftIcon, RadioIcon } from 'lucide-react';
+import { LayoutList } from 'lucide-react';
 
 interface FloatingHeaderProps {
   scrollTitle?: string;
@@ -23,13 +22,14 @@ export const FloatingHeader = memo<FloatingHeaderProps>(({ scrollTitle, title, g
     <header className="sticky inset-x-0 top-0 z-10 mx-auto flex h-12 w-full shrink-0 items-center overflow-hidden border-b dark:border-zinc-700 bg-white dark:bg-custom-light-gray dark:text-white text-sm font-medium lg:hidden">
       <div className="flex h-full w-full items-center px-3">
         <div className="flex w-full items-center justify-between gap-2">
-          <div className="flex flex-1 items-center gap-1">
-            {goBackLink ? (
-                <Link href={`${goBackLink}`} title="Go back">
-                  <ArrowLeftIcon size={16} />
-                </Link>
-            ) : ''
-            }
+          <div className="flex flex-1 items-center gap-2">
+            <button
+              onClick={() => window.dispatchEvent(new Event('toggleMobileMenu'))}
+              aria-label="Toggle navigation list"
+              className="shrink-0 link-card inline-flex items-center p-2"
+            >
+              <LayoutList size={20} />
+            </button>
             <div className="flex flex-1 items-center justify-between">
               {scrollTitle && (
                 <span
