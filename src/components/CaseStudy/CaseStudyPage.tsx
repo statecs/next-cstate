@@ -39,7 +39,7 @@ export const CaseStudyPage = ({ caseStudy }: CaseStudyPageProps) => {
 
     return (
         <ScrollArea useScrollAreaId>
-            <div className="aurora-main min-h-screen pb-24 bg-[var(--aurora-bg)]">
+            <div className="aurora-main min-h-screen pb-24">
                 <FloatingHeader scrollTitle="Projects" goBackLink="/projects" />
 
                 <CaseStudyHeader

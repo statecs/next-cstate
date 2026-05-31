@@ -49,13 +49,13 @@ export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner, on
   return (
     <ScrollArea
       className={cn(
-        'bg-zinc-50 dark:bg-custom-light-gray flex flex-col h-[calc(100vh)] w-full',
+        'bg-[var(--aurora-bg2)] flex flex-col h-[calc(100vh)] w-full',
         isMinimized ? 'items-center' : ''
       )}
     >
       {title && !isMinimized && (
         <div className={cn(
-          "sticky top-0 z-10 border-b dark:border-zinc-700 bg-zinc-50 dark:text-white dark:bg-custom-light-gray px-5 py-3",
+          "sticky top-0 z-10 border-b border-[var(--aurora-line)] bg-[var(--aurora-bg2)] text-[var(--aurora-text)] px-5 py-3",
           isMinimized ? "px-2" : ''
         )}>
           <div className="flex items-center justify-between">
@@ -64,7 +64,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner, on
         </div>
       )}
         <div className={cn(
-          "bg-zinc-50 justify-between dark:bg-custom-light-gray dark:text-white p-3",
+          "bg-[var(--aurora-bg2)] text-[var(--aurora-text)] justify-between p-3",
           isMinimized ? "p-2 flex flex-col items-center": ''
         )}>
           {childrenWithProps}

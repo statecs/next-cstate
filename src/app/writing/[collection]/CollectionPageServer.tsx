@@ -53,7 +53,7 @@ export const CollectionPageServer: React.FC<Props> = ({
   return (
     <ScrollArea useScrollAreaId>
       <FloatingHeader scrollTitle="Writing" goBackLink="/writing" />
-      <div className="aurora-main bg-[var(--aurora-bg)]">
+      <div className="aurora-main">
         {/* Editorial Header */}
         <div className="px-8 pt-16 pb-12 border-b border-[var(--aurora-line2)]">
           <div className="max-w-6xl mx-auto">
@@ -102,18 +102,20 @@ export const CollectionPageServer: React.FC<Props> = ({
                 )}
               </div>
             </div>
-            <div className={params.collection === 'home' ? 'md:hidden' : ''}>
-              <PageHeader
-                currentPage="writing"
-                title={undefined}
-                date={undefined}
-                category={undefined}
-                ctaLabel={collection.ctaLabel}
-                ctaUrl={collection.ctaUrl}
-                description={collection?.showDescription ? collection.description : null}
-              />
-            </div>
           </div>
+        </div>
+
+        {/* Article body — constrained to reading width */}
+        <div className={`max-w-3xl mx-auto px-6 py-12${params.collection === 'home' ? ' md:hidden' : ''}`}>
+          <PageHeader
+            currentPage="writing"
+            title={undefined}
+            date={undefined}
+            category={undefined}
+            ctaLabel={collection.ctaLabel}
+            ctaUrl={collection.ctaUrl}
+            description={collection?.showDescription ? collection.description : null}
+          />
         </div>
       </div>
     </ScrollArea>

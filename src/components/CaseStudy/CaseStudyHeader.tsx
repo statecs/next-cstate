@@ -43,7 +43,7 @@ export const CaseStudyHeader = ({
     ].filter(item => item.value);
 
     return (
-        <div className="bg-[var(--aurora-bg)]">
+        <div>
             {/* Hero */}
             <div className="px-8 pt-16 pb-12 border-b border-[var(--aurora-line2)]">
               <div className="max-w-6xl mx-auto">
