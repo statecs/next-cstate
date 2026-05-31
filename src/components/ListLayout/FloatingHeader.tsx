@@ -19,7 +19,7 @@ export const FloatingHeader = memo<FloatingHeaderProps>(({ scrollTitle, title, g
   const isWritingPath = pathname.startsWith('/writing');
   
   return (
-    <header className="sticky inset-x-0 top-0 z-10 mx-auto flex h-12 w-full shrink-0 items-center overflow-hidden border-b dark:border-zinc-700 bg-white dark:bg-custom-light-gray dark:text-white text-sm font-medium lg:hidden">
+    <header className="sticky inset-x-0 top-1 z-10 mx-auto flex h-12 w-full shrink-0 items-center overflow-hidden border-b border-zinc-200 dark:border-white/10 bg-white/80 dark:bg-[#1e1e1e]/70 backdrop-blur-md dark:text-white text-sm font-medium lg:hidden mt-2 animate-fadeIn animate-duration-500">
       <div className="flex h-full w-full items-center px-3">
         <div className="flex w-full items-center justify-between gap-2">
           <div className="flex flex-1 items-center gap-2">
