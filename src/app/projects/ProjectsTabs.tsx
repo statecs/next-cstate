@@ -83,10 +83,10 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
         <div className="aurora-main aurora-page-shell">
             <div className="aurora-wrap">
                 <div className="aurora-page-head">
-                    <p className="aurora-mono">§ 01 — Index of work · A complete log, newest first</p>
+                    <p className="aurora-mono">§ 01 — Index of work</p>
                     <h1>
                         Projects, writing<br />
-                        &amp; <em>field notes.</em>
+                        &amp; <em>case studies.</em>
                     </h1>
                 </div>
 

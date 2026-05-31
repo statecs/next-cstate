@@ -264,13 +264,6 @@ body.noanim .aurora-cursor-dot {
     height: 42px;
     border-radius: 50%;
     flex: none;
-    position: relative;
-    background: conic-gradient(from 200deg, var(--aurora-vio), var(--aurora-pink), var(--aurora-peri), var(--aurora-vio));
-    display: grid;
-    place-items: center;
-    font-family: var(--aurora-serif);
-    font-size: 18px;
-    color: #fff;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 6px 22px rgba(139, 92, 246, 0.35);
     overflow: hidden;
 }
@@ -1555,7 +1548,6 @@ body.aurora :focus-visible {
     .aurora-avatar {
         width: 36px;
         height: 36px;
-        font-size: 15px;
     }
     .aurora-nav-links {
         gap: 2px;

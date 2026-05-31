@@ -49,7 +49,7 @@ export default async function AboutPage() {
         <div className="aurora-main aurora-page-shell">
             <div className="aurora-wrap">
                 <div className="aurora-page-head">
-                    <p className="aurora-mono">§ About — design × code × access</p>
+                    <p className="aurora-mono">§ About — design × code</p>
                     <h1>
                         A Design Engineer<br />
                         at the seam of<br />

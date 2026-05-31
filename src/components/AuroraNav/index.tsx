@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAtom } from 'jotai';
@@ -84,7 +85,16 @@ const AuroraNav: React.FC = () => {
     return (
         <header className="aurora-nav">
             <Link href="/home" className="aurora-brand" aria-label="Christopher State — home">
-                <span className="aurora-avatar" aria-hidden="true">CS</span>
+                <Image
+                    src="/images/me.jpeg"
+                    alt=""
+                    width={42}
+                    height={42}
+                    className="aurora-avatar"
+                    style={{ objectFit: 'cover' }}
+                    unoptimized
+                    aria-hidden
+                />
                 <span className="aurora-brand-txt">
                     <b>Christopher State</b>
                     <span>Design Engineer</span>
