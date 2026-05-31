@@ -15,21 +15,18 @@ const LINKS: { href: string; label: string }[] = [
     { href: '/projects', label: 'Projects' },
 ];
 
-const MOTION_KEY = 'cs-motion-off';
+const THEME_KEY = 'cs-theme';
 
 const AuroraNav: React.FC = () => {
     const pathname = usePathname();
     const [user] = useAtom(userAtom);
     const { isAuthenticated } = useAuthStatus();
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [motionOff, setMotionOff] = useState(false);
+    const [isLight, setIsLight] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const stored = localStorage.getItem(MOTION_KEY) === '1';
-        setMotionOff(stored);
-        document.body.classList.toggle('noanim', stored);
-        document.dispatchEvent(new CustomEvent('cs:motion', { detail: stored }));
+        setIsLight(localStorage.getItem(THEME_KEY) === 'light');
     }, []);
 
     useEffect(() => {
@@ -54,12 +51,17 @@ const AuroraNav: React.FC = () => {
         return pathname.startsWith(href);
     };
 
-    const toggleMotion = () => {
-        const next = !motionOff;
-        setMotionOff(next);
-        document.body.classList.toggle('noanim', next);
-        localStorage.setItem(MOTION_KEY, next ? '1' : '0');
-        document.dispatchEvent(new CustomEvent('cs:motion', { detail: next }));
+    const toggleTheme = () => {
+        const next = !isLight;
+        setIsLight(next);
+        if (next) {
+            document.documentElement.classList.add('light');
+            localStorage.setItem(THEME_KEY, 'light');
+        } else {
+            document.documentElement.classList.remove('light');
+            localStorage.setItem(THEME_KEY, 'dark');
+        }
+        document.dispatchEvent(new CustomEvent('cs:theme'));
     };
 
     const userName = user ? `${user.given_name} ${user.family_name}` : 'Christopher State';
@@ -87,16 +89,16 @@ const AuroraNav: React.FC = () => {
                 ))}
             </nav>
 
-            <div className="aurora-nav-tools" suppressHydrationWarning>
+            <div className="aurora-nav-tools">
                 <button
                     type="button"
-                    onClick={toggleMotion}
+                    onClick={toggleTheme}
                     className="aurora-iconbtn"
-                    aria-label="Toggle animations"
-                    aria-pressed={motionOff}
-                    title={motionOff ? 'Enable animations' : 'Reduce animations'}
+                    aria-label={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
+                    aria-pressed={isLight}
+                    title={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
                 >
-                    {motionOff ? (
+                    {isLight ? (
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
                             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
                         </svg>
@@ -132,7 +134,7 @@ const AuroraNav: React.FC = () => {
                             <div
                                 className="absolute right-0 top-full mt-2 w-64 rounded-xl shadow-2xl z-50"
                                 style={{
-                                    background: 'rgba(12, 10, 29, 0.95)',
+                                    background: 'var(--aurora-bg2)',
                                     border: '1px solid var(--aurora-line2)',
                                     backdropFilter: 'blur(14px)',
                                 }}

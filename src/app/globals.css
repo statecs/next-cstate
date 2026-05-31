@@ -113,6 +113,24 @@
     --aurora-mono: var(--font-mono), ui-monospace, "JetBrains Mono", monospace;
 }
 
+html.light {
+    --aurora-bg:    #f5f3fa;
+    --aurora-bg2:   #ece8f8;
+    --aurora-text:  #1a1525;
+    --aurora-muted: #5c556e;
+    --aurora-faint: #8f88a2;
+    --aurora-line:  rgba(0, 0, 0, 0.09);
+    --aurora-line2: rgba(0, 0, 0, 0.15);
+    --aurora-glass:  rgba(255, 255, 255, 0.55);
+    --aurora-glass2: rgba(255, 255, 255, 0.80);
+    --aurora-lav:   #7c5fcf;
+    --aurora-vio:   #6d43e0;
+    --aurora-pink:  #d44bb0;
+    --aurora-peri:  #2e6fd4;
+    --aurora-aqua:  #1aaa94;
+    --aurora-grad-title: linear-gradient(110deg, #7c5fcf, #d44bb0, #2e6fd4, #1aaa94, #7c5fcf);
+}
+
 html.aurora,
 body.aurora {
     background: var(--aurora-bg);
@@ -1661,4 +1679,89 @@ body.noanim .aurora-eyebrow .dot,
 body.noanim .aurora-pill .dot,
 body.noanim .aurora-mouse::after {
     animation: none !important;
+}
+
+/* --- light mode component overrides --- */
+
+/* Hide canvas, vignette, reduce grain */
+html.light .aurora-canvas   { display: none; }
+html.light .aurora-vignette { display: none; }
+html.light .aurora-grain    { opacity: 0.015; }
+
+/* CSS aurora blobs replace the hidden canvas (fixed, won't scroll) */
+html.light body.aurora {
+    background-attachment: fixed;
+    background-image:
+        radial-gradient(ellipse 80% 55% at 15% 10%, rgba(201, 182, 255, 0.22) 0%, transparent 55%),
+        radial-gradient(ellipse 55% 45% at 88% 22%, rgba(255, 111, 216, 0.11) 0%, transparent 55%),
+        radial-gradient(ellipse 65% 55% at 68% 88%, rgba(106, 168, 255, 0.14) 0%, transparent 55%),
+        radial-gradient(ellipse 45% 40% at 18% 80%, rgba(94, 234, 212, 0.09) 0%, transparent 55%);
+}
+
+/* Navigation */
+html.light .aurora-nav {
+    background: linear-gradient(180deg, rgba(248, 247, 255, 0.90), rgba(248, 247, 255, 0));
+}
+
+/* Section headings: hardcoded pastel gradient washes out on light bg */
+html.light .aurora-sec-head h2 {
+    background: linear-gradient(110deg, #7c5fcf, #6d43e0, #2e6fd4);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+/* Cards: add visible white surface + subtle shadow */
+html.light .aurora-card {
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: 0 1px 16px rgba(26, 21, 37, 0.06), 0 0 0 0.5px rgba(26, 21, 37, 0.04);
+}
+
+/* AMA: override hardcoded dark backgrounds */
+html.light .aurora-ama-input {
+    background: rgba(255, 255, 255, 0.75);
+}
+
+html.light .aurora-ama-response,
+html.light .aurora-ama-response pre {
+    background: rgba(255, 255, 255, 0.65);
+}
+
+html.light .aurora-ama-suggest {
+    background: rgba(245, 243, 250, 0.96);
+}
+
+/* Logos */
+html.light .aurora-mtrack-logo img,
+html.light .aurora-logo-box img {
+    filter: brightness(0) opacity(0.55);
+}
+
+/* Primary CTA */
+html.light .aurora-btn.primary {
+    background: linear-gradient(120deg, #1a1525, #2d1f5e);
+    color: #f4f1f7;
+}
+
+/* Hero halo */
+html.light .aurora-hero::before {
+    background: radial-gradient(closest-side, rgba(109, 67, 224, 0.08), transparent 70%);
+}
+
+/* Cursor */
+html.light .aurora-cursor-ring {
+    border-color: rgba(110, 67, 224, 0.5);
+    mix-blend-mode: multiply;
+}
+
+html.light .aurora-cursor-dot { mix-blend-mode: multiply; }
+
+/* Bio text: hardcoded light lavender (#d8d3e2) has insufficient contrast on light bg */
+html.light .aurora-bio p {
+    color: var(--aurora-muted);
+}
+
+/* Footer CTA card: warm cream clashes with cool lavender page background in light mode */
+html.light .aurora-foot-card {
+    background: linear-gradient(135deg, #ece8fb, #e4e0f5);
+    border-color: rgba(109, 67, 224, 0.12);
 }

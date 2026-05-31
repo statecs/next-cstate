@@ -54,8 +54,10 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     return (
         <html
             lang="en"
+            suppressHydrationWarning
             className={`aurora flex flex-grow flex-col antialiased md:min-h-full ${titleFont.variable} ${bodyFont.variable} ${serif.variable} ${sans.variable} ${mono.variable}`}
         >
+            <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('cs-theme');if(t==='light')document.documentElement.classList.add('light');}catch(e){}})();` }} />
             <body className="aurora sm:min-h-full md:flex md:flex-grow md:flex-col">
                 <AuthWrapper>
                     <SkipLink />

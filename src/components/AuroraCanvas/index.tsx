@@ -85,9 +85,11 @@ const AuroraCanvas: React.FC = () => {
         addEventListener('pointermove', onMove, { passive: true });
         addEventListener('pointerdown', onDown, { passive: true });
 
+        const isLightMode = () => document.documentElement.classList.contains('light');
+
         const fade = (a: number) => {
             ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = `rgba(7,6,17,${a})`;
+            ctx.fillStyle = isLightMode() ? `rgba(245,243,250,${a})` : `rgba(7,6,17,${a})`;
             ctx.fillRect(0, 0, W, H);
         };
 
@@ -97,7 +99,7 @@ const AuroraCanvas: React.FC = () => {
             const AX = (0.5 + Math.cos(t * 0.7) * 0.3) * W;
             const AY = (0.5 + Math.sin(t * 0.9) * 0.27) * H;
 
-            ctx.globalCompositeOperation = 'lighter';
+            ctx.globalCompositeOperation = isLightMode() ? 'multiply' : 'lighter';
             const bc = ramp(t * 0.06);
             const bg = ctx.createRadialGradient(AX, AY, 0, AX, AY, 0.42 * Math.min(W, H));
             bg.addColorStop(0, `rgba(${bc[0] | 0},${bc[1] | 0},${bc[2] | 0},.05)`);
@@ -171,7 +173,7 @@ const AuroraCanvas: React.FC = () => {
 
         const staticWash = () => {
             ctx.clearRect(0, 0, W, H);
-            ctx.globalCompositeOperation = 'lighter';
+            ctx.globalCompositeOperation = isLightMode() ? 'multiply' : 'lighter';
             const blobs: Array<[number, number, number, number, number, number]> = [
                 [201, 182, 255, 0.28, 0.3, 0.32],
                 [255, 111, 216, 0.22, 0.72, 0.66],
@@ -194,10 +196,10 @@ const AuroraCanvas: React.FC = () => {
         };
 
         const start = () => {
-            if (reduce || document.body.classList.contains('noanim')) {
+            if (reduce || document.body.classList.contains('noanim') || isLightMode()) {
                 running = false;
                 cancelAnimationFrame(raf);
-                staticWash();
+                ctx.clearRect(0, 0, W, H);
                 return;
             }
             running = true;
@@ -223,9 +225,21 @@ const AuroraCanvas: React.FC = () => {
             else start();
         };
 
+        const onTheme = () => {
+            if (isLightMode()) {
+                running = false;
+                cancelAnimationFrame(raf);
+                ctx.clearRect(0, 0, W, H);
+            } else {
+                resize();
+                start();
+            }
+        };
+
         resize();
         addEventListener('resize', onResize);
         document.addEventListener('cs:motion', onMotion);
+        document.addEventListener('cs:theme', onTheme);
         start();
 
         return () => {
@@ -235,6 +249,7 @@ const AuroraCanvas: React.FC = () => {
             removeEventListener('pointerdown', onDown);
             removeEventListener('resize', onResize);
             document.removeEventListener('cs:motion', onMotion);
+            document.removeEventListener('cs:theme', onTheme);
         };
     }, []);
 
