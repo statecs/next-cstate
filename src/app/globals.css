@@ -1870,3 +1870,12 @@ html.light .aurora-foot-card {
     background: linear-gradient(135deg, #ece8fb, #e4e0f5);
     border-color: rgba(109, 67, 224, 0.12);
 }
+
+@media (max-width: 767px) {
+    .aurora-meta-bar {
+        display: none;
+    }
+    .aurora-page-head .aurora-mono {
+        display: none;
+    }
+}
