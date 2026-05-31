@@ -6,11 +6,11 @@ export const QuoteWall = ({ quotes }: QuoteWallProps) => {
     if (!quotes?.length) return null;
 
     return (
-        <section id="section-3" className="border-b border-[var(--aurora-line2)] py-16 px-8 bg-[var(--aurora-bg)]">
+        <section id="section-3" className="border-b border-[var(--aurora-line2)] py-16 px-8">
             {/* 3-col section header */}
             <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr_220px] gap-6 mb-10 pb-8 border-b border-dashed border-[var(--aurora-line)]">
                 <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--aurora-muted)] pt-1">
-                    <span className="text-red-500">§03</span>
+                    <span className="text-[var(--aurora-peri)]">§03</span>
                     {' · VOICES'}
                 </div>
                 <h2
@@ -30,7 +30,7 @@ export const QuoteWall = ({ quotes }: QuoteWallProps) => {
                     const isLike = q.type === 'like';
                     const badgeCls = isLike
                         ? 'bg-[var(--aurora-text)] text-[var(--aurora-bg)]'
-                        : 'bg-red-500 text-white';
+                        : 'bg-[var(--aurora-peri)] text-[var(--aurora-bg)]';
                     const isLastRow = i >= quotes.length - (quotes.length % 2 === 0 ? 2 : 1);
                     const isRightCol = i % 2 === 1;
 
@@ -56,9 +56,9 @@ export const QuoteWall = ({ quotes }: QuoteWallProps) => {
                                 className="font-serif leading-snug text-[var(--aurora-text)] mb-6"
                                 style={{ fontSize: 'clamp(20px, 2.5vw, 28px)' }}
                             >
-                                <span className="text-red-500 italic">&ldquo;</span>
+                                <span className="text-[var(--aurora-peri)] italic">&ldquo;</span>
                                 {q.text}
-                                <span className="text-red-500 italic">&rdquo;</span>
+                                <span className="text-[var(--aurora-peri)] italic">&rdquo;</span>
                             </p>
 
                             {/* Footer */}

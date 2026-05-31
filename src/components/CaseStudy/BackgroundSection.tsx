@@ -16,11 +16,11 @@ export const BackgroundSection = ({
     if (!backgroundLabel && !backgroundHeading && !backgroundBody && !stats?.length) return null;
 
     return (
-        <section id="section-1" className="border-b border-[var(--aurora-line2)] py-16 px-8 bg-[var(--aurora-bg)]">
+        <section id="section-1" className="border-b border-[var(--aurora-line2)] py-16 px-8">
             {/* 3-col section header */}
             <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr_220px] gap-6 mb-10 pb-8 border-b border-dashed border-[var(--aurora-line)]">
                 <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--aurora-muted)] pt-1">
-                    <span className="text-red-500">§01</span>
+                    <span className="text-[var(--aurora-peri)]">§01</span>
                     {backgroundLabel ? ` · ${backgroundLabel}` : ' · Background'}
                 </div>
                 {backgroundHeading && (

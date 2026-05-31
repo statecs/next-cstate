@@ -6,7 +6,7 @@ export const StatsStrip = ({ stats }: StatsStripProps) => {
     if (!stats?.length) return null;
 
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-4 border border-[var(--aurora-line2)] mt-8 bg-[var(--aurora-bg2)]">
+        <div className="grid grid-cols-2 sm:grid-cols-4 border border-[var(--aurora-line2)] mt-8 bg-[var(--aurora-bg)]/40 backdrop-blur-sm">
             {stats.map((stat, i) => (
                 <div
                     key={i}

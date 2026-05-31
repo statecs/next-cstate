@@ -8,11 +8,11 @@ export const ResultsList = ({ resultsHeading, resultsSummary, resultsBullets }: 
     if (!resultsHeading && !resultsSummary && !resultsBullets?.length) return null;
 
     return (
-        <section id="section-5" className="border-b border-[var(--aurora-line2)] py-16 px-8 bg-[var(--aurora-bg)]">
+        <section id="section-5" className="border-b border-[var(--aurora-line2)] py-16 px-8">
             {/* 3-col section header */}
             <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr_220px] gap-6 mb-10 pb-8 border-b border-dashed border-[var(--aurora-line)]">
                 <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--aurora-muted)] pt-1">
-                    <span className="text-red-500">§05</span>
+                    <span className="text-[var(--aurora-peri)]">§05</span>
                     {' · IMPACT'}
                 </div>
                 {resultsHeading && (
@@ -40,7 +40,7 @@ export const ResultsList = ({ resultsHeading, resultsSummary, resultsBullets }: 
                                 key={i}
                                 className="grid grid-cols-[28px_1fr] items-baseline border-b border-dashed border-[var(--aurora-line)] py-3"
                             >
-                                <span className="font-mono text-red-500 text-sm">→</span>
+                                <span className="font-mono text-[var(--aurora-peri)] text-sm">→</span>
                                 <span className="text-[16px] text-[var(--aurora-text)] leading-relaxed">
                                     {bullet}
                                 </span>

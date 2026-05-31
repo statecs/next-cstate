@@ -35,7 +35,7 @@ function TypeBadge({ kind }: { kind?: Post['kind'] }) {
   if (!kind) return null;
   const map: Record<string, string> = {
     'project': 'border border-zinc-400 dark:border-zinc-600 text-zinc-600 dark:text-zinc-400',
-    'case-study': 'bg-red-600 text-white',
+    'case-study': 'bg-[var(--aurora-peri)] text-[var(--aurora-bg)]',
     'writing': 'border border-zinc-400 dark:border-zinc-600 text-zinc-600 dark:text-zinc-400',
   };
   const label: Record<string, string> = {
@@ -77,7 +77,7 @@ function GridCard({ post, featured = false }: { post: EntryWithIndex; featured?:
 
   return (
     <article className={`relative flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden group transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/30${featured ? ' sm:col-span-2' : ''}`}>
-      <Link href={href} className="flex flex-col flex-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600">
+      <Link href={href} className="flex flex-col flex-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--aurora-peri)]">
 
         {/* Thumb */}
         <div className="aspect-[4/3] overflow-hidden border-b border-zinc-200 dark:border-zinc-800 relative bg-zinc-100 dark:bg-zinc-900 rounded-t-md">
@@ -141,7 +141,7 @@ function GridCard({ post, featured = false }: { post: EntryWithIndex; featured?:
           {/* Meta line */}
           <div className="mt-auto pt-2 border-t border-dashed border-zinc-200 dark:border-zinc-700 flex justify-between items-center">
             <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-500">{year}</span>
-            <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-500 group-hover:text-red-600 transition-colors">
+            <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-500 group-hover:text-[var(--aurora-peri)] transition-colors">
               View →
             </span>
           </div>

@@ -6,11 +6,11 @@ export const MethodologyCards = ({ methodologyCards }: MethodologyCardsProps) =>
     if (!methodologyCards?.length) return null;
 
     return (
-        <section id="section-4" className="border-b border-[var(--aurora-line2)] py-16 px-8 bg-[var(--aurora-bg)]">
+        <section id="section-4" className="border-b border-[var(--aurora-line2)] py-16 px-8">
             {/* 3-col section header */}
             <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr_220px] gap-6 mb-10 pb-8 border-b border-dashed border-[var(--aurora-line)]">
                 <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--aurora-muted)] pt-1">
-                    <span className="text-red-500">§04</span>
+                    <span className="text-[var(--aurora-peri)]">§04</span>
                     {' · APPROACH'}
                 </div>
                 <h2
@@ -42,7 +42,7 @@ export const MethodologyCards = ({ methodologyCards }: MethodologyCardsProps) =>
                                     className="font-serif leading-none tracking-[-0.025em] text-[var(--aurora-text)]"
                                     style={{ fontSize: '42px' }}
                                 >
-                                    <span className="text-red-500">
+                                    <span className="text-[var(--aurora-peri)]">
                                         {String(i + 1).padStart(2, '0')}
                                     </span>
                                 </span>
