@@ -1492,6 +1492,19 @@ body.noanim .aurora-cursor-dot {
     gap: 10px;
 }
 
+.aurora-foot-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.aurora-foot-link:hover {
+    color: var(--aurora-text);
+}
+
 /* --- focus / skip --- */
 
 body.aurora :focus-visible {

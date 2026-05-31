@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Github } from 'lucide-react';
 
 const HIDE_CARD_PATHS = ['/contact'];
 
@@ -26,7 +27,16 @@ const AuroraFooter: React.FC = () => {
             )}
             <div className="aurora-foot-meta">
                 <span>© {new Date().getFullYear()} Christopher State · Stockholm</span>
-                <span>Aurora · Flux</span>
+                <a
+                    href="https://github.com/statecs/next-cstate"
+                    className="aurora-foot-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Open source on GitHub"
+                >
+                    <Github size={12} aria-hidden="true" />
+                    Aurora · Flux
+                </a>
             </div>
         </footer>
     );
