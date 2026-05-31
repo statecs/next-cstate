@@ -49,7 +49,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ children, title, isInner, on
   return (
     <ScrollArea
       className={cn(
-        'bg-[var(--aurora-bg2)] flex flex-col h-[calc(100vh)] w-full',
+        'bg-[var(--aurora-bg2)] flex flex-col h-[calc(100vh)] lg:h-[calc(100vh-82px)] w-full',
         isMinimized ? 'items-center' : ''
       )}
     >
