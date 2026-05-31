@@ -1381,10 +1381,11 @@ body.noanim .aurora-cursor-dot {
 }
 
 .aurora-card h3 {
-    font-family: var(--aurora-serif);
-    font-weight: 400;
+    font-family: var(--font-fraunces), Georgia, serif;
+    font-weight: 500;
     font-size: 1.5rem;
-    line-height: 1.12;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
     margin: 26px 0 10px;
     color: var(--aurora-text);
 }

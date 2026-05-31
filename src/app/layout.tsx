@@ -3,7 +3,7 @@ import { Analytics } from '@/components/Analytics'
 import { GA_TRACKING_ID } from '@/lib/gtag'
 import Script from 'next/script'
 import localFont from 'next/font/local';
-import { Instrument_Serif, Hanken_Grotesk, JetBrains_Mono } from 'next/font/google';
+import { Instrument_Serif, Hanken_Grotesk, JetBrains_Mono, Inter, Fraunces, Plus_Jakarta_Sans } from 'next/font/google';
 import AuroraNav from '@/components/AuroraNav';
 import AuroraBackground from '@/components/AuroraBackground';
 import AuroraFooter from '@/components/AuroraFooter';
@@ -50,12 +50,34 @@ const mono = JetBrains_Mono({
     variable: '--font-mono',
 });
 
+const inter = Inter({
+    subsets: ['latin'],
+    weight: ['400', '500', '600', '700'],
+    display: 'swap',
+    variable: '--font-inter',
+});
+
+const fraunces = Fraunces({
+    subsets: ['latin'],
+    weight: ['400', '500', '600', '700'],
+    style: ['normal', 'italic'],
+    display: 'swap',
+    variable: '--font-fraunces',
+});
+
+const plusJakarta = Plus_Jakarta_Sans({
+    subsets: ['latin'],
+    weight: ['400', '500', '600', '700'],
+    display: 'swap',
+    variable: '--font-jakarta',
+});
+
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     return (
         <html
             lang="en"
             suppressHydrationWarning
-            className={`aurora flex flex-grow flex-col antialiased md:min-h-full ${titleFont.variable} ${bodyFont.variable} ${serif.variable} ${sans.variable} ${mono.variable}`}
+            className={`aurora flex flex-grow flex-col antialiased md:min-h-full ${titleFont.variable} ${bodyFont.variable} ${serif.variable} ${sans.variable} ${mono.variable} ${inter.variable} ${fraunces.variable} ${plusJakarta.variable}`}
         >
             <body className="aurora sm:min-h-full md:flex md:flex-grow md:flex-col">
                 <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('cs-theme');if(t==='light')document.documentElement.classList.add('light');}catch(e){}})();` }} />
