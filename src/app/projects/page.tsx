@@ -25,9 +25,9 @@ const ProjectPage = async () => {
   }));
 
   const caseStudyPosts: Post[] = (caseStudies || []).map((cs) => ({
-    url: `/${cs.slug}`,
+    url: `/projects/${cs.slug}`,
     title: cs.title,
-    slug: `/${cs.slug}`,
+    slug: `/projects/${cs.slug}`,
     image: cs.coverImage?.url || '',
     date: undefined,
     isPublic: cs.isPublic,
