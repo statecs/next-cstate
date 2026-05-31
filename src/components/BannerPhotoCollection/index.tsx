@@ -40,34 +40,50 @@ const BannerPhotoCollection: React.FC<Props> = ({ photosCollection, slug }) => {
     <div className="relative w-full mb-8 animate-fadeIn animate-duration-1000">
       {/* Main Banner Image */}
       <div className="relative w-full h-[300px] sm:h-[400px] lg:h-[500px] rounded-none overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 group">
-        <Link
-          href={`${basePath}/${currentPhoto.collection || slug}/${currentPhoto.slug}`}
-          className="block w-full h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white focus-visible:ring-offset-2"
-        >
-          <Image
-            src={currentPhoto.fullSize.url}
-            alt={currentPhoto.description || currentPhoto.title}
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
-            priority
-            quality={90}
-            placeholder={currentPhoto.base64 ? 'blur' : 'empty'}
-            blurDataURL={currentPhoto.base64}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 80vw"
-          />
-          
-          {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          
-          {/* Image Title Overlay */}
-          {currentPhoto.title && (
-            <div className="absolute inset-x-0 bottom-0 p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-              <h3 className="text-white font-semibold text-lg sm:text-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 leading-tight drop-shadow-lg">
-                {currentPhoto.title}
-              </h3>
-            </div>
-          )}
-        </Link>
+        {isWriting ? (
+          <div className="block w-full h-full">
+            <Image
+              src={currentPhoto.fullSize.url}
+              alt={currentPhoto.description || currentPhoto.title}
+              fill
+              className="object-cover"
+              priority
+              quality={90}
+              placeholder={currentPhoto.base64 ? 'blur' : 'empty'}
+              blurDataURL={currentPhoto.base64}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 80vw"
+            />
+          </div>
+        ) : (
+          <Link
+            href={`${basePath}/${currentPhoto.collection || slug}/${currentPhoto.slug}`}
+            className="block w-full h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white focus-visible:ring-offset-2"
+          >
+            <Image
+              src={currentPhoto.fullSize.url}
+              alt={currentPhoto.description || currentPhoto.title}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              priority
+              quality={90}
+              placeholder={currentPhoto.base64 ? 'blur' : 'empty'}
+              blurDataURL={currentPhoto.base64}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 80vw"
+            />
+
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+            {/* Image Title Overlay */}
+            {currentPhoto.title && (
+              <div className="absolute inset-x-0 bottom-0 p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                <h3 className="text-white font-semibold text-lg sm:text-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 leading-tight drop-shadow-lg">
+                  {currentPhoto.title}
+                </h3>
+              </div>
+            )}
+          </Link>
+        )}
 
         {/* Navigation Arrows for Multiple Images */}
         {hasMultipleImages && (
