@@ -16,7 +16,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
   const [isInterrupted, setIsInterrupted] = useState(false);
   const isInterruptedRef = useRef(false);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const processorRef = useRef<ScriptProcessorNode | null>(null);
+  const workletNodeRef = useRef<AudioWorkletNode | null>(null);
   const speechDetectionCounterRef = useRef(0);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,6 +42,14 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
 
   const startListening = async () => {
     setError(null);
+
+    // Tear down any stale connection before starting fresh
+    if (socketRef.current) {
+      socketRef.current.onclose = null;
+      socketRef.current.close();
+      socketRef.current = null;
+    }
+
     setIsListening(true);
     setIsInterrupted(false);
     setDropdownVisible(true);
@@ -98,17 +106,23 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
       mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       });
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
-      const source = audioContextRef.current.createMediaStreamSource(mediaStreamRef.current);
-      processorRef.current = audioContextRef.current.createScriptProcessor(4096, 1, 1);
-  
-      source.connect(processorRef.current);
-      processorRef.current.connect(audioContextRef.current.destination);
-  
-      processorRef.current.onaudioprocess = (e) => {
-        const audioData = e.inputBuffer.getChannelData(0);
 
-        // Auto-interrupt: detect speech while assistant is playing
+      // Guard: WebSocket may have closed while waiting for mic permission
+      if (!socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {
+        mediaStreamRef.current.getTracks().forEach(t => t.stop());
+        mediaStreamRef.current = null;
+        return;
+      }
+
+      audioContextRef.current = new AudioContext({ sampleRate: 24000 });
+      await audioContextRef.current.audioWorklet.addModule('/audio-worklet-processor.js');
+
+      const source = audioContextRef.current.createMediaStreamSource(mediaStreamRef.current);
+      workletNodeRef.current = new AudioWorkletNode(audioContextRef.current, 'audio-processor');
+
+      workletNodeRef.current.port.onmessage = (event) => {
+        const audioData: Float32Array = event.data;
+
         if (isPlayingRef.current && !isInterruptedRef.current) {
           const rms = calculateRMS(audioData);
           if (rms > SPEECH_RMS_THRESHOLD) {
@@ -125,16 +139,22 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
 
         speechDetectionCounterRef.current = 0;
 
-        // Normal audio sending when not playing
         if (!isInterruptedRef.current && socketRef.current?.readyState === WebSocket.OPEN) {
           const int16Data = floatTo16BitPCM(audioData);
           socketRef.current.send(int16Data);
         }
       };
+
+      source.connect(workletNodeRef.current);
+      workletNodeRef.current.connect(audioContextRef.current.destination);
     } catch (err) {
       console.error('Error setting up audio stream:', err);
       setError('Failed to set up audio stream. Please try again.');
       setIsListening(false);
+      if (socketRef.current) {
+        socketRef.current.close();
+        socketRef.current = null;
+      }
     }
   };
 
@@ -145,21 +165,21 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
     onVoiceInputStateChange(false);
     isInterruptedRef.current = false;
     stopAudio();
-  
+
     if (socketRef.current) {
       socketRef.current.close();
       socketRef.current = null;
     }
-  
+
     if (mediaStreamRef.current) {
       mediaStreamRef.current.getTracks().forEach((track) => track.stop());
       mediaStreamRef.current = null;
     }
-  
-    if (processorRef.current && audioContextRef.current) {
-      processorRef.current.disconnect();
+
+    if (workletNodeRef.current && audioContextRef.current) {
+      workletNodeRef.current.disconnect();
       audioContextRef.current.close();
-      processorRef.current = null;
+      workletNodeRef.current = null;
       audioContextRef.current = null;
     }
   };
@@ -173,9 +193,11 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
     if (mediaStreamRef.current) {
       mediaStreamRef.current.getTracks().forEach(track => track.stop());
     }
-    if (processorRef.current && audioContextRef.current) {
-      processorRef.current.disconnect();
+    if (workletNodeRef.current && audioContextRef.current) {
+      workletNodeRef.current.disconnect();
       audioContextRef.current.close();
+      workletNodeRef.current = null;
+      audioContextRef.current = null;
     }
     stopAudio();
   };
@@ -189,9 +211,11 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
     if (mediaStreamRef.current) {
       mediaStreamRef.current.getTracks().forEach(track => track.stop());
     }
-    if (processorRef.current && audioContextRef.current) {
-      processorRef.current.disconnect();
+    if (workletNodeRef.current && audioContextRef.current) {
+      workletNodeRef.current.disconnect();
       audioContextRef.current.close();
+      workletNodeRef.current = null;
+      audioContextRef.current = null;
     }
     try {
       await setupAudioStream();
@@ -213,6 +237,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
       setError('Failed to resume listening. Please try again.');
     }
   };
+
   const calculateRMS = (buffer: Float32Array): number => {
     let sum = 0;
     for (let i = 0; i < buffer.length; i++) {
@@ -247,7 +272,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
 
       {dropdownVisible && (
           <div className="relative inline-block">
-        
+
           <div className="absolute z-50 -left-32 mt-3 w-32 bg-white dark:bg-zinc-800 rounded-md shadow-lg border border-gray-200 dark:border-zinc-700 flex items-center justify-between p-1" style={{ height: '2rem' }}>
             <svg className="w-6 h-6" viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="10" stroke="#3B82F6" strokeWidth="2" fill="none" />
@@ -273,4 +298,4 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
   );
 };
 
-  export default VoiceInput;
+export default VoiceInput;
