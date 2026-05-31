@@ -127,7 +127,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children, posts }) => {
           z-50 lg:z-auto
           lg:mt-[82px]
           transition-all duration-300 ease-in-out
-          ${isMinimized ? "overflow-visible" : "overflow-scroll"}
+          ${isMinimized ? "overflow-visible" : "overflow-hidden"}
         `}
         style={{
           width: isMinimized ? '80px' : '384px',

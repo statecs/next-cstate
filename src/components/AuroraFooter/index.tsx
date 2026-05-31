@@ -6,10 +6,14 @@ import { usePathname } from 'next/navigation';
 import { Github } from 'lucide-react';
 
 const HIDE_CARD_PATHS = ['/contact'];
+const HIDE_FOOTER_PREFIXES = ['/writing/', '/projects/'];
 
 const AuroraFooter: React.FC = () => {
     const pathname = usePathname();
     const hideCard = HIDE_CARD_PATHS.includes(pathname);
+    const hideFooter = HIDE_FOOTER_PREFIXES.some(p => pathname.startsWith(p));
+
+    if (hideFooter) return null;
 
     return (
         <footer className="aurora-footer">
