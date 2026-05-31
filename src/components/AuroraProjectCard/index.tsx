@@ -54,14 +54,16 @@ const AuroraProjectCard: React.FC<AuroraProjectCardProps> = ({
             </div>
             <h3>{title}</h3>
             {blurb && <p className="blurb">{blurb}</p>}
-            {tags.length > 0 && (
-                <div className="tags">
-                    {tags.slice(0, 4).map(t => (
-                        <span key={t}>{t}</span>
-                    ))}
-                </div>
-            )}
-            {year && <span className="yr">{year}</span>}
+            <div className="card-foot">
+                {tags.length > 0 && (
+                    <div className="tags">
+                        {tags.slice(0, 4).map(t => (
+                            <span key={t}>{t}</span>
+                        ))}
+                    </div>
+                )}
+                {year && <span className="yr">{year}</span>}
+            </div>
         </Link>
     );
 };

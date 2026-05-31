@@ -1269,9 +1269,32 @@ body.noanim .aurora-cursor-dot {
 
 .aurora-filters {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
     gap: 10px;
     padding: 8px 0 36px;
+    align-items: center;
+}
+
+.aurora-filters::-webkit-scrollbar {
+    display: none;
+}
+
+.aurora-filters-group {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.aurora-filters-sep {
+    width: 1px;
+    height: 18px;
+    background: var(--aurora-line2);
+    flex-shrink: 0;
+    margin: 0 4px;
 }
 
 .aurora-filters button {
@@ -1297,6 +1320,15 @@ body.noanim .aurora-cursor-dot {
     background: #fff;
     color: #15121d;
     border-color: #fff;
+}
+
+.aurora-meta-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0 22px;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .aurora-grid {
@@ -1396,11 +1428,18 @@ body.noanim .aurora-cursor-dot {
     margin-bottom: 16px;
 }
 
+.aurora-card .card-foot {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: auto;
+}
+
 .aurora-card .tags {
     display: flex;
     flex-wrap: wrap;
     gap: 7px;
-    margin-top: auto;
 }
 
 .aurora-card .tags span {
@@ -1412,12 +1451,11 @@ body.noanim .aurora-cursor-dot {
 }
 
 .aurora-card .yr {
-    position: absolute;
-    right: 24px;
-    bottom: 22px;
     font-family: var(--aurora-mono);
     font-size: 0.74rem;
     color: var(--aurora-faint);
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 /* --- footer cream card --- */

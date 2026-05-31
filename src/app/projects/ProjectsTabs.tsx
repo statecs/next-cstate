@@ -90,49 +90,47 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
                     </h1>
                 </div>
 
-                <div role="group" aria-label="Filter by kind" className="aurora-filters">
-                    {kindChips.map(chip => (
-                        <button
-                            key={chip.value}
-                            type="button"
-                            onClick={() => setKindFilter(chip.value)}
-                            aria-pressed={kindFilter === chip.value}
-                        >
-                            {chip.label} <span style={{ opacity: 0.6 }}>{chip.count}</span>
-                        </button>
-                    ))}
-                </div>
-
-                {topTags.length > 0 && (
-                    <div role="group" aria-label="Filter by tag" className="aurora-filters" style={{ paddingTop: 0 }}>
-                        <button
-                            type="button"
-                            onClick={() => setTagFilter(null)}
-                            aria-pressed={tagFilter === null}
-                        >
-                            Any tag
-                        </button>
-                        {topTags.map(tag => (
+                <div className="aurora-filters">
+                    <div role="group" aria-label="Filter by kind" className="aurora-filters-group">
+                        {kindChips.map(chip => (
                             <button
-                                key={tag}
+                                key={chip.value}
                                 type="button"
-                                onClick={() => setTagFilter(prev => (prev === tag ? null : tag))}
-                                aria-pressed={tagFilter === tag}
+                                onClick={() => setKindFilter(chip.value)}
+                                aria-pressed={kindFilter === chip.value}
                             >
-                                {tag}
+                                {chip.label} <span style={{ opacity: 0.6 }}>{chip.count}</span>
                             </button>
                         ))}
                     </div>
-                )}
 
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        padding: '4px 0 22px',
-                    }}
-                >
+                    {topTags.length > 0 && (
+                        <>
+                            <span className="aurora-filters-sep" aria-hidden="true" />
+                            <div role="group" aria-label="Filter by tag" className="aurora-filters-group">
+                                <button
+                                    type="button"
+                                    onClick={() => setTagFilter(null)}
+                                    aria-pressed={tagFilter === null}
+                                >
+                                    Any tag
+                                </button>
+                                {topTags.map(tag => (
+                                    <button
+                                        key={tag}
+                                        type="button"
+                                        onClick={() => setTagFilter(prev => (prev === tag ? null : tag))}
+                                        aria-pressed={tagFilter === tag}
+                                    >
+                                        {tag}
+                                    </button>
+                                ))}
+                            </div>
+                        </>
+                    )}
+                </div>
+
+                <div className="aurora-meta-bar">
                     <span className="aurora-mono">
                         Showing {filtered.length} / {allEntries.length} entries
                     </span>
