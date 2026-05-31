@@ -257,9 +257,11 @@ const ComboBox: React.FC = () => {
   const handleVoiceInput = (transcript: string) => {
     setInputValue(transcript);
     setResponseMessage(null);
+    setLoading(true);
   };
 
   const handleAssistantResponse = (response: string) => {
+    setLoading(false);
     setResponseMessage(response);
     responseMessageRef.current = response;
     localStorage.setItem('chatResponse', response);
@@ -386,9 +388,10 @@ const ComboBox: React.FC = () => {
       </div>
 
       {loading && (
-        <p aria-live="polite" aria-atomic="true" className="aurora-ama-loading">
-          Sending…
-        </p>
+        <div aria-live="polite" aria-atomic="true" className="aurora-ama-loading flex items-center gap-2">
+          <LoaderIcon className="h-4 w-4 animate-spin" />
+          {!isVoiceInputActive && <span>Sending…</span>}
+        </div>
       )}
 
       {responseMessage && (
