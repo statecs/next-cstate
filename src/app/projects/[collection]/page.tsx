@@ -1,5 +1,6 @@
 import {draftMode} from 'next/headers';
 import {notFound, redirect} from 'next/navigation';
+import Image from 'next/image';
 import PageHeader from '@/components/PageHeader';
 import BannerPhotoCollection from '@/components/BannerPhotoCollection';
 import config from '@/utils/config';
@@ -58,13 +59,13 @@ const CollectionPage = async ({params}: Props) => {
                     ctaUrl={collection.ctaUrl}
                 />
                 <div className="min-h-screen pb-24">
-                    <div className="max-w-3xl mx-auto px-6 py-12">
+                    <div className="max-w-3xl mx-auto px-6 pb-12">
                         <PageHeader
                             description={collection?.showDescription ? collection.description : null}
                         />
                     </div>
-                                    {/* Photo slider at the bottom — renders nothing when photosCollection is empty */}
-                <div className="flex flex-grow px-4 sm:px-8 md:justify-center">
+                                    {/* Photo slider at the bottom — hidden on mobile, hero handles it */}
+                <div className="hidden sm:flex flex-grow px-4 sm:px-8 md:justify-center">
                     <div className="max-w-6xl mx-auto w-full">
                         <BannerPhotoCollection {...collection} key={collection.slug} />
                     </div>
@@ -75,14 +76,43 @@ const CollectionPage = async ({params}: Props) => {
         );
     }
 
+    const heroPhoto = collection.photosCollection?.items?.[0];
+
     return (
         <ScrollArea useScrollAreaId>
         <FloatingHeader scrollTitle="Projects" goBackLink="/projects"></FloatingHeader>
+
+        {/* Mobile hero — first photo as background with title */}
+        {heroPhoto && (
+            <div className="relative sm:hidden h-[55vw] min-h-[240px] max-h-[380px] overflow-hidden">
+                <Image
+                    src={heroPhoto.fullSize.url}
+                    alt={heroPhoto.description || collection.title}
+                    fill
+                    className="object-cover"
+                    priority
+                    placeholder={heroPhoto.base64 ? 'blur' : 'empty'}
+                    blurDataURL={heroPhoto.base64}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
+                <div className="absolute inset-0 flex flex-col justify-end p-5">
+                    <h1
+                        className="font-serif leading-[0.88] tracking-[-0.04em] text-white"
+                        style={{ fontSize: 'clamp(28px, 8vw, 52px)' }}
+                    >
+                        {collection.title}
+                    </h1>
+                </div>
+            </div>
+        )}
+
         <div className="flex flex-grow py-8 px-4 sm:px-8 md:justify-center">
             <div className="flex flex-col space-y-8 w-full">
                 <div className="max-w-6xl mx-auto w-full">
-                    {/* Banner Photo Collection */}
-                    <BannerPhotoCollection {...collection} key={collection.slug} />
+                    {/* Banner Photo Collection — hidden on mobile when hero shown */}
+                    <div className={heroPhoto ? 'hidden sm:block' : ''}>
+                        <BannerPhotoCollection {...collection} key={collection.slug} />
+                    </div>
 
                     {/* Page Header below banner */}
                     <div className={params.collection === 'home' ? 'md:hidden' : ''}>
