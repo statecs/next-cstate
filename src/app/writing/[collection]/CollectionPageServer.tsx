@@ -70,7 +70,7 @@ export const CollectionPageServer: React.FC<Props> = ({
           </div>
         </div>
         {/* Content */}
-        <div className="px-8 py-10">
+        <div className="px-8 pt-10">
           <div className="max-w-6xl mx-auto">
             <BannerPhotoCollection {...collection} key={collection.slug} />
             {/* Metadata Strip */}
@@ -106,7 +106,7 @@ export const CollectionPageServer: React.FC<Props> = ({
         </div>
 
         {/* Article body — constrained to reading width */}
-        <div className={`max-w-3xl mx-auto px-6 py-12${params.collection === 'home' ? ' md:hidden' : ''}`}>
+        <div className={`max-w-3xl mx-auto px-6 pb-12${params.collection === 'home' ? ' md:hidden' : ''}`}>
           <PageHeader
             currentPage="writing"
             title={undefined}
