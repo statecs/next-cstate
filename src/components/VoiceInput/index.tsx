@@ -59,12 +59,11 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
       socketRef.current = new WebSocket('wss://api2.cstate.se/audio-stream');
       socketRef.current.binaryType = 'arraybuffer';
 
-      socketRef.current.onopen = async () => {
+      socketRef.current.onopen = () => {
         console.log('WebSocket connection opened');
-        await setupAudioStream();
       };
 
-      socketRef.current.onmessage = (event) => {
+      socketRef.current.onmessage = async (event) => {
         if (event.data instanceof ArrayBuffer) {
           const float32Data = new Float32Array(event.data);
           if (float32Data.length > 0) {
@@ -75,7 +74,9 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
         } else {
           try {
             const message = JSON.parse(event.data);
-            if (message.type === 'transcription') {
+            if (message.type === 'ready') {
+              await setupAudioStream();
+            } else if (message.type === 'transcription') {
               onVoiceInput(message.text);
             } else if (message.type === 'assistant_response') {
               onAssistantResponse(message.text);
