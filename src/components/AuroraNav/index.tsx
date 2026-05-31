@@ -16,6 +16,7 @@ const LINKS: { href: string; label: string }[] = [
 ];
 
 const THEME_KEY = 'cs-theme';
+const MOTION_KEY = 'cs-motion-off';
 
 const AuroraNav: React.FC = () => {
     const pathname = usePathname();
@@ -23,10 +24,15 @@ const AuroraNav: React.FC = () => {
     const { isAuthenticated } = useAuthStatus();
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isLight, setIsLight] = useState(false);
+    const [motionOff, setMotionOff] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setIsLight(localStorage.getItem(THEME_KEY) === 'light');
+        const stored = localStorage.getItem(MOTION_KEY) === '1';
+        setMotionOff(stored);
+        document.body.classList.toggle('noanim', stored);
+        document.dispatchEvent(new CustomEvent('cs:motion', { detail: stored }));
     }, []);
 
     useEffect(() => {
@@ -49,6 +55,14 @@ const AuroraNav: React.FC = () => {
     const isActive = (href: string) => {
         if (href === '/home') return pathname === '/home' || pathname === '/';
         return pathname.startsWith(href);
+    };
+
+    const toggleMotion = () => {
+        const next = !motionOff;
+        setMotionOff(next);
+        document.body.classList.toggle('noanim', next);
+        localStorage.setItem(MOTION_KEY, next ? '1' : '0');
+        document.dispatchEvent(new CustomEvent('cs:motion', { detail: next }));
     };
 
     const toggleTheme = () => {
@@ -90,6 +104,28 @@ const AuroraNav: React.FC = () => {
             </nav>
 
             <div className="aurora-nav-tools">
+                <div className="hidden md:contents">
+                    <button
+                        type="button"
+                        onClick={toggleMotion}
+                        className="aurora-iconbtn"
+                        aria-label={motionOff ? 'Enable animation' : 'Pause animation'}
+                        aria-pressed={motionOff}
+                        title={motionOff ? 'Enable animation' : 'Pause animation'}
+                    >
+                        {motionOff ? (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                                <polygon points="5 3 19 12 5 21 5 3" />
+                            </svg>
+                        ) : (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                                <rect x="6" y="4" width="4" height="16" rx="1" />
+                                <rect x="14" y="4" width="4" height="16" rx="1" />
+                            </svg>
+                        )}
+                    </button>
+                </div>
+
                 <button
                     type="button"
                     onClick={toggleTheme}
