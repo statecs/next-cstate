@@ -83,19 +83,19 @@ export const LinkList = forwardRef<HTMLAnchorElement, LinkListProps>(({
             />
           )}
           <div className="flex flex-col gap-1">
-            <span className="font-semibold md:text-md md:tracking-wide">{post.title}</span>
-            <span className={cn('transition-colors duration-300', isActive ? 'darK:text-slate-300' : 'text-gray-600 dark:text-gray-400')}>
+            <span className={cn("font-semibold md:text-md md:tracking-wide", isActive ? "text-white" : "text-[var(--aurora-text)]")}>{post.title}</span>
+            <span className={cn('transition-colors duration-300', isActive ? 'text-slate-300' : 'text-gray-500 dark:text-gray-400')}>
               <time dateTime={post.date} suppressHydrationWarning>
                 {formattedDate}
               </time>
             </span>
-            <span className={cn('transition-colors duration-300', isActive ? 'dark:text-slate-300' : 'text-gray-600 dark:text-gray-400')}>
+            <span className={cn('transition-colors duration-300', isActive ? 'text-slate-300' : 'text-gray-500 dark:text-gray-400')}>
             {post.category && (
               <div className="max-w-[210px] lg:max-w-[160px] xl:max-w-[210px] max-h-[40px] overflow-hidden">
                 <div className="whitespace-nowrap overflow-hidden text-ellipsis">
                   {post.category?.split(',').map((cat, index, array) => (
                     <React.Fragment key={cat.trim()}>
-                      <span className="font-sans text-[12px] text-gray-400 dark:text-gray-400">
+                      <span className={cn("font-sans text-[12px]", isActive ? "text-slate-400" : "text-gray-400 dark:text-gray-400")}>
                         {cat.trim()}
                       </span>
                       {index < array.length - 1 && (

@@ -34,9 +34,9 @@ const FilterButton: React.FC<{
     className={cn(
       "px-2 py-1 rounded font-medium",
       isCategory ? "text-[10px]" : "text-xs",
-      activeFilter === filter 
-        ? "bg-black dark:bg-zinc-200 dark:text-custom-dark-gray text-gray-200" 
-        : "bg-gray-100 dark:text-white dark:bg-zinc-700 dark:border-custom-light-gray text-gray-500"
+      activeFilter === filter
+        ? "bg-[var(--aurora-text)] text-[var(--aurora-bg)] border border-[var(--aurora-text)]"
+        : "bg-transparent text-[var(--aurora-text)] border border-[var(--aurora-line)]"
     )}
     onClick={() => onClick(filter)}
     aria-pressed={activeFilter === filter}
@@ -237,7 +237,7 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
   return (
     <>
      
-      <div className="relative bg-zinc-50 font-serif dark:bg-custom-light-gray dark:text-white p-3 lg:p-0">
+      <div className="relative bg-[var(--aurora-bg2)] text-[var(--aurora-text)] p-3 lg:p-0">
         <div className="flex justify-between items-center mb-2">
           
         {!isListMinimized && (
@@ -250,7 +250,7 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
                 localStorage.setItem('listMenuShowFilters', String(newShowFilters));
               }
             }}
-            className="px-4 py-2 bg-gray-200 dark:bg-zinc-700 rounded-md text-xs font-medium transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-600"
+            className="px-4 py-2 bg-[var(--aurora-glass)] text-[var(--aurora-text)] border border-[var(--aurora-line)] rounded-md text-xs font-medium transition-colors duration-200 hover:bg-[var(--aurora-bg2)]"
           >
             {showFilters ? 'Hide Filters' : 'Show Filters'}
             {activeFilter && ' (1)'}
@@ -259,7 +259,7 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
           <button
             onClick={toggleMinimize}
             className={cn(
-              "block px-4 py-2 bg-gray-200 dark:bg-zinc-700 rounded-md text-xs font-medium transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-600",
+              "block px-4 py-2 bg-[var(--aurora-glass)] text-[var(--aurora-text)] border border-[var(--aurora-line)] rounded-md text-xs font-medium transition-colors duration-200 hover:bg-[var(--aurora-bg2)]",
               isListMinimized ? "mt-2 mb-4" : ""
             )}
             aria-label={isListMinimized ? "Expand list" : "Minimize list"}
@@ -269,7 +269,7 @@ export const ListLayout: React.FC<ListLayoutProps> = ({ list, isMobile, onMinimi
         </div>
 
         {isWriting && !isListMinimized && showFilters && (
-        <div className="flex flex-col gap-2 bg-zinc-50 font-serif dark:bg-custom-light-gray dark:text-white p-3 lg:p-0">
+        <div className="flex flex-col gap-2 bg-[var(--aurora-bg2)] text-[var(--aurora-text)] p-3 lg:p-0">
           {showFilters && (
             <>
               <div className="flex rounded-md shadow-sm w-full" role="group">
