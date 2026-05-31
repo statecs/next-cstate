@@ -18,7 +18,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
   const audioContextRef = useRef<AudioContext | null>(null);
   const workletNodeRef = useRef<AudioWorkletNode | null>(null);
   const speechDetectionCounterRef = useRef(0);
-  const playbackStartTimeRef = useRef<number>(0);
+  const lastAudioChunkTimeRef = useRef<number>(0);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
@@ -40,12 +40,6 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
   useEffect(() => {
     isInterruptedRef.current = isInterrupted;
   }, [isInterrupted]);
-
-  useEffect(() => {
-    if (isPlaying) {
-      playbackStartTimeRef.current = Date.now();
-    }
-  }, [isPlaying]);
 
   const startListening = async () => {
     setError(null);
@@ -74,6 +68,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
         if (event.data instanceof ArrayBuffer) {
           const float32Data = new Float32Array(event.data);
           if (float32Data.length > 0) {
+            lastAudioChunkTimeRef.current = Date.now();
             addAudioChunk(float32Data);
           } else {
             console.warn('Received empty audio chunk from WebSocket');
@@ -135,7 +130,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
         const audioData: Float32Array = event.data;
 
         if (isPlayingRef.current && !isInterruptedRef.current) {
-          if (Date.now() - playbackStartTimeRef.current < 600) return;
+          if (Date.now() - lastAudioChunkTimeRef.current < 1000) return;
           const rms = calculateRMS(audioData);
           if (rms > SPEECH_RMS_THRESHOLD) {
             speechDetectionCounterRef.current++;
