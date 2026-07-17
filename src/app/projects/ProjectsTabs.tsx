@@ -15,7 +15,7 @@ const KIND_LABEL: Record<string, string> = {
 };
 
 const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
-    const [kindFilter, setKindFilter] = useState<'all' | 'project' | 'case-study' | 'writing'>('all');
+    const [kindFilter, setKindFilter] = useState<'project' | 'writing'>('project');
     const [tagFilter, setTagFilter] = useState<string | null>(null);
     const [sort, setSort] = useState<'Newest' | 'Oldest' | 'A–Z'>('Newest');
 
@@ -26,8 +26,7 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
 
     const byKind = useMemo(
         () => ({
-            project: allEntries.filter(e => e.kind === 'project').length,
-            'case-study': allEntries.filter(e => e.kind === 'case-study').length,
+            project: allEntries.filter(e => e.kind === 'project' || e.kind === 'case-study').length,
             writing: allEntries.filter(e => e.kind === 'writing').length,
         }),
         [allEntries]
@@ -49,7 +48,8 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
 
     const filtered = useMemo(() => {
         let result = allEntries.filter(e => {
-            if (kindFilter !== 'all' && e.kind !== kindFilter) return false;
+            if (kindFilter === 'project' && e.kind !== 'project' && e.kind !== 'case-study') return false;
+            if (kindFilter === 'writing' && e.kind !== 'writing') return false;
             if (tagFilter) {
                 const tags = (e.category || '').split(',').map(t => t.trim());
                 if (!tags.includes(tagFilter)) return false;
@@ -72,10 +72,8 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
         setSort(prev => (prev === 'Newest' ? 'Oldest' : prev === 'Oldest' ? 'A–Z' : 'Newest'));
     };
 
-    const kindChips: { label: string; value: 'all' | 'project' | 'case-study' | 'writing'; count: number }[] = [
-        { label: 'All', value: 'all', count: allEntries.length },
+    const kindChips: { label: string; value: 'project' | 'writing'; count: number }[] = [
         { label: 'Projects', value: 'project', count: byKind.project },
-        { label: 'Case Studies', value: 'case-study', count: byKind['case-study'] },
         { label: 'Writing', value: 'writing', count: byKind.writing },
     ];
 
@@ -85,8 +83,8 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
                 <div className="aurora-page-head">
                     <p className="aurora-mono">§ 01 — Index of work</p>
                     <h1>
-                        Projects, writing<br />
-                        &amp; <em>case studies.</em>
+                        Projects<br />
+                        &amp; <em>writing.</em>
                     </h1>
                 </div>
 
