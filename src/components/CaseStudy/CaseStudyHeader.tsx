@@ -44,6 +44,18 @@ export const CaseStudyHeader = ({
         { label: 'Responses', value: metaResponses },
     ].filter(item => item.value);
 
+    const cta = ctaLabel && ctaUrl && (
+        <Link
+            href={ctaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[var(--aurora-text)] text-[var(--aurora-bg)] text-[11px] font-semibold uppercase tracking-widest whitespace-nowrap transition-transform duration-150 hover:-translate-y-px hover:opacity-90"
+        >
+            <span>{ctaLabel}</span>
+            <ExternalLinkIcon size={14} />
+        </Link>
+    );
+
     return (
         <div>
             {/* Mobile hero — cover image as background with title overlaid */}
@@ -73,76 +85,88 @@ export const CaseStudyHeader = ({
                     </div>
                 </div>
             )}
-
-            {/* Desktop editorial header */}
-            <div className={coverImage ? 'hidden sm:block' : ''}>
-                <div className="px-8 pt-16 pb-12 border-b border-[var(--aurora-line2)]">
-                    <div className="max-w-6xl mx-auto">
-                        {/* Kicker row */}
-                        <div className="aurora-mono hidden sm:flex items-center justify-between mb-10">
-                            <span>
-                                § 00
-                                {' — Case file'}
-                                {slug ? ` · ${slug}` : ''}
-                            </span>
-                            <div className="flex items-center gap-3">
-                                <span className="flex items-center gap-1.5">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--aurora-lav)] inline-block" />
-                                    Active
-                                </span>
-                                {tags?.length ? (
-                                    <span className="hidden sm:flex items-center gap-2">
-                                        {tags.slice(0, 3).map(tag => (
-                                            <span key={tag} className="border border-[var(--aurora-line2)] px-2 py-0.5 text-[10px]">
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </span>
-                                ) : null}
-                            </div>
-                        </div>
-
-                        {/* H1 */}
-                        <h1
-                            className="font-serif leading-[0.86] tracking-[-0.045em] text-[var(--aurora-text)] mb-6"
-                            style={{ fontSize: 'clamp(48px, 10vw, 140px)' }}
+            {coverImage && tags?.length ? (
+                <div className="sm:hidden flex flex-wrap gap-2 px-5 pt-4">
+                    {tags.slice(0, 4).map(tag => (
+                        <span
+                            key={tag}
+                            className="font-mono text-[10px] uppercase tracking-[0.08em] px-2.5 py-1 rounded-full border border-[var(--aurora-line2)] text-[var(--aurora-muted)]"
                         >
-                            {titleHighlight ? (
-                                <>
-                                    {parts[0]}
-                                    <em className="text-[var(--aurora-lav)]">{titleHighlight}</em>
-                                    {parts[1]}
-                                </>
-                            ) : (
-                                title
-                            )}
-                        </h1>
+                            {tag}
+                        </span>
+                    ))}
+                </div>
+            ) : null}
 
-                        {/* Lede */}
-                        {subtitle && (
-                            <p
-                                className="font-serif text-[var(--aurora-muted)] max-w-[720px]"
-                                style={{ fontSize: 'clamp(18px, 2.5vw, 26px)' }}
-                            >
-                                {subtitle}
-                            </p>
-                        )}
+            {/* Desktop editorial header — title/subtitle/tags above the image, like a magazine spread */}
+            <div className={coverImage ? 'hidden sm:block' : ''}>
+                <div className="px-8 pt-16 max-w-6xl mx-auto">
+                    {/* Kicker row */}
+                    <div className="aurora-mono hidden sm:flex items-center gap-2.5 mb-9">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--aurora-aqua)] shadow-[0_0_10px_var(--aurora-aqua)] inline-block" />
+                        Case file · 01
+                        {slug ? <span className="opacity-40"> — {slug}</span> : null}
                     </div>
+
+                    {/* H1 */}
+                    <h1
+                        className="font-serif leading-[0.86] tracking-[-0.045em] text-[var(--aurora-text)] mb-6"
+                        style={{ fontSize: 'clamp(48px, 10vw, 140px)' }}
+                    >
+                        {titleHighlight ? (
+                            <>
+                                {parts[0]}
+                                <em className="text-[var(--aurora-lav)]">{titleHighlight}</em>
+                                {parts[1]}
+                            </>
+                        ) : (
+                            title
+                        )}
+                    </h1>
+
+                    {/* Lede */}
+                    {subtitle && (
+                        <p
+                            className="font-serif italic text-[var(--aurora-muted)] max-w-[640px] mb-7"
+                            style={{ fontSize: 'clamp(18px, 2.2vw, 24px)' }}
+                        >
+                            {subtitle}
+                        </p>
+                    )}
+
+                    {/* Tags */}
+                    {tags?.length ? (
+                        <div className="flex flex-wrap gap-2 mb-2">
+                            {tags.slice(0, 5).map((tag, i) => (
+                                <span
+                                    key={tag}
+                                    className={
+                                        i === 0
+                                            ? 'font-mono text-[10px] uppercase tracking-[0.08em] px-3 py-1.5 rounded-full bg-[var(--aurora-lav)] text-[var(--aurora-bg)] font-semibold'
+                                            : 'font-mono text-[10px] uppercase tracking-[0.08em] px-3 py-1.5 rounded-full border border-[var(--aurora-line2)] text-[var(--aurora-muted)]'
+                                    }
+                                >
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+                    ) : null}
                 </div>
             </div>
 
-            {/* Cover image — desktop only */}
+            {/* Cover image — desktop only, full-bleed within the wrap */}
             {coverImage && (
-                <div className="max-w-6xl mx-auto hidden sm:block">
-                    <div className="relative bg-[var(--aurora-bg2)] border-b border-[var(--aurora-line2)]">
-                        <div className="relative w-full aspect-[16/7] overflow-hidden">
+                <div className="max-w-6xl mx-auto hidden sm:block px-8 pt-9">
+                    <div className="relative shadow-[0_30px_70px_-30px_rgba(0,0,0,0.5)]">
+                        <div className="relative w-full aspect-[16/7.3] overflow-hidden">
                             <Image
                                 src={coverImage}
                                 alt={coverImageDescription ?? title}
                                 fill
-                                className="object-cover opacity-90"
+                                className="object-cover"
                                 priority
                             />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[var(--aurora-bg)]/55 via-transparent to-transparent" />
                             {/* Corner marks */}
                             <span className="absolute top-3 left-3 w-4 h-4 border-t border-l border-white/60 pointer-events-none" />
                             <span className="absolute top-3 right-3 w-4 h-4 border-t border-r border-white/60 pointer-events-none" />
@@ -161,58 +185,45 @@ export const CaseStudyHeader = ({
                 </div>
             )}
 
-            {/* Meta grid — CTA fills the trailing column on desktop to save vertical space */}
-            {(metaItems.length > 0 || (ctaLabel && ctaUrl)) && (
-                <div className="max-w-6xl mx-auto">
-                    <dl className="grid grid-cols-2 sm:grid-cols-4 border-b border-[var(--aurora-line2)]">
-                        {metaItems.map((item, i) => (
-                            <div
-                                key={item.label}
-                                className={`p-6 ${
-                                    i < metaItems.length - 1
-                                        ? 'border-r border-[var(--aurora-line2)]'
-                                        : ctaLabel && ctaUrl
-                                            ? 'sm:border-r sm:border-[var(--aurora-line2)]'
-                                            : ''
-                                }`}
-                            >
-                                <dt className="font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--aurora-muted)] mb-2">
-                                    {item.label}
-                                </dt>
-                                <dd className="font-serif text-lg leading-snug text-[var(--aurora-text)]">
-                                    {item.value}
-                                </dd>
-                            </div>
-                        ))}
-                        {ctaLabel && ctaUrl && (
-                            <div className="hidden sm:flex p-6 items-center">
-                                <Link
-                                    href={ctaUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 px-6 py-3 border border-[var(--aurora-line2)] text-[var(--aurora-text)] text-xs font-semibold uppercase tracking-widest hover:bg-[var(--aurora-text)] hover:text-[var(--aurora-bg)] transition-colors duration-200"
-                                >
-                                    <span>{ctaLabel}</span>
-                                    <ExternalLinkIcon size={14} />
-                                </Link>
-                            </div>
-                        )}
-                    </dl>
+            {/* Meta strip — single row under the image, CTA folded in to save vertical space */}
+            {(metaItems.length > 0 || cta) && (
+                <div className="max-w-6xl mx-auto px-8 py-6 hidden sm:flex items-center justify-between gap-6 flex-wrap border-b border-[var(--aurora-line2)]">
+                    {metaItems.length > 0 && (
+                        <dl className="flex items-baseline gap-7 flex-wrap">
+                            {metaItems.map(item => (
+                                <div key={item.label}>
+                                    <dt className="font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--aurora-faint)] mb-1">
+                                        {item.label}
+                                    </dt>
+                                    <dd className="font-serif text-base text-[var(--aurora-text)]">
+                                        {item.value}
+                                    </dd>
+                                </div>
+                            ))}
+                        </dl>
+                    )}
+                    {cta}
                 </div>
             )}
 
-            {/* Mobile keeps the full-width CTA below the meta grid */}
-            {ctaLabel && ctaUrl && (
-                <div className="sm:hidden max-w-6xl mx-auto p-6">
-                    <Link
-                        href={ctaUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-6 py-3 border border-[var(--aurora-line2)] text-[var(--aurora-text)] text-xs font-semibold uppercase tracking-widest hover:bg-[var(--aurora-text)] hover:text-[var(--aurora-bg)] transition-colors duration-200"
-                    >
-                        <span>{ctaLabel}</span>
-                        <ExternalLinkIcon size={14} />
-                    </Link>
+            {/* Mobile — meta list + CTA stacked below the hero */}
+            {(metaItems.length > 0 || cta) && (
+                <div className="sm:hidden px-5 py-6 border-b border-[var(--aurora-line2)] space-y-5">
+                    {metaItems.length > 0 && (
+                        <dl className="grid grid-cols-2 gap-4">
+                            {metaItems.map(item => (
+                                <div key={item.label}>
+                                    <dt className="font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--aurora-faint)] mb-1">
+                                        {item.label}
+                                    </dt>
+                                    <dd className="font-serif text-base text-[var(--aurora-text)]">
+                                        {item.value}
+                                    </dd>
+                                </div>
+                            ))}
+                        </dl>
+                    )}
+                    {cta}
                 </div>
             )}
         </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { FloatingHeader } from '@/components/ListLayout/FloatingHeader';
 import { ScrollArea } from '@/components/SideMenu/ScrollArea';
 import { BackgroundSection } from './BackgroundSection';
@@ -15,9 +16,9 @@ interface CaseStudyPageProps {
 
 const TOC_ITEMS = [
     { label: 'Background', section: 1 },
-    { label: 'Data', section: 2 },
-    { label: 'Voices', section: 3 },
-    { label: 'Approach', section: 4 },
+    { label: 'Approach', section: 2 },
+    { label: 'Data', section: 3 },
+    { label: 'Voices', section: 4 },
     { label: 'Impact', section: 5 },
 ];
 
@@ -79,6 +80,10 @@ export const CaseStudyPage = ({ caseStudy }: CaseStudyPageProps) => {
                     stats={caseStudy.stats}
                 />
 
+                {caseStudy.methodologyCards?.length ? (
+                    <MethodologyCards methodologyCards={caseStudy.methodologyCards} />
+                ) : null}
+
                 {(caseStudy.ratingDistributionData ||
                     caseStudy.avgRatingPerModuleData ||
                     caseStudy.responseVolumeData) && (
@@ -92,10 +97,6 @@ export const CaseStudyPage = ({ caseStudy }: CaseStudyPageProps) => {
 
                 {caseStudy.quotes?.length ? <QuoteWall quotes={caseStudy.quotes} /> : null}
 
-                {caseStudy.methodologyCards?.length ? (
-                    <MethodologyCards methodologyCards={caseStudy.methodologyCards} />
-                ) : null}
-
                 {(caseStudy.resultsHeading ||
                     caseStudy.resultsSummary ||
                     caseStudy.resultsBullets?.length) ? (
@@ -107,31 +108,39 @@ export const CaseStudyPage = ({ caseStudy }: CaseStudyPageProps) => {
                 ) : null}
 
                 {/* Colophon */}
-                <div className="border-b border-[var(--aurora-line2)] p-8 grid grid-cols-1 sm:grid-cols-[1fr_320px] gap-10">
-                    <div
-                        className="font-serif leading-[0.95] tracking-[-0.03em] text-[var(--aurora-text)]"
-                        style={{ fontSize: 'clamp(46px, 6vw, 88px)' }}
-                    >
-                        End of file —<br />
-                        <em className="text-[var(--aurora-peri)] not-italic">everything passes,</em><br />
-                        eventually.
+                <div className="border-b border-[var(--aurora-line2)] p-8 grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-10 items-end">
+                    <div>
+                        <div
+                            className="font-serif leading-[0.95] tracking-[-0.03em] text-[var(--aurora-text)] mb-6"
+                            style={{ fontSize: 'clamp(40px, 5.5vw, 72px)' }}
+                        >
+                            End of file —<br />
+                            <em className="text-[var(--aurora-peri)] not-italic">everything passes,</em>{' '}
+                            eventually.
+                        </div>
+                        <Link
+                            href="/projects"
+                            className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--aurora-muted)] hover:text-[var(--aurora-text)] transition-colors border-b border-[var(--aurora-line2)] pb-0.5"
+                        >
+                            ← Back to all projects
+                        </Link>
                     </div>
-                    <aside className="font-mono text-[11px] tracking-[0.04em] text-[var(--aurora-muted)] border border-[var(--aurora-line2)] p-5 self-start space-y-3">
+                    <aside className="font-mono text-[11px] tracking-[0.04em] text-[var(--aurora-faint)] flex gap-8 sm:flex-col sm:gap-3 sm:text-right">
                         {filed && (
                             <div>
-                                <div className="uppercase tracking-[0.1em] text-[10px] text-[var(--aurora-faint)] mb-0.5">Filed</div>
-                                <div>{filed}</div>
+                                <div className="uppercase tracking-[0.1em] text-[10px] mb-0.5">Filed</div>
+                                <div className="text-[var(--aurora-muted)]">{filed}</div>
                             </div>
                         )}
                         {revised && (
                             <div>
-                                <div className="uppercase tracking-[0.1em] text-[10px] text-[var(--aurora-faint)] mb-0.5">Revised</div>
-                                <div>{revised}</div>
+                                <div className="uppercase tracking-[0.1em] text-[10px] mb-0.5">Revised</div>
+                                <div className="text-[var(--aurora-muted)]">{revised}</div>
                             </div>
                         )}
                         {caseStudy.slug && (
                             <div>
-                                <div className="uppercase tracking-[0.1em] text-[10px] text-[var(--aurora-faint)] mb-0.5">Ref</div>
+                                <div className="uppercase tracking-[0.1em] text-[10px] mb-0.5">Ref</div>
                                 <div className="text-[var(--aurora-text)]">{caseStudy.slug}</div>
                             </div>
                         )}

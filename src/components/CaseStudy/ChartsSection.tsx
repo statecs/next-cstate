@@ -1,19 +1,3 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import {
-    Chart as ChartJS,
-    ArcElement,
-    Tooltip,
-    Legend,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-} from 'chart.js';
-import { Bar, Doughnut } from 'react-chartjs-2';
-
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
-
 interface ChartsSectionProps {
     ratingDistributionData?: CaseStudyChartData;
     avgRatingPerModuleData?: CaseStudyChartData;
@@ -21,19 +5,47 @@ interface ChartsSectionProps {
     metaResponses?: string;
 }
 
-function useIsLight() {
-    const [isLight, setIsLight] = useState(() =>
-        typeof window !== 'undefined' && document.documentElement.classList.contains('light')
+const RATING_TINTS = [30, 48, 64, 80, 100];
+
+const BarList = ({
+    data,
+    max,
+    decimals = 0,
+}: {
+    data: CaseStudyChartData;
+    max?: number;
+    decimals?: number;
+}) => {
+    const labels = data.labels ?? [];
+    const values = data.data ?? [];
+    const scale = max ?? Math.max(...values, 1);
+
+    return (
+        <div>
+            {labels.map((label, i) => {
+                const value = values[i] ?? 0;
+                const width = Math.min(100, (value / scale) * 100);
+                return (
+                    <div key={label} className="grid grid-cols-[minmax(0,120px)_1fr_40px] items-center gap-3 mb-3.5 last:mb-0">
+                        <span className="font-mono text-[11px] text-[var(--aurora-muted)] truncate">{label}</span>
+                        <div className="h-2 rounded-full bg-[var(--aurora-line)] overflow-hidden">
+                            <div
+                                className="h-full rounded-full"
+                                style={{
+                                    width: `${width}%`,
+                                    background: 'linear-gradient(90deg, var(--aurora-peri), var(--aurora-lav))',
+                                }}
+                            />
+                        </div>
+                        <span className="font-mono text-[11px] text-[var(--aurora-text)] text-right">
+                            {decimals ? value.toFixed(decimals) : value}
+                        </span>
+                    </div>
+                );
+            })}
+        </div>
     );
-    useEffect(() => {
-        const obs = new MutationObserver(() =>
-            setIsLight(document.documentElement.classList.contains('light'))
-        );
-        obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-        return () => obs.disconnect();
-    }, []);
-    return isLight;
-}
+};
 
 export const ChartsSection = ({
     ratingDistributionData,
@@ -41,52 +53,8 @@ export const ChartsSection = ({
     responseVolumeData,
     metaResponses,
 }: ChartsSectionProps) => {
-    const isLight = useIsLight();
     const hasAny = ratingDistributionData || avgRatingPerModuleData || responseVolumeData;
     if (!hasAny) return null;
-
-    // lav: dark rgb(201,182,255) / light rgb(124,95,207)
-    const lav = isLight ? '124,95,207' : '201,182,255';
-    // peri: dark rgb(106,168,255) / light rgb(46,111,212)
-    const peri = isLight ? '46,111,212' : '106,168,255';
-
-    // Light mode needs higher minimum opacity — pale bg washes out subtle tints
-    const [o1, o2, o3, o4, o5] = isLight
-        ? [0.30, 0.48, 0.64, 0.80, 0.94]
-        : [0.20, 0.38, 0.56, 0.74, 0.90];
-
-    const RATING_COLORS = [
-        `rgba(${lav},${o1})`,
-        `rgba(${lav},${o2})`,
-        `rgba(${lav},${o3})`,
-        `rgba(${lav},${o4})`,
-        `rgba(${lav},${o5})`,
-    ];
-
-    const [vHi, vLo] = isLight ? [0.80, 0.68] : [0.72, 0.62];
-    const VOLUME_COLORS = [
-        `rgba(${peri},${vHi})`,
-        `rgba(${peri},${vLo})`,
-        `rgba(${peri},${vHi})`,
-        `rgba(${peri},${vLo})`,
-        `rgba(${peri},${vHi})`,
-        `rgba(${peri},${vLo})`,
-    ];
-
-    const [rc1, rc2, rc3, rc4] = isLight
-        ? [0.94, 0.76, 0.54, 0.32]
-        : [0.90, 0.68, 0.44, 0.22];
-
-    const ratingColor = (value: number): string => {
-        if (value >= 4.5) return `rgba(${lav},${rc1})`;
-        if (value >= 4.0) return `rgba(${lav},${rc2})`;
-        if (value >= 3.0) return `rgba(${lav},${rc3})`;
-        return `rgba(${lav},${rc4})`;
-    };
-
-    const tickColor = isLight ? '#5c556e' : '#9d97ab';
-    const gridColor = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
-    const cellCls = isLight ? 'p-6' : 'bg-[var(--aurora-bg)]/70 backdrop-blur-sm p-6';
 
     const avgScore = ratingDistributionData
         ? (() => {
@@ -101,72 +69,87 @@ export const ChartsSection = ({
                       total += data[i] ?? 0;
                   }
               });
-              return total > 0 ? (weightedSum / total).toFixed(1) : null;
+              return total > 0 ? weightedSum / total : null;
           })()
         : null;
 
+    const ratingTotal = (ratingDistributionData?.data ?? []).reduce((sum, v) => sum + v, 0);
+
     return (
-        <section id="section-2" className="border-b border-[var(--aurora-line2)] py-16 px-8">
-            {/* 3-col section header */}
-            <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr_220px] gap-6 mb-10 pb-8 border-b border-dashed border-[var(--aurora-line)]">
-                <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--aurora-muted)] pt-1">
-                    <span className="text-[var(--aurora-peri)]">§02</span>
-                    {' · DATA & INSIGHTS'}
+        <section id="section-3" className="border-b border-[var(--aurora-line2)] py-16 px-8">
+            {/* Section header */}
+            <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-6 mb-11 items-end">
+                <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--aurora-faint)]">
+                    <span className="text-[var(--aurora-peri)]">03</span>
+                    {' · Data & insights'}
                 </div>
                 <h2
-                    className="font-serif leading-[0.94] tracking-[-0.025em] text-[var(--aurora-text)]"
-                    style={{ fontSize: 'clamp(32px, 5vw, 72px)' }}
+                    className="font-serif leading-[1.02] tracking-[-0.02em] text-[var(--aurora-text)]"
+                    style={{ fontSize: 'clamp(30px, 4.2vw, 54px)' }}
                 >
                     Where the data lands.
                 </h2>
-                <div className="font-mono text-[11px] text-[var(--aurora-faint)] sm:text-right pt-1">
-                    {metaResponses ? `${metaResponses} responses` : ''}
-                </div>
             </div>
 
-            {/* Charts grid */}
-            <div className="grid lg:grid-cols-2 gap-8">
+            {/* Bento data cards — elevated fills instead of a bordered spreadsheet */}
+            <div className="grid lg:grid-cols-2 gap-5">
                 {ratingDistributionData && (
-                    <div className={cellCls}>
+                    <div className="rounded bg-[var(--aurora-bg2)] shadow-[inset_0_0_0_1px_var(--aurora-line)] p-7">
                         <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--aurora-muted)] mb-6">
-                            Rating Distribution
+                            Rating distribution
                         </h3>
-                        <div className="flex justify-center">
-                            <div className="relative w-52 h-52">
-                                <Doughnut
-                                    data={{
-                                        labels: ratingDistributionData.labels,
-                                        datasets: [
-                                            {
-                                                data: ratingDistributionData.data,
-                                                backgroundColor: RATING_COLORS,
-                                                borderWidth: 0,
-                                            },
-                                        ],
+
+                        {avgScore !== null && (
+                            <div className="flex items-center gap-6 mb-6">
+                                <div
+                                    className="w-[76px] h-[76px] rounded-full flex-shrink-0 relative flex items-center justify-center"
+                                    style={{
+                                        background: `conic-gradient(var(--aurora-lav) 0 ${(avgScore / 5) * 100}%, var(--aurora-line2) ${(avgScore / 5) * 100}% 100%)`,
                                     }}
-                                    options={{
-                                        responsive: true,
-                                        cutout: '72%',
-                                        animation: { animateRotate: true, duration: 800 },
-                                        plugins: { legend: { display: false } },
-                                    }}
-                                />
-                                {avgScore && (
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                        <span className="font-serif text-2xl text-[var(--aurora-text)]">{avgScore}</span>
-                                        <span className="font-mono text-[10px] text-[var(--aurora-peri)] uppercase tracking-[0.08em]">avg</span>
+                                >
+                                    <div className="absolute inset-[7px] rounded-full bg-[var(--aurora-bg2)]" />
+                                    <span className="relative font-serif text-xl text-[var(--aurora-text)]">
+                                        {avgScore.toFixed(1)}
+                                    </span>
+                                </div>
+                                <div>
+                                    <div className="font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--aurora-faint)]">
+                                        Weighted average
                                     </div>
-                                )}
+                                    <div className="font-serif text-[15px] text-[var(--aurora-muted)] mt-1">
+                                        across {ratingTotal || metaResponses} responses
+                                    </div>
+                                </div>
                             </div>
+                        )}
+
+                        <div className="flex h-2.5 rounded-full overflow-hidden mb-3">
+                            {(ratingDistributionData.labels ?? []).map((label, i) => {
+                                const value = ratingDistributionData.data?.[i] ?? 0;
+                                const width = ratingTotal > 0 ? (value / ratingTotal) * 100 : 0;
+                                return (
+                                    <span
+                                        key={label}
+                                        style={{
+                                            width: `${width}%`,
+                                            background: `color-mix(in srgb, var(--aurora-lav) ${RATING_TINTS[i % RATING_TINTS.length]}%, transparent)`,
+                                        }}
+                                    />
+                                );
+                            })}
                         </div>
-                        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-4">
+                        <div className="flex flex-wrap gap-x-4 gap-y-1.5">
                             {(ratingDistributionData.labels ?? []).map((label, i) => (
                                 <div key={label} className="flex items-center gap-1.5">
                                     <span
-                                        className="inline-block w-2 h-2 flex-shrink-0"
-                                        style={{ backgroundColor: RATING_COLORS[i % RATING_COLORS.length] }}
+                                        className="inline-block w-2 h-2 rounded-sm"
+                                        style={{
+                                            background: `color-mix(in srgb, var(--aurora-lav) ${RATING_TINTS[i % RATING_TINTS.length]}%, transparent)`,
+                                        }}
                                     />
-                                    <span className="font-mono text-[10px] text-[var(--aurora-muted)]">{label}</span>
+                                    <span className="font-mono text-[10px] text-[var(--aurora-muted)]">
+                                        {label} {ratingDistributionData.data?.[i]}
+                                    </span>
                                 </div>
                             ))}
                         </div>
@@ -174,81 +157,20 @@ export const ChartsSection = ({
                 )}
 
                 {avgRatingPerModuleData && (
-                    <div className={cellCls}>
+                    <div className="rounded bg-[var(--aurora-bg2)] shadow-[inset_0_0_0_1px_var(--aurora-line)] p-7">
                         <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--aurora-muted)] mb-6">
-                            Avg. Rating per Module
+                            Avg. rating per module
                         </h3>
-                        <Bar
-                            data={{
-                                labels: avgRatingPerModuleData.labels,
-                                datasets: [
-                                    {
-                                        data: avgRatingPerModuleData.data,
-                                        backgroundColor: avgRatingPerModuleData.data.map(ratingColor),
-                                        borderRadius: 0,
-                                        barThickness: 18,
-                                    },
-                                ],
-                            }}
-                            options={{
-                                responsive: true,
-                                indexAxis: 'y' as const,
-                                animation: { duration: 600 },
-                                plugins: { legend: { display: false } },
-                                scales: {
-                                    x: {
-                                        min: 0,
-                                        max: 5,
-                                        grid: { display: false },
-                                        ticks: { color: tickColor, font: { size: 11, family: 'monospace' } },
-                                    },
-                                    y: {
-                                        grid: { display: false },
-                                        ticks: { color: tickColor, font: { size: 11, family: 'monospace' } },
-                                    },
-                                },
-                            }}
-                        />
+                        <BarList data={avgRatingPerModuleData} max={5} decimals={1} />
                     </div>
                 )}
 
                 {responseVolumeData && (
-                    <div className={`${cellCls} lg:col-span-2`}>
+                    <div className="rounded bg-[var(--aurora-bg2)] shadow-[inset_0_0_0_1px_var(--aurora-line)] p-7 lg:col-span-2">
                         <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--aurora-muted)] mb-6">
-                            Response Volume by Module
+                            Response volume by module
                         </h3>
-                        <div className="h-52">
-                            <Bar
-                                data={{
-                                    labels: responseVolumeData.labels,
-                                    datasets: [
-                                        {
-                                            data: responseVolumeData.data,
-                                            backgroundColor: responseVolumeData.data.map(
-                                                (_, i) => VOLUME_COLORS[i % VOLUME_COLORS.length]
-                                            ),
-                                            borderRadius: 0,
-                                        },
-                                    ],
-                                }}
-                                options={{
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    animation: { duration: 600 },
-                                    plugins: { legend: { display: false } },
-                                    scales: {
-                                        x: {
-                                            grid: { display: false },
-                                            ticks: { color: tickColor, font: { size: 11, family: 'monospace' } },
-                                        },
-                                        y: {
-                                            grid: { color: gridColor },
-                                            ticks: { color: tickColor, font: { size: 11, family: 'monospace' } },
-                                        },
-                                    },
-                                }}
-                            />
-                        </div>
+                        <BarList data={responseVolumeData} />
                     </div>
                 )}
             </div>

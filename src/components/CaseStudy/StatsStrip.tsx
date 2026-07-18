@@ -6,19 +6,19 @@ export const StatsStrip = ({ stats }: StatsStripProps) => {
     if (!stats?.length) return null;
 
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-4 border border-[var(--aurora-line2)] mt-8 bg-[var(--aurora-bg)]/40 backdrop-blur-sm">
+        <div className="grid grid-cols-2 gap-x-7 content-start items-start">
             {stats.map((stat, i) => (
                 <div
                     key={i}
-                    className={`p-5 ${i < stats.length - 1 ? 'border-r border-[var(--aurora-line2)]' : ''}`}
+                    className={`py-6 ${i >= 2 ? 'border-t border-[var(--aurora-line)]' : ''}`}
                 >
                     <div
-                        className="font-serif leading-none tracking-[-0.025em] text-[var(--aurora-text)]"
-                        style={{ fontSize: 'clamp(40px, 5vw, 64px)' }}
+                        className="font-serif leading-none tracking-[-0.02em] text-[var(--aurora-text)]"
+                        style={{ fontSize: 'clamp(38px, 4.5vw, 58px)' }}
                     >
                         {stat.num}
                     </div>
-                    <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--aurora-muted)] mt-2.5 leading-snug">
+                    <div className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-[var(--aurora-muted)] mt-2.5 leading-snug whitespace-pre-line">
                         {stat.desc}
                     </div>
                 </div>
