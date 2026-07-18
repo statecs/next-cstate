@@ -1,6 +1,8 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
+import { ExternalLinkIcon } from 'lucide-react';
 
 interface CaseStudyHeaderProps {
     title: string;
@@ -159,14 +161,20 @@ export const CaseStudyHeader = ({
                 </div>
             )}
 
-            {/* Meta grid */}
-            {metaItems.length > 0 && (
+            {/* Meta grid — CTA fills the trailing column on desktop to save vertical space */}
+            {(metaItems.length > 0 || (ctaLabel && ctaUrl)) && (
                 <div className="max-w-6xl mx-auto">
                     <dl className="grid grid-cols-2 sm:grid-cols-4 border-b border-[var(--aurora-line2)]">
                         {metaItems.map((item, i) => (
                             <div
                                 key={item.label}
-                                className={`p-6 ${i < metaItems.length - 1 ? 'border-r border-[var(--aurora-line2)]' : ''}`}
+                                className={`p-6 ${
+                                    i < metaItems.length - 1
+                                        ? 'border-r border-[var(--aurora-line2)]'
+                                        : ctaLabel && ctaUrl
+                                            ? 'sm:border-r sm:border-[var(--aurora-line2)]'
+                                            : ''
+                                }`}
                             >
                                 <dt className="font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--aurora-muted)] mb-2">
                                     {item.label}
@@ -176,7 +184,35 @@ export const CaseStudyHeader = ({
                                 </dd>
                             </div>
                         ))}
+                        {ctaLabel && ctaUrl && (
+                            <div className="hidden sm:flex p-6 items-center">
+                                <Link
+                                    href={ctaUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 px-6 py-3 border border-[var(--aurora-line2)] text-[var(--aurora-text)] text-xs font-semibold uppercase tracking-widest hover:bg-[var(--aurora-text)] hover:text-[var(--aurora-bg)] transition-colors duration-200"
+                                >
+                                    <span>{ctaLabel}</span>
+                                    <ExternalLinkIcon size={14} />
+                                </Link>
+                            </div>
+                        )}
                     </dl>
+                </div>
+            )}
+
+            {/* Mobile keeps the full-width CTA below the meta grid */}
+            {ctaLabel && ctaUrl && (
+                <div className="sm:hidden max-w-6xl mx-auto p-6">
+                    <Link
+                        href={ctaUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-6 py-3 border border-[var(--aurora-line2)] text-[var(--aurora-text)] text-xs font-semibold uppercase tracking-widest hover:bg-[var(--aurora-text)] hover:text-[var(--aurora-bg)] transition-colors duration-200"
+                    >
+                        <span>{ctaLabel}</span>
+                        <ExternalLinkIcon size={14} />
+                    </Link>
                 </div>
             )}
         </div>

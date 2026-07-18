@@ -295,7 +295,7 @@ const PageHeader: React.FC<Props> = ({
                     )}
                 </div>
 
-                {ctaLabel && ctaUrl && typeof description !== 'string' && description?.json && (
+                {ctaLabel && ctaUrl && (
                     <Button
                         className="mt-2 sm:mt-0 px-0 py-0 sm:text-sm sm:px-4 sm:py-3"
                         href={getExternalUrl(ctaUrl)}
