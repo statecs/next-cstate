@@ -55,7 +55,7 @@ export const CollectionPageServer: React.FC<Props> = ({
   return (
     <ScrollArea useScrollAreaId>
       <FloatingHeader scrollTitle="Writing" goBackLink="/writing" />
-      <div className="aurora-main">
+      <div className="aurora-main aurora-enter-page">
 
         {/* Mobile: hero with image as background */}
         {heroImage && (

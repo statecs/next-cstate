@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { Suspense } from 'react'
 import config from '@/utils/config';
 import { fetchEditorialPage, fetchCollectionNavigation } from '@/utils/contentful';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { IndexSkeleton } from '@/components/Skeletons';
 import { getEditorialSeo } from '@/utils/helpers';
 import ClientLayout from './ClientLayout';
 
@@ -26,7 +26,7 @@ const Layout: React.FC<LayoutProps> = async ({ children }) => {
   }));
 
   return (
-    <Suspense fallback={<LoadingSpinner />}>
+    <Suspense fallback={<IndexSkeleton />}>
       {children}
     </Suspense>
   );

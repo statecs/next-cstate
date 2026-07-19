@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ArrowUpRightIcon } from 'lucide-react';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import config from '@/utils/config';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { TimelineSkeleton } from '@/components/Skeletons';
 import { fetchAllJourneys, fetchEditorialPage } from '@/utils/contentful';
 import { getEditorialSeo } from '@/utils/helpers';
 
@@ -46,7 +46,7 @@ export default async function AboutPage() {
     const years = Object.entries(allCollections).sort(([a], [b]) => b.localeCompare(a));
 
     return (
-        <div className="aurora-main aurora-page-shell">
+        <div className="aurora-main aurora-page-shell aurora-enter-page">
             <div className="aurora-wrap">
                 <div className="aurora-page-head">
                     <p className="aurora-mono">§ About — design × code</p>
@@ -99,7 +99,7 @@ export default async function AboutPage() {
                         <span className="aurora-mono">Newest first</span>
                     </div>
                     <div className="aurora-timeline">
-                        <Suspense fallback={<LoadingSpinner />}>
+                        <Suspense fallback={<TimelineSkeleton />}>
                             {years.length > 0 ? (
                                 years.flatMap(([year, events]) =>
                                     (Array.isArray(events) ? events : []).map((item, i) => {

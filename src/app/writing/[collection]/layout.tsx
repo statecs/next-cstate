@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { Suspense } from 'react'
 import config from '@/utils/config';
 import { fetchEditorialPage, fetchWritingNavigation } from '@/utils/contentful';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { EntrySkeleton } from '@/components/Skeletons';
 import { getEditorialSeo } from '@/utils/helpers';
 import ClientLayout from '../ClientLayout';
 
@@ -29,7 +29,7 @@ const WritingCollectionLayout: React.FC<LayoutProps> = async ({ children }) => {
 
     return (
       <ClientLayout posts={posts}>
-        <Suspense fallback={<LoadingSpinner />}>
+        <Suspense fallback={<EntrySkeleton />}>
           {children}
         </Suspense>
       </ClientLayout>
@@ -41,7 +41,7 @@ const WritingCollectionLayout: React.FC<LayoutProps> = async ({ children }) => {
     return (
       <div className="lg:bg-dots flex-1 h-[calc(100vh-110px)] lg:h-[calc(100vh)] overflow-hidden">
         <div className="lg:bg-dots flex-1 h-[calc(100vh-110px)] lg:h-[calc(100vh)] overflow-scroll">
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<EntrySkeleton />}>
             {children}
           </Suspense>
         </div>

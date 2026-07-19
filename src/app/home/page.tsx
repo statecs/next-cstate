@@ -17,7 +17,7 @@ const CLIENTS = [
 
 const HomePage = async () => {
     return (
-        <div className="aurora-main">
+        <div className="aurora-main aurora-enter-page">
             {/* HERO */}
             <section className="aurora-hero" aria-label="Home">
                 <div className="aurora-hero-inner">
