@@ -1,6 +1,7 @@
 import {cache} from 'react';
 import 'server-only';
 import {readCache, writeCache, generateCacheKey} from './cache';
+import {normalizeTags, type RelatedItem} from './related';
 
 /**
  * Fetch from Contentful GraphQL API
@@ -939,3 +940,101 @@ export const fetchCaseStudiesForSitemap = async (): Promise<CaseStudy[]> => {
     return response?.data?.caseStudyCollection?.items || [];
 };
 
+
+/**
+ * Slim index of everything that can be suggested as related reading.
+ *
+ * Deliberately not built on fetchAllCollections/fetchAllWritings — those pull
+ * up to 50 photos per entry, which is far more payload than a link needs.
+ */
+export const fetchRelatedIndex = async (
+    preview: boolean = false
+): Promise<{projects: RelatedItem[]; writings: RelatedItem[]}> => {
+    const query = `query {
+        collectionCollection(
+            limit: 50,
+            order: [date_DESC],
+            preview: ${preview ? 'true' : 'false'},
+            where: {category_not: ""}
+        ) {
+            items {
+                title
+                slug
+                subtitle
+                category
+                date
+                isPublic
+            }
+        }
+        caseStudyCollection(limit: 50, preview: ${preview ? 'true' : 'false'}) {
+            items {
+                title
+                slug
+                subtitle
+                tags
+                isPublic
+                sys {
+                    firstPublishedAt
+                }
+            }
+        }
+        writingCollection(
+            limit: 50,
+            order: [date_DESC],
+            preview: ${preview ? 'true' : 'false'},
+            where: {category_not: ""}
+        ) {
+            items {
+                title
+                slug
+                category
+                date
+                isPublic
+                isMembersOnly
+            }
+        }
+    }`;
+    const response: any = await fetchContent(query, preview, 'relatedIndex');
+
+    const collections: RelatedItem[] = (
+        response?.data?.collectionCollection?.items || []
+    ).map((item: any) => ({
+        slug: item.slug,
+        title: item.title,
+        subtitle: item.subtitle ?? null,
+        tags: normalizeTags(item.category),
+        kind: 'project' as const,
+        date: item.date ?? null,
+        isPublic: item.isPublic
+    }));
+
+    const caseStudies: RelatedItem[] = (
+        response?.data?.caseStudyCollection?.items || []
+    ).map((item: any) => ({
+        slug: item.slug,
+        title: item.title,
+        subtitle: item.subtitle ?? null,
+        tags: normalizeTags(item.tags),
+        kind: 'case-study' as const,
+        date: item.sys?.firstPublishedAt ?? null,
+        isPublic: item.isPublic
+    }));
+
+    const writings: RelatedItem[] = (
+        response?.data?.writingCollection?.items || []
+    ).map((item: any) => ({
+        slug: item.slug,
+        title: item.title,
+        tags: normalizeTags(item.category),
+        kind: 'writing' as const,
+        date: item.date ?? null,
+        // Members-only posts bounce straight to a paywall redirect, so they are
+        // no more linkable here than a private one.
+        isPublic: item.isPublic === false || item.isMembersOnly === true ? false : item.isPublic
+    }));
+
+    return {
+        projects: [...collections, ...caseStudies],
+        writings
+    };
+};

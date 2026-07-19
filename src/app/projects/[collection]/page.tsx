@@ -4,8 +4,10 @@ import Image from 'next/image';
 import PageHeader from '@/components/PageHeader';
 import BannerPhotoCollection from '@/components/BannerPhotoCollection';
 import config from '@/utils/config';
-import {fetchAllCollections, fetchAllCaseStudies, fetchCaseStudy, fetchCollection} from '@/utils/contentful';
+import {fetchAllCollections, fetchAllCaseStudies, fetchCaseStudy, fetchCollection, fetchRelatedIndex} from '@/utils/contentful';
 import {getCollectionSeo} from '@/utils/helpers';
+import {findRelated, normalizeTags} from '@/utils/related';
+import RelatedPosts from '@/components/RelatedPosts';
 import { ScrollArea } from '@/components/SideMenu/ScrollArea';
 import { FloatingHeader } from '@/components/ListLayout/FloatingHeader';
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
@@ -34,9 +36,19 @@ const CollectionPage = async ({params}: Props) => {
             redirect(`${baseUrl}/api/auth/login?post_login_redirect_url=${baseUrl}/projects`);
         }
 
+        const {projects} = await fetchRelatedIndex(isDraftModeEnabled);
+        const related = findRelated(
+            {slug: caseStudy.slug, tags: normalizeTags(caseStudy.tags)},
+            projects,
+            {includePrivate: authStatus}
+        );
+
         return (
             <div className="aurora-enter-page">
-                <CaseStudyPage caseStudy={caseStudy} />
+                <CaseStudyPage
+                    caseStudy={caseStudy}
+                    related={<RelatedPosts items={related} heading="Related work" />}
+                />
             </div>
         );
     }
@@ -45,6 +57,18 @@ const CollectionPage = async ({params}: Props) => {
         const baseUrl = process.env.NEXT_PUBLIC_URL;
         redirect(`${baseUrl}/api/auth/login?post_login_redirect_url=${baseUrl}/projects`);
     }
+
+    const {projects} = await fetchRelatedIndex(isDraftModeEnabled);
+    const relatedProjects = (
+        <RelatedPosts
+            items={findRelated(
+                {slug: collection.slug, tags: normalizeTags(collection.category)},
+                projects,
+                {includePrivate: authStatus}
+            )}
+            heading="Related work"
+        />
+    );
 
     if (collection.coverImage) {
         return (
@@ -76,6 +100,7 @@ const CollectionPage = async ({params}: Props) => {
                     </div>
                 </div>
                 </div>
+                {relatedProjects}
                 </div>
 
             </ScrollArea>
@@ -132,6 +157,7 @@ const CollectionPage = async ({params}: Props) => {
                 </div>
             </div>
         </div>
+        {relatedProjects}
         </ScrollArea>
     );
 };

@@ -22,13 +22,16 @@ interface Props {
   collection: any;
   isAuthenticated: boolean;
   roles: any[];
+  /** Rendered after the article body. Server-fetched, so it arrives as a node. */
+  related?: React.ReactNode;
 }
 
 export const CollectionPageServer: React.FC<Props> = ({
   params,
   collection,
   isAuthenticated,
-  roles
+  roles,
+  related
 }) => {
   if (!collection) return notFound();
 
@@ -164,6 +167,8 @@ export const CollectionPageServer: React.FC<Props> = ({
             description={collection?.showDescription ? collection.description : null}
           />
         </div>
+
+        {related}
       </div>
     </ScrollArea>
   );

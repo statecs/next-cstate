@@ -12,6 +12,8 @@ import { ResultsList } from './ResultsList';
 
 interface CaseStudyPageProps {
     caseStudy: CaseStudy;
+    /** Rendered above the colophon. Server-fetched, so it arrives as a node. */
+    related?: React.ReactNode;
 }
 
 const TOC_ITEMS = [
@@ -22,7 +24,7 @@ const TOC_ITEMS = [
     { label: 'Impact', section: 5 },
 ];
 
-export const CaseStudyPage = ({ caseStudy }: CaseStudyPageProps) => {
+export const CaseStudyPage = ({ caseStudy, related }: CaseStudyPageProps) => {
     const filed = caseStudy.sys?.firstPublishedAt
         ? new Date(caseStudy.sys.firstPublishedAt).toLocaleDateString('en-GB', {
               day: '2-digit',
@@ -106,6 +108,8 @@ export const CaseStudyPage = ({ caseStudy }: CaseStudyPageProps) => {
                         resultsBullets={caseStudy.resultsBullets}
                     />
                 ) : null}
+
+                {related}
 
                 {/* Colophon */}
                 <div className="border-b border-[var(--aurora-line2)] p-8 grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-10 items-end">
