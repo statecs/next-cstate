@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { Suspense } from 'react'
 import config from '@/utils/config';
 import { fetchEditorialPage, fetchCollectionNavigation, fetchAllCaseStudies } from '@/utils/contentful';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { CaseStudySkeleton } from '@/components/CaseStudy/CaseStudySkeleton';
 import { getEditorialSeo } from '@/utils/helpers';
 import ClientLayout from '../ClientLayout';
 
@@ -48,7 +48,7 @@ const CollectionLayout: React.FC<LayoutProps> = async ({ children }) => {
 
     return (
       <ClientLayout posts={posts} key="projects-layout">
-        <Suspense fallback={<LoadingSpinner />}>
+        <Suspense fallback={<CaseStudySkeleton />}>
           {children}
         </Suspense>
       </ClientLayout>
@@ -60,7 +60,7 @@ const CollectionLayout: React.FC<LayoutProps> = async ({ children }) => {
     return (
       <div className="lg:bg-dots flex-1 h-[calc(100vh-110px)] lg:h-[calc(100vh)] overflow-hidden">
         <div className="lg:bg-dots flex-1 h-[calc(100vh-110px)] lg:h-[calc(100vh)] overflow-scroll">
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<CaseStudySkeleton />}>
             {children}
           </Suspense>
         </div>

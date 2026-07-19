@@ -18,6 +18,12 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
     const [kindFilter, setKindFilter] = useState<'project' | 'writing'>('project');
     const [tagFilter, setTagFilter] = useState<string | null>(null);
     const [sort, setSort] = useState<'Newest' | 'Oldest' | 'A–Z'>('Newest');
+    // The staged entrance only plays on first paint — once the user touches a
+    // filter, cards swap in instantly instead of re-staggering.
+    const [interacted, setInteracted] = useState(false);
+    const enterClass = interacted ? '' : 'aurora-enter';
+    const enterStyle = (delay: number): React.CSSProperties | undefined =>
+        interacted ? undefined : ({ '--enter-delay': `${delay}ms` } as React.CSSProperties);
 
     const allEntries = useMemo(() => {
         const merged = [...projects, ...writings];
@@ -69,6 +75,7 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
     }, [allEntries, kindFilter, tagFilter, sort]);
 
     const cycleSort = () => {
+        setInteracted(true);
         setSort(prev => (prev === 'Newest' ? 'Oldest' : prev === 'Oldest' ? 'A–Z' : 'Newest'));
     };
 
@@ -81,20 +88,20 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
         <div className="aurora-main aurora-page-shell">
             <div className="aurora-wrap">
                 <div className="aurora-page-head">
-                    <p className="aurora-mono">§ 01 — Index of work</p>
-                    <h1>
+                    <p className={`aurora-mono ${enterClass}`} style={enterStyle(0)}>§ 01 — Index of work</p>
+                    <h1 className={enterClass} style={enterStyle(160)}>
                         Projects<br />
                         &amp; <em>writing.</em>
                     </h1>
                 </div>
 
-                <div className="aurora-filters">
+                <div className={`aurora-filters ${enterClass}`} style={enterStyle(420)}>
                     <div role="group" aria-label="Filter by kind" className="aurora-filters-group">
                         {kindChips.map(chip => (
                             <button
                                 key={chip.value}
                                 type="button"
-                                onClick={() => setKindFilter(chip.value)}
+                                onClick={() => { setInteracted(true); setKindFilter(chip.value); }}
                                 aria-pressed={kindFilter === chip.value}
                             >
                                 {chip.label} <span style={{ opacity: 0.6 }}>{chip.count}</span>
@@ -108,7 +115,7 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
                             <div role="group" aria-label="Filter by tag" className="aurora-filters-group">
                                 <button
                                     type="button"
-                                    onClick={() => setTagFilter(null)}
+                                    onClick={() => { setInteracted(true); setTagFilter(null); }}
                                     aria-pressed={tagFilter === null}
                                 >
                                     Any tag
@@ -117,7 +124,7 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
                                     <button
                                         key={tag}
                                         type="button"
-                                        onClick={() => setTagFilter(prev => (prev === tag ? null : tag))}
+                                        onClick={() => { setInteracted(true); setTagFilter(prev => (prev === tag ? null : tag)); }}
                                         aria-pressed={tagFilter === tag}
                                     >
                                         {tag}
@@ -128,7 +135,7 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
                     )}
                 </div>
 
-                <div className="aurora-meta-bar">
+                <div className={`aurora-meta-bar ${enterClass}`} style={enterStyle(560)}>
                     <span className="aurora-mono">
                         Showing {filtered.length} / {allEntries.length} entries
                     </span>
@@ -175,6 +182,11 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
                                 blurb={entry.description}
                                 tags={tags}
                                 year={year}
+                                style={
+                                    interacted
+                                        ? undefined
+                                        : ({ '--reveal-delay': `${700 + Math.min(i, 8) * 110}ms` } as React.CSSProperties)
+                                }
                             />
                         );
                     })}

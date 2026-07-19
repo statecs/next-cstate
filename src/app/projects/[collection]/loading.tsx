@@ -1,9 +1,5 @@
-import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { CaseStudySkeleton } from '@/components/CaseStudy/CaseStudySkeleton';
 
 export default function Loading() {
-  return (
-    <div className="flex items-center justify-center h-full min-h-[60vh]">
-      <LoadingSpinner />
-    </div>
-  );
+  return <CaseStudySkeleton />;
 }

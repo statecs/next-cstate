@@ -12,6 +12,8 @@ export interface AuroraProjectCardProps {
     blurb?: string;
     tags?: string[];
     year?: string | number;
+    /** Stagger for the reveal transition, e.g. `{'--reveal-delay': '120ms'}`. */
+    style?: React.CSSProperties;
 }
 
 const AuroraProjectCard: React.FC<AuroraProjectCardProps> = ({
@@ -23,6 +25,7 @@ const AuroraProjectCard: React.FC<AuroraProjectCardProps> = ({
     blurb,
     tags = [],
     year,
+    style,
 }) => {
     const ref = useRef<HTMLAnchorElement>(null);
 
@@ -46,6 +49,7 @@ const AuroraProjectCard: React.FC<AuroraProjectCardProps> = ({
             ref={ref}
             href={href}
             className="aurora-card aurora-reveal"
+            style={style}
             onPointerMove={onMove}
         >
             <div className="top">

@@ -34,7 +34,11 @@ const CollectionPage = async ({params}: Props) => {
             redirect(`${baseUrl}/api/auth/login?post_login_redirect_url=${baseUrl}/projects`);
         }
 
-        return <CaseStudyPage caseStudy={caseStudy} />;
+        return (
+            <div className="aurora-enter-page">
+                <CaseStudyPage caseStudy={caseStudy} />
+            </div>
+        );
     }
 
     if (collection?.isPublic == false && !authStatus) {
@@ -46,6 +50,7 @@ const CollectionPage = async ({params}: Props) => {
         return (
             <ScrollArea useScrollAreaId>
                 <FloatingHeader scrollTitle="Projects" goBackLink="/projects" />
+                <div className="aurora-enter-page">
                 <CaseStudyHeader
                     title={collection.title}
                     titleHighlight={collection.titleHighlight}
@@ -69,6 +74,7 @@ const CollectionPage = async ({params}: Props) => {
                     <div className="max-w-6xl mx-auto w-full">
                         <BannerPhotoCollection {...collection} key={collection.slug} />
                     </div>
+                </div>
                 </div>
                 </div>
 
