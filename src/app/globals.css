@@ -91,6 +91,8 @@
    ============================================================ */
 
 :root {
+    /* height of the fixed .aurora-nav — anything sticky must clear it */
+    --aurora-nav-h: 84px;
     --aurora-bg: #070611;
     --aurora-bg2: #0c0a1d;
     --aurora-text: #f4f1f7;
@@ -1067,6 +1069,65 @@ body.noanim .aurora-cursor-dot {
     color: var(--aurora-lav);
 }
 
+/* --- mobile section pill (FloatingHeader) --- */
+
+/* The strip is just a spacer in the flow so page content doesn't start beneath
+   the pill; the pill itself is fixed to the viewport, which is the only way to
+   reliably keep it clear of the fixed nav (scroll containers on these routes
+   start above the nav's bottom edge, so a sticky offset lands under it). */
+.aurora-subnav {
+    position: relative;
+    z-index: 40;
+    height: 50px;
+    pointer-events: none;
+}
+
+.aurora-subnav > * {
+    pointer-events: auto;
+}
+
+/* opacity only — a transform here would make this element the containing block
+   for the fixed pill inside it */
+@keyframes aurora-subnav-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.aurora-subnav-pill {
+    animation: aurora-subnav-in 0.5s ease-out both;
+}
+
+.aurora-subnav-pill {
+    position: fixed;
+    top: calc(var(--aurora-nav-h) + 8px);
+    left: clamp(14px, 4vw, 26px);
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px 8px 13px;
+    border-radius: 999px;
+    background: var(--aurora-glass);
+    border: 1px solid var(--aurora-line);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--aurora-text);
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.aurora-subnav-pill:active {
+    transform: scale(0.97);
+}
+
+.aurora-subnav-pill:hover {
+    background: var(--aurora-glass2);
+    border-color: var(--aurora-line2);
+}
+
 /* --- skeleton placeholders (route loading states) --- */
 
 .aurora-skel {
@@ -1706,6 +1767,9 @@ body.aurora :focus-visible {
 /* --- responsive --- */
 
 @media (max-width: 860px) {
+    :root {
+        --aurora-nav-h: 70px;
+    }
     .aurora-nav {
         padding: 13px clamp(14px, 4vw, 26px);
     }
