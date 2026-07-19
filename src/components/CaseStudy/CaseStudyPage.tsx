@@ -42,9 +42,11 @@ export const CaseStudyPage = ({ caseStudy, related }: CaseStudyPageProps) => {
 
     return (
         <ScrollArea useScrollAreaId>
-            <div className="aurora-main min-h-screen pb-24">
-                <FloatingHeader scrollTitle="Projects" goBackLink="/projects" />
+            {/* Outside the entrance animation: its transform would become the
+                containing block for the header's fixed pill. */}
+            <FloatingHeader scrollTitle="Projects" goBackLink="/projects" />
 
+            <div className="aurora-main min-h-screen pb-24 aurora-enter-page">
                 <CaseStudyHeader
                     title={caseStudy.title}
                     titleHighlight={caseStudy.titleHighlight}

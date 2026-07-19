@@ -43,13 +43,16 @@ const CollectionPage = async ({params}: Props) => {
             {includePrivate: authStatus}
         );
 
+        // No `aurora-enter-page` wrapper here — CaseStudyPage applies it below
+        // its own FloatingHeader. Wrapping the whole component makes the
+        // animated (transformed) div the containing block for the header's
+        // fixed pill, which then hangs off the top of the hero instead of the
+        // viewport.
         return (
-            <div className="aurora-enter-page">
-                <CaseStudyPage
-                    caseStudy={caseStudy}
-                    related={<RelatedPosts items={related} heading="Related work" />}
-                />
-            </div>
+            <CaseStudyPage
+                caseStudy={caseStudy}
+                related={<RelatedPosts items={related} heading="Related work" />}
+            />
         );
     }
 
