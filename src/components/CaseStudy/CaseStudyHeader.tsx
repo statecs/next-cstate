@@ -49,7 +49,7 @@ export const CaseStudyHeader = ({
             href={ctaUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[var(--aurora-text)] text-[var(--aurora-bg)] text-[11px] font-semibold uppercase tracking-widest whitespace-nowrap transition-transform duration-150 hover:-translate-y-px hover:opacity-90"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[var(--aurora-text)] !text-[var(--aurora-bg)] text-[11px] font-semibold uppercase tracking-widest whitespace-nowrap transition-transform duration-150 hover:-translate-y-px hover:opacity-90"
         >
             <span>{ctaLabel}</span>
             <ExternalLinkIcon size={14} />
