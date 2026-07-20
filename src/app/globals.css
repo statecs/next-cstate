@@ -480,20 +480,24 @@ body.noanim .aurora-cursor-dot {
 
 /* --- staggered per-letter title reveal --- */
 
+/* backwards fill: after the entrance the natural styles apply, so :hover can transition */
 .aurora-title .ch {
     display: inline-block;
-    opacity: 0;
-    transform: translateY(0.55em) rotate(4deg);
-    filter: blur(10px);
-    animation: aurora-ch-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: aurora-ch-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) backwards;
     animation-delay: var(--ch-delay, 0ms);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s;
+}
+
+.aurora-title .ch:hover {
+    transform: translateY(-0.08em) skewX(-6deg);
+    color: var(--aurora-lav);
 }
 
 @keyframes aurora-ch-in {
-    to {
-        opacity: 1;
-        transform: none;
-        filter: blur(0);
+    from {
+        opacity: 0;
+        transform: translateY(0.55em) rotate(4deg);
+        filter: blur(10px);
     }
 }
 
@@ -501,10 +505,6 @@ body.noanim .aurora-cursor-dot {
     from {
         opacity: 0;
         transform: translateY(0.3em) scale(0.97);
-    }
-    to {
-        opacity: 1;
-        transform: none;
     }
 }
 
@@ -518,9 +518,15 @@ body.noanim .aurora-cursor-dot {
     -webkit-text-fill-color: transparent;
     filter: drop-shadow(0 0 28px rgba(141, 192, 235, 0.40));
     animation:
-        aurora-em-in 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both,
+        aurora-em-in 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.45s backwards,
         flux-sweep 5s linear infinite,
         flux-glow 4s ease-in-out infinite;
+    display: inline-block;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.aurora-title em:hover {
+    transform: translateY(-0.05em);
 }
 
 .aurora-lede {
@@ -529,6 +535,81 @@ body.noanim .aurora-cursor-dot {
     margin: 28px auto 0;
     max-width: 620px;
     text-wrap: balance;
+}
+
+/* --- cycling word in the lede (grid-stacked crossfade) --- */
+
+.aurora-word-cycle {
+    display: inline-grid;
+    justify-items: center;
+    color: var(--aurora-aqua);
+    white-space: nowrap;
+}
+
+.aurora-word-cycle .w {
+    grid-area: 1 / 1;
+    opacity: 0;
+    animation: aurora-word-fade 9s ease-in-out infinite;
+}
+
+.aurora-word-cycle .w:nth-child(3) { animation-delay: 3s; }
+.aurora-word-cycle .w:nth-child(4) { animation-delay: 6s; }
+
+@keyframes aurora-word-fade {
+    0% {
+        opacity: 0;
+        transform: translateY(0.55em);
+        filter: blur(4px);
+    }
+    5%, 28% {
+        opacity: 1;
+        transform: none;
+        filter: blur(0);
+    }
+    33%, 100% {
+        opacity: 0;
+        transform: translateY(-0.55em);
+        filter: blur(4px);
+    }
+}
+
+/* --- hero cursor spotlight (position driven by AuroraHeroFX) --- */
+
+.aurora-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+        480px circle at var(--spot-x, 50%) var(--spot-y, 46%),
+        rgba(141, 192, 235, 0.10),
+        transparent 65%
+    );
+}
+
+/* --- hero corner HUD --- */
+
+.aurora-hud {
+    position: absolute;
+    left: clamp(20px, 5vw, 80px);
+    right: clamp(20px, 5vw, 80px);
+    bottom: 34px;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+    font-family: var(--aurora-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+    color: var(--aurora-faint);
+}
+
+@media (max-width: 860px) {
+    .aurora-hud {
+        display: none;
+    }
 }
 
 .aurora-cta-row {
@@ -633,6 +714,25 @@ body.noanim .aurora-cursor-dot {
     background: var(--aurora-muted);
     transform: translateX(-50%);
     animation: wheel 1.8s infinite;
+}
+
+/* --- scroll-driven flourishes (progressive: browsers without support skip them) --- */
+
+@supports (animation-timeline: scroll(root)) {
+    /* hero content recedes as you scroll away */
+    .aurora-hero-inner {
+        animation: aurora-hero-exit linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0 100vh;
+    }
+}
+
+@keyframes aurora-hero-exit {
+    to {
+        opacity: 0;
+        transform: translateY(-60px) scale(0.94);
+        filter: blur(6px);
+    }
 }
 
 /* --- marquee --- */
@@ -2037,6 +2137,7 @@ body.aurora :focus-visible {
     .aurora-pill .dot,
     .aurora-ama::after,
     .aurora-btn.primary::before,
+    .aurora-hero-inner,
     .aurora-mouse::after {
         animation: none !important;
         transition: none !important;
@@ -2046,6 +2147,17 @@ body.aurora :focus-visible {
         opacity: 1;
         transform: none;
         filter: none;
+    }
+    .aurora-word-cycle .w {
+        animation: none !important;
+    }
+    .aurora-word-cycle .w:nth-child(2) {
+        opacity: 1;
+        transform: none;
+        filter: none;
+    }
+    .aurora-word-cycle .w:nth-child(n + 3) {
+        display: none;
     }
     .aurora-canvas {
         opacity: 0.6;
@@ -2065,6 +2177,7 @@ body.noanim .aurora-eyebrow .dot,
 body.noanim .aurora-pill .dot,
 body.noanim .aurora-ama::after,
 body.noanim .aurora-btn.primary::before,
+body.noanim .aurora-hero-inner,
 body.noanim .aurora-mouse::after {
     animation: none !important;
     transition: none !important;
@@ -2075,6 +2188,20 @@ body.noanim .aurora-title .ch {
     opacity: 1;
     transform: none;
     filter: none;
+}
+
+body.noanim .aurora-word-cycle .w {
+    animation: none !important;
+}
+
+body.noanim .aurora-word-cycle .w:nth-child(2) {
+    opacity: 1;
+    transform: none;
+    filter: none;
+}
+
+body.noanim .aurora-word-cycle .w:nth-child(n + 3) {
+    display: none;
 }
 
 /* --- light mode component overrides --- */
@@ -2162,11 +2289,20 @@ html.light .aurora-hero::before {
     background: radial-gradient(closest-side, rgba(52, 104, 156, 0.10), transparent 70%);
 }
 
+/* Hero cursor spotlight */
+html.light .aurora-hero::after {
+    background: radial-gradient(
+        480px circle at var(--spot-x, 50%) var(--spot-y, 46%),
+        rgba(52, 104, 156, 0.09),
+        transparent 65%
+    );
+}
+
 /* Hero title accent: glow pulse reads pastel on light; keep sweep + entrance, calm the glow */
 html.light .aurora-title em {
     filter: drop-shadow(0 0 24px rgba(52, 104, 156, 0.30));
     animation:
-        aurora-em-in 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both,
+        aurora-em-in 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.45s backwards,
         flux-sweep 5s linear infinite;
 }
 

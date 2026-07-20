@@ -6,6 +6,7 @@ import ComboBox from '@/components/ComboBox';
 import AuroraMarquee from '@/components/AuroraMarquee';
 import AuroraAskCta from '@/components/AuroraAskCta';
 import AuroraHeroFX from '@/components/AuroraHeroFX';
+import AuroraHeroHud from '@/components/AuroraHeroHud';
 
 const CLIENTS = [
     { name: 'Siemens',    logo: '/images/logos/siemens.svg',          height: 28 },
@@ -48,7 +49,14 @@ const HomePage = async () => {
                         </span>
                     </h1>
                     <p className="aurora-lede">
-                        Building accessible products — from concept to code.
+                        Building accessible{' '}
+                        <span className="aurora-word-cycle">
+                            <span className="sr-only">products</span>
+                            <span className="w" aria-hidden="true">products</span>
+                            <span className="w" aria-hidden="true">interfaces</span>
+                            <span className="w" aria-hidden="true">experiences</span>
+                        </span>{' '}
+                        — from concept to code.
                     </p>
                     <div className="aurora-cta-row">
                         <Link href="/projects" className="aurora-btn primary" data-magnetic>
@@ -57,6 +65,7 @@ const HomePage = async () => {
                         <AuroraAskCta />
                     </div>
                 </div>
+                <AuroraHeroHud />
                 <div className="aurora-scrollcue" aria-hidden="true">
                     <div className="aurora-mouse" />
                     <span className="aurora-mono">scroll</span>
