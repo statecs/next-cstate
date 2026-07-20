@@ -93,44 +93,47 @@
 :root {
     /* height of the fixed .aurora-nav — anything sticky must clear it */
     --aurora-nav-h: 84px;
-    --aurora-bg: #070611;
-    --aurora-bg2: #0c0a1d;
-    --aurora-text: #f4f1f7;
-    --aurora-muted: #9d97ab;
-    --aurora-faint: #6b6678;
+    --aurora-bg: #060a10;
+    --aurora-bg2: #0a121c;
+    --aurora-text: #eef2f6;
+    --aurora-muted: #94a1ae;
+    --aurora-faint: #667380;
     --aurora-line: rgba(255, 255, 255, 0.09);
     --aurora-line2: rgba(255, 255, 255, 0.14);
     --aurora-glass: rgba(255, 255, 255, 0.035);
     --aurora-glass2: rgba(255, 255, 255, 0.06);
-    --aurora-lav: #c9b6ff;
-    --aurora-vio: #a78bfa;
-    --aurora-pink: #ff6fd8;
-    --aurora-peri: #6aa8ff;
-    --aurora-aqua: #5eead4;
+    /* Dark theme accents: ice/steel blue, teal, bronze — no lavender/pink */
+    --aurora-lav: #8dc0eb;
+    --aurora-vio: #3f7fbf;
+    --aurora-pink: #d29a5a;
+    --aurora-peri: #5b9fd8;
+    --aurora-aqua: #4fd0b5;
     --aurora-r: 18px;
     --aurora-title-size: clamp(3.2rem, 11vw, 9.2rem);
-    --aurora-grad-title: linear-gradient(110deg, #c9b6ff, #ff6fd8, #6aa8ff, #5eead4, #c9b6ff);
+    --aurora-grad-title: linear-gradient(110deg, #a5cdef, #5b9fd8, #4fd0b5, #a5cdef);
     --aurora-serif: var(--font-serif), Georgia, "Times New Roman", serif;
     --aurora-sans: var(--font-sans), system-ui, -apple-system, sans-serif;
     --aurora-mono: var(--font-mono), ui-monospace, "JetBrains Mono", monospace;
 }
 
+/* Light theme — "graphite & steel": cool gray ground, ink text,
+   navy/steel/teal accents with a bronze highlight. No lavender/pink. */
 html.light {
-    --aurora-bg:    #f5f3fa;
-    --aurora-bg2:   #ece8f8;
-    --aurora-text:  #1a1525;
-    --aurora-muted: #5c556e;
-    --aurora-faint: #8f88a2;
-    --aurora-line:  rgba(0, 0, 0, 0.09);
-    --aurora-line2: rgba(0, 0, 0, 0.15);
+    --aurora-bg:    #eef1f4;
+    --aurora-bg2:   #e3e8ed;
+    --aurora-text:  #151a20;
+    --aurora-muted: #4b5560;
+    --aurora-faint: #78828d;
+    --aurora-line:  rgba(15, 23, 32, 0.10);
+    --aurora-line2: rgba(15, 23, 32, 0.16);
     --aurora-glass:  rgba(255, 255, 255, 0.55);
     --aurora-glass2: rgba(255, 255, 255, 0.80);
-    --aurora-lav:   #7c5fcf;
-    --aurora-vio:   #6d43e0;
-    --aurora-pink:  #d44bb0;
-    --aurora-peri:  #2e6fd4;
-    --aurora-aqua:  #1aaa94;
-    --aurora-grad-title: linear-gradient(110deg, #7c5fcf, #d44bb0, #2e6fd4, #1aaa94, #7c5fcf);
+    --aurora-lav:   #34689c;
+    --aurora-vio:   #1d4e7e;
+    --aurora-pink:  #9a5b21;
+    --aurora-peri:  #24618f;
+    --aurora-aqua:  #0e7c6b;
+    --aurora-grad-title: linear-gradient(110deg, #1d4e7e, #34689c, #0e7c6b, #1d4e7e);
 }
 
 html.aurora,
@@ -147,8 +150,8 @@ body.aurora {
 }
 
 body.aurora ::selection {
-    background: var(--aurora-pink);
-    color: #0a0612;
+    background: var(--aurora-lav);
+    color: #060a10;
 }
 
 /* Let canvas/grain show through the existing scroll containers */
@@ -187,7 +190,7 @@ body.aurora a {
     pointer-events: none;
     /* Kept subtle — it sits above the content, so a heavy falloff dims body copy
        toward the bottom of the viewport while scrolling. */
-    background: radial-gradient(130% 100% at 50% 0%, transparent 60%, rgba(2, 1, 10, 0.25) 100%);
+    background: radial-gradient(130% 100% at 50% 0%, transparent 60%, rgba(1, 4, 10, 0.25) 100%);
 }
 
 /* --- custom cursor (desktop only) --- */
@@ -208,7 +211,7 @@ body.aurora a {
     width: 26px;
     height: 26px;
     border-radius: 50%;
-    border: 1.5px solid rgba(106, 168, 255, 0.7);
+    border: 1.5px solid rgba(91, 159, 216, 0.7);
     transition: width 0.25s, height 0.25s, border-color 0.25s;
 }
 
@@ -223,7 +226,7 @@ body.aurora a {
 body.aurora-hovering .aurora-cursor-ring {
     width: 50px;
     height: 50px;
-    border-color: rgba(255, 111, 216, 0.8);
+    border-color: rgba(79, 208, 181, 0.8);
 }
 
 @media (hover: none), (pointer: coarse) {
@@ -253,7 +256,7 @@ body.noanim .aurora-cursor-dot {
     padding: 20px clamp(20px, 4vw, 52px);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    background: linear-gradient(180deg, rgba(7, 6, 17, 0.7), rgba(7, 6, 17, 0));
+    background: linear-gradient(180deg, rgba(6, 10, 16, 0.7), rgba(6, 10, 16, 0));
 }
 
 .aurora-brand {
@@ -268,7 +271,7 @@ body.noanim .aurora-cursor-dot {
     height: 42px;
     border-radius: 50%;
     flex: none;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 6px 22px rgba(139, 92, 246, 0.35);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 6px 22px rgba(63, 127, 191, 0.32);
     overflow: hidden;
 }
 
@@ -400,7 +403,7 @@ body.noanim .aurora-cursor-dot {
     font-size: clamp(2rem, 5vw, 3.4rem);
     letter-spacing: -0.01em;
     line-height: 1.05;
-    background: linear-gradient(110deg, #efeafe, #c9b6ff, #6aa8ff);
+    background: linear-gradient(110deg, #e9f1f8, #8dc0eb, #4fd0b5);
     background-size: 200% 100%;
     -webkit-background-clip: text;
     background-clip: text;
@@ -429,7 +432,7 @@ body.noanim .aurora-cursor-dot {
     transform: translate(-50%, -50%);
     pointer-events: none;
     z-index: -1;
-    background: radial-gradient(closest-side, rgba(167, 139, 250, 0.18), transparent 70%);
+    background: radial-gradient(closest-side, rgba(63, 127, 191, 0.16), transparent 70%);
     filter: blur(10px);
     animation: halo 7s ease-in-out infinite;
 }
@@ -479,7 +482,7 @@ body.noanim .aurora-cursor-dot {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 28px rgba(201, 182, 255, 0.45));
+    filter: drop-shadow(0 0 28px rgba(141, 192, 235, 0.40));
     animation: flux-sweep 5s linear infinite, flux-glow 4s ease-in-out infinite;
 }
 
@@ -525,14 +528,14 @@ body.noanim .aurora-cursor-dot {
 }
 
 .aurora-btn.primary {
-    background: linear-gradient(120deg, #fff, #ece2ff);
-    color: #15121d;
+    background: linear-gradient(120deg, #fff, #dceafa);
+    color: #10151b;
     border-color: transparent;
-    box-shadow: 0 10px 44px rgba(167, 139, 250, 0.4);
+    box-shadow: 0 10px 44px rgba(91, 159, 216, 0.4);
 }
 
 .aurora-btn.primary:hover {
-    box-shadow: 0 14px 52px rgba(196, 181, 253, 0.55);
+    box-shadow: 0 14px 52px rgba(141, 192, 235, 0.5);
 }
 
 .aurora-btn .arr {
@@ -651,7 +654,7 @@ body.noanim .aurora-cursor-dot {
     inset: 0;
     z-index: -1;
     opacity: 0.5;
-    background: radial-gradient(60% 80% at 50% -10%, rgba(139, 92, 246, 0.4), transparent 70%);
+    background: radial-gradient(60% 80% at 50% -10%, rgba(63, 127, 191, 0.38), transparent 70%);
 }
 
 .aurora-ama h2 {
@@ -676,7 +679,7 @@ body.noanim .aurora-cursor-dot {
     padding: 7px 15px;
     border-radius: 999px;
     border: 1px solid var(--aurora-line2);
-    background: rgba(106, 168, 255, 0.16);
+    background: rgba(91, 159, 216, 0.16);
     color: var(--aurora-peri);
     font-size: 0.78rem;
     font-weight: 600;
@@ -711,8 +714,8 @@ body.noanim .aurora-cursor-dot {
 }
 
 .aurora-ama-input:focus-within {
-    border-color: rgba(167, 139, 250, 0.45);
-    box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.08);
+    border-color: rgba(141, 192, 235, 0.45);
+    box-shadow: 0 0 0 4px rgba(141, 192, 235, 0.08);
 }
 
 .aurora-ama-input input {
@@ -788,13 +791,13 @@ body.noanim .aurora-cursor-dot {
     display: grid;
     place-items: center;
     transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
-    box-shadow: 0 6px 20px rgba(167, 139, 250, 0.4);
+    box-shadow: 0 6px 20px rgba(63, 127, 191, 0.4);
 }
 
 .aurora-ama-send:hover:not(:disabled) {
     transform: translateY(-52%);
     filter: brightness(1.1);
-    box-shadow: 0 10px 28px rgba(167, 139, 250, 0.55);
+    box-shadow: 0 10px 28px rgba(63, 127, 191, 0.55);
 }
 
 .aurora-ama-send:disabled {
@@ -815,7 +818,7 @@ body.noanim .aurora-cursor-dot {
     z-index: 10;
     list-style: none;
     margin: 0;
-    background: rgba(7, 6, 17, 0.85);
+    background: rgba(6, 10, 16, 0.85);
     border: 1px solid var(--aurora-line2);
     border-radius: 14px;
     padding: 6px;
@@ -1014,7 +1017,7 @@ body.noanim .aurora-cursor-dot {
     padding: 0;
     border-radius: 999px;
     border: 1px solid var(--aurora-line2);
-    background: rgba(7, 6, 17, 0.85);
+    background: rgba(6, 10, 16, 0.85);
     color: var(--aurora-muted);
     display: grid;
     place-items: center;
@@ -1147,7 +1150,7 @@ body.noanim .aurora-cursor-dot {
     position: absolute;
     inset: 0;
     transform: translateX(-100%);
-    background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.12), transparent);
+    background: linear-gradient(90deg, transparent, rgba(141, 192, 235, 0.12), transparent);
     animation: aurora-skel-sweep 1.8s ease-in-out infinite;
 }
 
@@ -1228,7 +1231,7 @@ body.noanim .aurora-cursor-dot {
 
 .aurora-bio p {
     font-size: 1.25rem;
-    color: #d8d3e2;
+    color: #cdd7e0;
     margin-bottom: 20px;
     max-width: 60ch;
     font-family: var(--aurora-sans);
@@ -1470,7 +1473,7 @@ body.noanim .aurora-cursor-dot {
 
 .aurora-filters button[aria-pressed="true"] {
     background: #fff;
-    color: #15121d;
+    color: #10151b;
     border-color: #fff;
 }
 
@@ -1512,7 +1515,7 @@ body.noanim .aurora-cursor-dot {
     inset: 0;
     border-radius: var(--aurora-r);
     pointer-events: none;
-    background: radial-gradient(220px 170px at var(--mx, 50%) var(--my, 0%), rgba(106, 168, 255, 0.2), transparent 70%);
+    background: radial-gradient(220px 170px at var(--mx, 50%) var(--my, 0%), rgba(91, 159, 216, 0.2), transparent 70%);
     opacity: 0;
     transition: opacity 0.4s;
 }
@@ -1559,8 +1562,8 @@ body.noanim .aurora-cursor-dot {
 }
 
 .aurora-badge.writing {
-    background: rgba(106, 168, 255, 0.18);
-    border-color: rgba(106, 168, 255, 0.4);
+    background: rgba(91, 159, 216, 0.18);
+    border-color: rgba(91, 159, 216, 0.4);
     color: var(--aurora-peri);
 }
 
@@ -1623,8 +1626,8 @@ body.noanim .aurora-cursor-dot {
     margin: 0 auto;
     border: 1px solid var(--aurora-line);
     border-radius: 28px;
-    background: linear-gradient(135deg, #f6f3ee, #efe9f6);
-    color: #16121d;
+    background: linear-gradient(135deg, #f1f4f6, #e6edf3);
+    color: #12181f;
     padding: clamp(40px, 7vw, 80px);
     display: flex;
     justify-content: space-between;
@@ -1645,14 +1648,14 @@ body.noanim .aurora-cursor-dot {
 }
 
 .aurora-foot-card p {
-    color: #4a4255;
+    color: #47525c;
     max-width: 42ch;
     margin-top: 16px;
     font-family: var(--aurora-sans);
 }
 
 .aurora-foot-card .aurora-foot-btn {
-    background: #16121d;
+    background: #12181f;
     color: #fff;
     padding: 16px 28px;
     border-radius: 999px;
@@ -1732,10 +1735,10 @@ body.aurora :focus-visible {
 
 @keyframes flux-glow {
     0%, 100% {
-        filter: drop-shadow(0 0 28px rgba(167, 139, 250, 0.45));
+        filter: drop-shadow(0 0 28px rgba(141, 192, 235, 0.40));
     }
     50% {
-        filter: drop-shadow(0 0 48px rgba(255, 111, 216, 0.5));
+        filter: drop-shadow(0 0 48px rgba(79, 208, 181, 0.45));
     }
 }
 
@@ -1952,20 +1955,26 @@ html.light .aurora-grain    { opacity: 0.015; }
 html.light body.aurora {
     background-attachment: fixed;
     background-image:
-        radial-gradient(ellipse 80% 55% at 15% 10%, rgba(201, 182, 255, 0.22) 0%, transparent 55%),
-        radial-gradient(ellipse 55% 45% at 88% 22%, rgba(255, 111, 216, 0.11) 0%, transparent 55%),
-        radial-gradient(ellipse 65% 55% at 68% 88%, rgba(106, 168, 255, 0.14) 0%, transparent 55%),
-        radial-gradient(ellipse 45% 40% at 18% 80%, rgba(94, 234, 212, 0.09) 0%, transparent 55%);
+        radial-gradient(ellipse 80% 55% at 15% 10%, rgba(52, 104, 156, 0.14) 0%, transparent 55%),
+        radial-gradient(ellipse 55% 45% at 88% 22%, rgba(100, 116, 139, 0.10) 0%, transparent 55%),
+        radial-gradient(ellipse 65% 55% at 68% 88%, rgba(29, 78, 126, 0.10) 0%, transparent 55%),
+        radial-gradient(ellipse 45% 40% at 18% 80%, rgba(14, 124, 107, 0.08) 0%, transparent 55%);
+}
+
+/* Selection: dark-theme pink reads girly and fails on light ground */
+html.light body.aurora ::selection {
+    background: #1d4e7e;
+    color: #eef1f4;
 }
 
 /* Navigation */
 html.light .aurora-nav {
-    background: linear-gradient(180deg, rgba(248, 247, 255, 0.90), rgba(248, 247, 255, 0));
+    background: linear-gradient(180deg, rgba(238, 241, 244, 0.92), rgba(238, 241, 244, 0));
 }
 
 /* Section headings: hardcoded pastel gradient washes out on light bg */
 html.light .aurora-sec-head h2 {
-    background: linear-gradient(110deg, #7c5fcf, #6d43e0, #2e6fd4);
+    background: linear-gradient(110deg, #1d4e7e, #34689c, #0e7c6b);
     -webkit-background-clip: text;
     background-clip: text;
 }
@@ -1973,7 +1982,7 @@ html.light .aurora-sec-head h2 {
 /* Cards: add visible white surface + subtle shadow */
 html.light .aurora-card {
     background: rgba(255, 255, 255, 0.72);
-    box-shadow: 0 1px 16px rgba(26, 21, 37, 0.06), 0 0 0 0.5px rgba(26, 21, 37, 0.04);
+    box-shadow: 0 1px 16px rgba(21, 26, 32, 0.06), 0 0 0 0.5px rgba(21, 26, 32, 0.04);
 }
 
 /* AMA: override hardcoded dark backgrounds */
@@ -1998,18 +2007,29 @@ html.light .aurora-logo-box img {
 
 /* Primary CTA */
 html.light .aurora-btn.primary {
-    background: linear-gradient(120deg, #1a1525, #2d1f5e);
-    color: #f4f1f7;
+    background: linear-gradient(120deg, #151a20, #1d3a55);
+    color: #eef1f4;
+    box-shadow: 0 10px 40px rgba(29, 78, 126, 0.30);
+}
+
+html.light .aurora-btn.primary:hover {
+    box-shadow: 0 14px 48px rgba(29, 78, 126, 0.40);
 }
 
 /* Hero halo */
 html.light .aurora-hero::before {
-    background: radial-gradient(closest-side, rgba(109, 67, 224, 0.08), transparent 70%);
+    background: radial-gradient(closest-side, rgba(52, 104, 156, 0.10), transparent 70%);
+}
+
+/* Hero title accent: purple glow pulse reads pastel; keep the sweep, calm the glow */
+html.light .aurora-title em {
+    filter: drop-shadow(0 0 24px rgba(52, 104, 156, 0.30));
+    animation: flux-sweep 5s linear infinite;
 }
 
 /* Cursor */
 html.light .aurora-cursor-ring {
-    border-color: rgba(110, 67, 224, 0.5);
+    border-color: rgba(29, 78, 126, 0.55);
     mix-blend-mode: multiply;
 }
 
@@ -2020,10 +2040,36 @@ html.light .aurora-bio p {
     color: var(--aurora-muted);
 }
 
-/* Footer CTA card: warm cream clashes with cool lavender page background in light mode */
+/* Footer CTA card: cool steel surface to match the graphite page ground */
 html.light .aurora-foot-card {
-    background: linear-gradient(135deg, #ece8fb, #e4e0f5);
-    border-color: rgba(109, 67, 224, 0.12);
+    background: linear-gradient(135deg, #e9edf1, #dfe5eb);
+    border-color: rgba(29, 78, 126, 0.14);
+}
+
+/* Remaining hardcoded purple glows → steel blue */
+html.light .aurora-avatar {
+    box-shadow: 0 0 0 1px rgba(15, 23, 32, 0.10), 0 6px 22px rgba(29, 78, 126, 0.22);
+}
+
+html.light .aurora-ama::before {
+    background: radial-gradient(60% 80% at 50% -10%, rgba(52, 104, 156, 0.28), transparent 70%);
+}
+
+html.light .aurora-ama-input:focus-within {
+    border-color: rgba(52, 104, 156, 0.45);
+    box-shadow: 0 0 0 4px rgba(52, 104, 156, 0.08);
+}
+
+html.light .aurora-ama-send {
+    box-shadow: 0 6px 20px rgba(29, 78, 126, 0.30);
+}
+
+html.light .aurora-ama-send:hover:not(:disabled) {
+    box-shadow: 0 10px 28px rgba(29, 78, 126, 0.40);
+}
+
+html.light .aurora-skel::after {
+    background: linear-gradient(90deg, transparent, rgba(52, 104, 156, 0.12), transparent);
 }
 
 @media (max-width: 767px) {

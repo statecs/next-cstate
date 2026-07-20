@@ -2,21 +2,30 @@
 
 import { useEffect, useRef } from 'react';
 
-const STOPS: Array<[number, number, number]> = [
-    [201, 182, 255],
-    [255, 111, 216],
-    [106, 168, 255],
-    [94, 234, 212],
+// Dark theme: ice blue / steel / teal / slate — cool aurora, no lavender/pink
+const STOPS_DARK: Array<[number, number, number]> = [
+    [141, 192, 235],
+    [63, 127, 191],
+    [79, 208, 181],
+    [122, 145, 168],
 ];
 
-const ramp = (h: number): [number, number, number] => {
+// Light theme: steel blue / navy / teal / slate — matches the graphite palette
+const STOPS_LIGHT: Array<[number, number, number]> = [
+    [52, 104, 156],
+    [29, 78, 126],
+    [14, 124, 107],
+    [100, 116, 139],
+];
+
+const ramp = (stops: Array<[number, number, number]>, h: number): [number, number, number] => {
     h = (h % 1 + 1) % 1;
-    const n = STOPS.length;
+    const n = stops.length;
     const f = h * n;
     const i = Math.floor(f);
     const u = f - i;
-    const a = STOPS[i % n];
-    const b = STOPS[(i + 1) % n];
+    const a = stops[i % n];
+    const b = stops[(i + 1) % n];
     return [a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u];
 };
 
@@ -89,7 +98,7 @@ const AuroraCanvas: React.FC = () => {
 
         const fade = (a: number) => {
             ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = isLightMode() ? `rgba(245,243,250,${a})` : `rgba(7,6,17,${a})`;
+            ctx.fillStyle = isLightMode() ? `rgba(238,241,244,${a})` : `rgba(6,10,16,${a})`;
             ctx.fillRect(0, 0, W, H);
         };
 
@@ -99,8 +108,9 @@ const AuroraCanvas: React.FC = () => {
             const AX = (0.5 + Math.cos(t * 0.7) * 0.3) * W;
             const AY = (0.5 + Math.sin(t * 0.9) * 0.27) * H;
 
+            const stops = isLightMode() ? STOPS_LIGHT : STOPS_DARK;
             ctx.globalCompositeOperation = isLightMode() ? 'source-over' : 'lighter';
-            const bc = ramp(t * 0.06);
+            const bc = ramp(stops, t * 0.06);
             const bg = ctx.createRadialGradient(AX, AY, 0, AX, AY, 0.42 * Math.min(W, H));
             bg.addColorStop(0, `rgba(${bc[0] | 0},${bc[1] | 0},${bc[2] | 0},${isLightMode() ? .005 : .05})`);
             bg.addColorStop(1, 'rgba(0,0,0,0)');
@@ -155,8 +165,8 @@ const AuroraCanvas: React.FC = () => {
                 if (p.y < 0) p.y += H;
                 else if (p.y > H) p.y -= H;
                 if (Math.abs(p.x - ox) < 60 * DPR && Math.abs(p.y - oy) < 60 * DPR) {
-                    const c = ramp(p.hue + hShift);
-                    ctx.strokeStyle = `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${isLightMode() ? .48 : .52})`;
+                    const c = ramp(stops, p.hue + hShift);
+                    ctx.strokeStyle = `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${isLightMode() ? .38 : .52})`;
                     ctx.beginPath();
                     ctx.moveTo(ox, oy);
                     ctx.lineTo(p.x, p.y);
@@ -174,12 +184,19 @@ const AuroraCanvas: React.FC = () => {
         const staticWash = () => {
             ctx.clearRect(0, 0, W, H);
             ctx.globalCompositeOperation = isLightMode() ? 'source-over' : 'lighter';
-            const blobs: Array<[number, number, number, number, number, number]> = [
-                [201, 182, 255, 0.28, 0.3, 0.32],
-                [255, 111, 216, 0.22, 0.72, 0.66],
-                [106, 168, 255, 0.2, 0.6, 0.2],
-                [94, 234, 212, 0.16, 0.2, 0.75],
-            ];
+            const blobs: Array<[number, number, number, number, number, number]> = isLightMode()
+                ? [
+                    [52, 104, 156, 0.14, 0.3, 0.32],
+                    [100, 116, 139, 0.10, 0.72, 0.66],
+                    [29, 78, 126, 0.10, 0.6, 0.2],
+                    [14, 124, 107, 0.08, 0.2, 0.75],
+                ]
+                : [
+                    [141, 192, 235, 0.26, 0.3, 0.32],
+                    [63, 127, 191, 0.22, 0.72, 0.66],
+                    [79, 208, 181, 0.16, 0.6, 0.2],
+                    [122, 145, 168, 0.18, 0.2, 0.75],
+                ];
             blobs.forEach(b => {
                 const cx = b[4] * W;
                 const cy = b[5] * H;
