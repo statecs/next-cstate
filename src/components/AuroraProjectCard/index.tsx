@@ -35,6 +35,20 @@ const AuroraProjectCard: React.FC<AuroraProjectCardProps> = ({
         const r = el.getBoundingClientRect();
         el.style.setProperty('--mx', `${e.clientX - r.left}px`);
         el.style.setProperty('--my', `${e.clientY - r.top}px`);
+        if (
+            document.body.classList.contains('noanim') ||
+            matchMedia('(prefers-reduced-motion: reduce)').matches
+        )
+            return;
+        el.style.setProperty('--rx', `${(((e.clientX - r.left) / r.width) - 0.5) * 7}deg`);
+        el.style.setProperty('--ry', `${(0.5 - ((e.clientY - r.top) / r.height)) * 7}deg`);
+    };
+
+    const onLeave = () => {
+        const el = ref.current;
+        if (!el) return;
+        el.style.setProperty('--rx', '0deg');
+        el.style.setProperty('--ry', '0deg');
     };
 
     const badgeClass =
@@ -51,6 +65,7 @@ const AuroraProjectCard: React.FC<AuroraProjectCardProps> = ({
             className="aurora-card aurora-reveal"
             style={style}
             onPointerMove={onMove}
+            onPointerLeave={onLeave}
         >
             <div className="top">
                 <span className="num">№ {number}</span>

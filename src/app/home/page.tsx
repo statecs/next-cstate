@@ -5,6 +5,7 @@ import { getEditorialSeo } from '@/utils/helpers';
 import ComboBox from '@/components/ComboBox';
 import AuroraMarquee from '@/components/AuroraMarquee';
 import AuroraAskCta from '@/components/AuroraAskCta';
+import AuroraHeroFX from '@/components/AuroraHeroFX';
 
 const CLIENTS = [
     { name: 'Siemens',    logo: '/images/logos/siemens.svg',          height: 28 },
@@ -15,15 +16,36 @@ const CLIENTS = [
     { name: 'Friends',    logo: '/images/logos/Friends_logo.svg',     height: 20 },
 ];
 
+/* Per-character stagger for the hero title reveal (rendered server-side). */
+const titleChars = (text: string, startMs: number, stepMs = 45) => {
+    let visible = 0;
+    return text.split('').map((c, i) =>
+        c === ' ' ? (
+            ' '
+        ) : (
+            <span
+                key={i}
+                className="ch"
+                style={{ '--ch-delay': `${startMs + visible++ * stepMs}ms` } as React.CSSProperties}
+            >
+                {c}
+            </span>
+        )
+    );
+};
+
 const HomePage = async () => {
     return (
         <div className="aurora-main aurora-enter-page">
             {/* HERO */}
             <section className="aurora-hero" aria-label="Home">
+                <AuroraHeroFX />
                 <div className="aurora-hero-inner">
-                    <h1 className="aurora-title">
-                        Hi, I&apos;m<br />
-                        <em>Christopher.</em>
+                    <h1 className="aurora-title" aria-label="Hi, I'm Christopher.">
+                        <span aria-hidden="true">
+                            {titleChars("Hi, I'm", 150)}<br />
+                            <em>Christopher.</em>
+                        </span>
                     </h1>
                     <p className="aurora-lede">
                         Building accessible products — from concept to code.

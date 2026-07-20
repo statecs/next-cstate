@@ -9,6 +9,7 @@ import AuroraBackground from '@/components/AuroraBackground';
 import AuroraFooter from '@/components/AuroraFooter';
 import AuroraReveal from '@/components/AuroraReveal';
 import AuroraMagnetic from '@/components/AuroraMagnetic';
+import AuroraScrollProgress from '@/components/AuroraScrollProgress';
 import SkipLink from '@/components/SkipLink';
 import { MainWrapper } from '@/components/MainWrapper';
 import config from '@/utils/config';
@@ -97,6 +98,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
                     </MainWrapper>
                     <AuroraReveal />
                     <AuroraMagnetic />
+                    <AuroraScrollProgress />
                     {process.env.NODE_ENV !== 'development' && (
                         <>
                             <Script
