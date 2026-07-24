@@ -59,6 +59,29 @@ async function deploy() {
    result = await ssh.execCommand('pm2 logs portfolio-prod --lines 10 --nostream', { cwd: remoteDir });
    console.log('PM2 startup logs:\n', result.stdout);
 
+   // Clear the server's Contentful cache and revalidate all paths so new content shows immediately
+   const baseUrl = (process.env.NEXT_PUBLIC_URL || 'https://cstate.se').replace(/\/$/, '');
+   const secret = process.env.CONTENTFUL_WEBHOOK_SECRET;
+   if (!secret) {
+     console.warn('Skipping cache revalidation: CONTENTFUL_WEBHOOK_SECRET is not set.');
+   } else {
+     try {
+       console.log(`Revalidating cache at ${baseUrl}/api/revalidate ...`);
+       const res = await fetch(`${baseUrl}/api/revalidate`, {
+         method: 'GET',
+         headers: { Authorization: `Bearer ${secret}` }
+       });
+       const body = await res.text();
+       if (res.ok) {
+         console.log('Cache revalidated:', body);
+       } else {
+         console.error(`Cache revalidation failed (HTTP ${res.status}):`, body);
+       }
+     } catch (revalErr) {
+       console.error('Cache revalidation request errored:', revalErr.message || revalErr);
+     }
+   }
+
  } catch (err) {
    console.error('Error:', err);
    process.exit(1);
