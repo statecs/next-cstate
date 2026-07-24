@@ -515,6 +515,9 @@ export const fetchAllJourneys = async (
                 url
                 imageCollection {
                     items {
+                        sys {
+                            id
+                        }
                         title
                         url
                         description

@@ -48,3 +48,6 @@ data/
 # Contentful cache
 .contentful-cache/
 /tmp/.contentful-cache/
+
+# Likes SQLite database (persisted per-environment, not deployed)
+.data/

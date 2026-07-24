@@ -4,6 +4,9 @@ interface Image {
     title: string;
     url: string;
     description?: string;
+    sys?: {
+        id: string;
+    };
 }
 
 interface JourneyCollection {

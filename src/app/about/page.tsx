@@ -1,5 +1,4 @@
 import { Suspense } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRightIcon } from 'lucide-react';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
@@ -7,6 +6,7 @@ import config from '@/utils/config';
 import { TimelineSkeleton } from '@/components/Skeletons';
 import { fetchAllJourneys, fetchEditorialPage } from '@/utils/contentful';
 import { getEditorialSeo } from '@/utils/helpers';
+import LikeableImage from '@/components/LikeableImage';
 
 export const generateMetadata = async () => {
     const page = await fetchEditorialPage('about') || {};
@@ -124,15 +124,11 @@ export default async function AboutPage() {
                                                     {Array.isArray(item.imageCollection?.items) &&
                                                         item.imageCollection!.items.slice(0, 1).map((image: Image, imgIndex: number) => (
                                                             <div key={imgIndex} className="aurora-tl-img">
-                                                                <Image
+                                                                <LikeableImage
+                                                                    imageId={image.sys?.id || image.url}
                                                                     src={image.url}
                                                                     alt={image.description || ''}
-                                                                    width={0}
-                                                                    height={0}
-                                                                    sizes="(max-width: 768px) 100vw, 700px"
-                                                                    style={{ width: '100%', height: 'auto' }}
-                                                                    loading={imgIndex < 1 ? 'eager' : 'lazy'}
-                                                                    className="w-full object-cover"
+                                                                    priority={imgIndex < 1}
                                                                 />
                                                             </div>
                                                         ))}

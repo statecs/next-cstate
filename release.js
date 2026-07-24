@@ -20,7 +20,7 @@ async function deploy() {
      tick: (localPath, remotePath, error) => {
        if (error) console.error(`Failed to upload ${localPath}`, error);
      },
-     validate: (itemPath) => !itemPath.includes('node_modules') && !itemPath.includes('.git') && !itemPath.includes('.next')
+     validate: (itemPath) => !itemPath.includes('node_modules') && !itemPath.includes('.git') && !itemPath.includes('.next') && !itemPath.includes('.data')
    });
    console.log('Upload complete');
 
