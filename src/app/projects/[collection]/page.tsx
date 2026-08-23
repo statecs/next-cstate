@@ -35,6 +35,8 @@ const CollectionPage = async ({params}: Props) => {
         await fetchAllCaseStudies()
     );
     const number = projectNumber(index, params.collection);
+    // The entry as the index knows it, so the kicker prints the date its card does.
+    const indexEntry = index.find(entry => entry.slug === params.collection);
 
     if (!collection) {
         const caseStudy = await fetchCaseStudy(params.collection, isDraftModeEnabled);
@@ -103,10 +105,7 @@ const CollectionPage = async ({params}: Props) => {
                     backLabel="All projects"
                     kindLabel="Project"
                     indexNumber={number}
-                    dateLabel={formatProjectDate({
-                        published: index.find(entry => entry.slug === params.collection)?.published,
-                        date: collection.date,
-                    })}
+                    dateLabel={formatProjectDate(indexEntry ?? {date: collection.date})}
                 />
                 <div className="min-h-screen pb-24">
                     <div className="max-w-3xl mx-auto px-6 pb-12">

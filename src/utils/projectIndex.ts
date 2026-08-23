@@ -5,6 +5,27 @@
  * list from here rather than each sorting its own copy.
  */
 
+/**
+ * The date an entry is shown by: its own date field, or failing that the
+ * Contentful publish timestamp. The sidebar list has always read them in that
+ * order, and the cards and the grid order follow it so the two panels agree.
+ */
+const dateOf = (entry: {published?: string; date?: string}): string | undefined => {
+    const raw = entry.date || entry.published;
+    return raw && raw !== 'Not specified' ? raw : undefined;
+};
+
+/** Sort key for `dateOf`. Undated entries fall to the end of a newest-first list. */
+const timeOf = (entry: {published?: string; date?: string}): number => {
+    const raw = dateOf(entry);
+    if (!raw) return -Infinity;
+    const parsed = new Date(raw).getTime();
+    return Number.isNaN(parsed) ? -Infinity : parsed;
+};
+
+/** Newest first, by the date the entry is shown by. */
+export const byNewest = (a: Post, b: Post) => timeOf(b) - timeOf(a);
+
 /** Contentful gives collections and case studies separately; this is the merge. */
 export const buildProjectIndex = (
     links: Link[],
@@ -38,9 +59,7 @@ export const buildProjectIndex = (
     // A case study curated into the navigation is already in navProjects; the
     // nav copy wins, since that is the one carrying the curated url.
     const seen = new Set(navProjects.map(p => p.slug));
-    return [...navProjects, ...caseStudyPosts.filter(p => !seen.has(p.slug))].sort((a, b) =>
-        b.published > a.published ? 1 : -1
-    );
+    return [...navProjects, ...caseStudyPosts.filter(p => !seen.has(p.slug))].sort(byNewest);
 };
 
 /** Card number for an entry, e.g. "007". Undefined if it is not in the index. */
@@ -50,13 +69,12 @@ export const projectNumber = (index: Post[], slug: string): string | undefined =
 };
 
 /**
- * Day-level date, matching the form the case study pages use. Entries carry
- * either a Contentful publish timestamp or their own date field, and a few
- * carry the literal 'Not specified' — those get nothing rather than an
- * "Invalid Date".
+ * Day-level date, in the compact form the mono type calls for. Entries missing
+ * both dates, or carrying the literal 'Not specified', get nothing rather than
+ * an "Invalid Date".
  */
 export const formatProjectDate = (entry: {published?: string; date?: string}): string | undefined => {
-    const raw = entry.published && entry.published !== 'Not specified' ? entry.published : entry.date;
+    const raw = dateOf(entry);
     if (!raw) return undefined;
     const parsed = new Date(raw);
     if (Number.isNaN(parsed.getTime())) return undefined;

@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import AuroraProjectCard from '@/components/AuroraProjectCard';
-import { formatProjectDate } from '@/utils/projectIndex';
+import { byNewest, formatProjectDate } from '@/utils/projectIndex';
 
 interface ProjectsTabsProps {
     projects: Post[];
@@ -49,9 +49,9 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects }) => {
         });
 
         if (sort === 'Newest') {
-            result = [...result].sort((a, b) => (b.published > a.published ? 1 : -1));
+            result = [...result].sort(byNewest);
         } else if (sort === 'Oldest') {
-            result = [...result].sort((a, b) => (a.published > b.published ? 1 : -1));
+            result = [...result].sort((a, b) => byNewest(b, a));
         } else {
             result = [...result].sort((a, b) => a.title.localeCompare(b.title));
         }
