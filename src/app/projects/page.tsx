@@ -1,7 +1,7 @@
 import React from 'react';
 import config from '@/utils/config';
 import {fetchEditorialPage, fetchCollectionNavigation, fetchAllCaseStudies} from '@/utils/contentful';
-import {getEditorialSeo} from '@/utils/helpers';
+import {getEditorialSeo, withDescription} from '@/utils/helpers';
 import ProjectsTabs from './ProjectsTabs';
 import {buildProjectIndex} from '@/utils/projectIndex';
 
@@ -20,7 +20,9 @@ export const generateMetadata = async () => {
         ...config.seo,
         ...getEditorialSeo(page),
         title: 'Projects | Christopher State',
-        description: 'Selected design and engineering work'
+        ...withDescription(
+            'Selected design and engineering work by Christopher State — case studies and projects in UX, accessibility and front-end development.'
+        )
     };
 };
 

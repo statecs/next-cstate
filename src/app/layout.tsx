@@ -80,8 +80,24 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
             suppressHydrationWarning
             className={`aurora flex flex-grow flex-col antialiased md:min-h-full ${titleFont.variable} ${bodyFont.variable} ${serif.variable} ${sans.variable} ${mono.variable} ${inter.variable} ${fraunces.variable} ${plusJakarta.variable}`}
         >
+            <head>
+                {/* Both preferences land on <html> before the browser has
+                    anything to paint. In <body> this ran late enough that a
+                    light-theme reload flashed the dark default, and motion-off
+                    got a frame of animation before it took hold.
+
+                    <html> specifically, not <body>: it carries
+                    suppressHydrationWarning, so React accepts a class the
+                    server did not send. On <body> the same class reads as a
+                    hydration mismatch, and React answers that by rebuilding the
+                    DOM — which restarts every entrance animation mid-flight. */}
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `(function(){try{var d=document.documentElement;if(localStorage.getItem('cs-theme')==='light')d.classList.add('light');if(localStorage.getItem('cs-motion-off')==='1')d.classList.add('noanim')}catch(e){}})()`
+                    }}
+                />
+            </head>
             <body className="aurora sm:min-h-full md:flex md:flex-grow md:flex-col">
-                <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('cs-theme');if(t==='light')document.documentElement.classList.add('light');}catch(e){}})();` }} />
                 <AuthWrapper>
                     <SkipLink />
                     <AuroraBackground />

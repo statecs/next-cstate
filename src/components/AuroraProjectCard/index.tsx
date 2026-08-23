@@ -41,7 +41,7 @@ const AuroraProjectCard: React.FC<AuroraProjectCardProps> = ({
         el.style.setProperty('--mx', `${e.clientX - r.left}px`);
         el.style.setProperty('--my', `${e.clientY - r.top}px`);
         if (
-            document.body.classList.contains('noanim') ||
+            document.documentElement.classList.contains('noanim') ||
             matchMedia('(prefers-reduced-motion: reduce)').matches
         )
             return;

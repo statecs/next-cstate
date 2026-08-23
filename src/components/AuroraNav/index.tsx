@@ -32,7 +32,7 @@ const AuroraNav: React.FC = () => {
         setIsLight(localStorage.getItem(THEME_KEY) === 'light');
         const stored = localStorage.getItem(MOTION_KEY) === '1';
         setMotionOff(stored);
-        document.body.classList.toggle('noanim', stored);
+        document.documentElement.classList.toggle('noanim', stored);
         document.dispatchEvent(new CustomEvent('cs:motion', { detail: stored }));
     }, []);
 
@@ -61,7 +61,7 @@ const AuroraNav: React.FC = () => {
     const toggleMotion = () => {
         const next = !motionOff;
         setMotionOff(next);
-        document.body.classList.toggle('noanim', next);
+        document.documentElement.classList.toggle('noanim', next);
         localStorage.setItem(MOTION_KEY, next ? '1' : '0');
         document.dispatchEvent(new CustomEvent('cs:motion', { detail: next }));
     };
