@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import config from '@/utils/config';
 import { fetchAllJourneys, fetchEditorialPage } from '@/utils/contentful';
-import { getEditorialSeo } from '@/utils/helpers';
+import { getEditorialSeo, withDescription } from '@/utils/helpers';
 import { JOURNEY_PAGE_SIZE, orderJourneys } from '@/utils/journey';
 import JourneyTimeline from '@/components/JourneyTimeline';
 import LazyComboBox from '@/components/LazyComboBox';
@@ -65,10 +65,16 @@ const HomePage = async () => {
                     </h1>
                     <p className="aurora-lede">
                         Building accessible{' '}
+                        {/* The cycling words all sit in the DOM at once, so a
+                            scraper reads every one of them. The first is left
+                            unhidden to carry the sentence for a screen reader —
+                            a separate sr-only copy would only repeat it — and
+                            the spaces keep the rest from running together in a
+                            search snippet. Whitespace-only nodes are not
+                            rendered as grid items, so the stack is unaffected. */}
                         <span className="aurora-word-cycle">
-                            <span className="sr-only">products</span>
-                            <span className="w" aria-hidden="true">products</span>
-                            <span className="w" aria-hidden="true">interfaces</span>
+                            <span className="w">products</span>{' '}
+                            <span className="w" aria-hidden="true">interfaces</span>{' '}
                             <span className="w" aria-hidden="true">experiences</span>
                         </span>{' '}
                         — from concept to code.
@@ -171,7 +177,16 @@ const HomePage = async () => {
 
 export const generateMetadata = async () => {
     const page = await fetchEditorialPage('home') || {};
-    return { ...config.seo, ...getEditorialSeo(page) };
+    return {
+        ...config.seo,
+        ...getEditorialSeo(page),
+        // Written for the search result rather than cut out of the bio: the
+        // truncated prose read as a fragment and Google scraped the page
+        // instead of using it.
+        ...withDescription(
+            'Christopher State is a design engineer in Stockholm building accessible products from concept to code — UX research, design systems and front-end.'
+        )
+    };
 };
 
 export const revalidate = 86400; // 24 hours

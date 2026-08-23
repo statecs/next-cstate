@@ -92,6 +92,30 @@ export const getPhotoSeo = (collection: PhotoCollection, photo: Photo) => {
     };
 };
 
+/**
+ * Body prose cut down to a search-result snippet. Google drops a description it
+ * judges unhelpful and scrapes the page instead, so this avoids the tells: it
+ * breaks on a word rather than mid-syllable, only ellipsises when it actually
+ * cut something, and drops a decorative emoji lead-in.
+ */
+export const toMetaDescription = (text: string, limit = 155): string => {
+    const clean = text
+        .replace(/\s+/g, ' ')
+        // Leading emoji/symbol: reads as noise where the snippet is truncated
+        // to begin with, and some locales render it as a placeholder box.
+        .replace(/^[\p{Extended_Pictographic}\p{So}\s]+/u, '')
+        .trim();
+
+    if (clean.length <= limit) return clean;
+
+    const cut = clean.slice(0, limit);
+    const lastSpace = cut.lastIndexOf(' ');
+    // A limit-length run with no space is one long token; cutting at the limit
+    // is the only option left.
+    const truncated = lastSpace > limit * 0.6 ? cut.slice(0, lastSpace) : cut;
+    return `${truncated.replace(/[,;:.\u2014-]+$/, '')}…`;
+};
+
 export const getEditorialSeo = (page: Editorial) => {
     const extractTextFromJson = (json: any) => {
         let text = '';
@@ -108,22 +132,35 @@ export const getEditorialSeo = (page: Editorial) => {
     const contentIsCorrectType = (content: any): content is { json: any } =>
         typeof content === 'object' && content !== null && 'json' in content;
 
-    let description = contentIsCorrectType(page.content)
-                      ? extractTextFromJson(page.content.json) 
+    const body = contentIsCorrectType(page.content)
+                      ? extractTextFromJson(page.content.json)
                       : (page.content || '');
 
-    description = `${description.substring(0, 160)}...`;
+    const description = toMetaDescription(body);
 
     return {
         alternates: {
             canonical: `${config.seo.canonical}/${page.slug}`
         },
-        description,
-        openGraph: {description},
-        title: page.title,
-        twitter: {description}
+        ...withDescription(description),
+        title: page.title
     };
 };
+
+/**
+ * Page metadata carrying one description across all three places that need it.
+ * Spread after `getEditorialSeo` to override it — setting only the top-level
+ * field leaves og and twitter still showing the scraped body text.
+ *
+ * The og and twitter blocks are merged rather than replaced: a bare
+ * `openGraph: {description}` drops the rest of `config.seo.openGraph` with it,
+ * which is how the site came to have no og:image.
+ */
+export const withDescription = (description: string) => ({
+    description,
+    openGraph: {...config.seo.openGraph, description},
+    twitter: {...config.seo.twitter, description}
+});
 
 // A collection can be considered new if it's been published in the last 2 months.
 export const isCollectionNew = (date: string | undefined) => {

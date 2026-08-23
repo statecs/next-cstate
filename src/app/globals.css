@@ -552,8 +552,9 @@ body.noanim .aurora-cursor-dot {
     animation: aurora-word-fade 9s ease-in-out infinite;
 }
 
-.aurora-word-cycle .w:nth-child(3) { animation-delay: 3s; }
-.aurora-word-cycle .w:nth-child(4) { animation-delay: 6s; }
+/* Positional, so they shift if a word is added or removed above. */
+.aurora-word-cycle .w:nth-of-type(2) { animation-delay: 3s; }
+.aurora-word-cycle .w:nth-of-type(3) { animation-delay: 6s; }
 
 @keyframes aurora-word-fade {
     0% {

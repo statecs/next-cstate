@@ -4,7 +4,7 @@ import config from '@/utils/config';
 import {fetchEditorialPage} from '@/utils/contentful';
 import { CardGridSkeleton } from '@/components/Skeletons';
 import WritingGrid from '@/components/WritingGrid';
-import {getEditorialSeo} from '@/utils/helpers';
+import {getEditorialSeo, withDescription} from '@/utils/helpers';
 import {fetchWritingNavigation} from '@/utils/contentful';
 
 const WritingPage = async () => {
@@ -43,7 +43,14 @@ const WritingPage = async () => {
 
 export const generateMetadata = async () => {
     const page = await fetchEditorialPage('writing') || {};
-    return {...config.seo, ...getEditorialSeo(page)};
+    return {
+        ...config.seo,
+        ...getEditorialSeo(page),
+        title: 'Writing | Christopher State',
+        ...withDescription(
+            'Notes on design engineering, accessibility and AI by Christopher State.'
+        )
+    };
 };
 
 export const revalidate = 86400; // 24 hours
