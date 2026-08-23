@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/utils/helpers';
@@ -11,18 +11,27 @@ interface WritingGridProps {
   posts: Post[];
 }
 
+/**
+ * Categories arrive as one comma-separated string per post, and a few carry
+ * stray whitespace ("AI " vs "AI"), which would otherwise show up as two
+ * separate tags. Splitting in one place keeps the chips and the filter match
+ * in agreement.
+ */
+const postCategories = (post: Post): string[] =>
+  post.category?.split(',').map(c => c.trim()).filter(Boolean) || [];
+
 const WritingGrid: React.FC<WritingGridProps> = ({ posts }) => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [showFilters, setShowFilters] = useState(false);
+  // The tags are the point of the index page, so show them on arrival.
+  const [showFilters, setShowFilters] = useState(true);
   const [expandedTags, setExpandedTags] = useState<{ [key: string]: boolean }>({});
 
-  useEffect(() => {
-    const uniqueCategories = Array.from(new Set(
-      posts.flatMap(post => post.category?.split(', ') || [])
-    ));
-    setCategories(uniqueCategories);
-  }, [posts]);
+  // Derived, not effect state: an effect would leave the tag row empty in the
+  // server-rendered HTML and pop it in after hydration.
+  const categories = useMemo(
+    () => Array.from(new Set(posts.flatMap(postCategories))),
+    [posts]
+  );
 
   const toggleFilter = (filter: string) => {
     setActiveFilter(prev => prev === filter ? null : filter);
@@ -30,7 +39,7 @@ const WritingGrid: React.FC<WritingGridProps> = ({ posts }) => {
 
   const filteredPosts = useMemo(() => posts.filter(post => {
     if (!activeFilter) return true;
-    return post.category?.split(', ').includes(activeFilter);
+    return postCategories(post).includes(activeFilter);
   }), [posts, activeFilter]);
 
   const FilterButton: React.FC<{

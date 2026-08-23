@@ -12,7 +12,7 @@ import { ChevronDown, LayoutDashboard, LogOut, UserCircle } from 'lucide-react';
 
 const LINKS: { href: string; label: string }[] = [
     { href: '/home', label: 'Home' },
-    { href: '/home#about', label: 'About' },
+    { href: '/writing', label: 'Writing' },
     { href: '/projects', label: 'Projects' },
 ];
 
