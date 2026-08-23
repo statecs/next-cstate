@@ -44,7 +44,9 @@ export function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    // Exclude known routes
+    // Exclude known routes. '/about' is no longer a page but must stay listed:
+    // middleware runs before next.config redirects, so without it /about would be
+    // rewritten to /projects/about instead of reaching the /home#about redirect.
     const excludedRoutes = [
         'home', 'about', 'dashboard', 'contact',
         'writing', 'links', 'collections', 'projects',

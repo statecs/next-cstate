@@ -268,7 +268,7 @@ const AboutSnippet: React.FC<AboutSnippetProps> = ({
             {/* ENHANCED CTA Button */}
             <div className="pt-4">
               <Link
-                href="/about"
+                href="/home#about"
                 className="group relative inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-black via-gray-800 to-black dark:from-white dark:via-gray-200 dark:to-white text-white dark:text-black rounded-full font-bold hover:scale-110 transition-all duration-300 shadow-2xl hover:shadow-3xl overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

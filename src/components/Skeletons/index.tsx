@@ -81,33 +81,7 @@ export const TimelineSkeleton = ({ count = 4 }: { count?: number }) => (
     </div>
 );
 
-/** /about — bio + side card, then the journey timeline. */
-export const AboutSkeleton = () => (
-    <div className="aurora-main aurora-page-shell" aria-busy="true" aria-label="Loading">
-        <div className="aurora-wrap">
-            <PageHead eyebrow={220} lines={[560, 460, 380]} />
-
-            <div className="aurora-about-grid">
-                <div className="space-y-3.5">
-                    {[100, 96, 92, 70, 94, 88, 60].map((w, i) => (
-                        <SkelBar key={i} w={`${w}%`} h={15} />
-                    ))}
-                </div>
-                <div className="aurora-skel" style={{ height: 260, borderRadius: 20 }} />
-            </div>
-
-            <div style={{ padding: 'clamp(40px,8vh,90px) 0' }}>
-                <div className="flex items-baseline justify-between mb-8">
-                    <SkelBar w={160} h={30} />
-                    <SkelBar w={110} h={11} />
-                </div>
-                <TimelineSkeleton />
-            </div>
-        </div>
-    </div>
-);
-
-/** /home — centred hero, then the ask-me-anything card. */
+/** /home — hero, clients, about + journey, then the ask-me-anything card. */
 export const HomeSkeleton = () => (
     <div className="aurora-main" aria-busy="true" aria-label="Loading">
         <section className="aurora-hero">
@@ -133,6 +107,33 @@ export const HomeSkeleton = () => (
                         <SkelBar key={i} w={110} h={30} />
                     ))}
                 </div>
+            </div>
+        </section>
+
+        <section className="aurora-block">
+            <div className="aurora-wrap">
+                <div className="flex items-baseline justify-between mb-8">
+                    <SkelBar w={140} h={28} />
+                    <SkelBar w={120} h={11} />
+                </div>
+                <div className="aurora-about-grid">
+                    <div className="space-y-3.5">
+                        {[100, 96, 92, 70, 94, 88, 60].map((w, i) => (
+                            <SkelBar key={i} w={`${w}%`} h={15} />
+                        ))}
+                    </div>
+                    <div className="aurora-skel" style={{ height: 260, borderRadius: 20 }} />
+                </div>
+            </div>
+        </section>
+
+        <section className="aurora-block">
+            <div className="aurora-wrap">
+                <div className="flex items-baseline justify-between mb-8">
+                    <SkelBar w={160} h={30} />
+                    <SkelBar w={110} h={11} />
+                </div>
+                <TimelineSkeleton />
             </div>
         </section>
 

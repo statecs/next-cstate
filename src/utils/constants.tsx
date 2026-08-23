@@ -76,7 +76,7 @@ export const LINKS: Link[] = [
     icon: <SparklesIcon size={16} />
   },
   {
-    href: '/about',
+    href: '/home#about',
     label: 'About',
     icon: <CircleUserIcon size={16} />
   },

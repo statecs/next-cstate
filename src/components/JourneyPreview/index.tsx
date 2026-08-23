@@ -125,7 +125,7 @@ const JourneyPreview: React.FC<JourneyPreviewProps> = ({ events }) => {
       {/* View Full Journey CTA */}
       <div className="text-center mt-12">
         <Link
-          href="/about"
+          href="/home#about"
           className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 text-white dark:text-black rounded-full font-semibold text-lg hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
         >
           View Full Journey

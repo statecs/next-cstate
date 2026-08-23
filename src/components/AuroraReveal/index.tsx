@@ -7,9 +7,17 @@ const AuroraReveal: React.FC = () => {
         const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
         const noanim = document.body.classList.contains('noanim');
 
+        // Nothing to animate — reveal everything, and keep revealing whatever
+        // gets appended later (the journey timeline pages in as you scroll).
         if (reduce || noanim) {
-            document.querySelectorAll('.aurora-reveal').forEach(el => el.classList.add('in'));
-            return;
+            const revealAll = () =>
+                document.querySelectorAll('.aurora-reveal:not(.in)').forEach(el => el.classList.add('in'));
+
+            revealAll();
+            const staticMo = new MutationObserver(revealAll);
+            staticMo.observe(document.body, { childList: true, subtree: true });
+
+            return () => staticMo.disconnect();
         }
 
         const io = new IntersectionObserver(

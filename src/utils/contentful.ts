@@ -521,6 +521,8 @@ export const fetchAllJourneys = async (
                         title
                         url
                         description
+                        width
+                        height
                     }
                 }
                 sys {
@@ -543,8 +545,8 @@ export const fetchAllJourneys = async (
                         title: image.title,
                         fullSize: {
                             url: image.url,
-                            height: 0, // You might want to add these to your journey query
-                            width: 0,
+                            height: image.height ?? 0,
+                            width: image.width ?? 0,
                         },
                         base64: '', // You might want to add this to your journey query
                     })) || []

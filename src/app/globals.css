@@ -1429,6 +1429,24 @@ body.noanim .aurora-cursor-dot {
     font-family: var(--aurora-sans);
 }
 
+/* Opening line of the bio — carries the headline the standalone /about page
+   used to own, now that About is a section of /home rather than its own route. */
+.aurora-bio p.aurora-bio-lead {
+    font-family: var(--aurora-serif);
+    font-weight: 400;
+    font-size: clamp(1.7rem, 3.4vw, 2.6rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--aurora-text);
+    margin-bottom: 28px;
+    max-width: 18ch;
+}
+
+.aurora-bio p.aurora-bio-lead em {
+    font-style: italic;
+    color: var(--aurora-lav);
+}
+
 .aurora-side-card {
     border: 1px solid var(--aurora-line);
     border-radius: var(--aurora-r);
@@ -2030,6 +2048,10 @@ body.aurora :focus-visible {
     .aurora-bio p {
         font-size: 1rem;
     }
+    .aurora-bio p.aurora-bio-lead {
+        font-size: 1.6rem;
+        max-width: none;
+    }
     .aurora-avatar {
         width: 36px;
         height: 36px;
@@ -2317,6 +2339,10 @@ html.light .aurora-cursor-dot { mix-blend-mode: multiply; }
 /* Bio text: hardcoded light lavender (#d8d3e2) has insufficient contrast on light bg */
 html.light .aurora-bio p {
     color: var(--aurora-muted);
+}
+
+html.light .aurora-bio p.aurora-bio-lead {
+    color: var(--aurora-text);
 }
 
 /* Footer CTA card: cool steel surface to match the graphite page ground */
