@@ -14,10 +14,11 @@ interface Props {
     heading?: string;
 }
 
+/** Suggestions only need the year — the full date belongs on the index. */
 const yearOf = (date?: string | null) => {
     if (!date) return undefined;
     const year = new Date(date).getFullYear();
-    return Number.isNaN(year) ? undefined : year;
+    return Number.isNaN(year) ? undefined : String(year);
 };
 
 const RelatedPosts: React.FC<Props> = ({
@@ -65,7 +66,7 @@ const RelatedPosts: React.FC<Props> = ({
                                 ...item.sharedTags,
                                 ...item.tags.filter(tag => !item.sharedTags.includes(tag))
                             ]}
-                            year={yearOf(item.date)}
+                            dateLabel={yearOf(item.date)}
                         />
                     ))}
                 </div>

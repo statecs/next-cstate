@@ -1,13 +1,15 @@
 import {draftMode} from 'next/headers';
 import {notFound, redirect} from 'next/navigation';
-import Image from 'next/image';
+import ShimmerImage from '@/components/ShimmerImage';
 import PageHeader from '@/components/PageHeader';
 import BannerPhotoCollection from '@/components/BannerPhotoCollection';
 import config from '@/utils/config';
-import {fetchAllCollections, fetchAllCaseStudies, fetchCaseStudy, fetchCollection, fetchRelatedIndex} from '@/utils/contentful';
+import {fetchAllCollections, fetchAllCaseStudies, fetchCaseStudy, fetchCollection, fetchCollectionNavigation, fetchRelatedIndex} from '@/utils/contentful';
+import {buildProjectIndex, formatProjectDate, projectNumber} from '@/utils/projectIndex';
 import {getCollectionSeo} from '@/utils/helpers';
 import {findRelated, normalizeTags} from '@/utils/related';
 import RelatedPosts from '@/components/RelatedPosts';
+import BackLink from '@/components/BackLink';
 import { ScrollArea } from '@/components/SideMenu/ScrollArea';
 import { FloatingHeader } from '@/components/ListLayout/FloatingHeader';
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
@@ -26,6 +28,13 @@ const CollectionPage = async ({params}: Props) => {
     const authStatus = await isAuthenticated();
 
     const collection = await fetchCollection(params.collection, isDraftModeEnabled);
+
+    // Both fetches are already warm — the sidebar layout asks for the same two.
+    const index = buildProjectIndex(
+        await fetchCollectionNavigation(),
+        await fetchAllCaseStudies()
+    );
+    const number = projectNumber(index, params.collection);
 
     if (!collection) {
         const caseStudy = await fetchCaseStudy(params.collection, isDraftModeEnabled);
@@ -52,6 +61,7 @@ const CollectionPage = async ({params}: Props) => {
             <CaseStudyPage
                 caseStudy={caseStudy}
                 related={<RelatedPosts items={related} heading="Related work" />}
+                indexNumber={number}
             />
         );
     }
@@ -89,6 +99,14 @@ const CollectionPage = async ({params}: Props) => {
                     coverImage={collection.coverImage.url}
                     ctaLabel={collection.ctaLabel}
                     ctaUrl={collection.ctaUrl}
+                    backHref="/projects"
+                    backLabel="All projects"
+                    kindLabel="Project"
+                    indexNumber={number}
+                    dateLabel={formatProjectDate({
+                        published: index.find(entry => entry.slug === params.collection)?.published,
+                        date: collection.date,
+                    })}
                 />
                 <div className="min-h-screen pb-24">
                     <div className="max-w-3xl mx-auto px-6 pb-12">
@@ -116,16 +134,21 @@ const CollectionPage = async ({params}: Props) => {
         <ScrollArea useScrollAreaId>
         <FloatingHeader scrollTitle="Projects" goBackLink="/projects"></FloatingHeader>
 
+        {/* Back to the index. Below lg the FloatingHeader pill covers this, so
+            it only shows where that pill is hidden. */}
+        <div className="hidden lg:block max-w-6xl mx-auto w-full px-4 sm:px-8 pt-8">
+            <BackLink href="/projects" label="All projects" />
+        </div>
+
         {/* Mobile hero — first photo as background with title */}
         {heroPhoto && (
             <div className="relative sm:hidden h-[55vw] min-h-[240px] max-h-[380px] overflow-hidden">
-                <Image
+                <ShimmerImage
                     src={heroPhoto.fullSize.url}
                     alt={heroPhoto.description || collection.title}
                     fill
                     className="object-cover"
                     priority
-                    placeholder={heroPhoto.base64 ? 'blur' : 'empty'}
                     blurDataURL={heroPhoto.base64}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />

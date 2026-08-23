@@ -1,8 +1,9 @@
 'use client';
 
-import Image from 'next/image';
+import ShimmerImage from '@/components/ShimmerImage';
 import Link from 'next/link';
 import { ExternalLinkIcon } from 'lucide-react';
+import BackLink from '@/components/BackLink';
 
 interface CaseStudyHeaderProps {
     title: string;
@@ -18,6 +19,13 @@ interface CaseStudyHeaderProps {
     slug?: string;
     ctaLabel?: string;
     ctaUrl?: string;
+    /** Index this entry belongs to. Omitted, no back link is drawn. */
+    backHref?: string;
+    backLabel?: string;
+    /** Kicker row: what this entry is, its number on the index, and when it was filed. */
+    kindLabel?: string;
+    indexNumber?: string;
+    dateLabel?: string;
 }
 
 export const CaseStudyHeader = ({
@@ -34,6 +42,11 @@ export const CaseStudyHeader = ({
     slug,
     ctaLabel,
     ctaUrl,
+    backHref,
+    backLabel = 'Back',
+    kindLabel = 'Project',
+    indexNumber,
+    dateLabel,
 }: CaseStudyHeaderProps) => {
     const parts = titleHighlight ? title.split(titleHighlight) : [title];
 
@@ -61,7 +74,7 @@ export const CaseStudyHeader = ({
             {/* Mobile hero — cover image as background with title overlaid */}
             {coverImage && (
                 <div className="relative sm:hidden h-[55vw] min-h-[240px] max-h-[380px] overflow-hidden">
-                    <Image
+                    <ShimmerImage
                         src={coverImage}
                         alt={coverImageDescription ?? title}
                         fill
@@ -100,12 +113,22 @@ export const CaseStudyHeader = ({
 
             {/* Desktop editorial header — title/subtitle/tags above the image, like a magazine spread */}
             <div className={coverImage ? 'hidden sm:block' : ''}>
-                <div className="px-8 pt-16 max-w-6xl mx-auto">
-                    {/* Kicker row */}
+                <div className={`px-8 max-w-6xl mx-auto ${backHref ? 'pt-16 lg:pt-10' : 'pt-16'}`}>
+                    {/* Back to the index. Below lg the FloatingHeader pill covers
+                        this, so it only shows where that pill is hidden. */}
+                    {backHref && (
+                        <div className="mb-7 hidden lg:block">
+                            <BackLink href={backHref} label={backLabel} />
+                        </div>
+                    )}
+                    {/* Kicker row — what this is, where it sits on the index,
+                        and when it was filed. The number is the card number the
+                        entry carries on /projects, so the two agree. */}
                     <div className="aurora-mono hidden sm:flex items-center gap-2.5 mb-9">
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--aurora-aqua)] shadow-[0_0_10px_var(--aurora-aqua)] inline-block" />
-                        Case file · 01
-                        {slug ? <span className="opacity-40"> — {slug}</span> : null}
+                        {kindLabel}
+                        {indexNumber ? <span>№ {indexNumber}</span> : null}
+                        {dateLabel ? <span className="opacity-40">· {dateLabel}</span> : null}
                     </div>
 
                     {/* H1 */}
@@ -159,7 +182,7 @@ export const CaseStudyHeader = ({
                 <div className="max-w-6xl mx-auto hidden sm:block px-8 pt-9">
                     <div className="relative shadow-[0_30px_70px_-30px_rgba(0,0,0,0.5)]">
                         <div className="relative w-full aspect-[16/7.3] overflow-hidden">
-                            <Image
+                            <ShimmerImage
                                 src={coverImage}
                                 alt={coverImageDescription ?? title}
                                 fill

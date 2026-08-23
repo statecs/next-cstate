@@ -1,9 +1,10 @@
 import { notFound, redirect } from 'next/navigation';
-import Image from 'next/image';
+import ShimmerImage from '@/components/ShimmerImage';
 import PageHeader from '@/components/PageHeader';
 import BannerPhotoCollection from '@/components/BannerPhotoCollection';
 import { ScrollArea } from '@/components/SideMenu/ScrollArea';
 import { FloatingHeader } from '@/components/ListLayout/FloatingHeader';
+import BackLink from '@/components/BackLink';
 
 const formatDate = (date: string) => {
   if (!date) return '';
@@ -63,13 +64,12 @@ export const CollectionPageServer: React.FC<Props> = ({
         {/* Mobile: hero with image as background */}
         {heroImage && (
           <div className="relative sm:hidden h-[55vw] min-h-[240px] max-h-[380px] overflow-hidden">
-            <Image
+            <ShimmerImage
               src={heroImage.fullSize.url}
               alt={heroImage.description || collection.title}
               fill
               className="object-cover"
               priority
-              placeholder={heroImage.base64 ? 'blur' : 'empty'}
               blurDataURL={heroImage.base64}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
@@ -86,8 +86,13 @@ export const CollectionPageServer: React.FC<Props> = ({
 
         {/* Desktop: editorial header */}
         <div className={heroImage ? 'hidden sm:block' : ''}>
-          <div className="px-8 pt-16 pb-12 border-b border-[var(--aurora-line2)]">
+          <div className="px-8 pt-16 lg:pt-10 pb-12 border-b border-[var(--aurora-line2)]">
             <div className="max-w-6xl mx-auto">
+              {/* Back to the index. Below lg the FloatingHeader pill covers
+                  this, so it only shows where that pill is hidden. */}
+              <div className="mb-7 hidden lg:block">
+                <BackLink href="/writing" label="All writing" />
+              </div>
               <div className="aurora-mono hidden sm:flex items-center justify-between mb-10">
                 <span>§ 01{' — '}{collection.title}</span>
                 {collection.date && <span>{formatDate(collection.date)}</span>}

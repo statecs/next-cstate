@@ -1327,7 +1327,56 @@ body.noanim .aurora-cursor-dot {
     border-color: var(--aurora-line2);
 }
 
+/* --- back link: detail page -> the index it came from --- */
+
+.aurora-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px 8px 12px;
+    border: 1px solid var(--aurora-line2);
+    border-radius: 999px;
+    background: var(--aurora-glass);
+    font-family: var(--aurora-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--aurora-muted);
+    text-decoration: none;
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.aurora-back:hover,
+.aurora-back:focus-visible {
+    color: var(--aurora-text);
+    background: var(--aurora-glass2);
+}
+
+.aurora-back svg {
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The arrow leads the way out — it moves, the pill does not. */
+.aurora-back:hover svg,
+.aurora-back:focus-visible svg {
+    transform: translateX(-3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .aurora-back:hover svg,
+    .aurora-back:focus-visible svg {
+        transform: none;
+    }
+}
+
 /* --- skeleton placeholders (route loading states) --- */
+
+/* Paired with <ShimmerImage>, which sets the opacity inline. Transform is in
+   here too so a hover zoom on the photo still animates — an inline transition
+   would beat whatever the consumer declares. */
+.aurora-shimmer-img {
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
 
 .aurora-skel {
     position: relative;
@@ -1742,6 +1791,53 @@ body.noanim .aurora-cursor-dot {
     opacity: 1;
 }
 
+/* Cover band: full-bleed across the top of the card, so the padding that
+   holds the text does not inset the photo. */
+.aurora-card .media {
+    position: relative;
+    margin: -26px -26px 22px;
+    height: 172px;
+    overflow: hidden;
+    background: var(--aurora-glass2, rgba(255, 255, 255, 0.04));
+    border-bottom: 1px solid var(--aurora-line);
+}
+
+/* Declared here rather than as utilities on the element: these rules sit after
+   Tailwind's utilities and would win over them anyway. The fade-in is
+   ShimmerImage's job — this only slows the zoom down to the card's own easing. */
+.aurora-card .media img {
+    object-fit: cover;
+    transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* With a photo above it the title already has the band's margin for breathing
+   room, so it does not need the full standalone gap as well. */
+.aurora-card .media ~ h3 {
+    margin-top: 16px;
+}
+
+.aurora-card:hover .media img,
+.aurora-card:focus-visible .media img {
+    transform: scale(1.05);
+}
+
+/* Sinks the bottom of the photo into the card so the band and the body below
+   read as one surface instead of two stacked blocks. */
+.aurora-card .media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 40%, rgba(8, 11, 16, 0.55));
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .aurora-card:hover .media img,
+    .aurora-card:focus-visible .media img {
+        transform: none;
+    }
+}
+
 .aurora-card .top {
     display: flex;
     align-items: center;
@@ -2101,6 +2197,11 @@ body.aurora :focus-visible {
     .aurora-grid {
         grid-template-columns: 1fr;
     }
+    /* One card per row here, so the band is much wider — give it height back
+       to keep it from reading as a letterbox strip. */
+    .aurora-card .media {
+        height: 200px;
+    }
     .aurora-ama {
         border-radius: 22px;
     }
@@ -2258,6 +2359,12 @@ html.light .aurora-sec-head h2 {
     background: linear-gradient(110deg, #1d4e7e, #34689c, #0e7c6b);
     -webkit-background-clip: text;
     background-clip: text;
+}
+
+/* The cover fade is tuned for the dark surface; on white it only muddies the
+   bottom of the photo. */
+html.light .aurora-card .media::after {
+    background: linear-gradient(180deg, transparent 60%, rgba(21, 26, 32, 0.18));
 }
 
 /* Cards: add visible white surface + subtle shadow */

@@ -31,35 +31,64 @@ const PageHead = ({ eyebrow = 200, lines = [520, 340] }: { eyebrow?: number; lin
     </div>
 );
 
-/** Card grid used by the projects and writing indexes. */
-export const CardGridSkeleton = ({ count = 6 }: { count?: number }) => (
-    <div className="aurora-grid" style={{ paddingBottom: 'clamp(60px,10vh,120px)' }}>
-        {Array.from({ length: count }).map((_, i) => (
-            <div key={i} className="aurora-skel" style={{ height: 210, borderRadius: 'var(--aurora-r, 18px)' }} />
-        ))}
-    </div>
-);
+/**
+ * Card grid used by the projects and writing indexes. The two lay out
+ * differently — /projects has wide auto-fill cards, /writing a denser row of
+ * square thumbnails — so `square` picks the shape the page actually renders,
+ * otherwise the cards land somewhere the skeleton never was.
+ */
+export const CardGridSkeleton = ({ count = 6, square }: { count?: number; square?: boolean }) =>
+    square ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-[clamp(60px,10vh,120px)]">
+            {Array.from({ length: count }).map((_, i) => (
+                <div key={i}>
+                    <div className="aurora-skel aspect-square" style={{ borderRadius: 0 }} />
+                    <SkelBar w="80%" h={18} className="mt-4" />
+                </div>
+            ))}
+        </div>
+    ) : (
+        <div className="aurora-grid" style={{ paddingBottom: 'clamp(60px,10vh,120px)' }}>
+            {Array.from({ length: count }).map((_, i) => (
+                // Taller than the card's min-height: these cards lead with a
+                // cover band, so the text below it starts further down.
+                <div key={i} className="aurora-skel" style={{ height: 380, borderRadius: 'var(--aurora-r, 18px)' }} />
+            ))}
+        </div>
+    );
 
-/** /projects and /writing — index of entries. `filters` matches the chip row. */
-export const IndexSkeleton = ({ filters = true }: { filters?: boolean }) => (
+/**
+ * /projects and /writing — index of entries. `filters` draws the tag pill row,
+ * `meta` the showing/sort line that only /projects carries, and `square` the
+ * thumbnail grid /writing uses.
+ */
+export const IndexSkeleton = ({
+    filters = true,
+    meta = true,
+    square,
+}: {
+    filters?: boolean;
+    meta?: boolean;
+    square?: boolean;
+}) => (
     <div className="aurora-main aurora-page-shell" aria-busy="true" aria-label="Loading">
         <div className="aurora-wrap">
             <PageHead />
             {filters && (
-                <>
-                    <div className="flex flex-wrap gap-2.5 py-5">
-                        {[120, 104, 88, 96, 112].map((w, i) => (
-                            <SkelBar key={i} w={w} h={34} round />
-                        ))}
-                    </div>
-                    <div className="flex justify-between py-4">
-                        <SkelBar w={180} h={11} />
-                        <SkelBar w={120} h={11} />
-                    </div>
-                </>
+                <div className="flex flex-wrap gap-2.5 py-5">
+                    {[120, 104, 88, 96, 112].map((w, i) => (
+                        <SkelBar key={i} w={w} h={34} round />
+                    ))}
+                </div>
             )}
-            <div className={filters ? '' : 'pt-8'}>
-                <CardGridSkeleton />
+            {meta && (
+                <div className="flex justify-between py-4">
+                    <SkelBar w={180} h={11} />
+                    <SkelBar w={120} h={11} />
+                </div>
+            )}
+            <div className={filters || meta ? '' : 'pt-8'}>
+                <CardGridSkeleton count={square ? 10 : 6} square={square} />
             </div>
         </div>
     </div>
@@ -81,7 +110,7 @@ export const TimelineSkeleton = ({ count = 4 }: { count?: number }) => (
     </div>
 );
 
-/** /home — hero, clients, about + journey, then the ask-me-anything card. */
+/** /home — hero, about + journey, then the ask-me-anything card. */
 export const HomeSkeleton = () => (
     <div className="aurora-main" aria-busy="true" aria-label="Loading">
         <section className="aurora-hero">
@@ -92,20 +121,6 @@ export const HomeSkeleton = () => (
                 <div className="flex gap-3 mt-4">
                     <SkelBar w={168} h={48} round />
                     <SkelBar w={148} h={48} round />
-                </div>
-            </div>
-        </section>
-
-        <section className="aurora-block">
-            <div className="aurora-wrap">
-                <div className="flex items-baseline justify-between mb-8">
-                    <SkelBar w={210} h={28} />
-                    <SkelBar w={130} h={11} />
-                </div>
-                <div className="flex gap-10 overflow-hidden">
-                    {[0, 1, 2, 3, 4, 5].map(i => (
-                        <SkelBar key={i} w={110} h={30} />
-                    ))}
                 </div>
             </div>
         </section>

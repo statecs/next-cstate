@@ -2,20 +2,18 @@
 
 import React, { useState, useMemo } from 'react';
 import AuroraProjectCard from '@/components/AuroraProjectCard';
+import { formatProjectDate } from '@/utils/projectIndex';
 
 interface ProjectsTabsProps {
     projects: Post[];
-    writings: Post[];
 }
 
 const KIND_LABEL: Record<string, string> = {
     project: 'Project',
     'case-study': 'Case Study',
-    writing: 'Writing',
 };
 
-const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
-    const [kindFilter, setKindFilter] = useState<'project' | 'writing'>('project');
+const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects }) => {
     const [tagFilter, setTagFilter] = useState<string | null>(null);
     const [sort, setSort] = useState<'Newest' | 'Oldest' | 'A–Z'>('Newest');
     // The staged entrance only plays on first paint — once the user touches a
@@ -25,17 +23,9 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
     const enterStyle = (delay: number): React.CSSProperties | undefined =>
         interacted ? undefined : ({ '--enter-delay': `${delay}ms` } as React.CSSProperties);
 
-    const allEntries = useMemo(() => {
-        const merged = [...projects, ...writings];
-        return merged.map((entry, i) => ({ ...entry, _index: i + 1 }));
-    }, [projects, writings]);
-
-    const byKind = useMemo(
-        () => ({
-            project: allEntries.filter(e => e.kind === 'project' || e.kind === 'case-study').length,
-            writing: allEntries.filter(e => e.kind === 'writing').length,
-        }),
-        [allEntries]
+    const allEntries = useMemo(
+        () => projects.map((entry, i) => ({ ...entry, _index: i + 1 })),
+        [projects]
     );
 
     const topTags = useMemo(() => {
@@ -54,13 +44,8 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
 
     const filtered = useMemo(() => {
         let result = allEntries.filter(e => {
-            if (kindFilter === 'project' && e.kind !== 'project' && e.kind !== 'case-study') return false;
-            if (kindFilter === 'writing' && e.kind !== 'writing') return false;
-            if (tagFilter) {
-                const tags = (e.category || '').split(',').map(t => t.trim());
-                if (!tags.includes(tagFilter)) return false;
-            }
-            return true;
+            if (!tagFilter) return true;
+            return (e.category || '').split(',').map(t => t.trim()).includes(tagFilter);
         });
 
         if (sort === 'Newest') {
@@ -72,17 +57,12 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
         }
 
         return result;
-    }, [allEntries, kindFilter, tagFilter, sort]);
+    }, [allEntries, tagFilter, sort]);
 
     const cycleSort = () => {
         setInteracted(true);
         setSort(prev => (prev === 'Newest' ? 'Oldest' : prev === 'Oldest' ? 'A–Z' : 'Newest'));
     };
-
-    const kindChips: { label: string; value: 'project' | 'writing'; count: number }[] = [
-        { label: 'Projects', value: 'project', count: byKind.project },
-        { label: 'Writing', value: 'writing', count: byKind.writing },
-    ];
 
     return (
         <div className="aurora-main aurora-page-shell">
@@ -90,48 +70,31 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
                 <div className="aurora-page-head">
                     <p className={`aurora-mono ${enterClass}`} style={enterStyle(0)}>§ 01 — Index of work</p>
                     <h1 className={enterClass} style={enterStyle(160)}>
-                        Projects<br />
-                        &amp; <em>writing.</em>
+                        <em>Projects.</em>
                     </h1>
                 </div>
 
                 <div className={`aurora-filters ${enterClass}`} style={enterStyle(420)}>
-                    <div role="group" aria-label="Filter by kind" className="aurora-filters-group">
-                        {kindChips.map(chip => (
-                            <button
-                                key={chip.value}
-                                type="button"
-                                onClick={() => { setInteracted(true); setKindFilter(chip.value); }}
-                                aria-pressed={kindFilter === chip.value}
-                            >
-                                {chip.label} <span style={{ opacity: 0.6 }}>{chip.count}</span>
-                            </button>
-                        ))}
-                    </div>
-
                     {topTags.length > 0 && (
-                        <>
-                            <span className="aurora-filters-sep" aria-hidden="true" />
-                            <div role="group" aria-label="Filter by tag" className="aurora-filters-group">
+                        <div role="group" aria-label="Filter by tag" className="aurora-filters-group">
+                            <button
+                                type="button"
+                                onClick={() => { setInteracted(true); setTagFilter(null); }}
+                                aria-pressed={tagFilter === null}
+                            >
+                                Any tag
+                            </button>
+                            {topTags.map(tag => (
                                 <button
+                                    key={tag}
                                     type="button"
-                                    onClick={() => { setInteracted(true); setTagFilter(null); }}
-                                    aria-pressed={tagFilter === null}
+                                    onClick={() => { setInteracted(true); setTagFilter(prev => (prev === tag ? null : tag)); }}
+                                    aria-pressed={tagFilter === tag}
                                 >
-                                    Any tag
+                                    {tag}
                                 </button>
-                                {topTags.map(tag => (
-                                    <button
-                                        key={tag}
-                                        type="button"
-                                        onClick={() => { setInteracted(true); setTagFilter(prev => (prev === tag ? null : tag)); }}
-                                        aria-pressed={tagFilter === tag}
-                                    >
-                                        {tag}
-                                    </button>
-                                ))}
-                            </div>
-                        </>
+                            ))}
+                        </div>
                     )}
                 </div>
 
@@ -163,11 +126,6 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
                             .split(',')
                             .map(t => t.trim())
                             .filter(Boolean);
-                        const year = entry.published && entry.published !== 'Not specified'
-                            ? new Date(entry.published).getFullYear()
-                            : entry.date
-                                ? new Date(entry.date).getFullYear()
-                                : undefined;
                         const kind = entry.kind || 'project';
                         return (
                             <AuroraProjectCard
@@ -175,13 +133,12 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects, writings }) => {
                                 href={entry.url}
                                 number={String(entry._index).padStart(3, '0')}
                                 badge={KIND_LABEL[kind] || 'Project'}
-                                badgeVariant={
-                                    kind === 'case-study' ? 'case-study' : kind === 'writing' ? 'writing' : 'default'
-                                }
+                                badgeVariant={kind === 'case-study' ? 'case-study' : 'default'}
                                 title={entry.title}
                                 blurb={entry.description}
                                 tags={tags}
-                                year={year}
+                                dateLabel={formatProjectDate(entry)}
+                                image={entry.image || undefined}
                                 style={
                                     interacted
                                         ? undefined

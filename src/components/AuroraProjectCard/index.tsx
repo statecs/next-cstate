@@ -2,6 +2,7 @@
 
 import React, { useRef } from 'react';
 import Link from 'next/link';
+import ShimmerImage from '@/components/ShimmerImage';
 
 export interface AuroraProjectCardProps {
     href: string;
@@ -11,7 +12,10 @@ export interface AuroraProjectCardProps {
     title: string;
     blurb?: string;
     tags?: string[];
-    year?: string | number;
+    /** Already-formatted for display — the card only prints what it is handed. */
+    dateLabel?: string;
+    /** Cover image for the entry. Omitted, the card renders as a plain panel. */
+    image?: string;
     /** Stagger for the reveal transition, e.g. `{'--reveal-delay': '120ms'}`. */
     style?: React.CSSProperties;
 }
@@ -24,7 +28,8 @@ const AuroraProjectCard: React.FC<AuroraProjectCardProps> = ({
     title,
     blurb,
     tags = [],
-    year,
+    dateLabel,
+    image,
     style,
 }) => {
     const ref = useRef<HTMLAnchorElement>(null);
@@ -67,6 +72,19 @@ const AuroraProjectCard: React.FC<AuroraProjectCardProps> = ({
             onPointerMove={onMove}
             onPointerLeave={onLeave}
         >
+            {image && (
+                <div className="media">
+                    <ShimmerImage
+                        src={image}
+                        // Decorative: the title sits directly below, so naming
+                        // the entry again only repeats it for a screen reader.
+                        alt=""
+                        fill
+                        loading="lazy"
+                        sizes="(max-width: 700px) 100vw, (max-width: 1200px) 50vw, 380px"
+                    />
+                </div>
+            )}
             <div className="top">
                 <span className="num">№ {number}</span>
                 <span className={badgeClass}>{badge}</span>
@@ -81,7 +99,7 @@ const AuroraProjectCard: React.FC<AuroraProjectCardProps> = ({
                         ))}
                     </div>
                 )}
-                {year && <span className="yr">{year}</span>}
+                {dateLabel && <span className="yr">{dateLabel}</span>}
             </div>
         </Link>
     );

@@ -14,6 +14,8 @@ interface CaseStudyPageProps {
     caseStudy: CaseStudy;
     /** Rendered above the colophon. Server-fetched, so it arrives as a node. */
     related?: React.ReactNode;
+    /** Card number this entry carries on /projects, e.g. "007". */
+    indexNumber?: string;
 }
 
 const TOC_ITEMS = [
@@ -24,7 +26,7 @@ const TOC_ITEMS = [
     { label: 'Impact', section: 5 },
 ];
 
-export const CaseStudyPage = ({ caseStudy, related }: CaseStudyPageProps) => {
+export const CaseStudyPage = ({ caseStudy, related, indexNumber }: CaseStudyPageProps) => {
     const filed = caseStudy.sys?.firstPublishedAt
         ? new Date(caseStudy.sys.firstPublishedAt).toLocaleDateString('en-GB', {
               day: '2-digit',
@@ -59,6 +61,11 @@ export const CaseStudyPage = ({ caseStudy, related }: CaseStudyPageProps) => {
                     coverImage={caseStudy.coverImage?.url}
                     coverImageDescription={caseStudy.coverImage?.description}
                     slug={caseStudy.slug}
+                    backHref="/projects"
+                    backLabel="All projects"
+                    kindLabel="Case study"
+                    indexNumber={indexNumber}
+                    dateLabel={filed ?? undefined}
                 />
 
                 <div className="max-w-6xl mx-auto">
