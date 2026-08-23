@@ -6,19 +6,9 @@ import { getEditorialSeo } from '@/utils/helpers';
 import { JOURNEY_PAGE_SIZE, orderJourneys } from '@/utils/journey';
 import JourneyTimeline from '@/components/JourneyTimeline';
 import LazyComboBox from '@/components/LazyComboBox';
-import AuroraMarquee from '@/components/AuroraMarquee';
 import AuroraAskCta from '@/components/AuroraAskCta';
 import AuroraHeroFX from '@/components/AuroraHeroFX';
 import AuroraHeroHud from '@/components/AuroraHeroHud';
-
-const CLIENTS = [
-    { name: 'Siemens',    logo: '/images/logos/siemens.svg',          height: 28 },
-    { name: 'Vattenfall', logo: '/images/logos/Vattenfall_logo2.svg',  height: 20 },
-    { name: 'SJ',         logo: '/images/logos/SJ.svg',               height: 20 },
-    { name: 'ICA',        logo: '/images/logos/ICA_logo.svg',         height: 20 },
-    { name: 'Axfood',     logo: '/images/logos/AXFO.ST_BIG.svg',      height: 20 },
-    { name: 'Friends',    logo: '/images/logos/Friends_logo.svg',     height: 20 },
-];
 
 const SKILLS = ['UX Research', 'Accessibility', 'Prompt Engineering', 'Design Systems', 'Front-end', 'Prototyping'];
 
@@ -94,17 +84,6 @@ const HomePage = async () => {
                 <div className="aurora-scrollcue" aria-hidden="true">
                     <div className="aurora-mouse" />
                     <span className="aurora-mono">scroll</span>
-                </div>
-            </section>
-
-            {/* CLIENTS MARQUEE */}
-            <section className="aurora-block" aria-label="Clients">
-                <div className="aurora-wrap">
-                    <div className="aurora-sec-head">
-                        <h2>I&apos;ve worked with</h2>
-                        <span className="aurora-mono">Selected partners</span>
-                    </div>
-                    <AuroraMarquee items={CLIENTS} />
                 </div>
             </section>
 
