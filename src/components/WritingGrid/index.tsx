@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import ShimmerImage from '@/components/ShimmerImage';
 import { cn } from '@/utils/helpers';
 import NewBadge from '@/components/PhotoCollection/New';
 import { isCollectionNew } from '@/utils/helpers';
@@ -19,45 +19,6 @@ interface WritingGridProps {
  */
 const postCategories = (post: Post): string[] =>
   post.category?.split(',').map(c => c.trim()).filter(Boolean) || [];
-
-/**
- * Card thumbnail. next/image already defers the request until the card nears
- * the viewport, but that leaves an empty square in the meantime — so hold a
- * shimmer in the same box and fade the photo in once it has decoded. An error
- * clears the shimmer too, otherwise a dead URL would shimmer forever.
- */
-const CardImage: React.FC<{ src: string; alt: string }> = ({ src, alt }) => {
-  const [settled, setSettled] = useState(false);
-
-  return (
-    <>
-      {!settled && (
-        // position/radius inline: .aurora-skel's own `position: relative` and
-        // border-radius are declared after Tailwind's utilities and would win.
-        <div
-          className="aurora-skel"
-          style={{ position: 'absolute', inset: 0, borderRadius: 0, border: 'none' }}
-          aria-hidden="true"
-        />
-      )}
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        loading="lazy"
-        onLoad={() => setSettled(true)}
-        onError={() => setSettled(true)}
-        className={cn(
-          // One transition-property declaration: separate transition-transform
-          // and transition-opacity classes would clobber each other.
-          "object-cover transition-[opacity,transform] duration-500 group-hover:scale-105",
-          settled ? "opacity-100" : "opacity-0"
-        )}
-        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
-      />
-    </>
-  );
-};
 
 const WritingGrid: React.FC<WritingGridProps> = ({ posts }) => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
@@ -122,7 +83,14 @@ const WritingGrid: React.FC<WritingGridProps> = ({ posts }) => {
             >
               <div className="relative overflow-hidden bg-[var(--aurora-bg2)] aspect-square shadow-sm hover:shadow-md transition-shadow duration-300">
                 {post.image ? (
-                  <CardImage src={post.image} alt={post.title} />
+                  <ShimmerImage
+                    src={post.image}
+                    alt={post.title}
+                    fill
+                    loading="lazy"
+                    className="object-cover group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
+                  />
                 ) : (
                   <div className="flex items-center justify-center h-full text-[var(--aurora-faint)]">
                     <span className="font-mono text-[10px] uppercase tracking-[0.08em]">No Image</span>

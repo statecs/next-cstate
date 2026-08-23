@@ -1,5 +1,5 @@
 import { notFound, redirect } from 'next/navigation';
-import Image from 'next/image';
+import ShimmerImage from '@/components/ShimmerImage';
 import PageHeader from '@/components/PageHeader';
 import BannerPhotoCollection from '@/components/BannerPhotoCollection';
 import { ScrollArea } from '@/components/SideMenu/ScrollArea';
@@ -64,13 +64,12 @@ export const CollectionPageServer: React.FC<Props> = ({
         {/* Mobile: hero with image as background */}
         {heroImage && (
           <div className="relative sm:hidden h-[55vw] min-h-[240px] max-h-[380px] overflow-hidden">
-            <Image
+            <ShimmerImage
               src={heroImage.fullSize.url}
               alt={heroImage.description || collection.title}
               fill
               className="object-cover"
               priority
-              placeholder={heroImage.base64 ? 'blur' : 'empty'}
               blurDataURL={heroImage.base64}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />

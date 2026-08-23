@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
+import ShimmerImage from '@/components/ShimmerImage';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -42,14 +42,16 @@ const BannerPhotoCollection: React.FC<Props> = ({ photosCollection, slug }) => {
       <div className="relative w-full h-[300px] sm:h-[400px] lg:h-[500px] rounded-none overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 group">
         {isWriting ? (
           <div className="block w-full h-full">
-            <Image
+            <ShimmerImage
+              // Keyed on the photo: without it the fade stays settled from the
+              // previous slide and the next one pops in undecoded.
+              key={currentPhoto.fullSize.url}
               src={currentPhoto.fullSize.url}
               alt={currentPhoto.description || currentPhoto.title}
               fill
               className="object-cover"
               priority
               quality={90}
-              placeholder={currentPhoto.base64 ? 'blur' : 'empty'}
               blurDataURL={currentPhoto.base64}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 80vw"
             />
@@ -59,14 +61,14 @@ const BannerPhotoCollection: React.FC<Props> = ({ photosCollection, slug }) => {
             href={`${basePath}/${currentPhoto.collection || slug}/${currentPhoto.slug}`}
             className="block w-full h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white focus-visible:ring-offset-2"
           >
-            <Image
+            <ShimmerImage
+              key={currentPhoto.fullSize.url}
               src={currentPhoto.fullSize.url}
               alt={currentPhoto.description || currentPhoto.title}
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              className="object-cover group-hover:scale-105"
               priority
               quality={90}
-              placeholder={currentPhoto.base64 ? 'blur' : 'empty'}
               blurDataURL={currentPhoto.base64}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 80vw"
             />
@@ -147,7 +149,7 @@ const BannerPhotoCollection: React.FC<Props> = ({ photosCollection, slug }) => {
                   : "opacity-70 hover:opacity-100"
               )}
             >
-              <Image
+              <ShimmerImage
                 src={photo.fullSize.url}
                 alt={photo.description || photo.title}
                 fill

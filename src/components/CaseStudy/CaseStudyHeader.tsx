@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import ShimmerImage from '@/components/ShimmerImage';
 import Link from 'next/link';
 import { ExternalLinkIcon } from 'lucide-react';
 import BackLink from '@/components/BackLink';
@@ -74,7 +74,7 @@ export const CaseStudyHeader = ({
             {/* Mobile hero — cover image as background with title overlaid */}
             {coverImage && (
                 <div className="relative sm:hidden h-[55vw] min-h-[240px] max-h-[380px] overflow-hidden">
-                    <Image
+                    <ShimmerImage
                         src={coverImage}
                         alt={coverImageDescription ?? title}
                         fill
@@ -182,7 +182,7 @@ export const CaseStudyHeader = ({
                 <div className="max-w-6xl mx-auto hidden sm:block px-8 pt-9">
                     <div className="relative shadow-[0_30px_70px_-30px_rgba(0,0,0,0.5)]">
                         <div className="relative w-full aspect-[16/7.3] overflow-hidden">
-                            <Image
+                            <ShimmerImage
                                 src={coverImage}
                                 alt={coverImageDescription ?? title}
                                 fill

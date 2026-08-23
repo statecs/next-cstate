@@ -1,6 +1,6 @@
 import {draftMode} from 'next/headers';
 import {notFound, redirect} from 'next/navigation';
-import Image from 'next/image';
+import ShimmerImage from '@/components/ShimmerImage';
 import PageHeader from '@/components/PageHeader';
 import BannerPhotoCollection from '@/components/BannerPhotoCollection';
 import config from '@/utils/config';
@@ -143,13 +143,12 @@ const CollectionPage = async ({params}: Props) => {
         {/* Mobile hero — first photo as background with title */}
         {heroPhoto && (
             <div className="relative sm:hidden h-[55vw] min-h-[240px] max-h-[380px] overflow-hidden">
-                <Image
+                <ShimmerImage
                     src={heroPhoto.fullSize.url}
                     alt={heroPhoto.description || collection.title}
                     fill
                     className="object-cover"
                     priority
-                    placeholder={heroPhoto.base64 ? 'blur' : 'empty'}
                     blurDataURL={heroPhoto.base64}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />

@@ -1371,6 +1371,13 @@ body.noanim .aurora-cursor-dot {
 
 /* --- skeleton placeholders (route loading states) --- */
 
+/* Paired with <ShimmerImage>, which sets the opacity inline. Transform is in
+   here too so a hover zoom on the photo still animates — an inline transition
+   would beat whatever the consumer declares. */
+.aurora-shimmer-img {
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
 .aurora-skel {
     position: relative;
     overflow: hidden;
@@ -1796,15 +1803,11 @@ body.noanim .aurora-cursor-dot {
 }
 
 /* Declared here rather than as utilities on the element: these rules sit after
-   Tailwind's utilities and would win over them anyway. */
+   Tailwind's utilities and would win over them anyway. The fade-in is
+   ShimmerImage's job — this only slows the zoom down to the card's own easing. */
 .aurora-card .media img {
     object-fit: cover;
-    opacity: 0;
     transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.aurora-card .media.is-loaded img {
-    opacity: 1;
 }
 
 /* With a photo above it the title already has the band's margin for breathing
