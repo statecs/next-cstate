@@ -80,8 +80,27 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
             suppressHydrationWarning
             className={`aurora flex flex-grow flex-col antialiased md:min-h-full ${titleFont.variable} ${bodyFont.variable} ${serif.variable} ${sans.variable} ${mono.variable} ${inter.variable} ${fraunces.variable} ${plusJakarta.variable}`}
         >
+            <head>
+                {/* Ahead of the stylesheet, so the stored theme is on <html>
+                    before the browser has anything to paint. Sitting in <body>
+                    this ran late enough that a light-theme reload flashed the
+                    dark default first. */}
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `(function(){try{if(localStorage.getItem('cs-theme')==='light')document.documentElement.classList.add('light')}catch(e){}})()`
+                    }}
+                />
+            </head>
             <body className="aurora sm:min-h-full md:flex md:flex-grow md:flex-col">
-                <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('cs-theme');if(t==='light')document.documentElement.classList.add('light');}catch(e){}})();` }} />
+                {/* noanim lands on <body>, which does not exist yet up in <head>.
+                    First child is the earliest it can run — still before any of
+                    the page is parsed, where the effect that used to set it let
+                    a frame of animation through. */}
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `(function(){try{if(localStorage.getItem('cs-motion-off')==='1')document.body.classList.add('noanim')}catch(e){}})()`
+                    }}
+                />
                 <AuthWrapper>
                     <SkipLink />
                     <AuroraBackground />
