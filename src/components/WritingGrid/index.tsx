@@ -20,80 +20,95 @@ interface WritingGridProps {
 const postCategories = (post: Post): string[] =>
   post.category?.split(',').map(c => c.trim()).filter(Boolean) || [];
 
+/**
+ * Card thumbnail. next/image already defers the request until the card nears
+ * the viewport, but that leaves an empty square in the meantime — so hold a
+ * shimmer in the same box and fade the photo in once it has decoded. An error
+ * clears the shimmer too, otherwise a dead URL would shimmer forever.
+ */
+const CardImage: React.FC<{ src: string; alt: string }> = ({ src, alt }) => {
+  const [settled, setSettled] = useState(false);
+
+  return (
+    <>
+      {!settled && (
+        // position/radius inline: .aurora-skel's own `position: relative` and
+        // border-radius are declared after Tailwind's utilities and would win.
+        <div
+          className="aurora-skel"
+          style={{ position: 'absolute', inset: 0, borderRadius: 0, border: 'none' }}
+          aria-hidden="true"
+        />
+      )}
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        loading="lazy"
+        onLoad={() => setSettled(true)}
+        onError={() => setSettled(true)}
+        className={cn(
+          // One transition-property declaration: separate transition-transform
+          // and transition-opacity classes would clobber each other.
+          "object-cover transition-[opacity,transform] duration-500 group-hover:scale-105",
+          settled ? "opacity-100" : "opacity-0"
+        )}
+        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
+      />
+    </>
+  );
+};
+
 const WritingGrid: React.FC<WritingGridProps> = ({ posts }) => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  // The tags are the point of the index page, so show them on arrival.
-  const [showFilters, setShowFilters] = useState(true);
   const [expandedTags, setExpandedTags] = useState<{ [key: string]: boolean }>({});
 
   // Derived, not effect state: an effect would leave the tag row empty in the
-  // server-rendered HTML and pop it in after hydration.
-  const categories = useMemo(
-    () => Array.from(new Set(posts.flatMap(postCategories))),
-    [posts]
-  );
+  // server-rendered HTML and pop it in after hydration. Ordered by how many
+  // posts carry each tag, so the useful ones come first in a row that scrolls.
+  const categories = useMemo(() => {
+    const freq: Record<string, number> = {};
+    posts.forEach(post => {
+      postCategories(post).forEach(tag => {
+        freq[tag] = (freq[tag] || 0) + 1;
+      });
+    });
+    return Object.entries(freq)
+      .sort((a, b) => b[1] - a[1])
+      .map(([tag]) => tag);
+  }, [posts]);
 
-  const toggleFilter = (filter: string) => {
-    setActiveFilter(prev => prev === filter ? null : filter);
-  };
+  const toggleFilter = (filter: string) =>
+    setActiveFilter(prev => (prev === filter ? null : filter));
 
   const filteredPosts = useMemo(() => posts.filter(post => {
     if (!activeFilter) return true;
     return postCategories(post).includes(activeFilter);
   }), [posts, activeFilter]);
 
-  const FilterButton: React.FC<{
-    filter: string;
-    activeFilter: string | null;
-    onClick: (filter: string) => void;
-  }> = ({ filter, activeFilter, onClick }) => (
-    <button
-      className={cn(
-        "px-2 py-0.5 text-[10px] font-mono uppercase tracking-[0.08em] border transition-colors duration-150",
-        activeFilter === filter
-          ? "bg-[var(--aurora-text)] text-[var(--aurora-bg)] border-[var(--aurora-text)]"
-          : "text-[var(--aurora-muted)] border-[var(--aurora-line2)] hover:border-[var(--aurora-text)]"
-      )}
-      onClick={() => onClick(filter)}
-      aria-pressed={activeFilter === filter}
-      aria-label={`Filter by ${filter}`}
-    >
-      {filter}
-    </button>
-  );
-
   return (
     <div className="w-full pb-[clamp(60px,10vh,120px)]">
-      {/* Filter toggle row */}
-      <div className="flex items-center justify-between mb-6">
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="aurora-mono hover:text-[var(--aurora-text)] transition-colors duration-150"
-        >
-          {showFilters ? 'Hide filters' : 'Filter'}
-          {activeFilter && <span className="ml-1 text-[var(--aurora-text)]">[1]</span>}
-        </button>
-        {activeFilter && (
-          <button
-            onClick={() => setActiveFilter(null)}
-            className="aurora-mono hover:text-[var(--aurora-text)] transition-colors duration-150"
-          >
-            Clear
-          </button>
-        )}
-      </div>
-
-      {/* Filter buttons */}
-      {showFilters && (
-        <div className="flex flex-wrap gap-2 mb-8">
-          {categories.map(category => (
-            <FilterButton
-              key={category}
-              filter={category}
-              activeFilter={activeFilter}
-              onClick={toggleFilter}
-            />
-          ))}
+      {categories.length > 0 && (
+        <div className="aurora-filters">
+          <div role="group" aria-label="Filter by tag" className="aurora-filters-group">
+            <button
+              type="button"
+              onClick={() => setActiveFilter(null)}
+              aria-pressed={activeFilter === null}
+            >
+              Any tag
+            </button>
+            {categories.map(category => (
+              <button
+                key={category}
+                type="button"
+                onClick={() => toggleFilter(category)}
+                aria-pressed={activeFilter === category}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
@@ -107,13 +122,7 @@ const WritingGrid: React.FC<WritingGridProps> = ({ posts }) => {
             >
               <div className="relative overflow-hidden bg-[var(--aurora-bg2)] aspect-square shadow-sm hover:shadow-md transition-shadow duration-300">
                 {post.image ? (
-                  <Image
-                    src={post.image}
-                    alt={post.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
-                  />
+                  <CardImage src={post.image} alt={post.title} />
                 ) : (
                   <div className="flex items-center justify-center h-full text-[var(--aurora-faint)]">
                     <span className="font-mono text-[10px] uppercase tracking-[0.08em]">No Image</span>
@@ -149,7 +158,7 @@ const WritingGrid: React.FC<WritingGridProps> = ({ posts }) => {
                   {post.title}
                 </h3>
                 {post.category && (() => {
-                  const tags = post.category.split(', ').map(tag => tag.trim());
+                  const tags = postCategories(post);
                   const postKey = post.slug;
                   const showAllTags = expandedTags[postKey] || false;
                   const visibleTags = showAllTags ? tags : tags.slice(0, 2);
@@ -167,10 +176,10 @@ const WritingGrid: React.FC<WritingGridProps> = ({ posts }) => {
                               toggleFilter(tag);
                             }}
                             className={cn(
-                              "px-2 py-0.5 text-[10px] font-mono uppercase tracking-[0.06em] border transition-colors duration-150 cursor-pointer",
+                              "px-[9px] py-[4px] text-[0.72rem] rounded-md transition-colors duration-150 cursor-pointer",
                               activeFilter === tag
-                                ? "bg-[var(--aurora-text)] text-[var(--aurora-bg)] border-[var(--aurora-text)]"
-                                : "text-[var(--aurora-muted)] border-[var(--aurora-line2)] hover:border-[var(--aurora-text)]"
+                                ? "bg-[var(--aurora-text)] text-[var(--aurora-bg)]"
+                                : "bg-white/[0.04] text-[var(--aurora-faint)] hover:text-[var(--aurora-text)]"
                             )}
                           >
                             {tag}
