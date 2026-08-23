@@ -50,7 +50,9 @@ export const CardGridSkeleton = ({ count = 6, square }: { count?: number; square
     ) : (
         <div className="aurora-grid" style={{ paddingBottom: 'clamp(60px,10vh,120px)' }}>
             {Array.from({ length: count }).map((_, i) => (
-                <div key={i} className="aurora-skel" style={{ height: 210, borderRadius: 'var(--aurora-r, 18px)' }} />
+                // Taller than the card's min-height: these cards lead with a
+                // cover band, so the text below it starts further down.
+                <div key={i} className="aurora-skel" style={{ height: 380, borderRadius: 'var(--aurora-r, 18px)' }} />
             ))}
         </div>
     );

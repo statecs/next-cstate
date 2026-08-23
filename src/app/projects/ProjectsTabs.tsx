@@ -12,6 +12,24 @@ const KIND_LABEL: Record<string, string> = {
     'case-study': 'Case Study',
 };
 
+/**
+ * Day-level date, matching the "12 Mar 2024" form the case study pages use.
+ * Entries carry either a Contentful publish timestamp or their own date field,
+ * and a few carry the literal 'Not specified' — those get no date at all
+ * rather than an "Invalid Date".
+ */
+const formatDate = (entry: Post): string | undefined => {
+    const raw = entry.published && entry.published !== 'Not specified' ? entry.published : entry.date;
+    if (!raw) return undefined;
+    const parsed = new Date(raw);
+    if (Number.isNaN(parsed.getTime())) return undefined;
+    return parsed.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+    });
+};
+
 const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects }) => {
     const [tagFilter, setTagFilter] = useState<string | null>(null);
     const [sort, setSort] = useState<'Newest' | 'Oldest' | 'A–Z'>('Newest');
@@ -125,11 +143,6 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects }) => {
                             .split(',')
                             .map(t => t.trim())
                             .filter(Boolean);
-                        const year = entry.published && entry.published !== 'Not specified'
-                            ? new Date(entry.published).getFullYear()
-                            : entry.date
-                                ? new Date(entry.date).getFullYear()
-                                : undefined;
                         const kind = entry.kind || 'project';
                         return (
                             <AuroraProjectCard
@@ -141,7 +154,8 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects }) => {
                                 title={entry.title}
                                 blurb={entry.description}
                                 tags={tags}
-                                year={year}
+                                dateLabel={formatDate(entry)}
+                                image={entry.image || undefined}
                                 style={
                                     interacted
                                         ? undefined
