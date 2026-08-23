@@ -5,6 +5,7 @@ import { fetchEditorialPage, fetchCollectionNavigation, fetchAllCaseStudies } fr
 import { CaseStudySkeleton } from '@/components/CaseStudy/CaseStudySkeleton';
 import { getEditorialSeo } from '@/utils/helpers';
 import ClientLayout from '../ClientLayout';
+import { buildProjectIndex } from '@/utils/projectIndex';
 
 interface LayoutProps {
   children: ReactNode;
@@ -17,34 +18,12 @@ const CollectionLayout: React.FC<LayoutProps> = async ({ children }) => {
       fetchAllCaseStudies(),
     ]);
 
-    const navPosts: Post[] = (links || []).map((link) => ({
-      url: link.url,
-      title: link.title,
-      slug: link.url,
-      image: link.image,
-      description: link.description,
-      date: link.date,
-      isPublic: link.isPublic,
-      category: link.category,
-      published: link.published || 'Not specified',
+    // Same list, same order as the grid on /projects. LinkList prefixes the
+    // section, so entries are addressed from it rather than absolutely.
+    const posts = buildProjectIndex(links, caseStudies).map(post => ({
+      ...post,
+      url: `/${post.slug}`,
     }));
-
-    const caseStudyPosts: Post[] = (caseStudies || []).map((cs) => ({
-      url: `/${cs.slug}`,
-      title: cs.title,
-      slug: `/${cs.slug}`,
-      image: cs.coverImage?.url || '',
-      date: undefined,
-      isPublic: cs.isPublic,
-      category: cs.tags?.join(', ') || '',
-      published: cs.sys?.firstPublishedAt || 'Not specified',
-    }));
-
-    const seen = new Set(navPosts.map(p => p.url));
-    const posts = [
-      ...navPosts,
-      ...caseStudyPosts.filter(p => !seen.has(p.url)),
-    ].sort((a, b) => (b.published > a.published ? 1 : -1));
 
     return (
       <ClientLayout posts={posts} key="projects-layout">
