@@ -11,7 +11,7 @@ const AuroraMagnetic: React.FC = () => {
             if ((el as any)._auroraMag) return;
             (el as any)._auroraMag = true;
             const onMove = (e: PointerEvent) => {
-                if (document.body.classList.contains('noanim')) return;
+                if (document.documentElement.classList.contains('noanim')) return;
                 const r = el.getBoundingClientRect();
                 const dx = (e.clientX - r.left - r.width / 2) * 0.25;
                 const dy = (e.clientY - r.top - r.height / 2) * 0.3;

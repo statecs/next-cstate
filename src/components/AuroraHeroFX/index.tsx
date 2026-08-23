@@ -39,7 +39,7 @@ const AuroraHeroFX: React.FC = () => {
         };
 
         const onMove = (e: PointerEvent) => {
-            if (document.body.classList.contains('noanim')) return;
+            if (document.documentElement.classList.contains('noanim')) return;
             tx = (e.clientX / innerWidth) * 2 - 1;
             ty = (e.clientY / innerHeight) * 2 - 1;
             const r = hero.getBoundingClientRect();

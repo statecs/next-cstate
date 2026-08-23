@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 const AuroraReveal: React.FC = () => {
     useEffect(() => {
         const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const noanim = document.body.classList.contains('noanim');
+        const noanim = document.documentElement.classList.contains('noanim');
 
         // Nothing to animate — reveal everything, and keep revealing whatever
         // gets appended later (the journey timeline pages in as you scroll).

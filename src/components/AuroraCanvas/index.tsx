@@ -212,11 +212,17 @@ const AuroraCanvas: React.FC = () => {
             ctx.globalCompositeOperation = 'source-over';
         };
 
+        const motionOff = () =>
+            reduce || document.documentElement.classList.contains('noanim');
+
         const start = () => {
-            if (reduce || document.body.classList.contains('noanim')) {
+            if (motionOff()) {
+                // The still version of the same wash. Clearing instead left the
+                // page with no background until AuroraNav's effect fired
+                // cs:motion, which read as the backdrop popping in late.
                 running = false;
                 cancelAnimationFrame(raf);
-                ctx.clearRect(0, 0, W, H);
+                staticWash();
                 return;
             }
             running = true;
@@ -242,6 +248,8 @@ const AuroraCanvas: React.FC = () => {
             else start();
         };
 
+        // start() is the single gate on the motion preference, so a theme
+        // change repaints in whichever form is current rather than animating.
         const onTheme = () => { resize(); start(); };
 
         resize();
