@@ -1,13 +1,12 @@
 import React from 'react';
 import config from '@/utils/config';
-import {fetchEditorialPage, fetchCollectionNavigation, fetchWritingNavigation, fetchAllCaseStudies} from '@/utils/contentful';
+import {fetchEditorialPage, fetchCollectionNavigation, fetchAllCaseStudies} from '@/utils/contentful';
 import {getEditorialSeo} from '@/utils/helpers';
 import ProjectsTabs from './ProjectsTabs';
 
 const ProjectPage = async () => {
-  const [projectLinks, writingLinks, caseStudies] = await Promise.all([
+  const [projectLinks, caseStudies] = await Promise.all([
     fetchCollectionNavigation(),
-    fetchWritingNavigation(),
     fetchAllCaseStudies(),
   ]);
 
@@ -42,21 +41,7 @@ const ProjectPage = async () => {
     ...caseStudyPosts.filter(p => !seen.has(p.url)),
   ].sort((a, b) => (b.published > a.published ? 1 : -1));
 
-  const writings: Post[] = writingLinks.map((link) => ({
-    url: link.url,
-    title: link.title,
-    slug: link.url,
-    image: link.image,
-    description: link.description,
-    date: link.date,
-    isPublic: link.isPublic,
-    isMembersOnly: link.isMembersOnly,
-    category: link.category,
-    published: link.published || 'Not specified',
-    kind: 'writing' as const,
-  }));
-
-    return <ProjectsTabs projects={projects} writings={writings} />;
+    return <ProjectsTabs projects={projects} />;
 };
 
 export const generateMetadata = async () => {
@@ -64,8 +49,8 @@ export const generateMetadata = async () => {
     return {
         ...config.seo,
         ...getEditorialSeo(page),
-        title: 'Projects & Writing | Christopher State',
-        description: 'Creative projects and written content exploring design, technology, and innovation'
+        title: 'Projects | Christopher State',
+        description: 'Selected design and engineering work'
     };
 };
 
