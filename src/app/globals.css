@@ -1327,6 +1327,48 @@ body.noanim .aurora-cursor-dot {
     border-color: var(--aurora-line2);
 }
 
+/* --- back link: detail page -> the index it came from --- */
+
+.aurora-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px 8px 12px;
+    border: 1px solid var(--aurora-line2);
+    border-radius: 999px;
+    background: var(--aurora-glass);
+    font-family: var(--aurora-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--aurora-muted);
+    text-decoration: none;
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.aurora-back:hover,
+.aurora-back:focus-visible {
+    color: var(--aurora-text);
+    background: var(--aurora-glass2);
+}
+
+.aurora-back svg {
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The arrow leads the way out — it moves, the pill does not. */
+.aurora-back:hover svg,
+.aurora-back:focus-visible svg {
+    transform: translateX(-3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .aurora-back:hover svg,
+    .aurora-back:focus-visible svg {
+        transform: none;
+    }
+}
+
 /* --- skeleton placeholders (route loading states) --- */
 
 .aurora-skel {

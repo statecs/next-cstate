@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import AuroraProjectCard from '@/components/AuroraProjectCard';
+import { formatProjectDate } from '@/utils/projectIndex';
 
 interface ProjectsTabsProps {
     projects: Post[];
@@ -10,24 +11,6 @@ interface ProjectsTabsProps {
 const KIND_LABEL: Record<string, string> = {
     project: 'Project',
     'case-study': 'Case Study',
-};
-
-/**
- * Day-level date, matching the "12 Mar 2024" form the case study pages use.
- * Entries carry either a Contentful publish timestamp or their own date field,
- * and a few carry the literal 'Not specified' — those get no date at all
- * rather than an "Invalid Date".
- */
-const formatDate = (entry: Post): string | undefined => {
-    const raw = entry.published && entry.published !== 'Not specified' ? entry.published : entry.date;
-    if (!raw) return undefined;
-    const parsed = new Date(raw);
-    if (Number.isNaN(parsed.getTime())) return undefined;
-    return parsed.toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-    });
 };
 
 const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects }) => {
@@ -154,7 +137,7 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects }) => {
                                 title={entry.title}
                                 blurb={entry.description}
                                 tags={tags}
-                                dateLabel={formatDate(entry)}
+                                dateLabel={formatProjectDate(entry)}
                                 image={entry.image || undefined}
                                 style={
                                     interacted
