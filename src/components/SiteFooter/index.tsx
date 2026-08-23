@@ -7,7 +7,7 @@ import { drawerAtom, footerVisibilityAtom } from '@/utils/store';
 import { useAuthStatus } from '@/contexts/AuthContext';
 
 const LINKS = [
-  { label: 'About', url: '/about' },
+  { label: 'About', url: '/home#about' },
   { label: 'Projects', url: '/projects' },
   { label: 'Writing', url: '/writing' },
   { label: 'Contact', url: '/contact' },

@@ -55,6 +55,8 @@ module.exports = {
     async redirects() {
         return [
             {source: '/login', destination: '/api/auth/login', permanent: true},
+            // /about is now a section of /home
+            {source: '/about', destination: '/home#about', permanent: true},
         ];
     },
     images: {

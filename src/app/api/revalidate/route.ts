@@ -97,9 +97,8 @@ export async function POST(request: NextRequest) {
                     console.log(`[Webhook] Revalidated /${slug}`);
                 }
 
-                // Revalidate common editorial pages
+                // Revalidate common editorial pages (/home carries the about section)
                 await revalidatePath('/home');
-                await revalidatePath('/about');
 
                 break;
             }
@@ -115,7 +114,6 @@ export async function POST(request: NextRequest) {
             case 'journey': {
                 // Invalidate journeys cache
                 await invalidateCache('journeys/*');
-                await revalidatePath('/about');
                 await revalidatePath('/home');
 
                 break;

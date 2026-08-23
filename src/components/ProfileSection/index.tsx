@@ -39,7 +39,7 @@ const [isMobile, setIsMobile] = useState(false);
             </div>
             <Link
               className="group w-full"
-              href={`/about`}
+              href={`/home#about`}
             >
               <div className="link-card inline-flex justify-center items-center gap-2 p-2">
                   <div className="flex flex-col">
