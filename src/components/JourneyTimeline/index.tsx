@@ -24,6 +24,8 @@ const JourneyTimeline = ({ initialItems, total, pageSize }: JourneyTimelineProps
     const sentinel = useRef<HTMLDivElement>(null);
     // Read inside the observer callback, which must not be re-created per item.
     const state = useRef({ count: initialItems.length, loading: false });
+    // Set while something is scrolling the page somewhere specific.
+    const paused = useRef(false);
 
     const hasMore = items.length < total;
 
@@ -55,13 +57,43 @@ const JourneyTimeline = ({ initialItems, total, pageSize }: JourneyTimelineProps
         }
     }, [pageSize, total]);
 
+    // The hero's "Ask me anything" button scrolls to the AMA card, which sits
+    // directly below this list. Appending rows mid-flight would push the target
+    // further down and strand the reader in the middle of the timeline, so hold
+    // off until the jump has landed.
+    useEffect(() => {
+        let release: ReturnType<typeof setTimeout>;
+
+        const onAsk = () => {
+            paused.current = true;
+            clearTimeout(release);
+            release = setTimeout(() => {
+                paused.current = false;
+            }, 1400);
+        };
+
+        document.addEventListener('aurora:ask-show', onAsk);
+        return () => {
+            document.removeEventListener('aurora:ask-show', onAsk);
+            clearTimeout(release);
+        };
+    }, []);
+
     useEffect(() => {
         const node = sentinel.current;
         if (!node || !hasMore || failed) return;
 
         const io = new IntersectionObserver(
             entries => {
-                if (entries.some(e => e.isIntersecting)) loadMore();
+                if (paused.current) return;
+
+                // Only page in while the sentinel is still ahead of the reader.
+                // Once it is above the viewport they have moved past the
+                // timeline — usually to the AMA card — and appending rows there
+                // would shove whatever they are reading down the page.
+                if (entries.some(e => e.isIntersecting && e.boundingClientRect.top >= 0)) {
+                    loadMore();
+                }
             },
             // Start fetching before the sentinel is on screen so the next rows
             // are usually in place by the time the reader gets there.

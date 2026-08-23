@@ -40,6 +40,8 @@ const JourneyItem = ({ item, index }: { item: JourneyEntry; index: number }) => 
                             imageId={image.sys?.id || image.url}
                             src={image.url}
                             alt={image.description || ''}
+                            width={image.width}
+                            height={image.height}
                             priority={false}
                         />
                     </div>

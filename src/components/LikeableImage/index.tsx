@@ -10,11 +10,32 @@ interface LikeableImageProps {
     src: string;
     alt: string;
     priority?: boolean;
+    /** Intrinsic asset size. Reserves the row's height before the file loads. */
+    width?: number;
+    height?: number;
 }
+
+/**
+ * Without real dimensions next/image reserves nothing and the row snaps open on
+ * load, shoving everything below it down the page. The journey shots are mostly
+ * phone photos, so guess portrait when Contentful gives us no size.
+ */
+const FALLBACK_RATIO = 3 / 4;
+const FALLBACK_WIDTH = 1200;
 
 const DOUBLE_TAP_MS = 300;
 
-export default function LikeableImage({ imageId, src, alt, priority = false }: LikeableImageProps) {
+export default function LikeableImage({
+    imageId,
+    src,
+    alt,
+    priority = false,
+    width,
+    height,
+}: LikeableImageProps) {
+    const w = width && height ? width : FALLBACK_WIDTH;
+    const h = width && height ? height : Math.round(FALLBACK_WIDTH / FALLBACK_RATIO);
+
     const [stat, setStat] = useState<LikeStat>({ count: 0, liked: false });
     const [ready, setReady] = useState(false);
     const [burst, setBurst] = useState(false);
@@ -102,8 +123,8 @@ export default function LikeableImage({ imageId, src, alt, priority = false }: L
             <Image
                 src={src}
                 alt={alt}
-                width={0}
-                height={0}
+                width={w}
+                height={h}
                 sizes="(max-width: 768px) 100vw, 700px"
                 style={{ width: '100%', height: 'auto' }}
                 loading={priority ? 'eager' : 'lazy'}
