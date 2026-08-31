@@ -1,6 +1,10 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
+
+// Articles and case studies are for reading, so the backdrop steps back there.
+const READING_ROUTE = /^\/(writing|projects)(\/|$)/;
 
 // Dark theme: ice blue / steel / teal / slate — cool aurora, no lavender/pink
 const STOPS_DARK: Array<[number, number, number]> = [
@@ -31,6 +35,15 @@ const ramp = (stops: Array<[number, number, number]>, h: number): [number, numbe
 
 const AuroraCanvas: React.FC = () => {
     const ref = useRef<HTMLCanvasElement>(null);
+    const pathname = usePathname();
+
+    // A class on <html> rather than component state: the render loop reads it
+    // per frame, so navigating between a reading route and the rest eases over
+    // instead of tearing the engine down and reshuffling every particle.
+    // The pre-paint script in layout.tsx sets the same class on a hard load.
+    useEffect(() => {
+        document.documentElement.classList.toggle('reading', READING_ROUTE.test(pathname));
+    }, [pathname]);
 
     useEffect(() => {
         const cv = ref.current;
@@ -96,6 +109,12 @@ const AuroraCanvas: React.FC = () => {
 
         const isLightMode = () => document.documentElement.classList.contains('light');
 
+        // What pulls the eye off a paragraph is long, bright, fast strokes. Calm
+        // mode shortens the trails (heavier fade), thins and dims them, and slows
+        // the drift — rather than just turning the whole canvas's opacity down,
+        // which would leave the same distracting motion, only fainter.
+        const isCalm = () => document.documentElement.classList.contains('reading');
+
         const fade = (a: number) => {
             ctx.globalCompositeOperation = 'source-over';
             ctx.fillStyle = isLightMode() ? `rgba(238,241,244,${a})` : `rgba(6,10,16,${a})`;
@@ -103,21 +122,23 @@ const AuroraCanvas: React.FC = () => {
         };
 
         const frame = () => {
-            t += 0.0019;
-            fade(isLightMode() ? 0.14 : 0.11);
+            const light = isLightMode();
+            const calm = isCalm();
+            t += calm ? 0.0011 : 0.0019;
+            fade(light ? (calm ? 0.32 : 0.14) : (calm ? 0.28 : 0.11));
             const AX = (0.5 + Math.cos(t * 0.7) * 0.3) * W;
             const AY = (0.5 + Math.sin(t * 0.9) * 0.27) * H;
 
-            const stops = isLightMode() ? STOPS_LIGHT : STOPS_DARK;
-            ctx.globalCompositeOperation = isLightMode() ? 'source-over' : 'lighter';
+            const stops = light ? STOPS_LIGHT : STOPS_DARK;
+            ctx.globalCompositeOperation = light ? 'source-over' : 'lighter';
             const bc = ramp(stops, t * 0.06);
             const bg = ctx.createRadialGradient(AX, AY, 0, AX, AY, 0.42 * Math.min(W, H));
-            bg.addColorStop(0, `rgba(${bc[0] | 0},${bc[1] | 0},${bc[2] | 0},${isLightMode() ? .005 : .05})`);
+            bg.addColorStop(0, `rgba(${bc[0] | 0},${bc[1] | 0},${bc[2] | 0},${light ? (calm ? .003 : .005) : (calm ? .02 : .05)})`);
             bg.addColorStop(1, 'rgba(0,0,0,0)');
             ctx.fillStyle = bg;
             ctx.fillRect(0, 0, W, H);
 
-            ctx.lineWidth = DPR * (isLightMode() ? 2.4 : 1.1);
+            ctx.lineWidth = DPR * (light ? (calm ? 1.4 : 2.4) : (calm ? 0.9 : 1.1));
             const R = (coarse ? 120 : 155) * DPR;
             const hShift = t * 0.1;
 
@@ -128,19 +149,20 @@ const AuroraCanvas: React.FC = () => {
 
             for (const p of parts) {
                 const ang = (Math.sin(p.x * 0.0016 + t * 0.6) + Math.cos(p.y * 0.0016 - t * 0.4)) * Math.PI;
-                let vx = Math.cos(ang) * p.sp * DPR;
-                let vy = Math.sin(ang) * p.sp * DPR;
+                const drift = calm ? 0.55 : 1;
+                let vx = Math.cos(ang) * p.sp * DPR * drift;
+                let vy = Math.sin(ang) * p.sp * DPR * drift;
                 const adx = AX - p.x;
                 const ady = AY - p.y;
                 const ad = Math.hypot(adx, ady) || 1;
-                vx += (adx / ad) * 0.22 * DPR;
-                vy += (ady / ad) * 0.22 * DPR;
+                vx += (adx / ad) * 0.22 * DPR * drift;
+                vy += (ady / ad) * 0.22 * DPR * drift;
                 if (active) {
                     const dx = p.x - mx;
                     const dy = p.y - my;
                     const d = Math.hypot(dx, dy);
                     if (d < R && d > 0) {
-                        const f = (1 - d / R) * 3.6;
+                        const f = (1 - d / R) * (calm ? 1.2 : 3.6);
                         vx += (dx / d) * f;
                         vy += (dy / d) * f;
                     }
@@ -166,7 +188,7 @@ const AuroraCanvas: React.FC = () => {
                 else if (p.y > H) p.y -= H;
                 if (Math.abs(p.x - ox) < 60 * DPR && Math.abs(p.y - oy) < 60 * DPR) {
                     const c = ramp(stops, p.hue + hShift);
-                    ctx.strokeStyle = `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${isLightMode() ? .38 : .52})`;
+                    ctx.strokeStyle = `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${light ? (calm ? .13 : .38) : (calm ? 0.2 : .52)})`;
                     ctx.beginPath();
                     ctx.moveTo(ox, oy);
                     ctx.lineTo(p.x, p.y);

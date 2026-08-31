@@ -81,10 +81,14 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
             className={`aurora flex flex-grow flex-col antialiased md:min-h-full ${titleFont.variable} ${bodyFont.variable} ${serif.variable} ${sans.variable} ${mono.variable} ${inter.variable} ${fraunces.variable} ${plusJakarta.variable}`}
         >
             <head>
-                {/* Both preferences land on <html> before the browser has
-                    anything to paint. In <body> this ran late enough that a
-                    light-theme reload flashed the dark default, and motion-off
-                    got a frame of animation before it took hold.
+                {/* Both preferences, plus the calmer backdrop reading routes
+                    get, land on <html> before the browser has anything to
+                    paint. In <body> this ran late enough that a light-theme
+                    reload flashed the dark default, and motion-off got a frame
+                    of animation before it took hold. `reading` is here for the
+                    same reason: AuroraCanvas sets it on navigation, but on a
+                    hard load its effect runs a few frames into the animation,
+                    which is exactly the sweep the calm mode exists to avoid.
 
                     <html> specifically, not <body>: it carries
                     suppressHydrationWarning, so React accepts a class the
@@ -93,7 +97,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
                     DOM — which restarts every entrance animation mid-flight. */}
                 <script
                     dangerouslySetInnerHTML={{
-                        __html: `(function(){try{var d=document.documentElement;if(localStorage.getItem('cs-theme')==='light')d.classList.add('light');if(localStorage.getItem('cs-motion-off')==='1')d.classList.add('noanim')}catch(e){}})()`
+                        __html: `(function(){try{var d=document.documentElement;if(localStorage.getItem('cs-theme')==='light')d.classList.add('light');if(localStorage.getItem('cs-motion-off')==='1')d.classList.add('noanim');if(/^\\/(writing|projects)(\\/|$)/.test(location.pathname))d.classList.add('reading')}catch(e){}})()`
                     }}
                 />
             </head>
