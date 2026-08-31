@@ -9,6 +9,7 @@ import { userAtom } from '@/utils/store';
 import { useAuthStatus } from '@/contexts/AuthContext';
 import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs/components';
 import { ChevronDown, LayoutDashboard, LogOut, UserCircle } from 'lucide-react';
+import AdminRefresh from '@/components/AdminRefresh';
 
 const LINKS: { href: string; label: string }[] = [
     { href: '/home', label: 'Home' },
@@ -203,6 +204,7 @@ const AuroraNav: React.FC = () => {
                                             Dashboard
                                         </Link>
                                     </li>
+                                    <AdminRefresh onDone={() => setDropdownOpen(false)} />
                                 </ul>
                                 <div className="py-2 border-t" style={{ borderColor: 'var(--aurora-line)' }}>
                                     <LogoutLink
