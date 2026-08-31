@@ -89,10 +89,27 @@ const renderOptions = {
                   Your browser does not support the video tag.
                 </video>
               );
+            case "image/svg+xml":
+              // Next's optimizer refuses SVG unless dangerouslyAllowSVG is set
+              // — it answers 400 — and there is nothing to gain by rasterising
+              // vector art, so serve it straight from Contentful instead.
+              return (
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Image
+                    src={asset.url}
+                    height={asset.height}
+                    width={asset.width}
+                    alt={asset.description || 'Image'}
+                    className="h-auto w-full"
+                    unoptimized
+                  />
+                </Suspense>
+              );
             case "image/png":
             case "image/gif":
             case "image/jpeg":
             case "image/jpg":
+            case "image/webp":
               return (
                 <Suspense fallback={<LoadingSpinner />}>
                   <Image
