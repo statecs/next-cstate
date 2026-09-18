@@ -30,7 +30,7 @@ const STATUS: Record<OrbMode, string> = {
 };
 
 const HINT: Record<OrbMode, string> = {
-  idle: 'A live voice conversation about my work and experience',
+  idle: 'Tap the orb to start a live voice conversation',
   connecting: 'Setting up the microphone',
   listening: 'Go ahead — you can interrupt me at any time',
   thinking: '',
@@ -140,9 +140,9 @@ const VoiceOverlay: React.FC<VoiceOverlayProps> = ({
         <button
           type="button"
           className="aurora-voice-orb-btn"
-          onClick={mode === 'speaking' ? onInterrupt : undefined}
-          aria-disabled={mode !== 'speaking'}
-          aria-label="Interrupt"
+          onClick={mode === 'idle' ? onStart : mode === 'speaking' ? onInterrupt : undefined}
+          aria-disabled={mode !== 'idle' && mode !== 'speaking'}
+          aria-label={mode === 'idle' ? 'Start talking' : 'Interrupt'}
         >
           <VoiceOrb mode={mode} getMicLevel={getMicLevel} getOutputLevel={getOutputLevel} />
         </button>
@@ -157,12 +157,7 @@ const VoiceOverlay: React.FC<VoiceOverlayProps> = ({
       </div>
 
       <div className="aurora-voice-controls">
-        {mode === 'idle' ? (
-          <button type="button" onClick={onStart} className="aurora-voice-start">
-            <Mic aria-hidden="true" />
-            Start talking
-          </button>
-        ) : (
+        {mode !== 'idle' && (
           <button
             type="button"
             onClick={onTogglePause}
