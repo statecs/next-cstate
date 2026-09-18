@@ -2609,8 +2609,12 @@ html.light .aurora-skel::after {
     -webkit-tap-highlight-color: transparent;
 }
 
-.aurora-voice-orb-btn:not(:disabled) {
+.aurora-voice-orb-btn:not([aria-disabled="true"]) {
     cursor: pointer;
+}
+
+.aurora-voice:focus {
+    outline: none;
 }
 
 .aurora-voice-orb-btn:focus-visible {
