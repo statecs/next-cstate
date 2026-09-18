@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Mic } from 'lucide-react';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import config from '@/utils/config';
 import { fetchAllJourneys, fetchEditorialPage } from '@/utils/contentful';
@@ -84,6 +85,15 @@ const HomePage = async () => {
                             View my work <span className="arr" aria-hidden="true">→</span>
                         </Link>
                         <AuroraAskCta />
+                        <Link
+                            href="/voice"
+                            className="aurora-btn aurora-btn-voice"
+                            data-magnetic
+                            aria-label="Talk to me — start a voice conversation"
+                            title="Talk to me"
+                        >
+                            <Mic aria-hidden="true" />
+                        </Link>
                     </div>
                 </div>
                 <AuroraHeroHud />

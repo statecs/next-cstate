@@ -680,6 +680,26 @@ html.noanim .aurora-cursor-dot {
     transition: transform 0.3s;
 }
 
+/* The round mic beside "Ask me anything": same height as the pills, icon only. */
+.aurora-btn-voice {
+    padding: 0;
+    width: 54px;
+    height: 54px;
+    justify-content: center;
+    flex: none;
+}
+
+.aurora-btn-voice svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s, color 0.3s;
+}
+
+.aurora-btn-voice:hover svg {
+    color: var(--aurora-lav);
+    transform: scale(1.08);
+}
+
 .aurora-btn:hover .arr {
     transform: translateX(5px);
 }
@@ -2241,7 +2261,7 @@ body.aurora :focus-visible {
         padding: 7px 13px;
     }
     .aurora-cta-row {
-        gap: 10px;
+        gap: 8px;
         margin-top: 34px;
         flex-wrap: nowrap;
     }
@@ -2250,8 +2270,19 @@ body.aurora :focus-visible {
     }
     .aurora-cta-row .aurora-btn {
         justify-content: center;
-        padding: 12px 18px;
-        font-size: 0.88rem;
+        padding: 12px 14px;
+        font-size: 0.85rem;
+        gap: 6px;
+        white-space: nowrap;
+    }
+    .aurora-cta-row .aurora-btn-voice {
+        padding: 0;
+        width: 42px;
+        height: 42px;
+    }
+    .aurora-cta-row .aurora-btn-voice svg {
+        width: 18px;
+        height: 18px;
     }
     .aurora-scrollcue {
         bottom: 20px;
