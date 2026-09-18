@@ -1139,6 +1139,71 @@ html.noanim .aurora-cursor-dot {
     border-bottom-color: var(--aurora-lav);
 }
 
+/* Article SVG figures are authored on a light ground with a transparent
+   background. On the dark theme, inverting lightness and turning the hue
+   back 180° keeps the accent colours while flipping the ink and paper. */
+html:not(.light) .aurora-article-svg {
+    filter: invert(1) hue-rotate(180deg);
+}
+
+/* Article card grid — the [grid] … [/grid] block in a writing entry
+   (see components/PageHeader/cardGrid.tsx). Cards carry the right and bottom
+   rule and the frame the top and left one, so the lines meet without any
+   nth-child bookkeeping whatever the column count. */
+.aurora-cardgrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin: 2rem 0;
+    border-top: 1px solid var(--aurora-line);
+    border-left: 1px solid var(--aurora-line);
+}
+
+@media (min-width: 640px) {
+    .aurora-cardgrid {
+        grid-template-columns: repeat(var(--card-grid-cols, 2), minmax(0, 1fr));
+    }
+}
+
+.aurora-cardgrid-cell {
+    padding: 1.75rem 1.5rem;
+    border-right: 1px solid var(--aurora-line);
+    border-bottom: 1px solid var(--aurora-line);
+}
+
+@media (min-width: 640px) {
+    .aurora-cardgrid-cell {
+        padding: 2.25rem;
+    }
+}
+
+.aurora-cardgrid-index {
+    display: block;
+    margin-bottom: 1.25rem;
+    font-family: var(--aurora-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    color: var(--aurora-pink);
+}
+
+.aurora-cardgrid .aurora-cardgrid-cell :is(h1, h2, h3, h4, h5, h6) {
+    margin: 0 0 0.75rem;
+    font-family: var(--aurora-sans);
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--aurora-text);
+}
+
+.aurora-cardgrid .aurora-cardgrid-cell p {
+    margin: 0;
+    color: var(--aurora-muted);
+}
+
+.aurora-cardgrid .aurora-cardgrid-cell p + p {
+    margin-top: 0.75rem;
+}
+
 .aurora-ama-response {
     position: relative;
     text-align: left;

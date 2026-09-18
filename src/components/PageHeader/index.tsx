@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Button from '@/components/Button';
 import CodeBlock from './codeBlocks';
+import { groupCardGrids, cardGridRenderers } from './cardGrid';
 import { ExternalLinkIcon } from 'lucide-react'
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { getExternalUrl } from '@/utils/helpers';
@@ -78,6 +79,7 @@ const renderOptions = {
 
     return {
       renderNode: {
+        ...cardGridRenderers,
         [BLOCKS.EMBEDDED_ASSET]: (node: Block | Inline) => {
           const asset = assetMap.get(node.data.target.sys.id);
 
@@ -93,6 +95,8 @@ const renderOptions = {
               // Next's optimizer refuses SVG unless dangerouslyAllowSVG is set
               // — it answers 400 — and there is nothing to gain by rasterising
               // vector art, so serve it straight from Contentful instead.
+              // The diagrams are drawn for a light ground; .aurora-article-svg
+              // re-tones them on the dark theme.
               return (
                 <Suspense fallback={<LoadingSpinner />}>
                   <Image
@@ -100,7 +104,7 @@ const renderOptions = {
                     height={asset.height}
                     width={asset.width}
                     alt={asset.description || 'Image'}
-                    className="h-auto w-full"
+                    className="aurora-article-svg h-auto w-full"
                     unoptimized
                   />
                 </Suspense>
@@ -328,7 +332,7 @@ const PageHeader: React.FC<Props> = ({
                 <div className="mt-4 md:mt-6">
                     {description && typeof description !== 'string' && description.json && (
                            <div className={`text-[var(--aurora-text)] ${descriptionClass}`}>
-                            {documentToReactComponents(description.json, contentfulRenderOptions(description.links))}
+                            {documentToReactComponents(groupCardGrids(description.json), contentfulRenderOptions(description.links))}
                         </div>
                     )}
 
