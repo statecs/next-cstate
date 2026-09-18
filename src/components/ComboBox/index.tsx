@@ -267,7 +267,12 @@ const ComboBox: React.FC = () => {
     localStorage.setItem('chatResponse', response);
   };
 
-  const handleVoiceInputState = (isActive: boolean) => setIsVoiceInputActive(isActive);
+  const handleVoiceInputState = (isActive: boolean) => {
+    setIsVoiceInputActive(isActive);
+    // The transcript can land after the answer; don't leave the input locked
+    // once the session is over.
+    if (!isActive) setLoading(false);
+  };
 
   const hideSuggestions = loading || !!responseMessage;
 

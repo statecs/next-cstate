@@ -2558,3 +2558,160 @@ html.light .aurora-skel::after {
         display: none;
     }
 }
+
+/* --- voice session (full-screen, portalled to body) --- */
+
+.aurora-voice {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: grid;
+    grid-template-rows: 1fr auto auto;
+    justify-items: center;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--aurora-bg) 88%, transparent);
+    backdrop-filter: blur(28px) saturate(1.1);
+    -webkit-backdrop-filter: blur(28px) saturate(1.1);
+    color: var(--aurora-text);
+    animation: aurora-voice-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    /* The custom cursor lives at z-index 60, under this layer. */
+    cursor: auto;
+}
+
+@keyframes aurora-voice-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.aurora-voice-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    animation: aurora-voice-rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes aurora-voice-rise {
+    from { opacity: 0; transform: translateY(14px) scale(0.96); }
+    to { opacity: 1; transform: none; }
+}
+
+.aurora-voice-orb {
+    display: block;
+    width: min(320px, 78vw);
+    height: min(320px, 78vw);
+    margin-bottom: 4px;
+}
+
+.aurora-voice-status {
+    margin: 0;
+    font-family: var(--aurora-serif);
+    font-size: clamp(1.7rem, 4.6vw, 2.3rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-align: center;
+}
+
+.aurora-voice-hint {
+    margin: 0;
+    min-height: 1.5em;
+    color: var(--aurora-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    text-align: center;
+    max-width: 34ch;
+}
+
+.aurora-voice-caption {
+    width: 100%;
+    max-width: 560px;
+    min-height: 88px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 8px 30px;
+}
+
+.aurora-voice-caption p {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    text-align: center;
+    color: var(--aurora-text);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.aurora-voice-caption[data-user] p {
+    color: var(--aurora-muted);
+    font-style: italic;
+}
+
+.aurora-voice-caption[data-user] p::before { content: "\201C"; }
+.aurora-voice-caption[data-user] p::after { content: "\201D"; }
+
+.aurora-voice-controls {
+    display: flex;
+    gap: 14px;
+}
+
+.aurora-voice-controls button {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 1px solid var(--aurora-line2);
+    background: var(--aurora-glass2);
+    color: var(--aurora-text);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.aurora-voice-controls button svg {
+    width: 22px;
+    height: 22px;
+}
+
+.aurora-voice-controls button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    border-color: rgba(141, 192, 235, 0.45);
+}
+
+.aurora-voice-controls button:focus-visible {
+    outline: 2px solid var(--aurora-lav);
+    outline-offset: 3px;
+}
+
+.aurora-voice-controls button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.aurora-voice-controls button[aria-pressed="true"] {
+    background: var(--aurora-text);
+    color: var(--aurora-bg);
+    border-color: transparent;
+}
+
+.aurora-voice-end {
+    background: var(--aurora-text) !important;
+    color: var(--aurora-bg) !important;
+    border-color: transparent !important;
+}
+
+html.noanim .aurora-voice,
+html.noanim .aurora-voice-stage {
+    animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .aurora-voice,
+    .aurora-voice-stage {
+        animation: none;
+    }
+}

@@ -1,6 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Mic, X, Pause, Play } from 'lucide-react';
+'use client';
+
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Mic } from 'lucide-react';
 import { useAudioBufferManager } from '../../hooks/useAudioBufferManager';
+import VoiceOverlay from './VoiceOverlay';
+import type { OrbMode } from './VoiceOrb';
 
 interface VoiceInputProps {
   onVoiceInput: (input: string) => void;
@@ -8,301 +12,312 @@ interface VoiceInputProps {
   onVoiceInputStateChange: (state: boolean) => void;
 }
 
-const SPEECH_RMS_THRESHOLD = 0.025;
-const SPEECH_CONFIRM_FRAMES = 2;
+type Mode = 'idle' | OrbMode;
+
+const SOCKET_URL = 'wss://api2.cstate.se/audio-stream';
+
+// Barge-in: what counts as the user talking over the assistant. Echo of our
+// own playback leaks through the mic even with echo cancellation, so the bar
+// is an adaptive floor measured during playback, and speech has to sit above
+// it for a stretch — not a couple of 5 ms frames.
+const BARGE_MIN_RMS = 0.035;
+const BARGE_FLOOR_RATIO = 2.5;
+const BARGE_SUSTAIN_MS = 220;
+// Echo cancellers need a moment to converge once the speakers start.
+const BARGE_ARM_DELAY_MS = 400;
+// After playback ends, the room is still ringing; keep that out of the server VAD.
+const POST_PLAYBACK_MUTE_MS = 250;
+// Audio kept while deciding whether the user is interrupting, flushed to the
+// server once they are — so their first word isn't lost to the decision.
+const PRE_ROLL_MS = 320;
 
 const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantResponse, onVoiceInputStateChange }) => {
-  const [isListening, setIsListening] = useState(false);
-  const [isInterrupted, setIsInterrupted] = useState(false);
-  const isInterruptedRef = useRef(false);
+  const [mode, setMode] = useState<Mode>('idle');
+  const [error, setError] = useState<string | null>(null);
+  const [userText, setUserText] = useState('');
+  const [assistantText, setAssistantText] = useState('');
+  const modeRef = useRef<Mode>('idle');
+
+  const socketRef = useRef<WebSocket | null>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const workletNodeRef = useRef<AudioWorkletNode | null>(null);
-  const speechDetectionCounterRef = useRef(0);
-  const lastAudioChunkTimeRef = useRef<number>(0);
-  const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const mediaStreamRef = useRef<MediaStream | null>(null);
-  const socketRef = useRef<WebSocket | null>(null);
-  const { isPlaying, isPlayingRef, addAudioChunk, stopAudio, setOnPlaybackComplete } = useAudioBufferManager();
 
+  const micLevelRef = useRef(0);
+  const echoFloorRef = useRef(0);
+  const speechMsRef = useRef(0);
+  const preRollRef = useRef<ArrayBuffer[]>([]);
+
+  const {
+    isPlayingRef, playbackStartedAtRef, playbackEndedAtRef,
+    addAudioChunk, stopAudio, closeAudio, getOutputLevel,
+    setOnPlaybackStart, setOnPlaybackComplete,
+  } = useAudioBufferManager();
+
+  const callbacksRef = useRef({ onVoiceInput, onAssistantResponse, onVoiceInputStateChange });
   useEffect(() => {
-    return () => {
-      stopListening();
-    };
+    callbacksRef.current = { onVoiceInput, onAssistantResponse, onVoiceInputStateChange };
+  }, [onVoiceInput, onAssistantResponse, onVoiceInputStateChange]);
+
+  const changeMode = useCallback((next: Mode) => {
+    modeRef.current = next;
+    setMode(next);
   }, []);
 
   useEffect(() => {
-    setOnPlaybackComplete(() => {
-      // Playback done — mic is already active, server VAD handles next turn
+    setOnPlaybackStart(() => {
+      echoFloorRef.current = 0;
+      speechMsRef.current = 0;
+      preRollRef.current = [];
+      if (modeRef.current === 'listening' || modeRef.current === 'thinking') changeMode('speaking');
     });
-  }, [setOnPlaybackComplete]);
+    setOnPlaybackComplete(() => {
+      if (modeRef.current === 'speaking') changeMode('listening');
+    });
+  }, [setOnPlaybackStart, setOnPlaybackComplete, changeMode]);
 
-  useEffect(() => {
-    isInterruptedRef.current = isInterrupted;
-  }, [isInterrupted]);
+  const send = (data: ArrayBuffer | object) => {
+    const s = socketRef.current;
+    if (!s || s.readyState !== WebSocket.OPEN) return;
+    s.send(data instanceof ArrayBuffer ? data : JSON.stringify(data));
+  };
 
-  const startListening = async () => {
-    setError(null);
+  const teardownMic = () => {
+    mediaStreamRef.current?.getTracks().forEach(t => t.stop());
+    mediaStreamRef.current = null;
+    if (workletNodeRef.current) {
+      workletNodeRef.current.port.onmessage = null;
+      workletNodeRef.current.disconnect();
+      workletNodeRef.current = null;
+    }
+    audioContextRef.current?.close().catch(() => {});
+    audioContextRef.current = null;
+    micLevelRef.current = 0;
+  };
 
-    // Tear down any stale connection before starting fresh
-    if (socketRef.current) {
-      socketRef.current.onclose = null;
-      socketRef.current.close();
-      socketRef.current = null;
+  const bargeIn = () => {
+    stopAudio();
+    send({ type: 'interrupt' });
+    send({ type: 'reset' });
+    for (const buf of preRollRef.current) send(buf);
+    preRollRef.current = [];
+    speechMsRef.current = 0;
+    changeMode('listening');
+  };
+
+  const handleMicFrame = (audioData: Float32Array) => {
+    const sampleRate = audioContextRef.current?.sampleRate ?? 24000;
+    const frameMs = (audioData.length / sampleRate) * 1000;
+    const rms = calculateRMS(audioData);
+    micLevelRef.current = Math.max(rms, micLevelRef.current * 0.85);
+
+    if (modeRef.current === 'paused') return;
+
+    if (isPlayingRef.current) {
+      const now = Date.now();
+      if (now - playbackStartedAtRef.current < BARGE_ARM_DELAY_MS) return;
+
+      const pcm = floatTo16BitPCM(audioData);
+      preRollRef.current.push(pcm);
+      const maxFrames = Math.ceil(PRE_ROLL_MS / frameMs);
+      if (preRollRef.current.length > maxFrames) preRollRef.current.shift();
+
+      const floor = echoFloorRef.current;
+      echoFloorRef.current = floor === 0 ? rms : floor + (rms - floor) * 0.02;
+      const threshold = Math.max(BARGE_MIN_RMS, echoFloorRef.current * BARGE_FLOOR_RATIO);
+      if (rms > threshold) {
+        speechMsRef.current += frameMs;
+        if (speechMsRef.current >= BARGE_SUSTAIN_MS) bargeIn();
+      } else {
+        speechMsRef.current = Math.max(0, speechMsRef.current - frameMs * 1.5);
+      }
+      return;
     }
 
-    setIsListening(true);
-    setIsInterrupted(false);
-    setDropdownVisible(true);
-    onVoiceInputStateChange(true);
-
-    try {
-      socketRef.current = new WebSocket('wss://api2.cstate.se/audio-stream');
-      socketRef.current.binaryType = 'arraybuffer';
-
-      socketRef.current.onopen = () => {
-        console.log('WebSocket connection opened');
-      };
-
-      socketRef.current.onmessage = async (event) => {
-        if (event.data instanceof ArrayBuffer) {
-          const float32Data = new Float32Array(event.data);
-          if (float32Data.length > 0) {
-            lastAudioChunkTimeRef.current = Date.now();
-            addAudioChunk(float32Data);
-          } else {
-            console.warn('Received empty audio chunk from WebSocket');
-          }
-        } else {
-          try {
-            const message = JSON.parse(event.data);
-            if (message.type === 'ready') {
-              await setupAudioStream();
-            } else if (message.type === 'transcription') {
-              onVoiceInput(message.text);
-            } else if (message.type === 'assistant_response') {
-              onAssistantResponse(message.text);
-            }
-          } catch (error) {
-            console.error('Error parsing WebSocket message:', error);
-          }
-        }
-      };
-
-      socketRef.current.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        setError('WebSocket error occurred.');
-      };
-
-      socketRef.current.onclose = () => {
-        console.log('WebSocket connection closed');
-      };
-    } catch (err) {
-      console.error('Error starting listening:', err);
-      setError('Failed to start listening. Please try again.');
-      setIsListening(false);
-    }
+    if (Date.now() - playbackEndedAtRef.current < POST_PLAYBACK_MUTE_MS) return;
+    send(floatTo16BitPCM(audioData));
   };
 
   const setupAudioStream = async () => {
     try {
-      mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({
+      const stream = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       });
 
-      // Guard: WebSocket may have closed while waiting for mic permission
-      if (!socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {
-        mediaStreamRef.current.getTracks().forEach(t => t.stop());
-        mediaStreamRef.current = null;
+      // The socket may have closed, or the session ended, while the permission prompt was up.
+      if (modeRef.current === 'idle' || !socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {
+        stream.getTracks().forEach(t => t.stop());
         return;
       }
+      mediaStreamRef.current = stream;
 
-      audioContextRef.current = new AudioContext({ sampleRate: 24000 });
-      if (audioContextRef.current.state === 'suspended') {
-        await audioContextRef.current.resume();
-      }
-      await audioContextRef.current.audioWorklet.addModule('/audio-worklet-processor.js');
+      const ctx = new AudioContext({ sampleRate: 24000 });
+      audioContextRef.current = ctx;
+      if (ctx.state === 'suspended') await ctx.resume();
+      await ctx.audioWorklet.addModule('/audio-worklet-processor.js');
 
-      const source = audioContextRef.current.createMediaStreamSource(mediaStreamRef.current);
-      workletNodeRef.current = new AudioWorkletNode(audioContextRef.current, 'audio-processor');
+      const source = ctx.createMediaStreamSource(stream);
+      const node = new AudioWorkletNode(ctx, 'audio-processor');
+      node.port.onmessage = (event: MessageEvent<Float32Array>) => handleMicFrame(event.data);
+      source.connect(node);
+      node.connect(ctx.destination);
+      workletNodeRef.current = node;
 
-      workletNodeRef.current.port.onmessage = (event) => {
-        const audioData: Float32Array = event.data;
-
-        if (isPlayingRef.current && !isInterruptedRef.current) {
-          if (Date.now() - lastAudioChunkTimeRef.current < 1000) return;
-          const rms = calculateRMS(audioData);
-          if (rms > SPEECH_RMS_THRESHOLD) {
-            speechDetectionCounterRef.current++;
-            if (speechDetectionCounterRef.current >= SPEECH_CONFIRM_FRAMES) {
-              speechDetectionCounterRef.current = 0;
-              autoInterruptAndResume();
-            }
-          } else {
-            speechDetectionCounterRef.current = 0;
-          }
-          return;
-        }
-
-        speechDetectionCounterRef.current = 0;
-
-        if (!isInterruptedRef.current && socketRef.current?.readyState === WebSocket.OPEN) {
-          const int16Data = floatTo16BitPCM(audioData);
-          socketRef.current.send(int16Data);
-        }
-      };
-
-      source.connect(workletNodeRef.current);
-      workletNodeRef.current.connect(audioContextRef.current.destination);
+      changeMode(isPlayingRef.current ? 'speaking' : 'listening');
     } catch (err) {
       console.error('Error setting up audio stream:', err);
-      setError('Failed to set up audio stream. Please try again.');
-      setIsListening(false);
-      if (socketRef.current) {
-        socketRef.current.close();
-        socketRef.current = null;
-      }
+      setError('Microphone access is needed for a voice conversation');
+      changeMode('error');
     }
   };
 
-  const stopListening = () => {
-    setDropdownVisible(false);
-    setIsListening(false);
-    setIsInterrupted(false);
-    onVoiceInputStateChange(false);
-    isInterruptedRef.current = false;
-    stopAudio();
+  const startListening = () => {
+    setError(null);
+    setUserText('');
+    setAssistantText('');
+    changeMode('connecting');
+    callbacksRef.current.onVoiceInputStateChange(true);
 
     if (socketRef.current) {
+      socketRef.current.onclose = null;
+      socketRef.current.close();
+    }
+
+    const socket = new WebSocket(SOCKET_URL);
+    socket.binaryType = 'arraybuffer';
+    socketRef.current = socket;
+
+    socket.onmessage = async (event) => {
+      if (event.data instanceof ArrayBuffer) {
+        if (modeRef.current === 'paused' || modeRef.current === 'idle') return;
+        const chunk = new Float32Array(event.data);
+        if (chunk.length > 0) addAudioChunk(chunk);
+        return;
+      }
+      let message: any;
+      try { message = JSON.parse(event.data); } catch { return; }
+
+      switch (message.type) {
+        case 'ready':
+          await setupAudioStream();
+          break;
+        case 'speech_started':
+          setAssistantText('');
+          break;
+        case 'speech_stopped':
+          setUserText('');
+          if (modeRef.current === 'listening') changeMode('thinking');
+          break;
+        case 'transcription':
+          setUserText(message.text);
+          callbacksRef.current.onVoiceInput(message.text);
+          break;
+        case 'assistant_delta':
+          setAssistantText(prev => prev + message.text);
+          break;
+        case 'assistant_response':
+          setAssistantText(message.text);
+          callbacksRef.current.onAssistantResponse(message.text);
+          break;
+        default:
+          if (message.error) {
+            console.error('Voice session error:', message.error, message.details);
+            setError('The voice service is unavailable right now');
+            changeMode('error');
+          }
+      }
+    };
+
+    socket.onerror = (e) => {
+      console.error('WebSocket error:', e);
+      setError('Could not reach the voice service');
+      changeMode('error');
+    };
+
+    socket.onclose = () => {
+      if (modeRef.current !== 'idle' && modeRef.current !== 'error') {
+        setError('The connection was lost');
+        changeMode('error');
+      }
+      teardownMic();
+      stopAudio();
+    };
+  };
+
+  const stopListening = useCallback(() => {
+    if (socketRef.current) {
+      socketRef.current.onclose = null;
+      socketRef.current.onerror = null;
+      socketRef.current.onmessage = null;
       socketRef.current.close();
       socketRef.current = null;
     }
+    teardownMic();
+    closeAudio();
+    preRollRef.current = [];
+    changeMode('idle');
+    callbacksRef.current.onVoiceInputStateChange(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [closeAudio, changeMode]);
 
-    if (mediaStreamRef.current) {
-      mediaStreamRef.current.getTracks().forEach((track) => track.stop());
-      mediaStreamRef.current = null;
-    }
+  useEffect(() => () => stopListening(), [stopListening]);
 
-    if (workletNodeRef.current && audioContextRef.current) {
-      workletNodeRef.current.disconnect();
-      audioContextRef.current.close();
-      workletNodeRef.current = null;
-      audioContextRef.current = null;
-    }
-  };
-
-  const interruptVoiceInput = () => {
-    setIsInterrupted(true);
-    isInterruptedRef.current = true;
-    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify({ type: 'interrupt' }));
-    }
-    if (mediaStreamRef.current) {
-      mediaStreamRef.current.getTracks().forEach(track => track.stop());
-    }
-    if (workletNodeRef.current && audioContextRef.current) {
-      workletNodeRef.current.disconnect();
-      audioContextRef.current.close();
-      workletNodeRef.current = null;
-      audioContextRef.current = null;
+  const togglePause = async () => {
+    if (modeRef.current === 'paused') {
+      send({ type: 'reset' });
+      changeMode('connecting');
+      await setupAudioStream();
+      return;
     }
     stopAudio();
+    send({ type: 'interrupt' });
+    teardownMic();
+    changeMode('paused');
   };
 
-  const autoInterruptAndResume = async () => {
-    stopAudio();
-    if (socketRef.current?.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify({ type: 'interrupt' }));
-      socketRef.current.send(JSON.stringify({ type: 'reset' }));
-    }
-    if (mediaStreamRef.current) {
-      mediaStreamRef.current.getTracks().forEach(track => track.stop());
-    }
-    if (workletNodeRef.current && audioContextRef.current) {
-      workletNodeRef.current.disconnect();
-      audioContextRef.current.close();
-      workletNodeRef.current = null;
-      audioContextRef.current = null;
-    }
-    try {
-      await setupAudioStream();
-    } catch (err) {
-      console.error('Error auto-resuming after interrupt:', err);
-    }
-  };
-
-  const resumeVoiceInput = async () => {
-    setIsInterrupted(false);
-    isInterruptedRef.current = false;
-    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify({ type: 'reset' }));
-    }
-    try {
-      await setupAudioStream();
-    } catch (err) {
-      console.error('Error resuming media stream:', err);
-      setError('Failed to resume listening. Please try again.');
-    }
-  };
-
-  const calculateRMS = (buffer: Float32Array): number => {
-    let sum = 0;
-    for (let i = 0; i < buffer.length; i++) {
-      sum += buffer[i] * buffer[i];
-    }
-    return Math.sqrt(sum / buffer.length);
-  };
-
-  const floatTo16BitPCM = (input: Float32Array): ArrayBuffer => {
-    const buffer = new ArrayBuffer(input.length * 2);
-    const view = new DataView(buffer);
-    for (let i = 0; i < input.length; i++) {
-      let s = Math.max(-1, Math.min(1, input[i]));
-      view.setInt16(i * 2, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
-    }
-    return buffer;
-  };
+  const getMicLevel = useCallback(() => micLevelRef.current, []);
 
   return (
     <div className="absolute right-12 bottom-3 md:bottom-1.5 md:bottom-2.5">
       <button
-        onClick={isListening ? stopListening : startListening}
+        type="button"
+        onClick={startListening}
         className="p-2 rounded-full hover:bg-gray-300 dark:hover:bg-zinc-600 transition-colors duration-200 cursor-pointer"
-        aria-label={isListening ? 'Stop listening' : 'Start voice input'}
+        aria-label="Start a voice conversation"
       >
-        {isListening ? (
-          <X className="h-4 w-4 text-gray-500 dark:text-gray-400 cursor-pointer" />
-        ) : (
-          <Mic className="h-4 w-4 text-gray-500 dark:text-gray-400 cursor-pointer" />
-        )}
+        <Mic className="h-4 w-4 text-gray-500 dark:text-gray-400 cursor-pointer" />
       </button>
 
-      {dropdownVisible && (
-          <div className="relative inline-block">
-
-          <div className="absolute z-50 -left-32 mt-3 w-32 bg-white dark:bg-zinc-800 rounded-md shadow-lg border border-gray-200 dark:border-zinc-700 flex items-center justify-between p-1" style={{ height: '2rem' }}>
-            <svg className="w-6 h-6" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" stroke="#3B82F6" strokeWidth="2" fill="none" />
-              <circle cx="12" cy="12" r="10" stroke="#93C5FD" strokeWidth="2" fill="none" strokeDasharray="62.8" strokeDashoffset="62.8">
-              {!isInterrupted && (<animate attributeName="stroke-dashoffset" from="62.8" to="0" dur="2s" repeatCount="indefinite" />)}
-              </circle>
-            </svg>
-            <span className="text-xs text-gray-600 dark:text-gray-300 mx-1">
-              {isInterrupted ? 'Paused' : (isPlaying ? 'Playing' : 'Listening')}
-            </span>
-            <button
-              onClick={isInterrupted ? resumeVoiceInput : interruptVoiceInput}
-              className="p-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200"
-            >
-              {isInterrupted ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
-            </button>
-          </div>
-        </div>
+      {mode !== 'idle' && (
+        <VoiceOverlay
+          mode={mode}
+          error={error}
+          userText={userText}
+          assistantText={assistantText}
+          getMicLevel={getMicLevel}
+          getOutputLevel={getOutputLevel}
+          onTogglePause={togglePause}
+          onEnd={stopListening}
+        />
       )}
-
-      {error && <div className="fixed mt-2 text-sm text-red-500">{error}</div>}
     </div>
   );
+};
+
+const calculateRMS = (buffer: Float32Array): number => {
+  let sum = 0;
+  for (let i = 0; i < buffer.length; i++) sum += buffer[i] * buffer[i];
+  return Math.sqrt(sum / buffer.length);
+};
+
+const floatTo16BitPCM = (input: Float32Array): ArrayBuffer => {
+  const buffer = new ArrayBuffer(input.length * 2);
+  const view = new DataView(buffer);
+  for (let i = 0; i < input.length; i++) {
+    const s = Math.max(-1, Math.min(1, input[i]));
+    view.setInt16(i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+  }
+  return buffer;
 };
 
 export default VoiceInput;

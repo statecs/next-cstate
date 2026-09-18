@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 const READING_ROUTE = /^\/(writing|projects)(\/|$)/;
 
 // Dark theme: ice blue / steel / teal / slate — cool aurora, no lavender/pink
-const STOPS_DARK: Array<[number, number, number]> = [
+export const STOPS_DARK: Array<[number, number, number]> = [
     [141, 192, 235],
     [63, 127, 191],
     [79, 208, 181],
@@ -15,14 +15,14 @@ const STOPS_DARK: Array<[number, number, number]> = [
 ];
 
 // Light theme: steel blue / navy / teal / slate — matches the graphite palette
-const STOPS_LIGHT: Array<[number, number, number]> = [
+export const STOPS_LIGHT: Array<[number, number, number]> = [
     [52, 104, 156],
     [29, 78, 126],
     [14, 124, 107],
     [100, 116, 139],
 ];
 
-const ramp = (stops: Array<[number, number, number]>, h: number): [number, number, number] => {
+export const ramp = (stops: Array<[number, number, number]>, h: number): [number, number, number] => {
     h = (h % 1 + 1) % 1;
     const n = stops.length;
     const f = h * n;
