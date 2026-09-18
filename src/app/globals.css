@@ -1792,6 +1792,103 @@ html:not(.light) .aurora-article-svg {
     }
 }
 
+/* --- legal (privacy) --- */
+
+.aurora-legal {
+    max-width: 62ch;
+    padding-bottom: clamp(60px, 10vh, 120px);
+    font-family: var(--aurora-sans);
+    color: var(--aurora-muted);
+    line-height: 1.7;
+}
+
+.aurora-legal .aurora-legal-lede {
+    font-size: 1.25rem;
+    color: var(--aurora-text);
+    margin-bottom: 18px;
+}
+
+.aurora-legal > .aurora-mono {
+    display: block;
+    margin-bottom: 56px;
+}
+
+.aurora-legal h2 {
+    font-family: var(--aurora-serif);
+    font-weight: 400;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    color: var(--aurora-text);
+    border-top: 1px solid var(--aurora-line);
+    padding-top: 26px;
+    margin: 56px 0 20px;
+}
+
+.aurora-legal h3 {
+    font-family: var(--aurora-sans);
+    font-weight: 500;
+    font-size: 1.05rem;
+    color: var(--aurora-text);
+    margin: 30px 0 8px;
+}
+
+.aurora-legal p,
+.aurora-legal li {
+    font-size: 1.05rem;
+    margin-bottom: 16px;
+}
+
+.aurora-legal ul {
+    padding-left: 1.2em;
+    margin: 0 0 16px;
+}
+
+.aurora-legal li {
+    margin-bottom: 10px;
+}
+
+.aurora-legal li::marker {
+    color: var(--aurora-faint);
+}
+
+.aurora-legal strong {
+    font-weight: 500;
+    color: var(--aurora-text);
+}
+
+.aurora-legal code {
+    font-family: var(--aurora-mono);
+    font-size: 0.88em;
+    color: var(--aurora-text);
+    background: var(--aurora-line);
+    padding: 1px 6px;
+    border-radius: 6px;
+}
+
+.aurora-legal a {
+    color: var(--aurora-text);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color 0.2s;
+}
+
+.aurora-legal a:hover {
+    color: var(--aurora-lav);
+}
+
+.aurora-legal .aurora-legal-foot {
+    margin-top: 48px;
+}
+
+.aurora-legal .aurora-legal-foot a {
+    text-decoration: none;
+    font-family: var(--aurora-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
 /* --- reveal (intersection observer toggles .in) --- */
 
 .aurora-reveal {
@@ -2118,6 +2215,12 @@ html:not(.light) .aurora-article-svg {
     font-size: 0.72rem;
     flex-wrap: wrap;
     gap: 10px;
+}
+
+.aurora-foot-links {
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
 }
 
 .aurora-foot-link {

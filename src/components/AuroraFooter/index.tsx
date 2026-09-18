@@ -31,16 +31,21 @@ const AuroraFooter: React.FC = () => {
             )}
             <div className="aurora-foot-meta">
                 <span>© {new Date().getFullYear()} Christopher State · Stockholm</span>
-                <a
-                    href="https://github.com/statecs/next-cstate"
-                    className="aurora-foot-link"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Open source on GitHub"
-                >
-                    <Github size={12} aria-hidden="true" />
-                    Aurora · Flux
-                </a>
+                <span className="aurora-foot-links">
+                    <Link href="/privacy" className="aurora-foot-link">
+                        Privacy
+                    </Link>
+                    <a
+                        href="https://github.com/statecs/next-cstate"
+                        className="aurora-foot-link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Open source on GitHub"
+                    >
+                        <Github size={12} aria-hidden="true" />
+                        Aurora · Flux
+                    </a>
+                </span>
             </div>
         </footer>
     );
