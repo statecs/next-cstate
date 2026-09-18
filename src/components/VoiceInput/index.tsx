@@ -17,19 +17,28 @@ type Mode = 'idle' | OrbMode;
 const SOCKET_URL = 'wss://api2.cstate.se/audio-stream';
 
 // Barge-in: what counts as the user talking over the assistant. Echo of our
-// own playback leaks through the mic even with echo cancellation, so the bar
-// is an adaptive floor measured during playback, and speech has to sit above
-// it for a stretch — not a couple of 5 ms frames.
-const BARGE_MIN_RMS = 0.035;
-const BARGE_FLOOR_RATIO = 2.5;
-const BARGE_SUSTAIN_MS = 220;
+// own playback leaks through the mic even with echo cancellation, and on
+// phones the OS ducks the mic hard while the speaker plays — so a fixed
+// threshold is either tripped by echo or never reached by ducked speech. The
+// detector learns how much speaker output shows up in the mic (a coupling
+// ratio), predicts the echo from the live output level, and counts as speech
+// only what rises clearly above that prediction — for a stretch, not a
+// couple of 5 ms frames.
+const BARGE_MIN_RMS = 0.012;
+const BARGE_ECHO_RATIO = 1.6;
+const BARGE_AMBIENT_RATIO = 3;
+const BARGE_SUSTAIN_MS = 200;
 // Echo cancellers need a moment to converge once the speakers start.
-const BARGE_ARM_DELAY_MS = 400;
+const BARGE_ARM_DELAY_MS = 350;
+const DEBUG = () => { try { return localStorage.getItem('cs-voice-debug') === '1'; } catch { return false; } };
 // After playback ends, the room is still ringing; keep that out of the server VAD.
 const POST_PLAYBACK_MUTE_MS = 250;
 // Audio kept while deciding whether the user is interrupting, flushed to the
 // server once they are — so their first word isn't lost to the decision.
 const PRE_ROLL_MS = 320;
+// After a cancel, chunks and transcript already in flight keep arriving for
+// a moment; a new answer can't start this soon, so drop them.
+const POST_BARGE_DROP_MS = 600;
 
 const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantResponse, onVoiceInputStateChange }) => {
   const [mode, setMode] = useState<Mode>('idle');
@@ -44,8 +53,12 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
   const workletNodeRef = useRef<AudioWorkletNode | null>(null);
 
   const micLevelRef = useRef(0);
-  const echoFloorRef = useRef(0);
+  const ambientRef = useRef(0.01);
+  const couplingRef = useRef(0);
+  const outEnvRef = useRef(0);
   const speechMsRef = useRef(0);
+  const debugTickRef = useRef(0);
+  const bargedAtRef = useRef(0);
   const preRollRef = useRef<ArrayBuffer[]>([]);
 
   const {
@@ -66,7 +79,8 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
 
   useEffect(() => {
     setOnPlaybackStart(() => {
-      echoFloorRef.current = 0;
+      couplingRef.current = 0;
+      outEnvRef.current = 0;
       speechMsRef.current = 0;
       preRollRef.current = [];
       if (modeRef.current === 'listening' || modeRef.current === 'thinking') changeMode('speaking');
@@ -96,6 +110,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
   };
 
   const bargeIn = () => {
+    bargedAtRef.current = Date.now();
     stopAudio();
     send({ type: 'interrupt' });
     send({ type: 'reset' });
@@ -115,6 +130,11 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
 
     if (isPlayingRef.current) {
       const now = Date.now();
+      // Echo reaches the mic a little after the speaker: hold the output
+      // level's peaks so the prediction covers that lag.
+      const out = getOutputLevel();
+      outEnvRef.current = Math.max(out, outEnvRef.current * 0.97);
+      const outEnv = outEnvRef.current;
       if (now - playbackStartedAtRef.current < BARGE_ARM_DELAY_MS) return;
 
       const pcm = floatTo16BitPCM(audioData);
@@ -122,17 +142,38 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
       const maxFrames = Math.ceil(PRE_ROLL_MS / frameMs);
       if (preRollRef.current.length > maxFrames) preRollRef.current.shift();
 
-      const floor = echoFloorRef.current;
-      echoFloorRef.current = floor === 0 ? rms : floor + (rms - floor) * 0.02;
-      const threshold = Math.max(BARGE_MIN_RMS, echoFloorRef.current * BARGE_FLOOR_RATIO);
-      if (rms > threshold) {
+      const predictedEcho = couplingRef.current * outEnv;
+      const threshold = Math.max(
+        BARGE_MIN_RMS,
+        ambientRef.current * BARGE_AMBIENT_RATIO,
+        predictedEcho * BARGE_ECHO_RATIO + 0.004
+      );
+      const speech = rms > threshold;
+      if (speech) {
         speechMsRef.current += frameMs;
-        if (speechMsRef.current >= BARGE_SUSTAIN_MS) bargeIn();
       } else {
         speechMsRef.current = Math.max(0, speechMsRef.current - frameMs * 1.5);
+        // Only quiet frames teach the coupling, so speech can't inflate it.
+        if (outEnv > 0.01) {
+          const ratio = Math.min(3, rms / outEnv);
+          couplingRef.current = couplingRef.current === 0 ? ratio : couplingRef.current + (ratio - couplingRef.current) * 0.05;
+        }
+      }
+      if (DEBUG() && ++debugTickRef.current % 20 === 0) {
+        console.debug('[voice] rms', rms.toFixed(3), 'out', outEnv.toFixed(3), 'echo~', predictedEcho.toFixed(3), 'thr', threshold.toFixed(3), 'speechMs', speechMsRef.current | 0);
+      }
+      if (speechMsRef.current >= BARGE_SUSTAIN_MS) {
+        if (DEBUG()) console.debug('[voice] barge-in');
+        bargeIn();
       }
       return;
     }
+
+    // Track the room's quiet level while listening: a floor that falls fast
+    // and rises slowly, so the user's own speech doesn't drag it up.
+    ambientRef.current = rms < ambientRef.current
+      ? rms
+      : ambientRef.current + (rms - ambientRef.current) * 0.002;
 
     if (Date.now() - playbackEndedAtRef.current < POST_PLAYBACK_MUTE_MS) return;
     send(floatTo16BitPCM(audioData));
@@ -188,8 +229,9 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
     socketRef.current = socket;
 
     socket.onmessage = async (event) => {
+      const stale = Date.now() - bargedAtRef.current < POST_BARGE_DROP_MS;
       if (event.data instanceof ArrayBuffer) {
-        if (modeRef.current === 'paused' || modeRef.current === 'idle') return;
+        if (modeRef.current === 'paused' || modeRef.current === 'idle' || stale) return;
         const chunk = new Float32Array(event.data);
         if (chunk.length > 0) addAudioChunk(chunk);
         return;
@@ -213,7 +255,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
           callbacksRef.current.onVoiceInput(message.text);
           break;
         case 'assistant_delta':
-          setAssistantText(prev => prev + message.text);
+          if (!stale) setAssistantText(prev => prev + message.text);
           break;
         case 'assistant_response':
           setAssistantText(message.text);
@@ -277,6 +319,10 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
 
   const getMicLevel = useCallback(() => micLevelRef.current, []);
 
+  const interrupt = () => {
+    if (modeRef.current === 'speaking') bargeIn();
+  };
+
   return (
     <div className="absolute right-12 bottom-3 md:bottom-1.5 md:bottom-2.5">
       <button
@@ -297,6 +343,7 @@ const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput, onAssistantRespon
           getMicLevel={getMicLevel}
           getOutputLevel={getOutputLevel}
           onTogglePause={togglePause}
+          onInterrupt={interrupt}
           onEnd={stopListening}
         />
       )}

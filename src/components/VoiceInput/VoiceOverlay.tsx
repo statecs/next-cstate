@@ -13,6 +13,7 @@ interface VoiceOverlayProps {
   getMicLevel: () => number;
   getOutputLevel: () => number;
   onTogglePause: () => void;
+  onInterrupt: () => void;
   onEnd: () => void;
 }
 
@@ -29,13 +30,13 @@ const HINT: Record<OrbMode, string> = {
   connecting: 'Setting up the microphone',
   listening: 'Go ahead — you can interrupt me at any time',
   thinking: '',
-  speaking: 'Start talking to interrupt',
+  speaking: 'Start talking, or tap the orb, to interrupt',
   paused: 'Unmute to keep talking',
   error: '',
 };
 
 const VoiceOverlay: React.FC<VoiceOverlayProps> = ({
-  mode, error, userText, assistantText, getMicLevel, getOutputLevel, onTogglePause, onEnd,
+  mode, error, userText, assistantText, getMicLevel, getOutputLevel, onTogglePause, onInterrupt, onEnd,
 }) => {
   const endRef = useRef<HTMLButtonElement>(null);
   const onEndRef = useRef(onEnd);
@@ -69,7 +70,15 @@ const VoiceOverlay: React.FC<VoiceOverlayProps> = ({
   return createPortal(
     <div className="aurora-voice" role="dialog" aria-modal="true" aria-label="Voice conversation">
       <div className="aurora-voice-stage">
-        <VoiceOrb mode={mode} getMicLevel={getMicLevel} getOutputLevel={getOutputLevel} />
+        <button
+          type="button"
+          className="aurora-voice-orb-btn"
+          onClick={onInterrupt}
+          disabled={mode !== 'speaking'}
+          aria-label="Interrupt"
+        >
+          <VoiceOrb mode={mode} getMicLevel={getMicLevel} getOutputLevel={getOutputLevel} />
+        </button>
         <p className="aurora-voice-status" aria-live="polite">
           {error ?? STATUS[mode]}
         </p>
