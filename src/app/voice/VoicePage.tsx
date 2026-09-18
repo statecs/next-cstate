@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import VoiceOverlay from '@/components/VoiceInput/VoiceOverlay';
 import { useVoiceSession } from '@/components/VoiceInput/useVoiceSession';
@@ -12,12 +13,17 @@ import { useVoiceSession } from '@/components/VoiceInput/useVoiceSession';
  */
 const VoicePage = () => {
   const router = useRouter();
+  // The overlay portals into document.body, so it can't take part in prerendering.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const session = useVoiceSession({
     // Keep the last answer where the chat on /home shows it.
     onAssistantResponse: text => {
       try { localStorage.setItem('chatResponse', text); } catch { /* private mode */ }
     },
   });
+
+  if (!mounted) return null;
 
   return (
     <VoiceOverlay
