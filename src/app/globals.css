@@ -680,28 +680,69 @@ html.noanim .aurora-cursor-dot {
     transition: transform 0.3s;
 }
 
-/* The round mic beside "Ask me anything": same height as the pills, icon only. */
-.aurora-btn-voice {
-    padding: 0;
-    width: 54px;
-    height: 54px;
-    justify-content: center;
-    flex: none;
+/* "Ask me anything" and the mic: one pill, two buttons. The group carries the
+   border, glass and magnetic pull; the segments only carry their own hover. */
+.aurora-btn-group {
+    display: inline-flex;
+    align-items: stretch;
+    border-radius: 999px;
+    border: 1px solid var(--aurora-line2);
+    background: var(--aurora-glass);
+    backdrop-filter: blur(10px);
+    transition: border-color 0.3s;
+    will-change: transform;
 }
 
-.aurora-btn-voice svg {
-    width: 20px;
-    height: 20px;
+.aurora-btn-group:hover {
+    border-color: var(--aurora-lav);
+}
+
+.aurora-btn-group .aurora-btn-seg {
+    border: 0;
+    background: transparent;
+    backdrop-filter: none;
+    border-radius: 0;
+    will-change: auto;
+}
+
+.aurora-btn-group .aurora-btn-seg:first-child {
+    border-radius: 999px 0 0 999px;
+    padding-right: 22px;
+}
+
+.aurora-btn-group .aurora-btn-seg:last-child {
+    border-radius: 0 999px 999px 0;
+}
+
+.aurora-btn-group .aurora-btn-seg:hover {
+    background: var(--aurora-glass2);
+}
+
+.aurora-btn-group .aurora-btn-voice {
+    width: 54px;
+    padding: 0;
+    justify-content: center;
+    border-left: 1px solid var(--aurora-line2);
+    color: var(--aurora-muted);
+}
+
+.aurora-btn-group .aurora-btn-voice svg {
+    width: 19px;
+    height: 19px;
     transition: transform 0.3s, color 0.3s;
 }
 
-.aurora-btn-voice:hover svg {
-    color: var(--aurora-lav);
+.aurora-btn-group .aurora-btn-voice:hover {
+    color: var(--aurora-text);
+}
+
+.aurora-btn-group .aurora-btn-voice:hover svg {
     transform: scale(1.08);
 }
 
-.aurora-btn:hover .arr {
-    transform: translateX(5px);
+.aurora-btn-group .aurora-btn-seg:focus-visible {
+    outline: 2px solid var(--aurora-lav);
+    outline-offset: -3px;
 }
 
 .aurora-scrollcue {
@@ -2275,14 +2316,15 @@ body.aurora :focus-visible {
         gap: 6px;
         white-space: nowrap;
     }
-    .aurora-cta-row .aurora-btn-voice {
-        padding: 0;
-        width: 42px;
-        height: 42px;
+    .aurora-cta-row .aurora-btn-group .aurora-btn-seg:first-child {
+        padding-right: 14px;
     }
-    .aurora-cta-row .aurora-btn-voice svg {
-        width: 18px;
-        height: 18px;
+    .aurora-cta-row .aurora-btn-group .aurora-btn-voice {
+        width: 42px;
+    }
+    .aurora-cta-row .aurora-btn-group .aurora-btn-voice svg {
+        width: 17px;
+        height: 17px;
     }
     .aurora-scrollcue {
         bottom: 20px;

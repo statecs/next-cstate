@@ -6,7 +6,12 @@ import React from 'react';
 const FOCUS_WINDOW_MS = 4000;
 const FOCUS_POLL_MS = 80;
 
-const AuroraAskCta: React.FC = () => {
+interface AuroraAskCtaProps {
+    /** Render as one segment of a joined pill instead of a standalone button. */
+    segment?: boolean;
+}
+
+const AuroraAskCta: React.FC<AuroraAskCtaProps> = ({ segment = false }) => {
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -58,8 +63,8 @@ const AuroraAskCta: React.FC = () => {
     return (
         <a
             href="#ama"
-            className="aurora-btn"
-            data-magnetic
+            className={segment ? 'aurora-btn aurora-btn-seg' : 'aurora-btn'}
+            data-magnetic={segment ? undefined : ''}
             onClick={handleClick}
         >
             Ask me anything
