@@ -71,6 +71,9 @@ const VoiceOrb: React.FC<VoiceOrbProps> = ({ mode, getMicLevel, getOutputLevel, 
     let breathe = 0;
     let ringClock = 0;
     let running = true;
+    // With motion off the sphere still gets its aurora texture: the field runs
+    // for a moment at start, then freezes.
+    let warmup = 0;
 
     const frame = () => {
       const light = isLight();
@@ -87,7 +90,9 @@ const VoiceOrb: React.FC<VoiceOrbProps> = ({ mode, getMicLevel, getOutputLevel, 
       const target = m === 'paused' || m === 'error' ? -0.03 : level * 0.09;
       breathe += (target - breathe) * 0.12;
 
-      t += still ? 0 : (m === 'speaking' ? 0.010 : m === 'thinking' ? 0.012 : 0.0045);
+      const paintInner = !still || warmup < 80;
+      if (paintInner) warmup++;
+      t += still && warmup >= 80 ? 0 : (m === 'speaking' ? 0.010 : m === 'thinking' ? 0.012 : 0.0045);
       const scale = 1 + breathe + (still ? 0 : Math.sin(t * 2.4) * 0.008);
       const r = R * scale;
 
@@ -95,7 +100,10 @@ const VoiceOrb: React.FC<VoiceOrbProps> = ({ mode, getMicLevel, getOutputLevel, 
 
       // Halo — the orb's light spilling onto the backdrop, louder when louder.
       const hc = ramp(stops, t * 0.06);
-      const halo = ctx.createRadialGradient(C, C, r * 0.6, C, C, r * (1.55 + level * 0.35));
+      // Outer radius stays inside the canvas so the glow fades to nothing
+      // before the edge — otherwise the canvas's square shows as a box.
+      const haloR = Math.min(C - 1, r * (1.35 + level * 0.12));
+      const halo = ctx.createRadialGradient(C, C, r * 0.6, C, C, haloR);
       const haloA = light ? 0.10 + level * 0.14 : 0.16 + level * 0.28;
       halo.addColorStop(0, `rgba(${hc[0] | 0},${hc[1] | 0},${hc[2] | 0},${haloA})`);
       halo.addColorStop(1, `rgba(${hc[0] | 0},${hc[1] | 0},${hc[2] | 0},0)`);
@@ -129,49 +137,53 @@ const VoiceOrb: React.FC<VoiceOrbProps> = ({ mode, getMicLevel, getOutputLevel, 
       }
 
       // Inside the sphere: atmosphere, then the drifting aurora strokes.
-      ictx.globalCompositeOperation = 'source-over';
-      ictx.fillStyle = light ? `rgba(238,241,244,${still ? 1 : 0.16})` : `rgba(6,10,16,${still ? 1 : 0.13})`;
-      ictx.fillRect(0, 0, S, S);
+      if (paintInner) {
+        ictx.globalCompositeOperation = 'source-over';
+        ictx.fillStyle = light ? 'rgba(238,241,244,0.16)' : 'rgba(6,10,16,0.13)';
+        // In the frozen version, the last frames skip the fade so the strokes
+        // settle into trails instead of specks.
+        if (!still || warmup < 50) ictx.fillRect(0, 0, S, S);
 
-      const ax = C + Math.cos(t * 0.7) * R * 0.35;
-      const ay = C + Math.sin(t * 0.9) * R * 0.3;
-      ictx.globalCompositeOperation = light ? 'source-over' : 'lighter';
-      const bc = ramp(stops, t * 0.06 + 0.5);
-      const bg = ictx.createRadialGradient(ax, ay, 0, ax, ay, R * 1.1);
-      bg.addColorStop(0, `rgba(${bc[0] | 0},${bc[1] | 0},${bc[2] | 0},${light ? 0.05 : 0.09 + level * 0.06})`);
-      bg.addColorStop(1, 'rgba(0,0,0,0)');
-      ictx.fillStyle = bg;
-      ictx.fillRect(0, 0, S, S);
+        const ax = C + Math.cos(t * 0.7) * R * 0.35;
+        const ay = C + Math.sin(t * 0.9) * R * 0.3;
+        ictx.globalCompositeOperation = light ? 'source-over' : 'lighter';
+        const bc = ramp(stops, t * 0.06 + 0.5);
+        const bg = ictx.createRadialGradient(ax, ay, 0, ax, ay, R * 1.1);
+        bg.addColorStop(0, `rgba(${bc[0] | 0},${bc[1] | 0},${bc[2] | 0},${light ? 0.05 : 0.09 + level * 0.06})`);
+        bg.addColorStop(1, 'rgba(0,0,0,0)');
+        ictx.fillStyle = bg;
+        ictx.fillRect(0, 0, S, S);
 
-      if (!still) {
-        const drift = (m === 'speaking' ? 1.6 : m === 'thinking' ? 1.3 : 0.7) + level * 1.2;
-        ictx.lineWidth = DPR * (light ? 2 : 1.1);
-        const hShift = t * 0.1;
-        for (const p of parts) {
-          const ang = (Math.sin(p.x * 0.012 + t * 0.6) + Math.cos(p.y * 0.012 - t * 0.4)) * Math.PI;
-          let vx = Math.cos(ang) * p.sp * DPR * drift;
-          let vy = Math.sin(ang) * p.sp * DPR * drift;
-          const adx = ax - p.x;
-          const ady = ay - p.y;
-          const ad = Math.hypot(adx, ady) || 1;
-          vx += (adx / ad) * 0.18 * DPR * drift;
-          vy += (ady / ad) * 0.18 * DPR * drift;
-          const ox = p.x;
-          const oy = p.y;
-          p.x += vx;
-          p.y += vy;
-          if (Math.hypot(p.x - C, p.y - C) > R) {
-            const np = spawn();
-            p.x = np.x;
-            p.y = np.y;
-            continue;
+        {
+          const drift = (m === 'speaking' ? 1.6 : m === 'thinking' ? 1.3 : 0.7) + level * 1.2;
+          ictx.lineWidth = DPR * (light ? 2 : 1.1);
+          const hShift = t * 0.1;
+          for (const p of parts) {
+            const ang = (Math.sin(p.x * 0.012 + t * 0.6) + Math.cos(p.y * 0.012 - t * 0.4)) * Math.PI;
+            let vx = Math.cos(ang) * p.sp * DPR * drift;
+            let vy = Math.sin(ang) * p.sp * DPR * drift;
+            const adx = ax - p.x;
+            const ady = ay - p.y;
+            const ad = Math.hypot(adx, ady) || 1;
+            vx += (adx / ad) * 0.18 * DPR * drift;
+            vy += (ady / ad) * 0.18 * DPR * drift;
+            const ox = p.x;
+            const oy = p.y;
+            p.x += vx;
+            p.y += vy;
+            if (Math.hypot(p.x - C, p.y - C) > R) {
+              const np = spawn();
+              p.x = np.x;
+              p.y = np.y;
+              continue;
+            }
+            const c = ramp(stops, p.hue + hShift);
+            ictx.strokeStyle = `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${light ? 0.45 : 0.5})`;
+            ictx.beginPath();
+            ictx.moveTo(ox, oy);
+            ictx.lineTo(p.x, p.y);
+            ictx.stroke();
           }
-          const c = ramp(stops, p.hue + hShift);
-          ictx.strokeStyle = `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${light ? 0.32 : 0.5})`;
-          ictx.beginPath();
-          ictx.moveTo(ox, oy);
-          ictx.lineTo(p.x, p.y);
-          ictx.stroke();
         }
       }
 
