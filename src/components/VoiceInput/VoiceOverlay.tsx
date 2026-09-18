@@ -15,9 +15,12 @@ interface VoiceOverlayProps {
   onTogglePause: () => void;
   onInterrupt: () => void;
   onEnd: () => void;
+  /** Shown in the idle state (the /voice page) to begin a session. */
+  onStart?: () => void;
 }
 
 const STATUS: Record<OrbMode, string> = {
+  idle: 'Talk to me',
   connecting: 'Connecting',
   listening: 'Listening',
   thinking: 'Thinking',
@@ -27,6 +30,7 @@ const STATUS: Record<OrbMode, string> = {
 };
 
 const HINT: Record<OrbMode, string> = {
+  idle: 'A live voice conversation about my work and experience',
   connecting: 'Setting up the microphone',
   listening: 'Go ahead — you can interrupt me at any time',
   thinking: '',
@@ -36,7 +40,7 @@ const HINT: Record<OrbMode, string> = {
 };
 
 const VoiceOverlay: React.FC<VoiceOverlayProps> = ({
-  mode, error, userText, assistantText, getMicLevel, getOutputLevel, onTogglePause, onInterrupt, onEnd,
+  mode, error, userText, assistantText, getMicLevel, getOutputLevel, onTogglePause, onInterrupt, onEnd, onStart,
 }) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const onEndRef = useRef(onEnd);
@@ -153,20 +157,27 @@ const VoiceOverlay: React.FC<VoiceOverlayProps> = ({
       </div>
 
       <div className="aurora-voice-controls">
-        <button
-          type="button"
-          onClick={onTogglePause}
-          disabled={mode === 'connecting' || mode === 'error'}
-          aria-pressed={mode === 'paused'}
-          aria-label={mode === 'paused' ? 'Unmute microphone' : 'Mute microphone'}
-        >
-          {mode === 'paused' ? <MicOff /> : <Mic />}
-        </button>
+        {mode === 'idle' ? (
+          <button type="button" onClick={onStart} className="aurora-voice-start">
+            <Mic aria-hidden="true" />
+            Start talking
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={onTogglePause}
+            disabled={mode === 'connecting' || mode === 'error'}
+            aria-pressed={mode === 'paused'}
+            aria-label={mode === 'paused' ? 'Unmute microphone' : 'Mute microphone'}
+          >
+            {mode === 'paused' ? <MicOff /> : <Mic />}
+          </button>
+        )}
         <button
           type="button"
           onClick={onEnd}
           className="aurora-voice-end"
-          aria-label="End voice conversation"
+          aria-label={mode === 'idle' ? 'Close' : 'End voice conversation'}
         >
           <X />
         </button>

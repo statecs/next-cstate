@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { STOPS_DARK, STOPS_LIGHT, ramp } from '@/components/AuroraCanvas';
 
-export type OrbMode = 'connecting' | 'listening' | 'thinking' | 'speaking' | 'paused' | 'error';
+export type OrbMode = 'idle' | 'connecting' | 'listening' | 'thinking' | 'speaking' | 'paused' | 'error';
 
 interface VoiceOrbProps {
   mode: OrbMode;

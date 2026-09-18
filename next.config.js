@@ -57,6 +57,7 @@ module.exports = {
             {source: '/login', destination: '/api/auth/login', permanent: true},
             // /about is now a section of /home
             {source: '/about', destination: '/home#about', permanent: true},
+            {source: '/voicemode', destination: '/voice', permanent: true},
         ];
     },
     images: {

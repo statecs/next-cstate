@@ -50,7 +50,7 @@ export function middleware(request: NextRequest) {
     const excludedRoutes = [
         'home', 'about', 'dashboard', 'contact',
         'writing', 'links', 'collections', 'projects',
-        'api', 'images', 'login'
+        'api', 'images', 'login', 'voice', 'voicemode'
     ];
 
     if (excludedRoutes.includes(slug)) {
