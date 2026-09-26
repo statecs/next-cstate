@@ -52,10 +52,10 @@ const AuroraFooter: React.FC = () => {
                         className="aurora-foot-link"
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label="Open source on GitHub"
                     >
                         <Github size={12} aria-hidden="true" />
-                        Aurora · Flux
+                        Open source — view the code
+                        <span aria-hidden="true">↗</span>
                     </a>
                 </span>
             </div>
