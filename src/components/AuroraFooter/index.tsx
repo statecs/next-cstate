@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Github } from 'lucide-react';
+import { SOCIAL_LINKS } from '@/utils/constants';
 
 const HIDE_CARD_PATHS = ['/contact'];
 const HIDE_FOOTER_PREFIXES = ['/writing/', '/projects/'];
@@ -32,6 +33,17 @@ const AuroraFooter: React.FC = () => {
             <div className="aurora-foot-meta">
                 <span>© {new Date().getFullYear()} Christopher State · Stockholm</span>
                 <span className="aurora-foot-links">
+                    {SOCIAL_LINKS.map(s => (
+                        <a
+                            key={s.url}
+                            href={s.url}
+                            className="aurora-foot-link"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {s.label}
+                        </a>
+                    ))}
                     <Link href="/privacy" className="aurora-foot-link">
                         Privacy
                     </Link>

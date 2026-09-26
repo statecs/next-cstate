@@ -20,6 +20,13 @@ interface Profile {
   icon?: JSX.Element;
 }
 
+/** Profiles linked from the hero and the footer. */
+export const SOCIAL_LINKS = [
+  { key: 'linkedin', label: 'LinkedIn', url: 'https://www.linkedin.com/in/state/' },
+  { key: 'github', label: 'GitHub', url: 'https://github.com/statecs' },
+  { key: 'x', label: 'X', url: 'https://x.com/statecs' },
+] as const;
+
 export const PROFILES: Record<string, Profile> = {
   github: {
     title: 'GitHub',

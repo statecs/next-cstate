@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import AuroraSocialIcons from '@/components/AuroraSocialIcons';
 
 const fmt = new Intl.DateTimeFormat('en-GB', {
     hour: '2-digit',
@@ -9,7 +10,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Europe/Stockholm',
 });
 
-/** Decorative corner readouts in the hero: coordinates + live Stockholm time. */
+/** Hero corner readouts: coordinates, and social links over the live Stockholm time. */
 const AuroraHeroHud: React.FC = () => {
     const [time, setTime] = useState<string | null>(null);
 
@@ -21,9 +22,12 @@ const AuroraHeroHud: React.FC = () => {
     }, []);
 
     return (
-        <div className="aurora-hud" aria-hidden="true">
-            <span>59.3293°N — 18.0686°E</span>
-            <span>STHLM {time ?? '--:--:--'}</span>
+        <div className="aurora-hud">
+            <span className="aurora-hud-readout" aria-hidden="true">59.3293°N — 18.0686°E</span>
+            <div className="aurora-hud-right">
+                <AuroraSocialIcons />
+                <span className="aurora-hud-readout" aria-hidden="true">STHLM {time ?? '--:--:--'}</span>
+            </div>
         </div>
     );
 };

@@ -10,6 +10,7 @@ import AuroraAskCta from '@/components/AuroraAskCta';
 import AuroraVoiceCta from '@/components/AuroraVoiceCta';
 import AuroraHeroFX from '@/components/AuroraHeroFX';
 import AuroraHeroHud from '@/components/AuroraHeroHud';
+import AuroraSocialIcons from '@/components/AuroraSocialIcons';
 
 const SKILLS = ['UX Research', 'Accessibility', 'Prompt Engineering', 'Design Systems', 'Front-end', 'Prototyping'];
 
@@ -125,6 +126,8 @@ const HomePage = async () => {
                                     </p>
                                 </>
                             )}
+                            {/* The hero shows these on wider screens. */}
+                            <AuroraSocialIcons className="aurora-bio-social" />
                         </div>
 
                         <aside className="aurora-side-card aurora-reveal">
