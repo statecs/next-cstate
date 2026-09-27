@@ -116,8 +116,8 @@ const CollectionPage = async ({params}: Props) => {
                             description={collection?.showDescription ? collection.description : null}
                         />
                     </div>
-                                    {/* Photo slider at the bottom — hidden on mobile, hero handles it */}
-                <div className="hidden sm:flex flex-grow px-4 sm:px-8 md:justify-center">
+                {/* Photo slider below the write-up. The hero shows only the cover, so this stays on mobile too. */}
+                <div className="flex flex-grow px-4 sm:px-8 md:justify-center">
                     <div className="max-w-6xl mx-auto w-full">
                         <BannerPhotoCollection {...collection} key={collection.slug} />
                     </div>
