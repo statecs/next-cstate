@@ -98,9 +98,12 @@ const CollectionPage = async ({params}: Props) => {
                     metaRole={collection.metaRole}
                     metaTools={collection.metaTools}
                     metaDuration={collection.metaDuration}
+                    metaEvent={collection.metaEvent}
                     coverImage={collection.coverImage.url}
                     ctaLabel={collection.ctaLabel}
                     ctaUrl={collection.ctaUrl}
+                    secondaryCtaLabel={collection.secondaryCtaLabel}
+                    secondaryCtaUrl={collection.secondaryCtaUrl}
                     backHref="/projects"
                     backLabel="All projects"
                     kindLabel="Project"

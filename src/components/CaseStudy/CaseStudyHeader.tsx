@@ -5,6 +5,13 @@ import Link from 'next/link';
 import { ExternalLinkIcon } from 'lucide-react';
 import BackLink from '@/components/BackLink';
 
+/** Keeps hyphenated words like "party-game" on one line, so a large title
+ *  never breaks after the hyphen. */
+const keepHyphenated = (text: string) =>
+    text.split(/(\S+-\S+)/).map((part, i) =>
+        i % 2 ? <span key={i} className="whitespace-nowrap">{part}</span> : part
+    );
+
 interface CaseStudyHeaderProps {
     title: string;
     titleHighlight?: string;
@@ -14,11 +21,15 @@ interface CaseStudyHeaderProps {
     metaTools?: string;
     metaDuration?: string;
     metaResponses?: string;
+    metaEvent?: string;
     coverImage?: string;
     coverImageDescription?: string;
     slug?: string;
     ctaLabel?: string;
     ctaUrl?: string;
+    /** Quieter text link beside the CTA, e.g. the source code. */
+    secondaryCtaLabel?: string;
+    secondaryCtaUrl?: string;
     /** Index this entry belongs to. Omitted, no back link is drawn. */
     backHref?: string;
     backLabel?: string;
@@ -37,27 +48,31 @@ export const CaseStudyHeader = ({
     metaTools,
     metaDuration,
     metaResponses,
+    metaEvent,
     coverImage,
     coverImageDescription,
     slug,
     ctaLabel,
     ctaUrl,
+    secondaryCtaLabel,
+    secondaryCtaUrl,
     backHref,
     backLabel = 'Back',
     kindLabel = 'Project',
     indexNumber,
     dateLabel,
 }: CaseStudyHeaderProps) => {
-    const parts = titleHighlight ? title.split(titleHighlight) : [title];
+    const parts = (titleHighlight ? title.split(titleHighlight) : [title]).map(keepHyphenated);
 
     const metaItems = [
         { label: 'Role', value: metaRole },
         { label: 'Tools', value: metaTools },
         { label: 'Duration', value: metaDuration },
         { label: 'Responses', value: metaResponses },
+        { label: 'Event', value: metaEvent },
     ].filter(item => item.value);
 
-    const cta = ctaLabel && ctaUrl && (
+    const primaryCta = ctaLabel && ctaUrl && (
         <Link
             href={ctaUrl}
             target="_blank"
@@ -67,6 +82,25 @@ export const CaseStudyHeader = ({
             <span>{ctaLabel}</span>
             <ExternalLinkIcon size={14} />
         </Link>
+    );
+
+    const secondaryCta = secondaryCtaLabel && secondaryCtaUrl && (
+        <Link
+            href={secondaryCtaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 py-3 text-[11px] font-semibold uppercase tracking-widest whitespace-nowrap text-[var(--aurora-muted)] underline-offset-4 transition-colors duration-150 hover:text-[var(--aurora-text)] hover:underline"
+        >
+            <span>{secondaryCtaLabel}</span>
+            <ExternalLinkIcon size={14} />
+        </Link>
+    );
+
+    const cta = (primaryCta || secondaryCta) && (
+        <div className="flex items-center gap-6 flex-wrap">
+            {primaryCta}
+            {secondaryCta}
+        </div>
     );
 
     return (
@@ -84,7 +118,7 @@ export const CaseStudyHeader = ({
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
                     <div className="absolute inset-0 flex flex-col justify-end p-5">
                         <h1
-                            className="font-serif leading-[0.88] tracking-[-0.04em] text-white"
+                            className="font-serif leading-[0.88] tracking-[-0.04em] text-white [text-wrap:balance]"
                             style={{ fontSize: 'clamp(28px, 8vw, 52px)' }}
                         >
                             {titleHighlight ? (
@@ -93,7 +127,7 @@ export const CaseStudyHeader = ({
                                     <em className="text-[var(--aurora-lav)]">{titleHighlight}</em>
                                     {parts[1]}
                                 </>
-                            ) : title}
+                            ) : parts[0]}
                         </h1>
                     </div>
                 </div>
@@ -133,7 +167,7 @@ export const CaseStudyHeader = ({
 
                     {/* H1 */}
                     <h1
-                        className="font-serif leading-[0.86] tracking-[-0.045em] text-[var(--aurora-text)] mb-6"
+                        className="font-serif leading-[0.86] tracking-[-0.045em] text-[var(--aurora-text)] mb-6 [text-wrap:balance]"
                         style={{ fontSize: 'clamp(48px, 10vw, 140px)' }}
                     >
                         {titleHighlight ? (
@@ -143,7 +177,7 @@ export const CaseStudyHeader = ({
                                 {parts[1]}
                             </>
                         ) : (
-                            title
+                            parts[0]
                         )}
                     </h1>
 
@@ -160,14 +194,10 @@ export const CaseStudyHeader = ({
                     {/* Tags */}
                     {tags?.length ? (
                         <div className="flex flex-wrap gap-2 mb-2">
-                            {tags.slice(0, 5).map((tag, i) => (
+                            {tags.slice(0, 5).map(tag => (
                                 <span
                                     key={tag}
-                                    className={
-                                        i === 0
-                                            ? 'font-mono text-[10px] uppercase tracking-[0.08em] px-3 py-1.5 rounded-full bg-[var(--aurora-lav)] text-[var(--aurora-bg)] font-semibold'
-                                            : 'font-mono text-[10px] uppercase tracking-[0.08em] px-3 py-1.5 rounded-full border border-[var(--aurora-line2)] text-[var(--aurora-muted)]'
-                                    }
+                                    className="font-mono text-[10px] uppercase tracking-[0.08em] px-3 py-1.5 rounded-full border border-[var(--aurora-line2)] text-[var(--aurora-muted)]"
                                 >
                                     {tag}
                                 </span>

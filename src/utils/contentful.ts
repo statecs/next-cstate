@@ -389,6 +389,9 @@ export const fetchCollection = async (
                 metaRole
                 metaTools
                 metaDuration
+                metaEvent
+                secondaryCtaLabel
+                secondaryCtaUrl
                 photoSort
                 photosCollection(limit: 50) {
                     items {

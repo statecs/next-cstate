@@ -34,6 +34,9 @@ interface PhotoCollection {
     metaRole?: string;
     metaTools?: string;
     metaDuration?: string;
+    metaEvent?: string;
+    secondaryCtaLabel?: string;
+    secondaryCtaUrl?: string;
     description?: string;
     isFeatured?: boolean;
     isPublic?: boolean;
