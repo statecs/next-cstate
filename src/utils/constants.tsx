@@ -27,6 +27,26 @@ export const SOCIAL_LINKS = [
   { key: 'x', label: 'X', url: 'https://x.com/statecs' },
 ] as const;
 
+export type ProductKey = 'notely' | 'altvision' | 'tillsa' | 'verifa';
+
+export interface ProductLink {
+  key: ProductKey;
+  label: string;
+  host: string;
+  url: string;
+  blurb: string;
+  /** Shown as a pill but not linked yet; the pill says "Coming soon" instead. */
+  comingSoon?: boolean;
+}
+
+/** Apps I've built, linked as quick shortcuts from the hero and the about section. */
+export const PRODUCT_LINKS: readonly ProductLink[] = [
+  { key: 'notely', label: 'Notely', host: 'notely.se', url: 'https://notely.se', blurb: 'AI notes from audio' },
+  { key: 'altvision', label: 'AltVision', host: 'altvision.se', url: 'https://altvision.se', blurb: 'AI alt text for images' },
+  { key: 'tillsa', label: 'Tillsa', host: 'tillsa.se', url: 'https://tillsa.se', blurb: 'Shared shopping list' },
+  { key: 'verifa', label: 'Verifa', host: 'verifa.se', url: 'https://verifa.se', blurb: 'AI bookkeeping', comingSoon: true },
+];
+
 export const PROFILES: Record<string, Profile> = {
   github: {
     title: 'GitHub',

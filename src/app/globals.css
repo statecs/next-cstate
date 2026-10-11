@@ -615,6 +615,120 @@ html.noanim .aurora-cursor-dot {
     gap: 14px;
 }
 
+.aurora-hud-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+/* --- app shortcuts: icon + domain pills --- */
+
+.aurora-products {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    /* The hero readouts around it ignore the pointer. */
+    pointer-events: auto;
+}
+
+/* In the hero the pills sit in two equal columns, so a fourth or sixth app
+   grows the block by one row instead of pushing the row into the scroll cue. */
+.aurora-hud-left .aurora-products {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+}
+
+.aurora-products a,
+.aurora-products .soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 34px;
+    padding: 0 13px 0 11px;
+    border-radius: 999px;
+    border: 1px solid var(--aurora-line);
+    background: var(--aurora-glass);
+    color: var(--aurora-muted);
+    font-family: var(--aurora-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: none;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: 0.25s;
+    backdrop-filter: blur(10px);
+}
+
+.aurora-hud-left .aurora-products a,
+.aurora-hud-left .aurora-products .soon {
+    width: 100%;
+}
+
+.aurora-products a:hover,
+.aurora-products a:focus-visible {
+    color: var(--aurora-text);
+    border-color: var(--aurora-line2);
+}
+
+.aurora-products a:hover svg {
+    color: var(--aurora-lav);
+}
+
+/* Not linked yet: same pill, dimmed, with a tooltip instead of a destination. */
+.aurora-products .soon {
+    position: relative;
+    margin: 0;
+    cursor: default;
+    opacity: 0.55;
+    border-style: dashed;
+    line-height: 1;
+}
+
+.aurora-products .soon:hover,
+.aurora-products .soon:focus-visible,
+.aurora-products .soon[data-open] {
+    opacity: 0.8;
+}
+
+/* Beside the pill, so it never covers the row above it in the hero grid. */
+.aurora-tip {
+    position: absolute;
+    left: calc(100% + 10px);
+    top: 50%;
+    transform: translate(-4px, -50%);
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--aurora-line2);
+    background: var(--aurora-bg, #0b1117);
+    color: var(--aurora-text);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.aurora-products .soon:hover .aurora-tip,
+.aurora-products .soon:focus-visible .aurora-tip,
+.aurora-products .soon[data-open] .aurora-tip {
+    opacity: 1;
+    transform: translate(0, -50%);
+}
+
+/* In the about section only on small screens, where the hero hides its readouts. */
+.aurora-bio-products {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+}
+
 .aurora-social {
     display: flex;
     gap: 8px;
@@ -660,6 +774,25 @@ html.noanim .aurora-cursor-dot {
     .aurora-bio-social a {
         width: 40px;
         height: 40px;
+    }
+    .aurora-bio-products {
+        display: flex;
+    }
+    .aurora-bio-products a,
+    .aurora-bio-products .soon {
+        height: 40px;
+        font-size: 0.74rem;
+    }
+    /* Under the pill here: beside it would run off the right edge of the screen. */
+    .aurora-bio-products .aurora-tip {
+        left: 0;
+        top: calc(100% + 8px);
+        transform: translate(0, -4px);
+    }
+    .aurora-bio-products .soon:hover .aurora-tip,
+    .aurora-bio-products .soon:focus-visible .aurora-tip,
+    .aurora-bio-products .soon[data-open] .aurora-tip {
+        transform: translate(0, 0);
     }
 }
 
