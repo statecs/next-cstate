@@ -87,7 +87,7 @@ const AuroraNav: React.FC = () => {
         <header className="aurora-nav">
             <Link href="/home" className="aurora-brand" aria-label="Christopher State — home">
                 <Image
-                    src="/images/me.jpeg"
+                    src="/images/portrait.jpg"
                     alt=""
                     width={42}
                     height={42}
