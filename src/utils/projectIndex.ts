@@ -1,3 +1,5 @@
+import { PRODUCT_LINKS } from '@/utils/constants';
+
 /**
  * One ordering for the projects index, shared by the index page and the detail
  * pages. The cards are numbered by position in this list, and a detail page
@@ -25,6 +27,15 @@ const timeOf = (entry: {published?: string; date?: string}): number => {
 
 /** Newest first, by the date the entry is shown by. */
 export const byNewest = (a: Post, b: Post) => timeOf(b) - timeOf(a);
+
+/**
+ * Projects that are one of the apps in PRODUCT_LINKS. /projects shows those as
+ * app cards at the top, so the index — the grid, the sidebar and the card
+ * numbers — leaves them out rather than listing them twice.
+ */
+const APP_PROJECT_SLUGS = new Set(
+    PRODUCT_LINKS.map(app => app.projectSlug).filter((slug): slug is string => !!slug)
+);
 
 /** Contentful gives collections and case studies separately; this is the merge. */
 export const buildProjectIndex = (
@@ -59,7 +70,9 @@ export const buildProjectIndex = (
     // A case study curated into the navigation is already in navProjects; the
     // nav copy wins, since that is the one carrying the curated url.
     const seen = new Set(navProjects.map(p => p.slug));
-    return [...navProjects, ...caseStudyPosts.filter(p => !seen.has(p.slug))].sort(byNewest);
+    return [...navProjects, ...caseStudyPosts.filter(p => !seen.has(p.slug))]
+        .filter(p => !APP_PROJECT_SLUGS.has(p.slug))
+        .sort(byNewest);
 };
 
 /** Card number for an entry, e.g. "007". Undefined if it is not in the index. */

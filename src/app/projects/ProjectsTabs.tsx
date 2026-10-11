@@ -77,6 +77,13 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects }) => {
 
                 <AuroraAppCards className={enterClass} style={enterStyle(300)} />
 
+                {/* Everything below is the filtered index: case studies and
+                    projects, separate from the apps above. */}
+                <div className={`aurora-sec-head aurora-work-head ${enterClass}`} style={enterStyle(380)}>
+                    <h2>Other projects</h2>
+                    <span className="aurora-mono">Case studies &amp; projects</span>
+                </div>
+
                 <div className={`aurora-filters ${enterClass}`} style={enterStyle(420)}>
                     {topTags.length > 0 && (
                         <div role="group" aria-label="Filter by tag" className="aurora-filters-group">

@@ -1574,23 +1574,21 @@ html:not(.light) .aurora-article-svg {
     color: var(--aurora-lav);
 }
 
-/* --- /projects: apps I've built --- */
+/* --- /projects: apps I've built, then the other projects --- */
 
 .aurora-apps {
-    padding: 28px 0 44px;
+    padding: 36px 0 64px;
 }
 
-.aurora-apps h2 {
-    margin: 0 0 16px;
-    font-weight: 400;
+.aurora-apps .aurora-sec-head,
+.aurora-work-head {
+    margin-bottom: 28px;
 }
 
 .aurora-apps-grid {
     display: grid;
-    /* auto-fit lets the cards share the full row; a fifth app adds a column
-       until they no longer fit, then wraps. */
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -1602,42 +1600,33 @@ html:not(.light) .aurora-article-svg {
 
 .aurora-apps-card {
     flex: 1;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-areas:
-        "icon name"
-        "icon blurb"
-        "host host";
-    /* The blurb row takes the slack, so domains line up along the bottom. */
-    grid-template-rows: auto 1fr auto;
-    column-gap: 14px;
-    row-gap: 2px;
-    padding: 18px 20px;
-    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px 26px;
+    border-radius: 20px;
     border: 1px solid var(--aurora-line);
     background: var(--aurora-glass);
     color: var(--aurora-text);
-    text-decoration: none;
     backdrop-filter: blur(10px);
-    transition: border-color 0.25s, background 0.25s, transform 0.25s;
+    transition: border-color 0.25s, background 0.25s;
 }
 
-a.aurora-apps-card:hover,
-a.aurora-apps-card:focus-visible {
+.aurora-apps-card:not(.soon):hover {
     border-color: var(--aurora-line2);
     background: var(--aurora-glass2);
-    transform: translateY(-2px);
 }
 
-a.aurora-apps-card:focus-visible {
-    outline: 2px solid var(--aurora-lav);
-    outline-offset: 3px;
+.aurora-apps-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
 }
 
 .aurora-apps-icon {
-    grid-area: icon;
-    width: 40px;
-    height: 40px;
+    flex: none;
+    width: 44px;
+    height: 44px;
     border-radius: 12px;
     border: 1px solid var(--aurora-line2);
     display: grid;
@@ -1646,87 +1635,131 @@ a.aurora-apps-card:focus-visible {
     transition: color 0.25s;
 }
 
-a.aurora-apps-card:hover .aurora-apps-icon {
+.aurora-apps-card:not(.soon):hover .aurora-apps-icon {
     color: var(--aurora-lav);
 }
 
 .aurora-apps-name {
-    grid-area: name;
+    margin: 0;
+    font-family: var(--aurora-sans);
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 1.1rem;
     line-height: 1.3;
+    color: var(--aurora-text);
 }
 
 .aurora-apps-blurb {
-    grid-area: blurb;
+    margin: 0;
     color: var(--aurora-muted);
     font-size: 0.9rem;
     line-height: 1.4;
 }
 
-.aurora-apps-host {
-    grid-area: host;
-    margin-top: 14px;
+.aurora-apps-desc {
+    margin: 0;
+    color: var(--aurora-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    /* Takes the slack, so the footers line up across a row. */
+    flex: 1;
+}
+
+.aurora-apps-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--aurora-line);
+}
+
+.aurora-apps-platforms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.aurora-apps-platforms li {
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--aurora-line);
+    color: var(--aurora-muted);
+    font-size: 0.75rem;
+    line-height: 1.4;
+}
+
+.aurora-apps-links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.aurora-apps-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 0 13px;
+    border-radius: 999px;
+    border: 1px solid var(--aurora-line);
+    color: var(--aurora-muted);
     font-family: var(--aurora-mono);
     font-size: 0.7rem;
-    letter-spacing: 0.08em;
-    color: var(--aurora-faint);
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
 
-a.aurora-apps-card:hover .aurora-apps-host {
-    color: var(--aurora-muted);
+.aurora-apps-link.primary {
+    border-color: var(--aurora-line2);
+    color: var(--aurora-text);
 }
 
-/* Not live yet: the same card, dimmed and dashed, without a link. */
+.aurora-apps-link:hover,
+.aurora-apps-link:focus-visible {
+    color: var(--aurora-text);
+    border-color: rgba(141, 192, 235, 0.45);
+    background: var(--aurora-glass2);
+}
+
+.aurora-apps-link:focus-visible {
+    outline: 2px solid var(--aurora-lav);
+    outline-offset: 2px;
+}
+
+/* Not live yet: the same card, dimmed and dashed, without links. */
 .aurora-apps-card.soon {
     border-style: dashed;
     background: transparent;
-    opacity: 0.6;
+    opacity: 0.65;
 }
 
-.aurora-apps-card.soon .aurora-apps-host {
-    text-transform: uppercase;
+.aurora-apps-soon {
+    font-family: var(--aurora-mono);
+    font-size: 0.7rem;
     letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--aurora-faint);
 }
 
-/* Tablets: two by two rather than three and an orphan. */
-@media (min-width: 561px) and (max-width: 1100px) {
-    .aurora-apps-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+/* Phones: one card per row, now that each holds a paragraph. */
+@media (max-width: 640px) {
+    .aurora-apps {
+        padding: 24px 0 48px;
     }
-}
-
-/* Phones: two narrow columns, icon above the name. */
-@media (max-width: 560px) {
     .aurora-apps-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
+        grid-template-columns: 1fr;
+        gap: 12px;
     }
     .aurora-apps-card {
-        grid-template-columns: 1fr;
-        grid-template-areas:
-            "icon"
-            "name"
-            "blurb"
-            "host";
-        grid-template-rows: auto auto 1fr auto;
-        padding: 16px;
-    }
-    .aurora-apps-icon {
-        margin-bottom: 10px;
-        width: 36px;
-        height: 36px;
-    }
-    .aurora-apps-host {
-        margin-top: 10px;
-        overflow-wrap: anywhere;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    a.aurora-apps-card:hover,
-    a.aurora-apps-card:focus-visible {
-        transform: none;
+        padding: 20px;
     }
 }
 

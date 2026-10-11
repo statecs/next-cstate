@@ -35,16 +35,44 @@ export interface ProductLink {
   host: string;
   url: string;
   blurb: string;
+  /** A sentence or two for the /projects cards, from the app's own site. */
+  description: string;
+  /**
+   * Slug of the app's own page under /projects, if it has one. The cards link
+   * to it, and it is left out of the "Other projects" grid so the app is not
+   * listed twice.
+   */
+  projectSlug?: string;
+  /** Where it runs, when the app's site says so. */
+  platforms?: readonly string[];
   /** Shown as a pill but not linked yet; the pill says "Coming soon" instead. */
   comingSoon?: boolean;
 }
 
 /** Apps I've built, linked as quick shortcuts from the hero and the about section. */
 export const PRODUCT_LINKS: readonly ProductLink[] = [
-  { key: 'notely', label: 'Notely', host: 'notely.se', url: 'https://notely.se', blurb: 'AI notes from audio' },
-  { key: 'altvision', label: 'AltVision', host: 'altvision.se', url: 'https://altvision.se', blurb: 'AI alt text for images' },
-  { key: 'tillsa', label: 'Tillsa', host: 'tillsa.se', url: 'https://tillsa.se', blurb: 'Shared shopping list' },
-  { key: 'verifa', label: 'Verifa', host: 'verifa.se', url: 'https://verifa.se', blurb: 'AI bookkeeping', comingSoon: true },
+  {
+    key: 'notely', label: 'Notely', host: 'notely.se', url: 'https://notely.se', blurb: 'AI notes from audio',
+    description: 'Turns meetings, lectures and interviews into notes, with automatic transcription, summaries and AI insights. Transcribes and translates in 30 languages.',
+    platforms: ['iOS', 'Android', 'macOS'],
+    projectSlug: 'notely-ai',
+  },
+  {
+    key: 'altvision', label: 'AltVision', host: 'altvision.se', url: 'https://altvision.se', blurb: 'AI alt text for images',
+    description: 'Writes precise alt text for images by reading both the image and the text around it, and flags images that have none. Works in English and Swedish.',
+    platforms: ['Chrome', 'Firefox', 'WordPress'],
+    projectSlug: 'altvision',
+  },
+  {
+    key: 'tillsa', label: 'Tillsa', host: 'tillsa.se', url: 'https://tillsa.se', blurb: 'Shared shopping list',
+    description: 'One shopping and grocery list for the people you live with. Share a single link and ticks sync within seconds. Free and private.',
+    platforms: ['iPhone', 'iPad', 'Mac'],
+  },
+  {
+    key: 'verifa', label: 'Verifa', host: 'verifa.se', url: 'https://verifa.se', blurb: 'AI bookkeeping',
+    description: 'Reads receipts and invoices with AI, suggests entries against the Swedish BAS chart of accounts and creates finished vouchers. For sole traders and limited companies.',
+    comingSoon: true,
+  },
 ];
 
 export const PROFILES: Record<string, Profile> = {
