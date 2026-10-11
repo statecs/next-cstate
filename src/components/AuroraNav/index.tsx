@@ -2,6 +2,10 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
+// Imported, not referenced from /public: the production nginx serves /images/
+// from a separate legacy folder, so new files under public/images never reach
+// it. An import is bundled under /_next/static with a hashed name instead.
+import portrait from '@/assets/portrait.jpg';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAtom } from 'jotai';
@@ -87,7 +91,7 @@ const AuroraNav: React.FC = () => {
         <header className="aurora-nav">
             <Link href="/home" className="aurora-brand" aria-label="Christopher State — home">
                 <Image
-                    src="/images/portrait.jpg"
+                    src={portrait}
                     alt=""
                     width={42}
                     height={42}
