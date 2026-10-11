@@ -18,7 +18,7 @@ const AuroraProductLinks: React.FC<{ className?: string }> = ({ className }) => 
         {PRODUCT_LINKS.map(p => (
             <li key={p.key}>
                 {p.comingSoon ? (
-                    <ComingSoonPill id={`soon-${p.key}`} label={p.label} host={p.host}>
+                    <ComingSoonPill label={p.label} host={p.host}>
                         {ICONS[p.key]}
                     </ComingSoonPill>
                 ) : (

@@ -2919,6 +2919,120 @@ html.light .aurora-skel::after {
     }
 }
 
+/* --- ask dialog (the hero's "Ask me anything", portalled to body) --- */
+
+.aurora-ask {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: grid;
+    place-items: center;
+    padding: max(24px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--aurora-bg) 82%, transparent);
+    backdrop-filter: blur(24px) saturate(1.1);
+    -webkit-backdrop-filter: blur(24px) saturate(1.1);
+    color: var(--aurora-text);
+    animation: aurora-voice-in 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    /* The custom cursor lives at z-index 60, under this layer. */
+    cursor: auto;
+}
+
+.aurora-ask:focus {
+    outline: none;
+}
+
+.aurora-ask-card {
+    width: min(820px, 100%);
+    max-height: calc(100dvh - 48px);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    isolation: isolate;
+    background: linear-gradient(180deg, var(--aurora-glass2), var(--aurora-glass)), var(--aurora-bg);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+    animation: aurora-voice-rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.aurora-ask-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: clamp(36px, 5vw, 60px) clamp(20px, 5vw, 60px);
+}
+
+/* The page copy caps the answer and scrolls it on its own; here the body
+   already scrolls, so let the answer run. */
+.aurora-ask .aurora-ama-response p {
+    max-height: none;
+    overflow: visible;
+}
+
+.aurora-ask-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--aurora-line2);
+    background: var(--aurora-glass2);
+    color: var(--aurora-muted);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.aurora-ask-close svg {
+    width: 18px;
+    height: 18px;
+}
+
+.aurora-ask-close:hover {
+    color: var(--aurora-text);
+    border-color: rgba(141, 192, 235, 0.45);
+}
+
+.aurora-ask-close:focus-visible {
+    outline: 2px solid var(--aurora-lav);
+    outline-offset: 3px;
+}
+
+/* Phones: a full-screen sheet. dvh tracks the on-screen keyboard and browser
+   bars, so the input is not pushed out of view. */
+@media (max-width: 640px) {
+    .aurora-ask {
+        padding: 0;
+        place-items: stretch;
+    }
+    .aurora-ask-card {
+        width: 100%;
+        max-height: none;
+        height: 100dvh;
+        border-radius: 0;
+        border: 0;
+    }
+    .aurora-ask-card::after {
+        display: none;
+    }
+    .aurora-ask-body {
+        padding: max(64px, calc(env(safe-area-inset-top) + 56px)) 16px max(28px, env(safe-area-inset-bottom));
+    }
+    .aurora-ask-close {
+        top: max(12px, env(safe-area-inset-top));
+        right: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .aurora-ask,
+    .aurora-ask-card {
+        animation: none;
+    }
+}
+
 /* --- voice session (full-screen, portalled to body) --- */
 
 .aurora-voice {

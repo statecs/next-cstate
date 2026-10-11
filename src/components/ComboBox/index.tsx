@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useMemo, KeyboardEvent } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useId, KeyboardEvent } from 'react';
 import { sendMessageToResponseStream, sendMessageToClaudeAPI, textToSpeech } from '@/utils/threadService';
 import { useAtom } from 'jotai';
 import { footerVisibilityAtom, responseMessageLengthAtom } from '@/utils/store';
@@ -13,7 +13,19 @@ const SUGGESTIONS: string[] = [
   'How do you use AI in design?',
 ];
 
-const ComboBox: React.FC = () => {
+/** Fired when an answer lands, so another open copy of the chat can show it. */
+export const CHAT_SYNC_EVENT = 'aurora:chat-sync';
+
+interface ComboBoxProps {
+  /** The input's id. The section copy keeps the long-standing "queryInput". */
+  inputId?: string;
+  /** Start empty, ignoring the last saved answer, and focus the input on mount. */
+  fresh?: boolean;
+}
+
+const ComboBox: React.FC<ComboBoxProps> = ({ inputId = 'queryInput', fresh = false }) => {
+  const uid = useId();
+  const suggestListId = `${uid}-suggest`;
   const [inputValue, setInputValue] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [, setFooterVisible] = useAtom(footerVisibilityAtom);
@@ -52,11 +64,35 @@ const ComboBox: React.FC = () => {
     if (responseMessage) setResponseMessageLength(responseMessage.length);
   }, [responseMessage, setResponseMessageLength]);
 
-  // Retrieve cached response on mount
+  // Retrieve cached response on mount, unless this copy starts fresh.
   useEffect(() => {
+    if (fresh) {
+      inputRef.current?.focus({ preventScroll: true });
+      return;
+    }
     const cachedResponse = localStorage.getItem('chatResponse');
     if (cachedResponse) setResponseMessage(cachedResponse);
-  }, []);
+  }, [fresh]);
+
+  // Another copy (the hero's ask dialog) saved a new answer: show it here too,
+  // unless this copy is busy with its own question.
+  const loadingRef = useRef(false);
+  useEffect(() => {
+    loadingRef.current = loading;
+  }, [loading]);
+
+  useEffect(() => {
+    const onSync = (e: Event) => {
+      if ((e as CustomEvent<string>).detail === uid || loadingRef.current) return;
+      const cached = localStorage.getItem('chatResponse');
+      if (cached) setResponseMessage(cached);
+    };
+    document.addEventListener(CHAT_SYNC_EVENT, onSync);
+    return () => document.removeEventListener(CHAT_SYNC_EVENT, onSync);
+  }, [uid]);
+
+  const announceAnswer = () =>
+    document.dispatchEvent(new CustomEvent(CHAT_SYNC_EVENT, { detail: uid }));
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event) return;
@@ -95,6 +131,7 @@ const ComboBox: React.FC = () => {
           } else if (data.type === 'done') {
             localStorage.setItem('previousResponseId', data.responseId);
             setLoading(false);
+            announceAnswer();
           }
         }
       }
@@ -114,6 +151,7 @@ const ComboBox: React.FC = () => {
       const response = await sendMessageToClaudeAPI(message);
       setResponseMessage(response);
       localStorage.setItem('chatResponse', response);
+      announceAnswer();
     } catch (error) {
       console.error('Failed to send message to Claude:', error);
       setResponseMessage('Failed to send message to Claude');
@@ -157,6 +195,9 @@ const ComboBox: React.FC = () => {
       return;
     }
     if (e.key === 'Escape') {
+      // Closing the suggestion list uses up this Escape, so a dialog around
+      // the chat stays open; a second Escape closes the dialog.
+      if (showSuggestList) e.preventDefault();
       setIsFocused(false);
       setHighlightIdx(-1);
     }
@@ -175,18 +216,6 @@ const ComboBox: React.FC = () => {
     setFooterVisible(true);
     handleSendMessage(suggestion);
   };
-
-  useEffect(() => {
-    const onAskShow = () => {
-      setResponseMessage(null);
-      localStorage.removeItem('chatResponse');
-      window.setTimeout(() => {
-        inputRef.current?.focus({ preventScroll: true });
-      }, 0);
-    };
-    document.addEventListener('aurora:ask-show', onAskShow);
-    return () => document.removeEventListener('aurora:ask-show', onAskShow);
-  }, []);
 
   useEffect(() => {
     // Reset highlight when filtered list changes (typing narrows the list)
@@ -265,6 +294,7 @@ const ComboBox: React.FC = () => {
     setResponseMessage(response);
     responseMessageRef.current = response;
     localStorage.setItem('chatResponse', response);
+    announceAnswer();
   };
 
   const handleVoiceInputState = (isActive: boolean) => {
@@ -281,7 +311,7 @@ const ComboBox: React.FC = () => {
       <div className="aurora-ama-input">
         <input
           ref={inputRef}
-          id="queryInput"
+          id={inputId}
           type="text"
           value={inputValue}
           onChange={handleInputChange}
@@ -303,10 +333,10 @@ const ComboBox: React.FC = () => {
           aria-label="Ask me anything"
           aria-autocomplete="list"
           aria-expanded={showSuggestList}
-          aria-controls="aurora-ama-suggest-list"
+          aria-controls={suggestListId}
           aria-activedescendant={
             showSuggestList && highlightIdx >= 0
-              ? `aurora-ama-suggest-${highlightIdx}`
+              ? `${suggestListId}-${highlightIdx}`
               : undefined
           }
           role="combobox"
@@ -330,14 +360,14 @@ const ComboBox: React.FC = () => {
 
         {showSuggestList && (
           <ul
-            id="aurora-ama-suggest-list"
+            id={suggestListId}
             role="listbox"
             className="aurora-ama-suggest"
           >
             {filtered.map((s, i) => (
               <li key={s} role="presentation">
                 <button
-                  id={`aurora-ama-suggest-${i}`}
+                  id={`${suggestListId}-${i}`}
                   type="button"
                   role="option"
                   aria-selected={highlightIdx === i}

@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 
 interface Props {
-    id: string;
     label: string;
     host: string;
     children: React.ReactNode;
@@ -14,7 +13,10 @@ interface Props {
  * tooltip through CSS; a click or tap shows it for a moment too, since touch has
  * no hover.
  */
-const ComingSoonPill: React.FC<Props> = ({ id, label, host, children }) => {
+const ComingSoonPill: React.FC<Props> = ({ label, host, children }) => {
+    // The pills render twice on the home page (hero and about), so the
+    // tooltip id must be unique per copy.
+    const id = useId();
     const [open, setOpen] = useState(false);
 
     useEffect(() => {

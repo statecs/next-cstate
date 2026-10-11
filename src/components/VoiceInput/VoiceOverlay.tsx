@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Mic, MicOff, X } from 'lucide-react';
 import VoiceOrb, { OrbMode } from './VoiceOrb';
+import { useModalDialog } from '@/hooks/useModalDialog';
 
 interface VoiceOverlayProps {
   mode: OrbMode;
@@ -43,83 +44,7 @@ const VoiceOverlay: React.FC<VoiceOverlayProps> = ({
   mode, error, userText, assistantText, getMicLevel, getOutputLevel, onTogglePause, onInterrupt, onEnd, onStart,
 }) => {
   const rootRef = useRef<HTMLDivElement>(null);
-  const onEndRef = useRef(onEnd);
-  useEffect(() => { onEndRef.current = onEnd; }, [onEnd]);
-
-  // A modal in every sense: the page behind is inert to keyboard and screen
-  // readers, Tab cycles within the dialog, focus lands on the dialog so its
-  // name and status are announced, and goes back to the opener afterwards.
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    const opener = document.activeElement as HTMLElement | null;
-    const prev = document.documentElement.style.overflow;
-    document.documentElement.style.overflow = 'hidden';
-
-    const siblings = Array.from(document.body.children).filter(
-      (el): el is HTMLElement => el instanceof HTMLElement && el !== root
-    );
-    const restore = siblings.map(el => ({ el, inert: el.inert, hidden: el.getAttribute('aria-hidden') }));
-    siblings.forEach(el => {
-      el.inert = true;
-      el.setAttribute('aria-hidden', 'true');
-    });
-
-    root.focus({ preventScroll: true });
-
-    const focusables = () =>
-      Array.from(
-        root.querySelectorAll<HTMLElement>('button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
-      ).filter(el => el.offsetParent !== null);
-
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        onEndRef.current();
-        return;
-      }
-      if (e.key !== 'Tab') return;
-      const items = focusables();
-      if (items.length === 0) {
-        e.preventDefault();
-        root.focus();
-        return;
-      }
-      const first = items[0];
-      const last = items[items.length - 1];
-      const active = document.activeElement;
-      if (e.shiftKey && (active === first || active === root || !root.contains(active))) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && (active === last || !root.contains(active))) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-
-    // Anything that still manages to focus outside (e.g. VoiceOver's cursor
-    // on a browser without inert) is pulled back in.
-    const onFocusIn = (e: FocusEvent) => {
-      if (!root.contains(e.target as Node)) {
-        e.stopPropagation();
-        (focusables()[0] ?? root).focus();
-      }
-    };
-
-    document.addEventListener('keydown', onKey);
-    document.addEventListener('focusin', onFocusIn);
-    return () => {
-      document.documentElement.style.overflow = prev;
-      document.removeEventListener('keydown', onKey);
-      document.removeEventListener('focusin', onFocusIn);
-      restore.forEach(({ el, inert, hidden }) => {
-        el.inert = inert;
-        if (hidden === null) el.removeAttribute('aria-hidden');
-        else el.setAttribute('aria-hidden', hidden);
-      });
-      opener?.focus?.({ preventScroll: true });
-    };
-  }, []);
+  useModalDialog(rootRef, onEnd);
 
   const caption = assistantText || userText;
   const captionIsUser = !assistantText && !!userText;

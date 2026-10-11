@@ -27,12 +27,6 @@ const LazyComboBox = () => {
     useEffect(() => {
         if (show) return;
 
-        // The hero's "Ask me anything" button scrolls here and focuses the input
-        // shortly after, so mount on its signal too rather than waiting for the
-        // observer to catch up.
-        const onAsk = () => setShow(true);
-        document.addEventListener('aurora:ask-show', onAsk);
-
         const node = host.current;
         const io = node
             ? new IntersectionObserver(
@@ -46,7 +40,6 @@ const LazyComboBox = () => {
         if (node && io) io.observe(node);
 
         return () => {
-            document.removeEventListener('aurora:ask-show', onAsk);
             io?.disconnect();
         };
     }, [show]);
