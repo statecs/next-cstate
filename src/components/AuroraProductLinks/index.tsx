@@ -2,11 +2,17 @@ import { AudioLinesIcon, FileCheckIcon, ScanEyeIcon, ShoppingBasketIcon } from '
 import { PRODUCT_LINKS, type ProductKey } from '@/utils/constants';
 import ComingSoonPill from './ComingSoonPill';
 
-const ICONS: Record<ProductKey, JSX.Element> = {
-    notely: <AudioLinesIcon size={14} strokeWidth={1.6} aria-hidden="true" />,
-    altvision: <ScanEyeIcon size={14} strokeWidth={1.6} aria-hidden="true" />,
-    tillsa: <ShoppingBasketIcon size={14} strokeWidth={1.6} aria-hidden="true" />,
-    verifa: <FileCheckIcon size={14} strokeWidth={1.6} aria-hidden="true" />,
+const ICON_COMPONENTS: Record<ProductKey, typeof AudioLinesIcon> = {
+    notely: AudioLinesIcon,
+    altvision: ScanEyeIcon,
+    tillsa: ShoppingBasketIcon,
+    verifa: FileCheckIcon,
+};
+
+/** The app's icon, shared by the home page pills and the /projects cards. */
+export const ProductIcon: React.FC<{ product: ProductKey; size?: number }> = ({ product, size = 14 }) => {
+    const Icon = ICON_COMPONENTS[product];
+    return <Icon size={size} strokeWidth={1.6} aria-hidden="true" />;
 };
 
 /**
@@ -19,7 +25,7 @@ const AuroraProductLinks: React.FC<{ className?: string }> = ({ className }) => 
             <li key={p.key}>
                 {p.comingSoon ? (
                     <ComingSoonPill label={p.label} host={p.host}>
-                        {ICONS[p.key]}
+                        <ProductIcon product={p.key} />
                     </ComingSoonPill>
                 ) : (
                     <a
@@ -29,7 +35,7 @@ const AuroraProductLinks: React.FC<{ className?: string }> = ({ className }) => 
                         aria-label={`${p.label} — ${p.blurb} (opens in a new tab)`}
                         title={`${p.label} — ${p.blurb}`}
                     >
-                        {ICONS[p.key]}
+                        <ProductIcon product={p.key} />
                         <span>{p.host}</span>
                     </a>
                 )}

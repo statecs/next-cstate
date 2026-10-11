@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import AuroraProjectCard from '@/components/AuroraProjectCard';
+import AuroraAppCards from '@/components/AuroraAppCards';
 import { byNewest, formatProjectDate } from '@/utils/projectIndex';
 
 interface ProjectsTabsProps {
@@ -73,6 +74,8 @@ const ProjectsTabs: React.FC<ProjectsTabsProps> = ({ projects }) => {
                         <em>Projects.</em>
                     </h1>
                 </div>
+
+                <AuroraAppCards className={enterClass} style={enterStyle(300)} />
 
                 <div className={`aurora-filters ${enterClass}`} style={enterStyle(420)}>
                     {topTags.length > 0 && (
