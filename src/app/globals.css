@@ -2923,7 +2923,12 @@ html.light .aurora-skel::after {
 
 .aurora-ask {
     position: fixed;
-    inset: 0;
+    /* Sized to the visible viewport, which the dialog tracks in script, so
+       the input stays above the on-screen keyboard. */
+    top: var(--ask-vv-top, 0);
+    left: 0;
+    right: 0;
+    height: var(--ask-vv-height, 100%);
     z-index: 300;
     display: grid;
     place-items: center;
@@ -2943,7 +2948,7 @@ html.light .aurora-skel::after {
 
 .aurora-ask-card {
     width: min(820px, 100%);
-    max-height: calc(100dvh - 48px);
+    max-height: calc(var(--ask-vv-height, 100dvh) - 48px);
     display: flex;
     flex-direction: column;
     padding: 0;
@@ -3000,22 +3005,46 @@ html.light .aurora-skel::after {
     outline-offset: 3px;
 }
 
-/* Phones: a full-screen sheet. dvh tracks the on-screen keyboard and browser
-   bars, so the input is not pushed out of view. */
+/* Phones: a full-screen sheet, as tall as the visible viewport so the input
+   stays above the keyboard. */
 @media (max-width: 640px) {
     .aurora-ask {
         padding: 0;
         place-items: stretch;
+        /* Safari keeps reporting the shorter height for the band its toolbar
+           gave up, so reach the bottom of the screen regardless. */
+        min-height: 100lvh;
+        grid-template-rows: minmax(0, 1fr);
+    }
+    /* Safari paints nothing fixed in the band its collapsed toolbar frees up,
+       only the page's background colour (never an image), so give the page
+       the solid colour of the sheet's bottom edge: the glass tint over bg. */
+    html.aurora:has(> body > .aurora-ask),
+    body.aurora:has(> .aurora-ask) {
+        background: color-mix(in srgb, var(--aurora-bg), #fff 3.5%);
+    }
+    html.light.aurora:has(> body > .aurora-ask),
+    html.light body.aurora:has(> .aurora-ask) {
+        background: color-mix(in srgb, var(--aurora-bg), #fff 55%);
     }
     .aurora-ask-card {
         width: 100%;
         max-height: none;
-        height: 100dvh;
+        /* Stretches to fill the dialog's single row. */
+        height: auto;
         border-radius: 0;
         border: 0;
     }
     .aurora-ask-card::after {
         display: none;
+    }
+    /* The card's scale-in reads as the page shrinking when the card is the
+       whole screen, so here only the content rises into place. */
+    .aurora-ask-card {
+        animation: none;
+    }
+    .aurora-ask-body {
+        animation: aurora-ask-body-in 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
     }
     .aurora-ask-body {
         padding: max(64px, calc(env(safe-area-inset-top) + 56px)) 16px max(28px, env(safe-area-inset-bottom));
@@ -3026,9 +3055,15 @@ html.light .aurora-skel::after {
     }
 }
 
+@keyframes aurora-ask-body-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .aurora-ask,
-    .aurora-ask-card {
+    .aurora-ask-card,
+    .aurora-ask-body {
         animation: none;
     }
 }

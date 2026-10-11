@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import dynamic from 'next/dynamic';
 import { X } from 'lucide-react';
@@ -24,9 +24,35 @@ const ComboBox = dynamic(loadComboBox, {
  * to the chat at the bottom. It holds a second copy of the same chat, started
  * empty; an answer given here is also shown down there afterwards.
  */
-const AuroraAskOverlay: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+interface Props {
+    onClose: () => void;
+    /** Where focus goes on close: the button that opened it. */
+    returnFocusTo?: HTMLElement | null;
+}
+
+const AuroraAskOverlay: React.FC<Props> = ({ onClose, returnFocusTo }) => {
     const rootRef = useRef<HTMLDivElement>(null);
-    useModalDialog(rootRef, onClose);
+    useModalDialog(rootRef, onClose, { returnFocusTo });
+
+    // iPhone Safari shrinks its toolbar and raises the keyboard when the input
+    // takes focus, but a fixed inset:0 layer keeps the old height, so the page
+    // shows through below it. Track the visible viewport instead.
+    useEffect(() => {
+        const root = rootRef.current;
+        const vv = window.visualViewport;
+        if (!root || !vv) return;
+        const sync = () => {
+            root.style.setProperty('--ask-vv-top', `${vv.offsetTop}px`);
+            root.style.setProperty('--ask-vv-height', `${vv.height}px`);
+        };
+        sync();
+        vv.addEventListener('resize', sync);
+        vv.addEventListener('scroll', sync);
+        return () => {
+            vv.removeEventListener('resize', sync);
+            vv.removeEventListener('scroll', sync);
+        };
+    }, []);
 
     return createPortal(
         <div
