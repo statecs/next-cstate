@@ -12,6 +12,7 @@ import AuroraHeroFX from '@/components/AuroraHeroFX';
 import AuroraHeroHud from '@/components/AuroraHeroHud';
 import AuroraSocialIcons from '@/components/AuroraSocialIcons';
 import AuroraProductLinks from '@/components/AuroraProductLinks';
+import AuroraScrollCue from '@/components/AuroraScrollCue';
 
 const SKILLS = ['UX Research', 'Accessibility', 'Prompt Engineering', 'Design Systems', 'Front-end', 'Prototyping'];
 
@@ -93,10 +94,7 @@ const HomePage = async () => {
                     </div>
                 </div>
                 <AuroraHeroHud />
-                <div className="aurora-scrollcue" aria-hidden="true">
-                    <div className="aurora-mouse" />
-                    <span className="aurora-mono">scroll</span>
-                </div>
+                <AuroraScrollCue />
             </section>
 
             {/* ABOUT */}

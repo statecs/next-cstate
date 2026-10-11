@@ -937,7 +937,44 @@ html.noanim .aurora-cursor-dot {
     flex-direction: column;
     align-items: center;
     gap: 8px;
+    /* A comfortable tap target around the small mouse and label. */
+    min-width: 64px;
+    padding: 6px 10px;
+    border-radius: 14px;
     color: var(--aurora-faint);
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.2s;
+}
+
+.aurora-scrollcue .aurora-mono {
+    color: inherit;
+}
+
+.aurora-scrollcue:hover,
+.aurora-scrollcue:focus-visible {
+    color: var(--aurora-text);
+}
+
+.aurora-scrollcue:hover .aurora-mouse,
+.aurora-scrollcue:focus-visible .aurora-mouse {
+    border-color: var(--aurora-muted);
+}
+
+.aurora-scrollcue:focus-visible {
+    outline: 2px solid var(--aurora-lav);
+    outline-offset: 2px;
+}
+
+/* Focus moves to the section after the jump; no ring around the whole block. */
+#about:focus {
+    outline: none;
+}
+
+/* Land with a little room between the fixed nav and the section heading. */
+#about {
+    scroll-margin-top: 28px;
 }
 
 .aurora-mouse {
@@ -1623,6 +1660,45 @@ html:not(.light) .aurora-article-svg {
     gap: 14px;
 }
 
+.aurora-apps-titles {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Top-right: open the live site in a new tab. */
+.aurora-apps-open {
+    flex: none;
+    align-self: flex-start;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--aurora-line2);
+    display: grid;
+    place-items: center;
+    color: var(--aurora-muted);
+    transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.2s;
+}
+
+.aurora-apps-open:hover,
+.aurora-apps-open:focus-visible {
+    color: var(--aurora-text);
+    border-color: rgba(141, 192, 235, 0.45);
+    background: var(--aurora-glass2);
+}
+
+.aurora-apps-open:hover svg {
+    transform: translate(1px, -1px);
+}
+
+.aurora-apps-open svg {
+    transition: transform 0.2s;
+}
+
+.aurora-apps-open:focus-visible {
+    outline: 2px solid var(--aurora-lav);
+    outline-offset: 2px;
+}
+
 .aurora-apps-icon {
     flex: none;
     width: 44px;
@@ -1692,11 +1768,9 @@ html:not(.light) .aurora-article-svg {
     line-height: 1.4;
 }
 
-.aurora-apps-links {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
+
+.aurora-apps-link,
+.aurora-apps-soon {
     margin-left: auto;
 }
 
@@ -1717,10 +1791,6 @@ html:not(.light) .aurora-article-svg {
     transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
 
-.aurora-apps-link.primary {
-    border-color: var(--aurora-line2);
-    color: var(--aurora-text);
-}
 
 .aurora-apps-link:hover,
 .aurora-apps-link:focus-visible {
@@ -2803,8 +2873,11 @@ body.aurora :focus-visible {
         height: 17px;
     }
     .aurora-scrollcue {
-        bottom: 20px;
+        bottom: 14px;
         gap: 6px;
+        /* Only the label shows here; keep the tap target finger-sized. */
+        min-height: 44px;
+        justify-content: center;
     }
     .aurora-scrollcue .aurora-mouse {
         display: none;
