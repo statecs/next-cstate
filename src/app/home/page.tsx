@@ -68,20 +68,7 @@ const HomePage = async () => {
                         </span>
                     </h1>
                     <p className="aurora-lede">
-                        Building accessible{' '}
-                        {/* The cycling words all sit in the DOM at once, so a
-                            scraper reads every one of them. The first is left
-                            unhidden to carry the sentence for a screen reader —
-                            a separate sr-only copy would only repeat it — and
-                            the spaces keep the rest from running together in a
-                            search snippet. Whitespace-only nodes are not
-                            rendered as grid items, so the stack is unaffected. */}
-                        <span className="aurora-word-cycle">
-                            <span className="w">products</span>{' '}
-                            <span className="w" aria-hidden="true">interfaces</span>{' '}
-                            <span className="w" aria-hidden="true">experiences</span>
-                        </span>{' '}
-                        — from concept to code.
+                        Building accessible products from concept to code.
                     </p>
                     <div className="aurora-cta-row">
                         <Link href="/projects" className="aurora-btn primary" data-magnetic>

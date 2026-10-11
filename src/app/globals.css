@@ -537,43 +537,6 @@ html.noanim .aurora-cursor-dot {
     text-wrap: balance;
 }
 
-/* --- cycling word in the lede (grid-stacked crossfade) --- */
-
-.aurora-word-cycle {
-    display: inline-grid;
-    justify-items: center;
-    color: var(--aurora-aqua);
-    white-space: nowrap;
-}
-
-.aurora-word-cycle .w {
-    grid-area: 1 / 1;
-    opacity: 0;
-    animation: aurora-word-fade 9s ease-in-out infinite;
-}
-
-/* Positional, so they shift if a word is added or removed above. */
-.aurora-word-cycle .w:nth-of-type(2) { animation-delay: 3s; }
-.aurora-word-cycle .w:nth-of-type(3) { animation-delay: 6s; }
-
-@keyframes aurora-word-fade {
-    0% {
-        opacity: 0;
-        transform: translateY(0.55em);
-        filter: blur(4px);
-    }
-    5%, 28% {
-        opacity: 1;
-        transform: none;
-        filter: blur(0);
-    }
-    33%, 100% {
-        opacity: 0;
-        transform: translateY(-0.55em);
-        filter: blur(4px);
-    }
-}
-
 /* --- hero cursor spotlight (position driven by AuroraHeroFX) --- */
 
 .aurora-hero::after {
@@ -2959,17 +2922,6 @@ body.aurora :focus-visible {
         transform: none;
         filter: none;
     }
-    .aurora-word-cycle .w {
-        animation: none !important;
-    }
-    .aurora-word-cycle .w:nth-child(2) {
-        opacity: 1;
-        transform: none;
-        filter: none;
-    }
-    .aurora-word-cycle .w:nth-child(n + 3) {
-        display: none;
-    }
     .aurora-canvas {
         opacity: 0.6;
     }
@@ -2999,20 +2951,6 @@ html.noanim .aurora-title .ch {
     opacity: 1;
     transform: none;
     filter: none;
-}
-
-html.noanim .aurora-word-cycle .w {
-    animation: none !important;
-}
-
-html.noanim .aurora-word-cycle .w:nth-child(2) {
-    opacity: 1;
-    transform: none;
-    filter: none;
-}
-
-html.noanim .aurora-word-cycle .w:nth-child(n + 3) {
-    display: none;
 }
 
 /* --- light mode component overrides --- */
