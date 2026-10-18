@@ -1,10 +1,12 @@
 # Drop this file into <repo>/.github/workflows/claude-review.yml
 # Requires the repo secret ANTHROPIC_API_KEY (or CLAUDE_CODE_OAUTH_TOKEN) and the Claude GitHub App installed.
+# Two automatic reviews per PR; add the "claude-review" label to request more.
+# Keep this file identical on every branch that has it, or claude-code-action skips the review.
 name: Claude PR Review
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, reopened, ready_for_review, labeled]
 
 jobs:
   review:
@@ -24,4 +26,6 @@ jobs:
     #   max_turns: 40
     #   fail_on_request_changes: false
     #   skip_release_prs: false    # also review release/* -> main PRs
+    #   max_auto_reviews: 2        # automatic reviews per PR, then label-only
+    #   settle_minutes: 5          # wait after the last push before the follow-up review
     #   workspace_id: wrkspc_...   # which Anthropic workspace to bill (needed for non-workspace-scoped keys)
