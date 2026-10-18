@@ -1,22 +1,26 @@
 # Drop this file into <repo>/.github/workflows/claude-review.yml
 # Requires the repo secret ANTHROPIC_API_KEY (or CLAUDE_CODE_OAUTH_TOKEN) and the Claude GitHub App installed.
-# Two automatic reviews per PR; add the "claude-review" label to request more.
+# Two automatic reviews per PR; comment "@claude-review" (or add the "claude-review" label) to request more.
 # Keep this file identical on every branch that has it, or claude-code-action skips the review.
 name: Claude PR Review
 
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review, labeled]
+  issue_comment:
+    types: [created]
 
 jobs:
   review:
+    # Comments only start a run when they are on a PR and ask for a review.
+    if: github.event_name != 'issue_comment' || (github.event.issue.pull_request && contains(github.event.comment.body, '@claude-review'))
     uses: statecs/claude-pr-review/.github/workflows/review.yml@main
     permissions:
       contents: read
       pull-requests: write
       issues: write
       id-token: write
-      actions: read
+      actions: write   # lets a comment-triggered review refresh the PR's check
     secrets:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
