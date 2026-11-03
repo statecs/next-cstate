@@ -1,3 +1,9 @@
+// Bundled rather than served from /public: production nginx serves /images/
+// from a legacy folder outside the app, so new files there never reach it.
+import ogImage from '@/assets/og.png';
+
+const ogImageUrl = `https://cstate.se${ogImage.src}`;
+
 const config = {
     seo: {
         title: {
@@ -10,9 +16,9 @@ const config = {
         openGraph: {
             images: [
                 {
-                    alt: 'Christopher State',
+                    alt: "Christopher State, Design Engineer: Hi, I'm Christopher.",
                     height: 630,
-                    url: 'https://cstate.se/images/chris-placeholder.jpg',
+                    url: ogImageUrl,
                     width: 1200
                 }
             ],
@@ -24,7 +30,7 @@ const config = {
         twitter: {
             card: 'summary_large_image',
             creator: '@statecs',
-            image: 'https://cstate.se/images/chris-placeholder.jpg',
+            images: [ogImageUrl],
             site: '@statecs',
             title: 'Christopher State | Design Engineer'
         },
