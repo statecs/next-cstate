@@ -1,6 +1,6 @@
 // Bundled rather than served from /public: production nginx serves /images/
 // from a legacy folder outside the app, so new files there never reach it.
-import ogImage from '@/assets/og.png';
+import ogImage from '@/assets/og.jpg';
 
 const ogImageUrl = `https://cstate.se${ogImage.src}`;
 
