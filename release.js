@@ -99,6 +99,10 @@ async function deploy() {
         // Build into .next-build so the live .next keeps serving until the new
         // build is known to be good. Reuse the build cache (it also holds the
         // downloaded Google Fonts).
+        // tsconfig type-checks .next/types and any **/*.ts, so generated types
+        // from the live or previous build would still point at deleted files.
+        // They are only used for type checking, never at runtime.
+        await run('Clear old generated types', 'rm -rf .next/types .next-prev .next-failed');
         await run(
             'Build',
             'rm -rf .next-build && mkdir .next-build && ([ -d .next/cache ] && cp -R .next/cache .next-build/cache || true) && NEXT_DIST_DIR=.next-build npm run build'
