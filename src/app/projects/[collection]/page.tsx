@@ -19,13 +19,14 @@ import { CaseStudyHeader } from '@/components/CaseStudy/CaseStudyHeader';
 export const dynamic = 'force-dynamic';
 
 interface Props {
-    params: {collection: string};
+    params: Promise<{collection: string}>;
 }
 
-const CollectionPage = async ({params}: Props) => {
-    const {isEnabled: isDraftModeEnabled} = draftMode();
+const CollectionPage = async (props: Props) => {
+    const params = await props.params;
+    const {isEnabled: isDraftModeEnabled} = await draftMode();
     const { isAuthenticated } = getKindeServerSession();
-    const authStatus = await isAuthenticated();
+    const authStatus = (await isAuthenticated()) === true;
 
     const collection = await fetchCollection(params.collection, isDraftModeEnabled);
 
@@ -202,7 +203,8 @@ export const generateStaticParams = async () => {
     return [...collectionParams, ...caseStudyParams];
 };
 
-export const generateMetadata = async ({params}: Props) => {
+export const generateMetadata = async (props: Props) => {
+    const params = await props.params;
     const collection = await fetchCollection(params.collection);
 
     if (!collection) {

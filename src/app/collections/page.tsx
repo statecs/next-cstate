@@ -8,7 +8,7 @@ import FilterableCollections from './FilterableCollections';
 import { Item } from '@/types/items.d'; 
 
 const CollectionsPage = async () => {
-    const { isEnabled: isDraftModeEnabled } = draftMode();
+    const { isEnabled: isDraftModeEnabled } = await draftMode();
     const { collections, writings, caseStudies } = await fetchAllData(isDraftModeEnabled);
     if (!collections && !writings && !caseStudies) redirect('/');
 
