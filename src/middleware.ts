@@ -1,6 +1,35 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+// Pages that used to live at the top level, listed explicitly because these
+// redirects are permanent and get cached: they must not rest on a guess.
+const LEGACY_PROJECT_SLUGS = new Set([
+    'ai-for-accessibility', 'altvision', 'bubble-catch-game', 'doctrin',
+    'evolving-design-system', 'flowfactory', 'ica', 'intranet-minbutik',
+    'mapiful', 'notely-ai', 'sj', 'studs', 'ths', 'vattenfall-erp-sap-elearning'
+]);
+const LEGACY_WRITING_SLUGS = new Set([
+    'building-ai-powered-transcription-app-journey',
+    'designing-for-context-mcps-and-ai-products',
+    'developer-guide-focus-indicators',
+    'digital-accessibility-insights-pts-sis-accessibleeu',
+    'gpt-5-2-incremental-progress-or-road-to-agi',
+    'how-does-an-ai-watermark-its-words',
+    'how-rl-shapes-modern-ai-models',
+    'openai-o3-paradigm-shift-artificial-intelligence',
+    'the-limits-of-mathematical-reasoning',
+    'the-web-content-accessibility-guidelines',
+    'understanding-ai-and-rag',
+    'understanding-aria-basics-to-best-practices',
+    'understanding-gpt-and-transformer-models',
+    'vibe-coding-the-art-of-writing-code',
+    'what-is-web-accessibility',
+    'when-a-government-can-switch-off-your-ai-model-overnight',
+    'when-ai-agents-form-a-swarm',
+    'why-ai-is-solving-the-wrong-problem',
+    'why-are-tokens-so-expensive'
+]);
+
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
@@ -31,8 +60,23 @@ export function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    // Only process single-segment paths (no slashes after first char)
     const segments = pathname.split('/').filter(Boolean);
+
+    // Old top-level URLs, with or without an image slug after them
+    if (segments.length === 1 || segments.length === 2) {
+        const section = LEGACY_PROJECT_SLUGS.has(segments[0])
+            ? 'projects'
+            : LEGACY_WRITING_SLUGS.has(segments[0]) ? 'writing' : null;
+
+        if (section) {
+            return NextResponse.redirect(
+                new URL(`/${section}${pathname}${request.nextUrl.search}`, request.url),
+                308
+            );
+        }
+    }
+
+    // Only process single-segment paths (no slashes after first char)
     if (segments.length !== 1) {
         return NextResponse.next();
     }
