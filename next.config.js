@@ -24,6 +24,8 @@ const securityHeaders = [
     }    
 ];
 module.exports = {
+    // release.js builds into a separate folder and swaps it in only if the build succeeds
+    distDir: process.env.NEXT_DIST_DIR || '.next',
     env: {
         API_BASE_URL: process.env.API_BASE_URL,
         NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
