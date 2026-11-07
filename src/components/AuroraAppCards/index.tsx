@@ -8,9 +8,10 @@ const liveCount = PRODUCT_LINKS.filter(a => !a.comingSoon).length;
 /**
  * The apps from PRODUCT_LINKS as cards at the top of /projects: icon, name,
  * pitch, a short description and where it runs. The corner button opens the
- * live site in a new tab; the footer links to the app's project page when it
- * has one. Those
- * project pages are left out of the "Other projects" grid below, so an app is
+ * live site in a new tab, and its hit area is stretched over the whole card
+ * (see .aurora-apps-open::after), so a click anywhere does the same. The
+ * footer's project link sits above that layer and goes to the app's project
+ * page when it has one. Those project pages are left out of the "Other projects" grid below, so an app is
  * listed once. An app flagged comingSoon is shown but not linked.
  */
 const AuroraAppCards: React.FC<{ className?: string; style?: React.CSSProperties }> = ({ className, style }) => (

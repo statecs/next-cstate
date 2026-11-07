@@ -1610,6 +1610,17 @@ html:not(.light) .aurora-article-svg {
     color: var(--aurora-text);
     backdrop-filter: blur(10px);
     transition: border-color 0.25s, background 0.25s;
+    /* Anchors the corner link's stretched hit area below. */
+    position: relative;
+}
+
+/* The corner link's hit area covers the whole card, so a click anywhere opens
+   the live site. The project link sits above it and keeps its own target. */
+.aurora-apps-open::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
 }
 
 .aurora-apps-card:not(.soon):hover {
@@ -1643,13 +1654,14 @@ html:not(.light) .aurora-article-svg {
 }
 
 .aurora-apps-open:hover,
-.aurora-apps-open:focus-visible {
+.aurora-apps-open:focus-visible,
+.aurora-apps-card:hover .aurora-apps-open {
     color: var(--aurora-text);
     border-color: rgba(141, 192, 235, 0.45);
     background: var(--aurora-glass2);
 }
 
-.aurora-apps-open:hover svg {
+.aurora-apps-card:hover .aurora-apps-open svg {
     transform: translate(1px, -1px);
 }
 
@@ -1738,6 +1750,8 @@ html:not(.light) .aurora-article-svg {
 }
 
 .aurora-apps-link {
+    position: relative;
+    z-index: 1;
     display: inline-flex;
     align-items: center;
     gap: 6px;
