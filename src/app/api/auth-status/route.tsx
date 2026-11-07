@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   const { isAuthenticated } = getKindeServerSession();
-  const authStatus = await isAuthenticated();
+  const authStatus = (await isAuthenticated()) === true;
 
   return NextResponse.json(
     { isAuthenticated: authStatus },

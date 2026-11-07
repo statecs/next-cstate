@@ -28,8 +28,5 @@ interface Post {
   }
 
 
-  interface LayoutProps {
-    children: ReactNode;
-  }
 
 

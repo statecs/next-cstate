@@ -22,7 +22,7 @@ import { RefObject, useEffect, useRef, useState } from 'react';
  * focus moves until it is uncovered.
  */
 export const useModalDialog = (
-    rootRef: RefObject<HTMLElement>,
+    rootRef: RefObject<HTMLElement | null>,
     onClose: () => void,
     { returnFocusTo }: { returnFocusTo?: HTMLElement | null } = {}
 ) => {
