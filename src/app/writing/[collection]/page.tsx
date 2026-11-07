@@ -8,10 +8,11 @@ import { findRelated, normalizeTags } from '@/utils/related';
 import RelatedPosts from '@/components/RelatedPosts';
 
 interface Props {
-  params: { collection: string };
+  params: Promise<{ collection: string }>;
 }
 
-export const generateMetadata = async ({params}: Props) => {
+export const generateMetadata = async (props: Props) => {
+  const params = await props.params;
   const collection = await fetchWriting(params.collection);
   if (!collection) return null;
 
@@ -21,12 +22,13 @@ export const generateMetadata = async ({params}: Props) => {
 
 export const revalidate = 86400; // 24 hours
 
-export default async function CollectionPage({ params }: Props) {
-  const { isEnabled: isDraftModeEnabled } = draftMode();
+export default async function CollectionPage(props: Props) {
+  const params = await props.params;
+  const { isEnabled: isDraftModeEnabled } = await draftMode();
   const collection = await fetchWriting(params.collection, isDraftModeEnabled);
-  
+
   const { isAuthenticated } = getKindeServerSession();
-  const authStatus = await isAuthenticated();
+  const authStatus = (await isAuthenticated()) === true;
 
   const { writings } = await fetchRelatedIndex(isDraftModeEnabled);
   const related = findRelated(

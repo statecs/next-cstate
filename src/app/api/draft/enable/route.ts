@@ -10,6 +10,6 @@ export const GET = async (request: Request) => {
         return new Response('Invalid token', {status: 401});
     }
 
-    draftMode().enable();
+    (await draftMode()).enable();
     redirect(returnUrl || '/');
 };

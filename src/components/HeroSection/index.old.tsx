@@ -81,7 +81,7 @@ const scrollToContent = () => {
 
 // Magnetic pull effect hook
 const useMagneticPull = (
-  elementRef: React.RefObject<HTMLElement>,
+  elementRef: React.RefObject<HTMLElement | null>,
   mouseX: MotionValue<number>,
   mouseY: MotionValue<number>,
   strength: number = 0.25,

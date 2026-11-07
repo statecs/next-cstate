@@ -1,5 +1,5 @@
 import {draftMode} from 'next/headers';
-import {redirect} from 'next/navigation';
+import {notFound, redirect} from 'next/navigation';
 import PageHeader from '@/components/PageHeader';
 import PhotoCarousel from '@/components/PhotoCarousel';
 import config from '@/utils/config';
@@ -8,7 +8,7 @@ import {getPhotoSeo} from '@/utils/helpers';
 import { FloatingHeader } from '@/components/ListLayout/FloatingHeader';
 
 interface Props {
-    params: {collection: string; photo: string};
+    params: Promise<{collection: string; photo: string}>;
 }
 
 const getCollectionAndPhoto = async (
@@ -22,14 +22,16 @@ const getCollectionAndPhoto = async (
     return {collection, photo};
 };
 
-const PhotoPage = async ({params}: Props) => {
-    const {isEnabled: isDraftModeEnabled} = draftMode();
-    const {collection} = await getCollectionAndPhoto(
+const PhotoPage = async (props: Props) => {
+    const params = await props.params;
+    const {isEnabled: isDraftModeEnabled} = await draftMode();
+    const {collection, photo} = await getCollectionAndPhoto(
         params.collection,
         params.photo,
         isDraftModeEnabled
     );
     if (!collection) redirect('/');
+    if (!photo) notFound();
 
     return (
         <>
@@ -75,7 +77,8 @@ export const generateStaticParams = async () => {
         .flatMap(photo => photo);
 };
 
-export const generateMetadata = async ({params}: Props) => {
+export const generateMetadata = async (props: Props) => {
+    const params = await props.params;
     const {collection, photo} = await getCollectionAndPhoto(params.collection, params.photo);
     if (!collection || !photo) return null;
 

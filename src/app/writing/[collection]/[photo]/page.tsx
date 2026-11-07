@@ -1,5 +1,5 @@
 import {draftMode} from 'next/headers';
-import {redirect} from 'next/navigation';
+import {notFound, redirect} from 'next/navigation';
 import Link from 'next/link';
 import PageHeader from '@/components/PageHeader';
 import PhotoCarousel from '@/components/PhotoCarousel';
@@ -9,7 +9,7 @@ import {getPhotoSeo} from '@/utils/helpers';
 import { FloatingHeader } from '@/components/ListLayout/FloatingHeader';
 
 interface Props {
-    params: {collection: string; photo: string};
+    params: Promise<{collection: string; photo: string}>;
 }
 
 const getCollectionAndPhoto = async (
@@ -23,57 +23,59 @@ const getCollectionAndPhoto = async (
     return {collection, photo};
 };
 
-const PhotoPage = async ({params}: Props) => {
-    const {isEnabled: isDraftModeEnabled} = draftMode();
-    const {collection} = await getCollectionAndPhoto(
-        params.collection,
-        params.photo,
-        isDraftModeEnabled
-    );
-    if (!collection) redirect('/');
+const PhotoPage = async (props: Props) => {
+  const params = await props.params;
+  const {isEnabled: isDraftModeEnabled} = await draftMode();
+  const {collection, photo} = await getCollectionAndPhoto(
+      params.collection,
+      params.photo,
+      isDraftModeEnabled
+  );
+  if (!collection) redirect('/');
+  if (!photo) notFound();
 
-    return (
-        <>
-          <FloatingHeader scrollTitle={collection.title} goBackLink={`/writing/${collection.slug}`} />
-          <div className="aurora-main min-h-screen aurora-enter-page">
-            {/* Kicker header */}
-            <div className="px-8 pt-10 pb-6 border-b border-[var(--aurora-line)]">
-              <div className="max-w-6xl mx-auto">
-                <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--aurora-muted)]">
-                  <Link href={`/writing/${collection.slug}`}>
-                    <span className="text-red-500">§</span>
-                    {' — '}{collection.title}
-                  </Link>
-                </div>
-              </div>
-            </div>
-            {/* Carousel */}
-            <div className="px-8 py-6">
-              <div className="max-w-6xl mx-auto">
-                <PhotoCarousel photo={params.photo} collection={collection} />
-              </div>
-            </div>
-            {/* Description / CTA */}
-            <div className="px-8 pb-10">
-              <div className="max-w-6xl mx-auto">
-                {collection.photosCollection.items.map((photo, index) =>
-                  photo.slug === params.photo && (
-                    <div key={index}>
-                      <PageHeader
-                        animate={false}
-                        backUrl={`/${collection.slug}`}
-                        ctaLabel={collection.ctaLabel}
-                        ctaUrl={collection.ctaUrl}
-                        description={photo.description}
-                      />
-                    </div>
-                  )
-                )}
+  return (
+      <>
+        <FloatingHeader scrollTitle={collection.title} goBackLink={`/writing/${collection.slug}`} />
+        <div className="aurora-main min-h-screen aurora-enter-page">
+          {/* Kicker header */}
+          <div className="px-8 pt-10 pb-6 border-b border-[var(--aurora-line)]">
+            <div className="max-w-6xl mx-auto">
+              <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--aurora-muted)]">
+                <Link href={`/writing/${collection.slug}`}>
+                  <span className="text-red-500">§</span>
+                  {' — '}{collection.title}
+                </Link>
               </div>
             </div>
           </div>
-        </>
-    );
+          {/* Carousel */}
+          <div className="px-8 py-6">
+            <div className="max-w-6xl mx-auto">
+              <PhotoCarousel photo={params.photo} collection={collection} />
+            </div>
+          </div>
+          {/* Description / CTA */}
+          <div className="px-8 pb-10">
+            <div className="max-w-6xl mx-auto">
+              {collection.photosCollection.items.map((photo, index) =>
+                photo.slug === params.photo && (
+                  <div key={index}>
+                    <PageHeader
+                      animate={false}
+                      backUrl={`/${collection.slug}`}
+                      ctaLabel={collection.ctaLabel}
+                      ctaUrl={collection.ctaUrl}
+                      description={photo.description}
+                    />
+                  </div>
+                )
+              )}
+            </div>
+          </div>
+        </div>
+      </>
+  );
 };
 
 export const generateStaticParams = async () => {
@@ -90,11 +92,12 @@ export const generateStaticParams = async () => {
         .flatMap(photo => photo);
 };
 
-export const generateMetadata = async ({params}: Props) => {
-    const {collection, photo} = await getCollectionAndPhoto(params.collection, params.photo);
-    if (!collection || !photo) return null;
+export const generateMetadata = async (props: Props) => {
+  const params = await props.params;
+  const {collection, photo} = await getCollectionAndPhoto(params.collection, params.photo);
+  if (!collection || !photo) return null;
 
-    return {...config.seo, ...getPhotoSeo(collection, photo)};
+  return {...config.seo, ...getPhotoSeo(collection, photo)};
 };
 
 export const revalidate = 86400; // 24 hours
