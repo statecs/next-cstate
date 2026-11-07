@@ -45,8 +45,8 @@ module.exports = {
         return {
             beforeFiles: [
                 {
-                    source: '/images/photos/:path*',
-                    destination: 'https://images.ctfassets.net/:path*'
+                    source: '/images/photos/6ss3uxgp4reb/:path*',
+                    destination: 'https://images.ctfassets.net/6ss3uxgp4reb/:path*'
                 },
                 {source: '/', destination: '/home'}
             ]
@@ -64,8 +64,12 @@ module.exports = {
         formats: ['image/webp'],
         minimumCacheTTL: 31536000, // 1 year
         remotePatterns: [
-            {protocol: 'https', hostname: 'images.ctfassets.net'},
-            {protocol: 'https', hostname: 'downloads.ctfassets.net'}
+            // Only this site's Contentful space, so the optimizer can't be used on other spaces' files.
+            // Also rejects Screenshot_2026-10-27_at_*: an automated client requests real assets with
+            // that date swapped into the filename, and each 403 from Contentful logs an error. This
+            // is the place to block it, as middleware and rewrites don't run for /_next/image.
+            {protocol: 'https', hostname: 'images.ctfassets.net', pathname: '/6ss3uxgp4reb/*/*/!(Screenshot_2026-10-27_at_*)'},
+            {protocol: 'https', hostname: 'downloads.ctfassets.net', pathname: '/6ss3uxgp4reb/*/*/!(Screenshot_2026-10-27_at_*)'}
         ]
     },
     reactStrictMode: true,
