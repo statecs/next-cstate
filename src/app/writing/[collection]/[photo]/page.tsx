@@ -1,5 +1,5 @@
 import {draftMode} from 'next/headers';
-import {redirect} from 'next/navigation';
+import {notFound, redirect} from 'next/navigation';
 import Link from 'next/link';
 import PageHeader from '@/components/PageHeader';
 import PhotoCarousel from '@/components/PhotoCarousel';
@@ -25,12 +25,13 @@ const getCollectionAndPhoto = async (
 
 const PhotoPage = async ({params}: Props) => {
     const {isEnabled: isDraftModeEnabled} = draftMode();
-    const {collection} = await getCollectionAndPhoto(
+    const {collection, photo} = await getCollectionAndPhoto(
         params.collection,
         params.photo,
         isDraftModeEnabled
     );
     if (!collection) redirect('/');
+    if (!photo) notFound();
 
     return (
         <>
