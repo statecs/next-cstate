@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
+import ShimmerImage from '@/components/ShimmerImage';
 import { loadLikeStat, toggleLike, type LikeStat } from './likesClient';
 import styles from './LikeableImage.module.css';
 
@@ -120,7 +120,9 @@ export default function LikeableImage({
             onDoubleClick={handleDoubleClick}
             onTouchEnd={handleTouchEnd}
         >
-            <Image
+            {/* Shimmers in the reserved box until the file decodes, instead of
+                showing an empty/broken frame that then pops in. */}
+            <ShimmerImage
                 src={src}
                 alt={alt}
                 width={w}
