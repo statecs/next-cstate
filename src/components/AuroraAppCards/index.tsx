@@ -23,7 +23,8 @@ const AuroraAppCards: React.FC<{ className?: string; style?: React.CSSProperties
         <div className="aurora-sec-head">
             <h2 id="aurora-apps-title">Apps I&apos;ve built</h2>
             <span className="aurora-mono">
-                {liveCount} live · {PRODUCT_LINKS.length - liveCount} coming
+                {liveCount} live
+                {liveCount < PRODUCT_LINKS.length && ` · ${PRODUCT_LINKS.length - liveCount} coming`}
             </span>
         </div>
         <ul className="aurora-apps-grid">

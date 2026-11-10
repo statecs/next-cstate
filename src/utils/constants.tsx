@@ -71,7 +71,6 @@ export const PRODUCT_LINKS: readonly ProductLink[] = [
   {
     key: 'verifa', label: 'Verifa', host: 'verifa.se', url: 'https://verifa.se', blurb: 'AI bookkeeping',
     description: 'Reads receipts and invoices with AI, suggests entries against the Swedish BAS chart of accounts and creates finished vouchers. For sole traders and limited companies.',
-    comingSoon: true,
   },
 ];
 
