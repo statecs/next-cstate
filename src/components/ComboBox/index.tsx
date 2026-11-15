@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useMemo, useId, KeyboardEvent } from 'react';
-import { sendMessageToResponseStream, sendMessageToClaudeAPI, textToSpeech } from '@/utils/threadService';
+import { askAma, textToSpeech } from '@/utils/threadService';
 import { useAtom } from 'jotai';
 import { footerVisibilityAtom, responseMessageLengthAtom } from '@/utils/store';
 import { Volume2Icon, PauseIcon, LoaderIcon } from 'lucide-react';
@@ -54,7 +54,6 @@ const ComboBox: React.FC<ComboBoxProps> = ({ inputId = 'queryInput', fresh = fal
 
   const showSuggestList = isFocused && filtered.length > 0 && !loading && !responseMessage;
 
-  const getPreviousResponseId = () => localStorage.getItem('previousResponseId');
 
   useEffect(() => {
     responseMessageRef.current = responseMessage;
@@ -106,7 +105,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ inputId = 'queryInput', fresh = fal
     setInputValue('');
 
     try {
-      const response = await sendMessageToResponseStream(message, getPreviousResponseId());
+      const response = await askAma(message, selectedModel === 'claude' ? 'claude' : 'gpt');
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       if (!reader) throw new Error('No response body');
@@ -129,44 +128,22 @@ const ComboBox: React.FC<ComboBoxProps> = ({ inputId = 'queryInput', fresh = fal
               return updated;
             });
           } else if (data.type === 'done') {
-            localStorage.setItem('previousResponseId', data.responseId);
             setLoading(false);
             announceAnswer();
+          } else if (data.type === 'error') {
+            throw new Error('Failed to send message');
           }
         }
       }
+      setLoading(false);
     } catch (error) {
       console.error('Failed to send message:', error);
-      setResponseMessage('Failed to send message');
+      setResponseMessage(error instanceof Error && error.message ? error.message : 'Failed to send message');
       setLoading(false);
     }
   };
 
-  const sendMessageToClaude = async (message: string) => {
-    setLoading(true);
-    setResponseMessage(null);
-    setInputValue('');
-
-    try {
-      const response = await sendMessageToClaudeAPI(message);
-      setResponseMessage(response);
-      localStorage.setItem('chatResponse', response);
-      announceAnswer();
-    } catch (error) {
-      console.error('Failed to send message to Claude:', error);
-      setResponseMessage('Failed to send message to Claude');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSendMessage = async (message: string) => {
-    if (selectedModel === 'claude') {
-      await sendMessageToClaude(message);
-    } else {
-      await sendMessage(message);
-    }
-  };
+  const handleSendMessage = (message: string) => sendMessage(message);
 
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
