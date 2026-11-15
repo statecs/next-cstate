@@ -67,13 +67,13 @@ module.exports = {
         minimumCacheTTL: 31536000, // 1 year
         remotePatterns: [
             // Only this site's Contentful space, so the optimizer can't be used on other spaces' files.
-            // Also rejects Screenshot_2026-* and later: an automated client requests real assets with
+            // Also rejects Screenshot_2026-* through Screenshot_2099-*: an automated client requests real assets with
             // a recent date swapped into the filename (first 2026-10-27, then 2026-11-07), and each
             // 403 from Contentful logs an error. No real screenshot asset is dated 2026 or later, and
             // new uploads should not be named Screenshot_*. This is the place to block it, as
             // middleware and rewrites don't run for /_next/image.
-            {protocol: 'https', hostname: 'images.ctfassets.net', pathname: '/6ss3uxgp4reb/*/*/!(Screenshot_202[6-9]-*)'},
-            {protocol: 'https', hostname: 'downloads.ctfassets.net', pathname: '/6ss3uxgp4reb/*/*/!(Screenshot_202[6-9]-*)'}
+            {protocol: 'https', hostname: 'images.ctfassets.net', pathname: '/6ss3uxgp4reb/*/*/!(Screenshot_202[6-9]-*|Screenshot_20[3-9][0-9]-*)'},
+            {protocol: 'https', hostname: 'downloads.ctfassets.net', pathname: '/6ss3uxgp4reb/*/*/!(Screenshot_202[6-9]-*|Screenshot_20[3-9][0-9]-*)'}
         ]
     },
     reactStrictMode: true,
