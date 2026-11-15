@@ -11,7 +11,6 @@ import AuroraVoiceCta from '@/components/AuroraVoiceCta';
 import AuroraHeroFX from '@/components/AuroraHeroFX';
 import AuroraHeroHud from '@/components/AuroraHeroHud';
 import AuroraSocialIcons from '@/components/AuroraSocialIcons';
-import AuroraProductLinks from '@/components/AuroraProductLinks';
 import AuroraScrollCue from '@/components/AuroraScrollCue';
 
 const SKILLS = ['UX Research', 'Accessibility', 'Prompt Engineering', 'Design Systems', 'Front-end', 'Prototyping'];
@@ -112,29 +111,32 @@ const HomePage = async () => {
                                     </p>
                                 </>
                             )}
-                            {/* The hero shows these on wider screens. */}
+                            {/* Wider screens show these under the skills card. */}
                             <AuroraSocialIcons className="aurora-bio-social" />
-                            <div className="aurora-bio-products">
-                                <span className="aurora-mono">Apps I&apos;ve built</span>
-                                <AuroraProductLinks />
-                            </div>
                         </div>
 
-                        <aside className="aurora-side-card aurora-reveal">
-                            <h3>Top skills</h3>
-                            <div className="aurora-chips">
-                                {SKILLS.map(skill => (
-                                    <span key={skill} className="aurora-chip">{skill}</span>
-                                ))}
-                            </div>
-                            <div className="aurora-loc">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-                                    <path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11Z" />
-                                    <circle cx="12" cy="10" r="2.4" />
-                                </svg>
-                                <span>Stockholm, Sweden</span>
-                            </div>
-                        </aside>
+                        <div className="aurora-side aurora-reveal">
+                            <aside className="aurora-side-card">
+                                <h3>Top skills</h3>
+                                <div className="aurora-chips">
+                                    {SKILLS.map(skill => (
+                                        <span key={skill} className="aurora-chip">{skill}</span>
+                                    ))}
+                                </div>
+                                <div className="aurora-loc">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                                        <path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11Z" />
+                                        <circle cx="12" cy="10" r="2.4" />
+                                    </svg>
+                                    <span>Stockholm, Sweden</span>
+                                </div>
+                            </aside>
+                            <Link href="/projects" className="aurora-side-apps">
+                                See the apps I&apos;ve built <span className="arr" aria-hidden="true">→</span>
+                            </Link>
+                            {/* Small screens show these in the bio instead. */}
+                            <AuroraSocialIcons className="aurora-side-social" />
+                        </div>
                     </div>
                 </div>
             </section>

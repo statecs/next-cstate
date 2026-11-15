@@ -49,7 +49,7 @@ export interface ProductLink {
   comingSoon?: boolean;
 }
 
-/** Apps I've built, linked as quick shortcuts from the hero and the about section. */
+/** Apps I've built, shown as cards at the top of /projects. */
 export const PRODUCT_LINKS: readonly ProductLink[] = [
   {
     key: 'notely', label: 'Notely', host: 'notely.se', url: 'https://notely.se', blurb: 'AI notes from audio',

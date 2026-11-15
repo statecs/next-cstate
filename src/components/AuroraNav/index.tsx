@@ -161,15 +161,6 @@ const AuroraNav: React.FC = () => {
                     )}
                 </button>
 
-                <Link
-                    href="/contact"
-                    className="aurora-btn"
-                    style={{ padding: '11px 20px' }}
-                    data-magnetic
-                >
-                    Let&apos;s talk
-                </Link>
-
                 {isAuthenticated && (
                     <div className="relative" ref={dropdownRef}>
                         <button
